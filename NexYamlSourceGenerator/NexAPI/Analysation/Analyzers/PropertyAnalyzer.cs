@@ -32,7 +32,8 @@ namespace StrideSourceGenerator.NexAPI.Analysation.Analyzers
                 IsInterface = context.Symbol.Type.TypeKind == TypeKind.Interface,
                 MemberGenerator = memberGenerator,
                 Type = namespa,
-                Context = context.DataMemberContext
+                Context = context.DataMemberContext,
+                IsArray = context.Symbol.Type.TypeKind == TypeKind.Array,
             };
         }
 

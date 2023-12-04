@@ -13,6 +13,7 @@ internal class SymbolInfo
     internal string Namespace { get; set; }
     internal SymbolKind TypeKind { get; set; }
     internal IContentModeInfo MemberGenerator { get; set; }
+    internal bool IsArray { get; set; }
     internal bool IsGeneric { get; set; }
     internal bool IsAbstract { get; set; }
     internal string Tag {  get => $$"""emitter.Tag($"!{typeof({{Name}})},{{Namespace}}")""";}
