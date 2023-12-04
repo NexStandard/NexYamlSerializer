@@ -16,7 +16,7 @@ namespace StrideSourceGenerator.NexIncremental
 
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
-            Debugger.Launch();
+            // Debugger.Launch();
             AssignModeInfo assignModeInfo = new AssignModeInfo();
             IncrementalValueProvider<ImmutableArray<ClassInfo>> classProvider = context.SyntaxProvider
                                        .CreateSyntaxProvider((node, transform) =>
