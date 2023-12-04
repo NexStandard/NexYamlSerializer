@@ -12,20 +12,5 @@ namespace StrideSourceGenerator.NexIncremental
             }
             return false;
         }
-        public static bool HasInheritedDataContractAttributeInInheritanceHierarchy(this ITypeSymbol typeDeclaration, INamedTypeSymbol attribute)
-        {
-            if (typeDeclaration == null) return false;
-            ITypeSymbol baseType = typeDeclaration;
-
-            while (baseType != null)
-            {
-                if (baseType.HasAttribute(attribute))
-                {
-                    return true;
-                }
-                baseType = baseType.BaseType;
-            }
-            return false;
-        }
     }
 }

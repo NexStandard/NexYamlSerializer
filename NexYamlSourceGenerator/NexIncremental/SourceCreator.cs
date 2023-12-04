@@ -34,10 +34,9 @@ using VYaml;
 using VYaml.Emitter;
 using VYaml.Parser;
 using VYaml.Serialization;
-using Stride.Core;
 {ns}
-[System.CodeDom.Compiler.GeneratedCode(""StrideYaml"",""1.0.0.0"")]
-public class {info.GeneratorName} : IYamlFormatter<{info.Name}>
+[System.CodeDom.Compiler.GeneratedCode(""NexYaml"",""1.0.0.0"")]
+internal class {info.GeneratorName} : IYamlFormatter<{info.Name}>
 {{
     string AssemblyName {{ get; }} = typeof({info.Name}).Assembly.GetName().Name;
     string IdentifierTag {{ get; }} = typeof({info.Name}).Name;

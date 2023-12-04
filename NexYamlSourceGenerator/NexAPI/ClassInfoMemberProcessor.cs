@@ -11,16 +11,16 @@ namespace StrideSourceGenerator.NexAPI
     {
         public List<IMemberSymbolAnalyzer<IPropertySymbol>> PropertyAnalyzers { get; set; } = new();
         public List<IMemberSymbolAnalyzer<IFieldSymbol>> FieldAnalyzers { get; set; } = new();
-        private INamedTypeSymbol DataMemberAttribute => WellKnownReferences.DataMemberAttribute(compilation);
+        private INamedTypeSymbol DataMemberIgnoreAttribute => WellKnownReferences.DataMemberIgnoreAttribute(compilation);
         public ImmutableList<SymbolInfo> Process(ITypeSymbol type)
         {
             IReadOnlyList<ISymbol> symbols = selector.GetAllMembers(type);
             List<SymbolInfo> result = new List<SymbolInfo>();
             foreach (ISymbol symbol in symbols)
             {
-                DataMemberContext context = DataMemberContext.Create(symbol, DataMemberAttribute);
                 if (symbol == null)
                     continue;
+                DataMemberContext context = DataMemberContext.Create(symbol, DataMemberIgnoreAttribute);
                 if (symbol is IPropertySymbol property)
                     ProcessAnalyzers(PropertyAnalyzers, property, result, context);
                 else if (symbol is IFieldSymbol field)
@@ -33,6 +33,8 @@ namespace StrideSourceGenerator.NexAPI
         void ProcessAnalyzers<T>(List<IMemberSymbolAnalyzer<T>> analyzers, T symbol, List<SymbolInfo> result, DataMemberContext context)
             where T : ISymbol
         {
+            if (context.Exists == false)
+                return;
             foreach (IMemberSymbolAnalyzer<T> analyzer in analyzers)
             {
                 MemberContext<T> memberContext = new MemberContext<T>(symbol, context);

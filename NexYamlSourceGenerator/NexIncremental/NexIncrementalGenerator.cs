@@ -43,18 +43,20 @@ namespace StrideSourceGenerator.NexIncremental
             if (dataContractAttribute is null)
                 return null;
 
-            ITypeSymbol type = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration);
-
-            if (!type.HasInheritedDataContractAttributeInInheritanceHierarchy(dataContractAttribute))
-                return null;
+            ITypeSymbol type = semanticModel.GetDeclaredSymbol(classDeclaration);
 
             MemberSelector memberSelector = new MemberSelector(dataContractAttribute);
             AssignModeInfo assignMode = new AssignModeInfo();
 
-            IMemberSymbolAnalyzer<IPropertySymbol> standardAssignAnalyzer = new PropertyAnalyzer(assignMode);
+            IMemberSymbolAnalyzer<IPropertySymbol> standardAssignAnalyzer = new PropertyAnalyzer(assignMode)
+                .HasVisibleGetter()
+                .HasVisibleSetter();
+            IMemberSymbolAnalyzer<IFieldSymbol> standardFieldAssignAnalyzer = new FieldAnalyzer(assignMode)
+                .IsVisibleToSerializer();
 
             ClassInfoMemberProcessor classInfoMemberProcessor = new ClassInfoMemberProcessor(memberSelector, compilation);
             classInfoMemberProcessor.PropertyAnalyzers.Add(standardAssignAnalyzer);
+            classInfoMemberProcessor.FieldAnalyzers.Add(standardFieldAssignAnalyzer);
             var members = classInfoMemberProcessor.Process(type);
             return ClassInfo.CreateFrom(type, members);
         }

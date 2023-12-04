@@ -8,7 +8,6 @@ namespace StrideSourceGenerator.Core
         {
             return compilation.GetTypeByMetadataName("System.Runtime.Serialization.DataMemberAttribute");
         }
-
         public static INamedTypeSymbol DataMemberIgnoreAttribute(Compilation compilation)
         {
             return compilation.GetTypeByMetadataName("System.Runtime.Serialization.IgnoreDataMemberAttribute");
