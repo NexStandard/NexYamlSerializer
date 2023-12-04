@@ -44,7 +44,8 @@ namespace StrideSourceGenerator.NexIncremental
                 return null;
 
             ITypeSymbol type = semanticModel.GetDeclaredSymbol(classDeclaration);
-
+            if (!type.HasAttribute(dataContractAttribute))
+                return null;
             MemberSelector memberSelector = new MemberSelector(dataContractAttribute);
             AssignModeInfo assignMode = new AssignModeInfo();
 
