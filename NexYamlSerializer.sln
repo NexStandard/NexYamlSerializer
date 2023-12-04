@@ -1,0 +1,27 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34309.116
+MinimumVisualStudioVersion = 16.0.0.0
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NexYamlSerializer", "NexYamlSerializer\NexYamlSerializer.csproj", "{458918A0-942E-4CF9-A4B6-EA9B3E0F697B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NexYamlSourceGenerator", "NexYamlSourceGenerator\NexYamlSourceGenerator.csproj", "{34E30BA7-3207-4D23-86E7-701B902D56BA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{458918A0-942E-4CF9-A4B6-EA9B3E0F697B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{458918A0-942E-4CF9-A4B6-EA9B3E0F697B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{458918A0-942E-4CF9-A4B6-EA9B3E0F697B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{458918A0-942E-4CF9-A4B6-EA9B3E0F697B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34E30BA7-3207-4D23-86E7-701B902D56BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34E30BA7-3207-4D23-86E7-701B902D56BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34E30BA7-3207-4D23-86E7-701B902D56BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34E30BA7-3207-4D23-86E7-701B902D56BA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
