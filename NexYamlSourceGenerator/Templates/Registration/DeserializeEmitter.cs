@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using NexYamlSourceGenerator.NexAPI;
 using StrideSourceGenerator.NexAPI;
 using StrideSourceGenerator.Templates;
 using System;
@@ -9,12 +10,13 @@ using System.Text;
 namespace NexYamlSourceGenerator.Templates.Registration;
 internal class DeserializeEmitter : ITemplate
 {
-    public string Create(ClassInfo info)
+    public string Create(ClassPackage package)
     {
+        var info = package.ClassInfo;
         var defaultValues = new StringBuilder();
         var objectCreation = new StringBuilder();
-        Dictionary<int, List<SymbolInfo>> map = MapPropertiesToLength(info.MemberSymbols);
-        foreach (SymbolInfo member in info.MemberSymbols)
+        Dictionary<int, List<SymbolInfo>> map = MapPropertiesToLength(package.MemberSymbols);
+        foreach (SymbolInfo member in package.MemberSymbols)
         {
             defaultValues.Append("var __TEMP__").Append(member.Name).Append($"= default({(member.IsArray ? member.Type +"[]" : member.Type)});\n");
             objectCreation.Append(member.Name + "=" + "__TEMP__" + member.Name + ",");
@@ -51,7 +53,7 @@ internal class DeserializeEmitter : ITemplate
              }
 
              parser.ReadWithVerify(ParseEventType.MappingEnd);
-             var __TEMP__RESULT = new {{info.Name}}
+             var __TEMP__RESULT = new {{info.NameDefinition}}
              {
                  {{objectCreation.ToString().Trim(',')}}
              };

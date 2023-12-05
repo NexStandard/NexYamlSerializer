@@ -7,6 +7,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using StrideSourceGenerator.NexAPI.Analysation.Analyzers;
 using Microsoft.CodeAnalysis.CSharp;
+using NexYamlSourceGenerator.NexAPI;
 
 namespace StrideSourceGenerator.NexIncremental
 {
@@ -18,7 +19,7 @@ namespace StrideSourceGenerator.NexIncremental
         {
             // Debugger.Launch();
             AssignModeInfo assignModeInfo = new AssignModeInfo();
-            IncrementalValueProvider<ImmutableArray<ClassInfo>> classProvider = context.SyntaxProvider
+            IncrementalValueProvider<ImmutableArray<ClassPackage>> classProvider = context.SyntaxProvider
                                        .CreateSyntaxProvider((node, transform) =>
                                        {
                                            return node is TypeDeclarationSyntax;
@@ -36,7 +37,7 @@ namespace StrideSourceGenerator.NexIncremental
             context.RegisterSourceOutput(classProvider, Generate);
         }
 
-        private ClassInfo CreateClassInfo(Compilation compilation, TypeDeclarationSyntax classDeclaration, SemanticModel semanticModel)
+        private ClassPackage CreateClassInfo(Compilation compilation, TypeDeclarationSyntax classDeclaration, SemanticModel semanticModel)
         {
             INamedTypeSymbol dataContractAttribute = WellKnownReferences.DataContractAttribute(compilation);
 
@@ -59,14 +60,18 @@ namespace StrideSourceGenerator.NexIncremental
             classInfoMemberProcessor.PropertyAnalyzers.Add(standardAssignAnalyzer);
             classInfoMemberProcessor.FieldAnalyzers.Add(standardFieldAssignAnalyzer);
             var members = classInfoMemberProcessor.Process(type);
-            return ClassInfo.CreateFrom(type, members);
+            return new ClassPackage()
+            {
+                ClassInfo = ClassInfo.CreateFrom(type),
+                MemberSymbols = members,
+            };
         }
 
         private static void Generate(
           SourceProductionContext ctx,
-          ImmutableArray<ClassInfo> myCustomObjects)
+          ImmutableArray<ClassPackage> myCustomObjects)
         {
-            foreach (ClassInfo obj in myCustomObjects)
+            foreach (ClassPackage obj in myCustomObjects)
             {
                 ctx.CancellationToken.ThrowIfCancellationRequested();
 
@@ -74,12 +79,12 @@ namespace StrideSourceGenerator.NexIncremental
             }
         }
         private static SourceCreator SourceCreator = new SourceCreator();
-        private static void Generates(SourceProductionContext ctx, ClassInfo info)
+        private static void Generates(SourceProductionContext ctx, ClassPackage info)
         {
             if (info is null)
                 return;
 
-            ctx.AddSource(info.GeneratorName + ".g.cs", SourceCreator.Create(ctx, info));
+            ctx.AddSource(info.ClassInfo.GeneratorName + ".g.cs", SourceCreator.Create(ctx, info));
         }
     }
 }

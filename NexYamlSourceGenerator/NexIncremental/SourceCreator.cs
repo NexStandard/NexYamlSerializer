@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using NexYamlSourceGenerator.NexAPI;
 using NexYamlSourceGenerator.Templates.Registration;
 using StrideSourceGenerator.NexAPI;
 using StrideSourceGenerator.Templates;
@@ -17,11 +18,12 @@ namespace StrideSourceGenerator.NexIncremental
         private static readonly ITemplate serializerEmitter = new SerializeEmitter();
         private static readonly ITemplate deserializeEmitter = new DeserializeEmitter();
         private static readonly ITemplate utf8MemberEmitter = new UTF8MemberEmitter();
-        internal string Create(SourceProductionContext ctx, ClassInfo info)
+        internal string Create(SourceProductionContext ctx, ClassPackage package)
         {
-            string ns = (info.NameSpace != null ? "namespace " + info.NameSpace + ";" : "");
+            var info = package.ClassInfo;
+            string ns = info.NameSpace != null ? "namespace " + info.NameSpace + ";" : "";
             StringBuilder tempVariables = new StringBuilder();
-            foreach (var member in info.MemberSymbols)
+            foreach (var member in package.MemberSymbols)
             {
                 tempVariables.AppendLine($"var temp_{member.Name} = default({member.Type});");
             }
@@ -41,16 +43,16 @@ using VYaml.Serialization;
 [System.CodeDom.Compiler.GeneratedCode(""NexYaml"",""1.0.0.0"")]
 internal class {info.GeneratorName+info.TypeParameterArguments} : IYamlFormatter<{info.NameDefinition}>
 {{
-    {utf8MemberEmitter.Create(info)}
+    {utf8MemberEmitter.Create(package)}
     string AssemblyName {{ get; }} = typeof({info.ShortDefinition}).Assembly.GetName().Name;
     string IdentifierTag {{ get; }} = typeof({info.ShortDefinition}).Name;
     Type IdentifierType {{ get; }} = typeof({info.ShortDefinition});
 
     {info.Accessor} void Register()
     {{
-        {thisRegister.Create(info)}
-        {abstractRegister.Create(info)}
-        {interfaceRegister.Create(info)}
+        {thisRegister.Create(package)}
+        {abstractRegister.Create(package)}
+        {interfaceRegister.Create(package)}
     }}
 
     {info.Accessor} void Serialize(ref Utf8YamlEmitter emitter, {info.NameDefinition} value, YamlSerializationContext context)
@@ -68,14 +70,14 @@ internal class {info.GeneratorName+info.TypeParameterArguments} : IYamlFormatter
             context.IsRedirected = false;
             context.IsFirst = false;
         }}
-{serializerEmitter.Create(info)}
+{serializerEmitter.Create(package)}
         if(context.IsMappingEnabled)
             emitter.EndMapping();
     }}
 
     {info.Accessor} {info.NameDefinition}? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {{
-        {deserializeEmitter.Create(info)}
+        {deserializeEmitter.Create(package)}
     }}
 }}
 ";

@@ -1,4 +1,5 @@
-﻿using StrideSourceGenerator.NexAPI;
+﻿using NexYamlSourceGenerator.NexAPI;
+using StrideSourceGenerator.NexAPI;
 using StrideSourceGenerator.Templates;
 using System;
 using System.Collections.Generic;
@@ -8,10 +9,10 @@ using System.Xml.Linq;
 namespace NexYamlSourceGenerator.Templates.Registration;
 internal class UTF8MemberEmitter : ITemplate
 {
-    public string Create(ClassInfo info)
+    public string Create(ClassPackage package)
     {
         StringBuilder utf8Members = new StringBuilder();
-        foreach(var member in info.MemberSymbols)
+        foreach(var member in package.MemberSymbols)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(member.Name);
             StringBuilder sb = new StringBuilder();
@@ -19,7 +20,7 @@ internal class UTF8MemberEmitter : ITemplate
             {
                 sb.Append(by + ",");
             }
-            utf8Members.AppendLine($"\tprivate static readonly byte[] UTF8{member.Name} = new byte[]{{ {sb.ToString().Trim(',')} }};");
+            utf8Members.Append($"private static readonly byte[] UTF8{member.Name} = new byte[]{{ {sb.ToString().Trim(',')} }};\n\t");
         }
         return utf8Members.ToString();
     }

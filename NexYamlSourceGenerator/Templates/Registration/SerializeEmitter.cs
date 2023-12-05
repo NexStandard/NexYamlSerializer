@@ -1,4 +1,5 @@
-﻿using StrideSourceGenerator.NexAPI;
+﻿using NexYamlSourceGenerator.NexAPI;
+using StrideSourceGenerator.NexAPI;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -8,10 +9,10 @@ namespace StrideSourceGenerator.Templates.Registration
 {
     internal class SerializeEmitter : ITemplate
     {
-        public string Create(ClassInfo info)
+        public string Create(ClassPackage package)
         {
             StringBuilder sb = new StringBuilder();
-            foreach (SymbolInfo member in info.MemberSymbols)
+            foreach (SymbolInfo member in package.MemberSymbols)
             {
                 string serializeString = $$""".Serialize""";
                 if (member.IsArray)
