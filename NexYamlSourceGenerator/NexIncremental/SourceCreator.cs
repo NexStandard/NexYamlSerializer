@@ -39,12 +39,12 @@ using VYaml.Parser;
 using VYaml.Serialization;
 {ns}
 [System.CodeDom.Compiler.GeneratedCode(""NexYaml"",""1.0.0.0"")]
-internal class {info.GeneratorName} : IYamlFormatter<{info.Name}>
+internal class {info.GeneratorName+info.TypeParameterArguments} : IYamlFormatter<{info.NameDefinition}>
 {{
     {utf8MemberEmitter.Create(info)}
-    string AssemblyName {{ get; }} = typeof({info.Name}).Assembly.GetName().Name;
-    string IdentifierTag {{ get; }} = typeof({info.Name}).Name;
-    Type IdentifierType {{ get; }} = typeof({info.Name});
+    string AssemblyName {{ get; }} = typeof({info.ShortDefinition}).Assembly.GetName().Name;
+    string IdentifierTag {{ get; }} = typeof({info.ShortDefinition}).Name;
+    Type IdentifierType {{ get; }} = typeof({info.ShortDefinition});
 
     {info.Accessor} void Register()
     {{
@@ -53,7 +53,7 @@ internal class {info.GeneratorName} : IYamlFormatter<{info.Name}>
         {interfaceRegister.Create(info)}
     }}
 
-    {info.Accessor} void Serialize(ref Utf8YamlEmitter emitter, {info.Name} value, YamlSerializationContext context)
+    {info.Accessor} void Serialize(ref Utf8YamlEmitter emitter, {info.NameDefinition} value, YamlSerializationContext context)
     {{
         if (value is null)
         {{
@@ -64,7 +64,7 @@ internal class {info.GeneratorName} : IYamlFormatter<{info.Name}>
             emitter.BeginMapping();
         if(context.IsRedirected || context.IsFirst)
         {{
-            emitter.Tag($""!{{typeof({info.Name})}},{{AssemblyName}}"");
+            emitter.Tag($""!{{typeof({info.ShortDefinition})}},{{AssemblyName}}"");
             context.IsRedirected = false;
             context.IsFirst = false;
         }}
@@ -73,7 +73,7 @@ internal class {info.GeneratorName} : IYamlFormatter<{info.Name}>
             emitter.EndMapping();
     }}
 
-    {info.Accessor} {info.Name}? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    {info.Accessor} {info.NameDefinition}? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {{
         {deserializeEmitter.Create(info)}
     }}

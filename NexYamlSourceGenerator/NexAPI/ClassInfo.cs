@@ -11,8 +11,16 @@ namespace StrideSourceGenerator.NexAPI
         public static ClassInfo CreateFrom(ITypeSymbol type, ImmutableList<SymbolInfo> members)
         {
             bool isGeneric = false;
+
+            string displayName = type.ToDisplayString();
             string generatorName = GeneratorPrefix + GetFullNamespace(type, '_') + type.Name;
-            string genericTypeName = "";
+
+            int index = displayName.IndexOf('<');
+
+            // If '<' is found, extract the substring before it
+            string shortDefinition = (index != -1) ? displayName.Substring(0, index) : displayName;
+
+            string genericTypeArguments = "";
             if (type is INamedTypeSymbol namedType)
             {
                 if (namedType.TypeArguments != null)
@@ -22,16 +30,24 @@ namespace StrideSourceGenerator.NexAPI
                     if (genericcount > 0)
                     {
                         isGeneric = true;
-                        genericTypeName = type.Name + "<" + new string(',', genericcount - 1) + ">";
+                        shortDefinition += "<" + new string(',', genericcount - 1) + ">";
+                        genericTypeArguments += "<";
+                        foreach (var argument in namedType.TypeArguments)
+                        {
+                            genericTypeArguments += argument.Name;
+                        }
+                        genericTypeArguments += ">";
                     }
                 }
             }
             string namespaceName = GetFullNamespace(type, '.');
             return new()
             {
+                NameDefinition = type.ToDisplayString(),
+                ShortDefinition = shortDefinition,
                 Name = type.Name,
                 IsGeneric = isGeneric,
-                GenericTypeName = genericTypeName,
+                TypeParameterArguments = genericTypeArguments,
                 NameSpace = namespaceName,
                 AllInterfaces = type.AllInterfaces.Select(t => t.Name).ToList(),
                 AllAbstracts = FindAbstractClasses(type),
@@ -54,10 +70,16 @@ namespace StrideSourceGenerator.NexAPI
             return fullNamespace.TrimEnd(separator);
         }
 
-
+        /// <summary>
+        /// i.e. Test<J,K >
+        /// </summary>
+        public string NameDefinition { get; private set; }
+        /// <summary>
+        /// i.e. <J,K>
+        /// </summary>
+        public string TypeParameterArguments { get; private set; }
         private ClassInfo() { }
         public bool IsGeneric { get; private set; }
-        public string GenericTypeName { get; private set; }
         public string Name { get; set; }
         public string NameSpace { get; set; }
         public string GeneratorName { get; set; }
@@ -65,6 +87,11 @@ namespace StrideSourceGenerator.NexAPI
         internal IReadOnlyList<string> AllInterfaces { get; set; }
         internal IReadOnlyList<string> AllAbstracts { get; set; }
         public ImmutableList<SymbolInfo> MemberSymbols { get; internal set; }
+        /// <summary>
+        /// i.e. typeof(Test<,,>)
+        /// or Test if it's non generic
+        /// </summary>
+        public string ShortDefinition { get; private set; }
 
         public bool Equals(ClassInfo other)
         {
