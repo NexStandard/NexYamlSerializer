@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using NexYamlSourceGenerator.Templates.Registration;
 using StrideSourceGenerator.NexAPI;
 using StrideSourceGenerator.Templates;
 using StrideSourceGenerator.Templates.Registration;
@@ -14,6 +15,8 @@ namespace StrideSourceGenerator.NexIncremental
         private static readonly ITemplate abstractRegister = new AbstractRegister();
         private static readonly ITemplate interfaceRegister = new InterfaceRegister();
         private static readonly ITemplate serializerEmitter = new SerializeEmitter();
+        private static readonly ITemplate deserializeEmitter = new DeserializeEmitter();
+        private static readonly ITemplate utf8MemberEmitter = new UTF8MemberEmitter();
         internal string Create(SourceProductionContext ctx, ClassInfo info)
         {
             string ns = (info.NameSpace != null ? "namespace " + info.NameSpace + ";" : "");
@@ -38,6 +41,7 @@ using VYaml.Serialization;
 [System.CodeDom.Compiler.GeneratedCode(""NexYaml"",""1.0.0.0"")]
 internal class {info.GeneratorName} : IYamlFormatter<{info.Name}>
 {{
+    {utf8MemberEmitter.Create(info)}
     string AssemblyName {{ get; }} = typeof({info.Name}).Assembly.GetName().Name;
     string IdentifierTag {{ get; }} = typeof({info.Name}).Name;
     Type IdentifierType {{ get; }} = typeof({info.Name});
@@ -71,8 +75,7 @@ internal class {info.GeneratorName} : IYamlFormatter<{info.Name}>
 
     {info.Accessor} {info.Name}? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {{
-        
-        return default!;
+        {deserializeEmitter.Create(info)}
     }}
 }}
 ";

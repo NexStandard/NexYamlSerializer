@@ -17,12 +17,16 @@ namespace StrideSourceGenerator.NexAPI.Analysation.Analyzers
 
         public SymbolInfo Analyze(MemberContext<IPropertySymbol> context)
         {
-            var type = context.Symbol.Type;
-            var names = context.Symbol.Type.ContainingNamespace;
-            string namespa = context.Symbol.Type.Name;
-            if (names != null)
+            string typeName;
+            ITypeSymbol type;
+            bool isArray = context.Symbol.Type.TypeKind == TypeKind.Array;
+            if (isArray)
             {
-                namespa = context.Symbol.Type.GetFullNamespace('.') + "." + context.Symbol.Type.Name;
+                typeName = ((IArrayTypeSymbol)context.Symbol.Type).ElementType.ToDisplayString();
+            }
+            else
+            {
+                typeName = context.Symbol.Type.ToDisplayString();
             }
             return new SymbolInfo()
             {
@@ -31,8 +35,9 @@ namespace StrideSourceGenerator.NexAPI.Analysation.Analyzers
                 IsAbstract = context.Symbol.Type.IsAbstract,
                 IsInterface = context.Symbol.Type.TypeKind == TypeKind.Interface,
                 MemberGenerator = memberGenerator,
-                Type = namespa,
+                Type = typeName,
                 Context = context.DataMemberContext,
+                IsByteType = context.Symbol.Type.SpecialType == SpecialType.System_Byte || context.Symbol.Type.SpecialType == SpecialType.System_SByte,
                 IsArray = context.Symbol.Type.TypeKind == TypeKind.Array,
             };
         }

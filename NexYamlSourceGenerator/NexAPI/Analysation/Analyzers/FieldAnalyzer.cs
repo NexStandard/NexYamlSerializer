@@ -19,21 +19,36 @@ namespace StrideSourceGenerator.NexAPI.Analysation.Analyzers
         public SymbolInfo Analyze(MemberContext<IFieldSymbol> context)
         {
             var names = context.Symbol.Type.ContainingNamespace;
-            string namespa = context.Symbol.Type.Name;
+            string typeName;
+            ITypeSymbol type;
+            bool isArray = context.Symbol.Type.TypeKind == TypeKind.Array;
+            if(isArray)
+            {
+                typeName = ((IArrayTypeSymbol)context.Symbol.Type).ElementType.Name;
+                type = ((IArrayTypeSymbol)context.Symbol.Type).ElementType;
+            }
+            else
+            {
+                typeName = context.Symbol.Type.Name;
+                type= context.Symbol.Type;
+            }
             if (names != null)
             {
-                namespa = context.Symbol.Type.GetFullNamespace('.') + "." + context.Symbol.Type.Name;
+                typeName = type.GetFullNamespace('.') + "." + typeName;
             }
+
             return new SymbolInfo()
             {
                 Name = context.Symbol.Name,
                 TypeKind = SymbolKind.Field,
                 MemberGenerator = memberGenerator,
-                Type = namespa,
+                Type = typeName,
                 IsAbstract = context.Symbol.Type.IsAbstract,
                 IsInterface = context.Symbol.Type.TypeKind == TypeKind.Interface,
                 Context = context.DataMemberContext,
+                IsByteType = context.Symbol.Type.SpecialType == SpecialType.System_Byte || context.Symbol.Type.SpecialType == SpecialType.System_SByte,
                 IsArray = context.Symbol.Type.TypeKind == TypeKind.Array,
+                
             };
         }
 
