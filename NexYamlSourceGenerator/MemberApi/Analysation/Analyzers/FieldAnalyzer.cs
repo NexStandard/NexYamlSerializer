@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using System.Collections.Immutable;
-using StrideSourceGenerator.NexAPI.Core;
+using NexYamlSourceGenerator.MemberApi.ModeInfos;
 
-namespace StrideSourceGenerator.NexAPI.Analysation.Analyzers
+namespace NexYamlSourceGenerator.MemberApi.Analysation.Analyzers
 {
     internal class FieldAnalyzer : IMemberSymbolAnalyzer<IFieldSymbol>
     {
@@ -22,7 +22,7 @@ namespace StrideSourceGenerator.NexAPI.Analysation.Analyzers
             string typeName;
             ITypeSymbol type;
             bool isArray = context.Symbol.Type.TypeKind == TypeKind.Array;
-            if(isArray)
+            if (isArray)
             {
                 typeName = ((IArrayTypeSymbol)context.Symbol.Type).ElementType.Name;
                 type = ((IArrayTypeSymbol)context.Symbol.Type).ElementType;
@@ -30,7 +30,7 @@ namespace StrideSourceGenerator.NexAPI.Analysation.Analyzers
             else
             {
                 typeName = context.Symbol.Type.Name;
-                type= context.Symbol.Type;
+                type = context.Symbol.Type;
             }
             if (names != null)
             {
@@ -48,7 +48,7 @@ namespace StrideSourceGenerator.NexAPI.Analysation.Analyzers
                 Context = context.DataMemberContext,
                 IsByteType = context.Symbol.Type.SpecialType == SpecialType.System_Byte || context.Symbol.Type.SpecialType == SpecialType.System_SByte,
                 IsArray = context.Symbol.Type.TypeKind == TypeKind.Array,
-                
+
             };
         }
 

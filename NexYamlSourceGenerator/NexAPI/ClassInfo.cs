@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 using System.Collections.Immutable;
 using System.Xml.Linq;
 
-namespace StrideSourceGenerator.NexAPI
+namespace NexYamlSourceGenerator.NexAPI
 {
     /// <summary>
     /// Represents information about a class and its members.
@@ -27,7 +27,7 @@ namespace StrideSourceGenerator.NexAPI
         internal string Accessor { get; private set; }
         internal IReadOnlyList<string> AllInterfaces { get; private set; }
         internal IReadOnlyList<string> AllAbstracts { get; private set; }
-        
+
         /// <summary>
         /// i.e. Test<,,>
         /// or Test if it's non generic
@@ -39,7 +39,7 @@ namespace StrideSourceGenerator.NexAPI
             string displayName = type.ToDisplayString();
 
             int index = displayName.IndexOf('<');
-            string shortDefinition = (index != -1) ? displayName.Substring(0, index) : displayName;
+            string shortDefinition = index != -1 ? displayName.Substring(0, index) : displayName;
             string genericTypeArguments = "";
 
             TryAddGenericsToName(type, ref shortDefinition, ref genericTypeArguments);
@@ -151,7 +151,7 @@ namespace StrideSourceGenerator.NexAPI
 
         public bool Equals(ClassInfo info)
         {
-            return 
+            return
                NameDefinition == info.NameDefinition &&
                TypeParameterArguments == info.TypeParameterArguments &&
                NameSpace == info.NameSpace &&

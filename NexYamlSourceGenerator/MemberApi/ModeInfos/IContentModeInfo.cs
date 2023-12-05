@@ -1,8 +1,6 @@
-﻿using StrideSourceGenerator.NexAPI;
-
-namespace StrideSourceGenerator.ModeInfos.Yaml
+﻿namespace NexYamlSourceGenerator.MemberApi.ModeInfos
 {
-    internal class AssignModeInfo : IContentModeInfo
+    internal interface IContentModeInfo
     {
         public bool IsContentMode { get; set; }
         public string GenerationInvocation { get; }

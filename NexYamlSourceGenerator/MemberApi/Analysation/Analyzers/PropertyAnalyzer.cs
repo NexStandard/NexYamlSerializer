@@ -1,11 +1,8 @@
 using Microsoft.CodeAnalysis;
-using StrideSourceGenerator.NexAPI.Core;
+using NexYamlSourceGenerator.MemberApi.ModeInfos;
 using StrideSourceGenerator.NexAPI.MemberSymbolAnalysis;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace StrideSourceGenerator.NexAPI.Analysation.Analyzers
+namespace NexYamlSourceGenerator.MemberApi.Analysation.Analyzers
 {
     internal class PropertyAnalyzer : IMemberSymbolAnalyzer<IPropertySymbol>
     {

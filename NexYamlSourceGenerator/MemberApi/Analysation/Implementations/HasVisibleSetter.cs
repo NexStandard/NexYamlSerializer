@@ -1,5 +1,4 @@
 ﻿using Microsoft.CodeAnalysis;
-using StrideSourceGenerator.NexAPI.Core;
 using StrideSourceGenerator.NexAPI.MemberSymbolAnalysis;
 
 internal class HasVisibleSetter(IMemberSymbolAnalyzer<IPropertySymbol> analyzer) : MemberSymbolAnalyzer<IPropertySymbol>(analyzer)

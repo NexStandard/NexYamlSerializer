@@ -1,5 +1,5 @@
 using Microsoft.CodeAnalysis;
-using StrideSourceGenerator.NexAPI.Implementations;
+using NexYamlSourceGenerator.MemberApi.Analysation.Implementations;
 using StrideSourceGenerator.NexAPI.MemberSymbolAnalysis;
 
 internal static class AnalyzerExtensions

@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using StrideSourceGenerator.NexAPI.MemberSymbolAnalysis;
 
-namespace StrideSourceGenerator.NexAPI.Implementations
+namespace NexYamlSourceGenerator.MemberApi.Analysation.Implementations
 {
     internal class HasOriginalDefinition(IMemberSymbolAnalyzer<IPropertySymbol> analyzer, INamedTypeSymbol originalDefinition) : MemberSymbolAnalyzer<IPropertySymbol>(analyzer)
     {

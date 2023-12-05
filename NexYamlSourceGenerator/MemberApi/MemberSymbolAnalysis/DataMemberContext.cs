@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
+using NexYamlSourceGenerator.MemberApi.Analysation;
 using StrideSourceGenerator.Core;
-using StrideSourceGenerator.NexAPI.Core;
 using System.Runtime.Serialization;
 
 namespace StrideSourceGenerator.NexAPI.MemberSymbolAnalysis

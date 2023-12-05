@@ -1,5 +1,5 @@
 using Microsoft.CodeAnalysis;
-using StrideSourceGenerator.NexAPI;
+using NexYamlSourceGenerator.MemberApi.ModeInfos;
 using StrideSourceGenerator.NexAPI.MemberSymbolAnalysis;
 using System.Collections.Immutable;
 using System.Reflection;

@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace StrideSourceGenerator.NexAPI.Core
+namespace NexYamlSourceGenerator.MemberApi.Analysation
 {
     public static class Extensionss
     {

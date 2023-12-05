@@ -1,9 +1,10 @@
 ﻿using Microsoft.CodeAnalysis;
+using NexYamlSourceGenerator.MemberApi.Analysation;
+using StrideSourceGenerator.Core;
 using StrideSourceGenerator.NexAPI;
-using StrideSourceGenerator.NexAPI.Core;
 using StrideSourceGenerator.NexIncremental;
 
-namespace StrideSourceGenerator.Core
+namespace NexYamlSourceGenerator.NexIncremental
 {
     internal class MemberSelector(INamedTypeSymbol decidingAttribute) : IMemberSelector
     {

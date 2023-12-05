@@ -1,13 +1,13 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using StrideSourceGenerator.Core;
-using StrideSourceGenerator.ModeInfos.Yaml;
-using StrideSourceGenerator.NexAPI;
 using System.Collections.Immutable;
-using System.Diagnostics;
-using StrideSourceGenerator.NexAPI.Analysation.Analyzers;
 using Microsoft.CodeAnalysis.CSharp;
 using NexYamlSourceGenerator.NexAPI;
+using NexYamlSourceGenerator.MemberApi;
+using NexYamlSourceGenerator.MemberApi.Analysation.Analyzers;
+using NexYamlSourceGenerator.MemberApi.ModeInfos.Yaml;
+using NexYamlSourceGenerator.NexIncremental;
 
 namespace StrideSourceGenerator.NexIncremental
 {
@@ -56,10 +56,11 @@ namespace StrideSourceGenerator.NexIncremental
             IMemberSymbolAnalyzer<IFieldSymbol> standardFieldAssignAnalyzer = new FieldAnalyzer(assignMode)
                 .IsVisibleToSerializer();
 
-            ClassInfoMemberProcessor classInfoMemberProcessor = new ClassInfoMemberProcessor(memberSelector, compilation);
-            classInfoMemberProcessor.PropertyAnalyzers.Add(standardAssignAnalyzer);
-            classInfoMemberProcessor.FieldAnalyzers.Add(standardFieldAssignAnalyzer);
+            MemberProcessor classInfoMemberProcessor = new MemberProcessor(memberSelector, compilation)
+                .Attach(standardAssignAnalyzer)
+                .Attach(standardFieldAssignAnalyzer);
             var members = classInfoMemberProcessor.Process(type);
+
             return new ClassPackage()
             {
                 ClassInfo = ClassInfo.CreateFrom(type),
