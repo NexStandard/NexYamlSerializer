@@ -10,6 +10,7 @@ using System.Text;
 namespace NexYamlSourceGenerator.Templates.Registration;
 internal class DeserializeEmitter : ITemplate
 {
+    ITemplate TempMemberEmitter = new TempMemberEmitter();
     public string Create(ClassPackage package)
     {
         var info = package.ClassInfo;
@@ -18,9 +19,7 @@ internal class DeserializeEmitter : ITemplate
         Dictionary<int, List<SymbolInfo>> map = MapPropertiesToLength(package.MemberSymbols);
         foreach (SymbolInfo member in package.MemberSymbols)
         {
-            defaultValues.Append("var __TEMP__").Append(member.Name).Append($"= default({(member.IsArray ? member.Type +"[]" : member.Type)});\n");
             objectCreation.Append(member.Name + "=" + "__TEMP__" + member.Name + ",");
-
         }
         return $$"""
             if (parser.IsNullScalar())
@@ -29,7 +28,7 @@ internal class DeserializeEmitter : ITemplate
                 return default;
             }
             parser.ReadWithVerify(ParseEventType.MappingStart);
-            {{defaultValues}}
+            {{TempMemberEmitter.Create(package)}}
             while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
             {
                 if (parser.CurrentEventType != ParseEventType.Scalar)

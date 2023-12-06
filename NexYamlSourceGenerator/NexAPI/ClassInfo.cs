@@ -16,12 +16,15 @@ namespace NexYamlSourceGenerator.NexAPI
         /// or just Test if its non generic
         /// </summary>
         internal string NameDefinition { get; private set; }
+        internal string TypeName { get; private set; }
         /// <summary>
         /// i.e. <J,K>
         /// or "" if its non generic
         /// </summary>
         internal string TypeParameterArguments { get; private set; }
+        internal string TypeParameterArgumentsShort { get; private set; }
         internal ClassInfo() { }
+        internal bool IsGeneric { get; private set; }
         internal string NameSpace { get; private set; }
         internal string GeneratorName { get; private set; }
         internal string Accessor { get; private set; }
@@ -41,14 +44,17 @@ namespace NexYamlSourceGenerator.NexAPI
             int index = displayName.IndexOf('<');
             string shortDefinition = index != -1 ? displayName.Substring(0, index) : displayName;
             string genericTypeArguments = "";
-
-            TryAddGenericsToName(type, ref shortDefinition, ref genericTypeArguments);
+            string genericTypeArgumentsShort = "";
+            var isGeneric = TryAddGenericsToName(type, ref shortDefinition, ref genericTypeArguments, ref genericTypeArgumentsShort);
 
             return new()
             {
                 NameDefinition = type.ToDisplayString(),
+                TypeName = type.Name,
+                IsGeneric = isGeneric,
                 ShortDefinition = shortDefinition,
                 TypeParameterArguments = genericTypeArguments,
+                TypeParameterArgumentsShort = genericTypeArgumentsShort,
                 NameSpace = GetFullNamespace(type, '.'),
                 AllInterfaces = type.AllInterfaces.Select(t => t.Name).ToList(),
                 AllAbstracts = FindAbstractClasses(type),
@@ -67,7 +73,7 @@ namespace NexYamlSourceGenerator.NexAPI
         /// <param name="type">The <see cref="INamedTypeSymbol"/> representing the class.</param>
         /// <param name="shortDefinition">The short definition of the class name.</param>
         /// <param name="genericTypeArguments">The type parameter arguments for the class.</param>
-        private static void TryAddGenericsToName(ITypeSymbol type, ref string shortDefinition, ref string genericTypeArguments)
+        private static bool TryAddGenericsToName(ITypeSymbol type, ref string shortDefinition, ref string genericTypeArguments, ref string genericTypeArgumentsShort)
         {
             if (type is INamedTypeSymbol namedType)
             {
@@ -79,14 +85,21 @@ namespace NexYamlSourceGenerator.NexAPI
                     {
                         shortDefinition += "<" + new string(',', genericcount - 1) + ">";
                         genericTypeArguments += "<";
+                        genericTypeArgumentsShort += "<";
                         foreach (var argument in namedType.TypeArguments)
                         {
                             genericTypeArguments += argument.Name;
+                            genericTypeArgumentsShort += ",";
                         }
+                        genericTypeArgumentsShort = genericTypeArgumentsShort.Remove(genericTypeArgumentsShort.Length - 1);
                         genericTypeArguments += ">";
+                        genericTypeArgumentsShort += ">";
+                        return true;
                     }
+
                 }
             }
+            return false;
         }
 
         static string GetFullNamespace(ITypeSymbol typeSymbol, char separator)

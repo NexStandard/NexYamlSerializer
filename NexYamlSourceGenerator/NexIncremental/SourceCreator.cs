@@ -66,7 +66,7 @@ internal class {info.GeneratorName+info.TypeParameterArguments} : IYamlFormatter
             emitter.BeginMapping();
         if(context.IsRedirected || context.IsFirst)
         {{
-            emitter.Tag($""!{{typeof({info.ShortDefinition})}},{{AssemblyName}}"");
+            emitter.Tag($""!{info.NameSpace}.{info.TypeName},{{AssemblyName}}"");
             context.IsRedirected = false;
             context.IsFirst = false;
         }}

@@ -11,6 +11,13 @@ namespace StrideSourceGenerator.Templates.Registration
 
         public string Create(ClassPackage package)
         {
+            if(package.ClassInfo.IsGeneric)
+            {
+                var genericBuilder = new StringBuilder();
+                genericBuilder.AppendLine($"{Constants.SerializerRegistry}.RegisterGenericFormatter(typeof({package.ClassInfo.ShortDefinition}),typeof({package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}));");
+                genericBuilder.AppendLine($"{Constants.SerializerRegistry}.RegisterFormatter(typeof({package.ClassInfo.ShortDefinition}));");
+                return genericBuilder.ToString();
+            }
             return Constants.SerializerRegistry + string.Format(Constants.RegisterFormatter, "this");
         }
     }
