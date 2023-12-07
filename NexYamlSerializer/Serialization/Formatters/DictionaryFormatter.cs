@@ -11,6 +11,7 @@ using VYaml.Parser;
 namespace VYaml.Serialization
 {
     public class DictionaryFormatter<TKey, TValue> : IYamlFormatter<Dictionary<TKey, TValue>?>
+        where TKey : notnull
     {
         public void Serialize(ref Utf8YamlEmitter emitter, Dictionary<TKey, TValue>? value, YamlSerializationContext context)
         {

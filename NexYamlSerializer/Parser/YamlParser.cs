@@ -68,18 +68,15 @@ namespace VYaml.Parser
         public static YamlParser FromBytes(Memory<byte> bytes)
         {
             var sequence = new ReadOnlySequence<byte>(bytes);
-            var tokenizer = new Utf8YamlTokenizer(sequence);
-            return new YamlParser(tokenizer);
+            return new YamlParser(sequence);
         }
 
         public static YamlParser FromSequence(in ReadOnlySequence<byte> sequence)
         {
-            var tokenizer = new Utf8YamlTokenizer(sequence);
-            return new YamlParser(tokenizer);
+            return new YamlParser(sequence);
         }
 
         public ParseEventType CurrentEventType { get; private set; }
-        public bool UnityStrippedMark { get; private set; }
 
         public Marker CurrentMark
         {
@@ -105,7 +102,21 @@ namespace VYaml.Parser
         readonly Dictionary<string, int> anchors;
         ExpandBuffer<ParseState> stateStack;
 
-        public YamlParser(in Utf8YamlTokenizer tokenizer)
+        public YamlParser(ReadOnlySequence<byte> sequence)
+        {
+            tokenizer = new Utf8YamlTokenizer(sequence);
+            currentState = ParseState.StreamStart;
+            CurrentEventType = default;
+            lastAnchorId = -1;
+            anchors = new Dictionary<string, int>();
+            stateStack = new ExpandBuffer<ParseState>(16);
+
+            currentScalar = null;
+            currentTag = null;
+            currentAnchor = null;
+        }
+
+        public YamlParser(ref Utf8YamlTokenizer tokenizer)
         {
             this.tokenizer = tokenizer;
             currentState = ParseState.StreamStart;
@@ -117,8 +128,6 @@ namespace VYaml.Parser
             currentScalar = null;
             currentTag = null;
             currentAnchor = null;
-
-            UnityStrippedMark = false;
         }
 
         public void Dispose()
@@ -403,7 +412,6 @@ namespace VYaml.Parser
         {
             currentAnchor = null;
             currentTag = null;
-            UnityStrippedMark = false;
 
             switch (CurrentTokenType)
             {

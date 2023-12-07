@@ -1,4 +1,5 @@
 #nullable enable
+using System;
 using System.Text;
 
 namespace VYaml.Internal
@@ -12,49 +13,53 @@ namespace VYaml.Internal
 
         public static string ToCamelCase(string s)
         {
-            if (string.IsNullOrEmpty(s) || char.IsLower(s, 0))
+            var span = s.AsSpan();
+            if (span.Length <= 0 ||
+                (span.Length <= 1 && char.IsLower(span[0])))
             {
                 return s;
             }
 
-            var array = s.ToCharArray();
-            array[0] = char.ToLowerInvariant(array[0]);
-            return new string(array);
+            Span<char> buf = stackalloc char[span.Length];
+            buf[0] = char.ToLowerInvariant(span[0]);
+            span[1..].CopyTo(buf[1..]);
+            return buf.ToString();
         }
 
-        public static string ToSnakeCase(string s)
+        public static string ToSnakeCase(string s, char separator = '_')
         {
-            if (string.IsNullOrEmpty(s)) return s;
+            var span = s.AsSpan();
+            if (span.Length <= 0) return s;
 
-            var sb = new StringBuilder();
-            for (var i = 0; i < s.Length; i++)
+            Span<char> buf = stackalloc char[span.Length * 2];
+            var written = 0;
+            foreach (var ch in span)
             {
-                var c = s[i];
-
-                if (char.IsUpper(c))
+                if (char.IsUpper(ch))
                 {
-                    // first
-                    if (i == 0)
+                    if (written == 0 || // first
+                        char.IsUpper(span[written - 1])) // WriteIO => write_io
                     {
-                        sb.Append(char.ToLowerInvariant(c));
-                    }
-                    else if (char.IsUpper(s[i - 1])) // WriteIO => write_io
-                    {
-                        sb.Append(char.ToLowerInvariant(c));
+                        buf[written++] = char.ToLowerInvariant(ch);
                     }
                     else
                     {
-                        sb.Append("_");
-                        sb.Append(char.ToLowerInvariant(c));
+                        buf[written++] = separator;
+                        if (buf.Length <= written)
+                        {
+                            buf = new char[buf.Length * 2];
+                        }
+
+                        buf[written++] = char.ToLowerInvariant(ch);
                     }
                 }
                 else
                 {
-                    sb.Append(c);
+                    buf[written++] = ch;
                 }
             }
 
-            return sb.ToString();
+            return buf[..written].ToString();
         }
     }
 }

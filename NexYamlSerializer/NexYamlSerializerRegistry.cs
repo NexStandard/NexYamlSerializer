@@ -58,65 +58,33 @@ namespace VYaml
             { typeof(Guid?), new StaticNullableFormatter<Guid>(GuidFormatter.Instance) },
             { typeof(Uri), UriFormatter.Instance },
         };
-        Dictionary<Type, Dictionary<Type, IYamlFormatter>> InterfaceBuffer = new();
-        Dictionary<Type, Dictionary<Type, IYamlFormatter>> AbstractClassesBuffer = new();
+        Dictionary<Type, Dictionary<Type, IYamlFormatter>> InterfaceBuffer { get; } = new();
+        Dictionary<Type, Dictionary<Type, IYamlFormatter>> AbstractClassesBuffer { get; } = new();
         GenericMapDictionary GenericFormatterBuffer = new();
         Dictionary<string, Type> TypeMap = new();
-        List<(Guid,Type,IYamlFormatter)> GenericTemporaryBuffer = new();
         public IYamlFormatter<T>? GetFormatter<T>()
         {
-            if (DefinedFormatters.ContainsKey(typeof(T)))
+            if (DefinedFormatters.TryGetValue(typeof(T), out var formatter))
             {
-                return (IYamlFormatter<T>)DefinedFormatters[typeof(T)];
+                return (IYamlFormatter<T>)formatter;
             }
-
             return null;
         }
+
         public Type GetAliasType(string alias) => TypeMap[alias];
-        public Guid RequestGenericBufferStorage(IYamlFormatter formatter,Type formatterTarget)
-        {
-            Guid guid = Guid.NewGuid();
-            if(GenericTemporaryBuffer.Any(x => x.Item2 == formatterTarget))
-            {
-                return GenericTemporaryBuffer.Where(x => x.Item2 == formatterTarget).First().Item1;
-            }
-            else
-            {
-                GenericTemporaryBuffer.Add((guid, formatterTarget, formatter));
-            }
-            return guid;
-        }
+
         public IYamlFormatter<T> GetGenericBufferedFormatter<T>()
         {
-            Type type = typeof(T);
-            try
-            {
-                IYamlFormatter x = GenericTemporaryBuffer.First(x => x.Item2 == type).Item3;
-                
-                return (IYamlFormatter<T>)x;
-
-            }
-            catch
-            {
-                Type genericFormatter = NexYamlSerializerRegistry.Instance.FindGenericFormatter<T>();
-                Type t = typeof(T);
-                Type genericType = genericFormatter.MakeGenericType(t.GenericTypeArguments);
-                return (IYamlFormatter<T>)Activator.CreateInstance(genericType);
-            }
-        }
-        public void RemoveGenericBuffer(Guid guid)
-        {
-            GenericTemporaryBuffer.RemoveAll(item => item.Item1 == guid);
-        }
-        public void ClearGenericBuffer()
-        {
-            GenericTemporaryBuffer.Clear();
+            Type genericFormatter = FindGenericFormatter<T>();
+            Type t = typeof(T);
+            Type genericType = genericFormatter.MakeGenericType(t.GenericTypeArguments);
+            return (IYamlFormatter<T>)Activator.CreateInstance(genericType);
         }
         public IYamlFormatter? GetFormatter(Type type)
         {
-            if (DefinedFormatters.ContainsKey(type))
+            if (DefinedFormatters.TryGetValue(type, out IYamlFormatter value))
             {
-                return DefinedFormatters[type];
+                return value;
             }
 
             return null;
