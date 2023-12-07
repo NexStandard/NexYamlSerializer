@@ -60,7 +60,7 @@ namespace VYaml
         };
         Dictionary<Type, Dictionary<Type, IYamlFormatter>> InterfaceBuffer { get; } = new();
         Dictionary<Type, Dictionary<Type, IYamlFormatter>> AbstractClassesBuffer { get; } = new();
-        GenericMapDictionary GenericFormatterBuffer = new();
+        GenericMapDictionary GenericFormatterBuffer { get; } = new();
         Dictionary<string, Type> TypeMap = new();
         public IYamlFormatter<T>? GetFormatter<T>()
         {
