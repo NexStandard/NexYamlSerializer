@@ -36,7 +36,7 @@ namespace VYaml.Serialization
                 {
                     if(type.IsGenericType)
                     {
-                        formatter = NexYamlSerializerRegistry.Instance.GetGenericBufferedFormatter<T>();
+                        formatter = NexYamlSerializerRegistry.Instance.CreateGenericFormatter<T>();
                     }
                     else
                     {

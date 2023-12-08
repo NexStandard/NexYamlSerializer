@@ -48,7 +48,7 @@ internal class {info.GeneratorName+info.TypeParameterArguments} : IYamlFormatter
     string IdentifierTag {{ get; }} = typeof({info.ShortDefinition}).Name;
     Type IdentifierType {{ get; }} = typeof({info.ShortDefinition});
 
-    {info.Accessor} void Register()
+    {info.Accessor} static void Register()
     {{
         {thisRegister.Create(package)}
         {abstractRegister.Create(package)}

@@ -18,7 +18,7 @@ namespace StrideSourceGenerator.Templates.Registration
                 genericBuilder.AppendLine($"{Constants.SerializerRegistry}.RegisterFormatter(typeof({package.ClassInfo.ShortDefinition}));");
                 return genericBuilder.ToString();
             }
-            return Constants.SerializerRegistry + string.Format(Constants.RegisterFormatter, "this");
+            return Constants.SerializerRegistry + string.Format(Constants.RegisterFormatter, $"new {package.ClassInfo.NameSpace}.{package.ClassInfo.GeneratorName}()");
         }
     }
 }

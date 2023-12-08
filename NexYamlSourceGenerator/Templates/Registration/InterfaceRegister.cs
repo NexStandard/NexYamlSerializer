@@ -11,10 +11,21 @@ namespace StrideSourceGenerator.Templates.Registration
         public string Create(ClassPackage package)
         {
             StringBuilder sb = new();
-            foreach (string interfac in package.ClassInfo.AllInterfaces)
+            if(package.ClassInfo.IsGeneric )
             {
-                sb.AppendLine(Constants.SerializerRegistry + string.Format(Constants.RegisterInterface, "this", interfac));
+                foreach (string interfac in package.ClassInfo.AllInterfaces)
+                {
+                    sb.AppendLine(Constants.SerializerRegistry + string.Format(Constants.RegisterInterface, $"typeof({package.ClassInfo.ShortDefinition})", interfac));
+                }
             }
+            else
+            {
+                foreach (string interfac in package.ClassInfo.AllInterfaces)
+                {
+                    sb.AppendLine(Constants.SerializerRegistry + string.Format(Constants.RegisterInterface, "this", interfac));
+                }
+            }
+
             return sb.ToString();
         }
     }

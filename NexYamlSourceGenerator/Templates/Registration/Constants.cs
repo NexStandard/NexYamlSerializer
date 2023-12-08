@@ -8,7 +8,7 @@ namespace StrideSourceGenerator.Templates.Registration
     {
         public const string SerializerRegistry = "NexYamlSerializerRegistry.Instance";
         public const string RegisterFormatter = ".RegisterFormatter({0});";
-        public const string RegisterInterface = ".RegisterInterface({0},typeof({1}));";
-        public const string RegisterAbstractClass = ".RegisterAbstractClass({0},typeof({1}));";
+        public const string RegisterInterface = ".Register({0},typeof({1}));";
+        public const string RegisterAbstractClass = ".Register({0},typeof({1}));";
     }
 }

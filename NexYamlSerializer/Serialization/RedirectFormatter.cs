@@ -46,12 +46,12 @@ namespace VYaml.Serialization
             IYamlFormatter formatter;
             if (type.IsInterface)
             {
-                formatter = NexYamlSerializerRegistry.Instance.FindInterfaceTypeBased<T>(value.GetType());
+                formatter = NexYamlSerializerRegistry.Instance.FindFormatter<T>(value.GetType());
                 context.IsRedirected = true;
             }
             else if (type.IsAbstract)
             {
-                formatter = NexYamlSerializerRegistry.Instance.FindAbstractTypeBased<T>(value.GetType());
+                formatter = NexYamlSerializerRegistry.Instance.FindFormatter<T>(value.GetType());
                 context.IsRedirected = true;
             }
             else

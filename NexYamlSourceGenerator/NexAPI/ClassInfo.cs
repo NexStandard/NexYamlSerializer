@@ -56,7 +56,7 @@ namespace NexYamlSourceGenerator.NexAPI
                 TypeParameterArguments = genericTypeArguments,
                 TypeParameterArgumentsShort = genericTypeArgumentsShort,
                 NameSpace = GetFullNamespace(type, '.'),
-                AllInterfaces = type.AllInterfaces.Select(t => t.Name).ToList(),
+                AllInterfaces = type.AllInterfaces.Select(t => t.ToDisplayString()).ToList(),
                 AllAbstracts = FindAbstractClasses(type),
                 Accessor = type.DeclaredAccessibility.ToString().ToLower(),
                 GeneratorName = CreateGeneratorName(type)
