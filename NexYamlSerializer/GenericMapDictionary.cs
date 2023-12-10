@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 using System.Text;
 using VYaml.Serialization;
 
@@ -7,29 +9,29 @@ namespace VYaml.Core
 {
     class GenericMapDictionary
     {
-        private readonly Dictionary<TypeKey, Type> dictionary = new Dictionary<TypeKey, Type>()
+        public static Dictionary<Type,Type> Create()
         {
-            [new TypeKey(typeof(List<>))] = typeof(ListFormatter<>),
-            [new TypeKey(typeof(KeyValuePair<,>))] = typeof(KeyValuePairFormatter<,>),
-            [new TypeKey(typeof(Dictionary<,>))] = typeof(DictionaryFormatter<,>),
-            [new TypeKey(typeof(Tuple<>))] = typeof(TupleFormatter<>),
-            [new TypeKey(typeof(Tuple<,>))] = typeof(TupleFormatter<,>),
-            [new TypeKey(typeof(Tuple<,,>))] = typeof(TupleFormatter<,,>),
-            [new TypeKey(typeof(Tuple<,,,>))] = typeof(TupleFormatter<,,,>),
-            [new TypeKey(typeof(Tuple<,,,,>))] = typeof(TupleFormatter<,,,,>),
-            [new TypeKey(typeof(Tuple<,,,,,>))] = typeof(TupleFormatter<,,,,,>),
-            [new TypeKey(typeof(Tuple<,,,,,,>))] = typeof(TupleFormatter<,,,,,,>),
-            [new TypeKey(typeof(Tuple<,,,,,,,>))] = typeof(TupleFormatter<,,,,,,,>)
-        };
-
-        public void Add(Type type, Type value)
-        {
-            dictionary[new TypeKey(type)] = value;
+            return new Dictionary<Type, Type>(new GenericEqualityComparer())
+            {
+                [typeof(List<>)] = typeof(ListFormatter<>),
+                [typeof(KeyValuePair<,>)] = typeof(KeyValuePairFormatter<,>),
+                [typeof(Dictionary<,>)] = typeof(DictionaryFormatter<,>),
+                [typeof(Tuple<>)] = typeof(TupleFormatter<>),
+                [typeof(Tuple<,>)] = typeof(TupleFormatter<,>),
+                [typeof(Tuple<,,>)] = typeof(TupleFormatter<,,>),
+                [typeof(Tuple<,,,>)] = typeof(TupleFormatter<,,,>),
+                [typeof(Tuple<,,,,>)] = typeof(TupleFormatter<,,,,>),
+                [typeof(Tuple<,,,,,>)] = typeof(TupleFormatter<,,,,,>),
+                [typeof(Tuple<,,,,,,>)] = typeof(TupleFormatter<,,,,,,>),
+                [typeof(Tuple<,,,,,,,>)] = typeof(TupleFormatter<,,,,,,,>)
+            };
         }
-        public Type? FindAssignableType(Type searchType)
+    }
+    internal static class DictionaryExtension
+    {
+        internal static Type FindAssignableType(this Dictionary<Type, Type> dictionary, Type type)
         {
-            Type value;
-            return dictionary.TryGetValue(new TypeKey(searchType), out value) ? value : null;
+            return dictionary.TryGetValue(type, out var value) ? value : null;
         }
     }
 
@@ -59,6 +61,21 @@ namespace VYaml.Core
                 return thisGenericType == otherGenericType;
             }
             return false;
+        }
+    }
+    class GenericEqualityComparer : IEqualityComparer<Type>
+    {
+        public bool Equals(Type x, Type y)
+        {
+            Type thisGenericType = x.IsGenericType ? x.GetGenericTypeDefinition() : x;
+            Type otherGenericType = y.IsGenericType ? y.GetGenericTypeDefinition() : y;
+
+            return thisGenericType == otherGenericType;
+        }
+
+        public int GetHashCode([DisallowNull] Type type)
+        {
+            return type.IsGenericType ? type.GetGenericTypeDefinition().GetHashCode() : type.GetHashCode();
         }
     }
 }

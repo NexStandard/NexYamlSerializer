@@ -65,7 +65,7 @@ namespace VYaml
 
         }
         Dictionary<Type, Dictionary<Type, IYamlFormatter>> FormatterBuffer { get; } = new();
-        GenericMapDictionary GenericFormatterBuffer { get; } = new();
+        Dictionary<Type,Type> GenericFormatterBuffer { get; } = GenericMapDictionary.Create();
         Dictionary<string, Type> TypeMap = new();
         public IYamlFormatter<T>? GetFormatter<T>()
         {
