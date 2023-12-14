@@ -11,14 +11,15 @@ namespace StrideSourceGenerator.Templates.Registration
 
         public string Create(ClassPackage package)
         {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"{Constants.SerializerRegistry}.RegisterTag($\"{package.ClassInfo.NameSpace}.{package.ClassInfo.TypeName},{{AssemblyName}}\",typeof({package.ClassInfo.ShortDefinition}));");
             if(package.ClassInfo.IsGeneric)
             {
-                var genericBuilder = new StringBuilder();
-                genericBuilder.AppendLine($"{Constants.SerializerRegistry}.RegisterGenericFormatter(typeof({package.ClassInfo.ShortDefinition}),typeof({package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}));");
-                genericBuilder.AppendLine($"{Constants.SerializerRegistry}.RegisterFormatter(typeof({package.ClassInfo.ShortDefinition}));");
-                return genericBuilder.ToString();
+                sb.AppendLine($"{Constants.SerializerRegistry}.RegisterGenericFormatter(typeof({package.ClassInfo.ShortDefinition}),typeof({package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}));");
+                sb.AppendLine($"{Constants.SerializerRegistry}.RegisterFormatter(typeof({package.ClassInfo.ShortDefinition}));");
+                return sb.ToString();
             }
-            return Constants.SerializerRegistry + string.Format(Constants.RegisterFormatter, $"new {package.ClassInfo.NameSpace}.{package.ClassInfo.GeneratorName}()");
+            return sb.AppendLine(Constants.SerializerRegistry + string.Format(Constants.RegisterFormatter, $"new {package.ClassInfo.NameSpace}.{package.ClassInfo.GeneratorName}()")).ToString();
         }
     }
 }

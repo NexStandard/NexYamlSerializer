@@ -44,7 +44,7 @@ using VYaml.Serialization;
 internal class {info.GeneratorName+info.TypeParameterArguments} : IYamlFormatter<{info.NameDefinition}>
 {{
     {utf8MemberEmitter.Create(package)}
-    string AssemblyName {{ get; }} = typeof({info.ShortDefinition}).Assembly.GetName().Name;
+    static readonly string AssemblyName = typeof({info.ShortDefinition}).Assembly.GetName().Name;
     string IdentifierTag {{ get; }} = typeof({info.ShortDefinition}).Name;
     Type IdentifierType {{ get; }} = typeof({info.ShortDefinition});
 

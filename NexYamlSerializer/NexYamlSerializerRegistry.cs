@@ -80,11 +80,15 @@ namespace VYaml
 
         internal IYamlFormatter<T> CreateGenericFormatter<T>()
         {
-            Type t = typeof(T);
-            Type genericFormatter = FindGenericFormatter<T>();
+            Type type = typeof(T);
+            return (IYamlFormatter<T>)CreateGenericFormatter(type);
+        }
+        internal IYamlFormatter CreateGenericFormatter(Type type)
+        {
+            Type genericFormatter = FindGenericFormatter(type);
 
-            Type genericType = genericFormatter.MakeGenericType(t.GenericTypeArguments);
-            return (IYamlFormatter<T>)Activator.CreateInstance(genericType);
+            Type genericType = genericFormatter.MakeGenericType(type.GenericTypeArguments);
+            return (IYamlFormatter)Activator.CreateInstance(genericType);
         }
         public IYamlFormatter? GetFormatter(Type type)
         {
@@ -92,14 +96,20 @@ namespace VYaml
             {
                 return value;
             }
-
+            else
+            {
+                CreateGenericFormatter(type);
+            }
             return null;
         }
         public void RegisterFormatter<T>(IYamlFormatter<T> formatter)
         {
             Type keyType = typeof(T);
             DefinedFormatters[keyType] = formatter;
-            TypeMap[keyType.FullName] = keyType;
+        }
+        public void RegisterTag(string tag,Type formatterGenericType)
+        {
+            TypeMap[tag] = formatterGenericType;
         }
         public void RegisterFormatter(Type formatter)
         {
