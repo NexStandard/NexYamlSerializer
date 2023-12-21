@@ -4,30 +4,23 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-
-	  <IncludeBuildOutput>true</IncludeBuildOutput>
-	  <IncludeContentInPack>true</IncludeContentInPack>
+	  <OutputType>Library</OutputType>
 	  <PackageTags>yaml,serialization</PackageTags>
 	  <Description>The Universal YamlSerializer for C#</Description>
   </PropertyGroup>
-	<PropertyGroup>
-		<!-- NuGet Packaging -->
-		<PackageVersion>1.0</PackageVersion>
-		<Authors>ixllegacyixl</Authors>
-		<PackageProjectUrl>https://github.com/NexStandard/NexYamlSerializer</PackageProjectUrl>
-		<RepositoryUrl>$(PackageProjectUrl)</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<Title>NexVYaml</Title>
-	</PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NexYamlSerializer\NexYamlSerializer.csproj" PrivateAssets="All"/>
-    <ProjectReference Include="..\NexYamlSourceGenerator\NexYamlSourceGenerator.csproj" PrivateAssets="All"/>
-	  <None Include="$(OutputPath)\NexYamlSourceGenerator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 
-	  <None Include="$(OutputPath)\NexYamlSourceGenerator.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="true" />
-	  <None Include="$(OutputPath)\NexYamlSerializer.dll" Pack="true" PackagePath="lib\net8.0" Visible="true" />
+  <ItemGroup>
+    <Reference Include="NexYamlSerializer">
+      <HintPath>..\NexYamlSerializer\bin\Release\net8.0\NexYamlSerializer.dll</HintPath>
+    </Reference>
+    <Reference Include="NexYamlSourceGenerator">
+      <HintPath>..\NexYamlSourceGenerator\bin\Debug\netstandard2.0\NexYamlSourceGenerator.dll</HintPath>
+    </Reference>
+    <None Remove="bin\Debug\net8.0\\NexYamlSerializer.dll" />
+	<None Include="$(OutputPath)\NexYamlSerializer.dll" Pack="true" PackagePath="lib\net8.0" Visible="true" />
+	<None Remove="bin\Debug\net8.0\\NexYamlSourceGenerator.dll" />
+	<None Include="$(OutputPath)\NexYamlSourceGenerator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
+
 
 </Project>

@@ -1,0 +1,13 @@
+<Project>
+	<PropertyGroup>
+		<!-- NuGet Packaging -->
+		<PackageVersion>1.0</PackageVersion>
+		<Authors>ixllegacyixl</Authors>
+		<PackageProjectUrl>https://github.com/NexStandard/NexYamlSerializer</PackageProjectUrl>
+		<RepositoryUrl>$(PackageProjectUrl)</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Title>NexVYaml</Title>
+	</PropertyGroup>
+</Project>
