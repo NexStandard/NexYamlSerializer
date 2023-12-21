@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
-	  <IncludeBuildOutput>false</IncludeBuildOutput>
+	  <IncludeBuildOutput>true</IncludeBuildOutput>
 	  <IncludeContentInPack>true</IncludeContentInPack>
 	  <PackageTags>yaml,serialization</PackageTags>
 	  <Description>The Universal YamlSerializer for C#</Description>
@@ -19,10 +19,15 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Title>NexVYaml</Title>
 	</PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NexYamlSerializer\NexYamlSerializer.csproj" />
-    <ProjectReference Include="..\NexYamlSourceGenerator\NexYamlSourceGenerator.csproj" />
+    <ProjectReference Include="..\NexYamlSerializer\NexYamlSerializer.csproj" PrivateAssets="All"/>
+    <ProjectReference Include="..\NexYamlSourceGenerator\NexYamlSourceGenerator.csproj" PrivateAssets="All"/>
+	  <None Include="$(OutputPath)\NexYamlSourceGenerator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+
+	  <None Include="$(OutputPath)\NexYamlSourceGenerator.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="true" />
+	  <None Include="$(OutputPath)\NexYamlSerializer.dll" Pack="true" PackagePath="lib\net8.0" Visible="true" />
   </ItemGroup>
 
 </Project>

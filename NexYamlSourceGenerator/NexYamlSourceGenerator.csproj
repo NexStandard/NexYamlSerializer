@@ -13,7 +13,7 @@
 	  <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
 
 	  <PackageTags>yaml</PackageTags>
-	  <Description>Code generator for NexVYaml</Description>
+	  <Description>Code generator for VYaml</Description>
   </PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
@@ -29,6 +29,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(OutputPath)\netstandard2.0\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		
+		 
+
 	</ItemGroup>
+
 </Project>
