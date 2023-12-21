@@ -77,7 +77,10 @@ namespace VYaml
         }
 
         public Type GetAliasType(string alias) => TypeMap[alias];
-
+        internal Type SynchronizeTypes(Type originalType,Type genericTarget)
+        {
+            return originalType;
+        }
         internal IYamlFormatter<T> CreateGenericFormatter<T>()
         {
             Type type = typeof(T);

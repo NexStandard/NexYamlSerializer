@@ -2,8 +2,18 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-	<LangVersion>preview</LangVersion>
+	<LangVersion>12</LangVersion>
 	<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+
+	  <AnalyzerLanguage>cs</AnalyzerLanguage>
+	  <IncludeBuildOutput>false</IncludeBuildOutput>
+	  <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+	  <DevelopmentDependency>true</DevelopmentDependency>
+	  <IsRoslynComponent>true</IsRoslynComponent>
+	  <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+
+	  <PackageTags>yaml</PackageTags>
+	  <Description>Code generator for NexVYaml</Description>
   </PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
@@ -16,5 +26,9 @@
 		<Using Include="System" />
 		<Using Include="System.Linq" />
 		<Using Include="System.Collections.Generic" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
 </Project>

@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+	  <IncludeBuildOutput>false</IncludeBuildOutput>
+	  <IncludeContentInPack>true</IncludeContentInPack>
+	  <PackageTags>yaml,serialization</PackageTags>
+	  <Description>The Universal YamlSerializer for C#</Description>
+  </PropertyGroup>
+	<PropertyGroup>
+		<!-- NuGet Packaging -->
+		<PackageVersion>1.0</PackageVersion>
+		<Authors>ixllegacyixl</Authors>
+		<PackageProjectUrl>https://github.com/NexStandard/NexYamlSerializer</PackageProjectUrl>
+		<RepositoryUrl>$(PackageProjectUrl)</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	</PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NexYamlSerializer\NexYamlSerializer.csproj" />
+    <ProjectReference Include="..\NexYamlSourceGenerator\NexYamlSourceGenerator.csproj" />
+  </ItemGroup>
+
+</Project>
