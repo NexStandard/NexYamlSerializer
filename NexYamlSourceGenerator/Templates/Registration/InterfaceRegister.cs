@@ -1,17 +1,14 @@
 ﻿using NexYamlSourceGenerator.NexAPI;
-using StrideSourceGenerator.NexAPI;
-using System;
-using System.Collections.Generic;
 using System.Text;
 
-namespace StrideSourceGenerator.Templates.Registration
+namespace NexYamlSourceGenerator.Templates.Registration
 {
     internal class InterfaceRegister : ITemplate
     {
         public string Create(ClassPackage package)
         {
             StringBuilder sb = new();
-            if(package.ClassInfo.IsGeneric )
+            if (package.ClassInfo.IsGeneric)
             {
                 foreach (string interfac in package.ClassInfo.AllInterfaces)
                 {

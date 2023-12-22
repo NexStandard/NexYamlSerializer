@@ -1,10 +1,6 @@
 ﻿using NexYamlSourceGenerator.NexAPI;
-using StrideSourceGenerator.NexAPI;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace StrideSourceGenerator.Templates
+namespace NexYamlSourceGenerator.Templates
 {
     internal interface ITemplate
     {

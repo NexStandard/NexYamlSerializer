@@ -1,10 +1,7 @@
 ﻿using NexYamlSourceGenerator.NexAPI;
-using StrideSourceGenerator.NexAPI;
-using System;
-using System.Collections.Generic;
 using System.Text;
 
-namespace StrideSourceGenerator.Templates.Registration
+namespace NexYamlSourceGenerator.Templates.Registration
 {
     internal class ThisRegister : ITemplate
     {
@@ -13,7 +10,7 @@ namespace StrideSourceGenerator.Templates.Registration
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine($"{Constants.SerializerRegistry}.RegisterTag($\"{package.ClassInfo.NameSpace}.{package.ClassInfo.TypeName},{{AssemblyName}}\",typeof({package.ClassInfo.ShortDefinition}));");
-            if(package.ClassInfo.IsGeneric)
+            if (package.ClassInfo.IsGeneric)
             {
                 sb.AppendLine($"{Constants.SerializerRegistry}.RegisterGenericFormatter(typeof({package.ClassInfo.ShortDefinition}),typeof({package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}));");
                 sb.AppendLine($"{Constants.SerializerRegistry}.RegisterFormatter(typeof({package.ClassInfo.ShortDefinition}));");

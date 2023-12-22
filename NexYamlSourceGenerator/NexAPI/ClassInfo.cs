@@ -8,7 +8,7 @@ namespace NexYamlSourceGenerator.NexAPI
     /// Represents information about a class and its members.
     /// Usable with Incremental Source Generation.
     /// </summary>
-    internal class ClassInfo : IEquatable<ClassInfo>
+    internal record ClassInfo
     {
         private const string GeneratorPrefix = "NexSourceGenerated_";
         /// <summary>
@@ -133,46 +133,6 @@ namespace NexYamlSourceGenerator.NexAPI
                 baseType = baseType.BaseType;
             }
             return result;
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj is ClassInfo info &&
-                   NameDefinition == info.NameDefinition &&
-                   TypeParameterArguments == info.TypeParameterArguments &&
-                   NameSpace == info.NameSpace &&
-                   GeneratorName == info.GeneratorName &&
-                   Accessor == info.Accessor &&
-                   EqualityComparer<IReadOnlyList<string>>.Default.Equals(AllInterfaces, info.AllInterfaces) &&
-                   EqualityComparer<IReadOnlyList<string>>.Default.Equals(AllAbstracts, info.AllAbstracts) &&
-                   ShortDefinition == info.ShortDefinition;
-        }
-
-        public override int GetHashCode()
-        {
-            int hashCode = -1139297379;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(NameDefinition);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(TypeParameterArguments);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(NameSpace);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(GeneratorName);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Accessor);
-            hashCode = hashCode * -1521134295 + EqualityComparer<IReadOnlyList<string>>.Default.GetHashCode(AllInterfaces);
-            hashCode = hashCode * -1521134295 + EqualityComparer<IReadOnlyList<string>>.Default.GetHashCode(AllAbstracts);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(ShortDefinition);
-            return hashCode;
-        }
-
-        public bool Equals(ClassInfo info)
-        {
-            return
-               NameDefinition == info.NameDefinition &&
-               TypeParameterArguments == info.TypeParameterArguments &&
-               NameSpace == info.NameSpace &&
-               GeneratorName == info.GeneratorName &&
-               Accessor == info.Accessor &&
-               EqualityComparer<IReadOnlyList<string>>.Default.Equals(AllInterfaces, info.AllInterfaces) &&
-               EqualityComparer<IReadOnlyList<string>>.Default.Equals(AllAbstracts, info.AllAbstracts) &&
-               ShortDefinition == info.ShortDefinition;
         }
     }
 }

@@ -3,13 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
 	<LangVersion>12</LangVersion>
-	<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
-
 	  <AnalyzerLanguage>cs</AnalyzerLanguage>
-	  <IncludeBuildOutput>false</IncludeBuildOutput>
-	  <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
-	  <DevelopmentDependency>true</DevelopmentDependency>
-	  <IsRoslynComponent>true</IsRoslynComponent>
 	  <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
 
 	  <PackageTags>yaml</PackageTags>
@@ -27,15 +21,4 @@
 		<Using Include="System.Linq" />
 		<Using Include="System.Collections.Generic" />
 	</ItemGroup>
-	<ItemGroup>
-	  <None Remove="bin\Debug\netstandard2.0\\netstandard2.0\NexYamlSourceGenerator.dll" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Include="$(OutputPath)\netstandard2.0\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		
-		 
-
-	</ItemGroup>
-
 </Project>

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace StrideSourceGenerator.Templates.Registration
+namespace NexYamlSourceGenerator.Templates.Registration
 {
     internal class Constants
     {

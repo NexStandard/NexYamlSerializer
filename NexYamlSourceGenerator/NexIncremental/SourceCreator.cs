@@ -1,14 +1,10 @@
 ﻿using Microsoft.CodeAnalysis;
 using NexYamlSourceGenerator.NexAPI;
+using NexYamlSourceGenerator.Templates;
 using NexYamlSourceGenerator.Templates.Registration;
-using StrideSourceGenerator.NexAPI;
-using StrideSourceGenerator.Templates;
-using StrideSourceGenerator.Templates.Registration;
-using System;
-using System.Collections.Generic;
 using System.Text;
 
-namespace StrideSourceGenerator.NexIncremental
+namespace NexYamlSourceGenerator.NexIncremental
 {
     internal class SourceCreator
     {
@@ -41,7 +37,7 @@ using VYaml.Parser;
 using VYaml.Serialization;
 {ns}
 [System.CodeDom.Compiler.GeneratedCode(""NexYaml"",""1.0.0.0"")]
-internal class {info.GeneratorName+info.TypeParameterArguments} : IYamlFormatter<{info.NameDefinition}>
+internal class {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<{info.NameDefinition}>
 {{
     {utf8MemberEmitter.Create(package)}
     static readonly string AssemblyName = typeof({info.ShortDefinition}).Assembly.GetName().Name;

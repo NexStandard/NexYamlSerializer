@@ -1,10 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
-using NexYamlSourceGenerator.NexAPI;
-using StrideSourceGenerator.NexAPI;
-using StrideSourceGenerator.Templates;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using NexYamlSourceGenerator.NexAPI;
 using System.Text;
 
 namespace NexYamlSourceGenerator.Templates.Registration;

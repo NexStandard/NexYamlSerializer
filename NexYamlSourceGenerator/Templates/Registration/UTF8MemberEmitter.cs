@@ -1,10 +1,5 @@
 ﻿using NexYamlSourceGenerator.NexAPI;
-using StrideSourceGenerator.NexAPI;
-using StrideSourceGenerator.Templates;
-using System;
-using System.Collections.Generic;
 using System.Text;
-using System.Xml.Linq;
 
 namespace NexYamlSourceGenerator.Templates.Registration;
 internal class UTF8MemberEmitter : ITemplate

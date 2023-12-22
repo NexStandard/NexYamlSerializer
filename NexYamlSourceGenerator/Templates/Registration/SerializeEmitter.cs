@@ -1,11 +1,8 @@
 ﻿using NexYamlSourceGenerator.NexAPI;
-using StrideSourceGenerator.NexAPI;
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
+using NexYamlSourceGenerator.Templates;
 using System.Text;
 
-namespace StrideSourceGenerator.Templates.Registration
+namespace NexYamlSourceGenerator.Templates.Registration
 {
     internal class SerializeEmitter : ITemplate
     {
@@ -16,9 +13,7 @@ namespace StrideSourceGenerator.Templates.Registration
             {
                 string serializeString = $$""".Serialize""";
                 if (member.IsArray)
-                {
                     serializeString = $$""".SerializeArray""";
-                }
                 if (member.IsAbstract || member.IsInterface)
                 {
 

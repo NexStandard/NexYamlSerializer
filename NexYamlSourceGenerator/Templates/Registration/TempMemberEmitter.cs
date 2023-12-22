@@ -1,5 +1,4 @@
 ﻿using NexYamlSourceGenerator.NexAPI;
-using StrideSourceGenerator.Templates;
 using System;
 using System.Collections.Generic;
 using System.Text;

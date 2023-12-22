@@ -1,9 +1,9 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace StrideSourceGenerator.NexAPI
+namespace NexYamlSourceGenerator.NexAPI
 {
     internal interface IMemberSelector
     {
-        IReadOnlyList<ISymbol> GetAllMembers(ITypeSymbol type);
+        IEnumerable<ISymbol> GetAllMembers(ITypeSymbol type);
     }
 }
