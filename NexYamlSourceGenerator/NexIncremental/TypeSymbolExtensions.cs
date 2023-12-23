@@ -9,7 +9,7 @@ internal static class TypeSymbolExtensions
     {
         foreach (ISymbol member in type.GetMembers())
         {
-            if (member is IPropertySymbol || type is IFieldSymbol)
+            if (member is IPropertySymbol || member is IFieldSymbol)
                 yield return member;
         }
     }
