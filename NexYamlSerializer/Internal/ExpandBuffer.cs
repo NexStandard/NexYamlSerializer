@@ -3,7 +3,7 @@ using System;
 using System.Buffers;
 using System.Runtime.CompilerServices;
 
-namespace VYaml.Internal
+namespace NexVYaml.Internal
 {
     struct ExpandBuffer<T>
     {

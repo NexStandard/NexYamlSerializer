@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Unicode;
-using VYaml.Emitter;
-using VYaml.Parser;
+using NexVYaml.Emitter;
+using NexVYaml.Parser;
 
-namespace VYaml.Serialization
+namespace NexVYaml.Serialization
 {
     public class DictionaryFormatter<TKey, TValue> : IYamlFormatter<Dictionary<TKey, TValue>?>
         where TKey : notnull

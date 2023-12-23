@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using VYaml.Emitter;
-using VYaml.Internal;
-using VYaml.Parser;
+using NexVYaml.Emitter;
+using NexVYaml.Internal;
+using NexVYaml.Parser;
 
-namespace VYaml.Serialization
+namespace NexVYaml.Serialization
 {
     public class YamlSerializerException : Exception
     {

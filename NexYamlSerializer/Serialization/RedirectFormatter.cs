@@ -4,10 +4,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using VYaml.Emitter;
-using VYaml.Parser;
+using NexYamlSerializer;
+using NexVYaml.Emitter;
+using NexVYaml.Parser;
 
-namespace VYaml.Serialization
+namespace NexVYaml.Serialization
 {
 
     public struct RedirectFormatter<T> : IYamlFormatter<T>
@@ -26,18 +27,6 @@ namespace VYaml.Serialization
 
             MethodInfo method = formatter.GetType().GetMethod(nameof(Deserialize));
             return (T)method.Invoke(formatter, new object[] { parser, context });
-        }
-        private Type FindStartType(string query)
-        {
-            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                Type t = assembly.GetType(query);
-                if (t != null)
-                {
-                    return t;
-                }
-            }
-            return null;
         }
 
         public void Serialize(ref Utf8YamlEmitter emitter, T value, YamlSerializationContext context)
@@ -58,9 +47,7 @@ namespace VYaml.Serialization
             {
                 if (type.IsGenericType)
                 {
-                    Type formatterType = NexYamlSerializerRegistry.Instance.FindGenericFormatter<T>();
-                    Type closedType = formatterType.MakeGenericType(typeof(T).GenericTypeArguments);
-                    formatter = (IYamlFormatter)Activator.CreateInstance(closedType);
+                    formatter = NexYamlSerializerRegistry.Instance.GetGenericFormatter<T>();
                 }
                 else
                 {

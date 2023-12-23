@@ -3,10 +3,10 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using VYaml.Emitter;
-using VYaml.Internal;
+using NexVYaml.Emitter;
+using NexVYaml.Internal;
 
-namespace VYaml.Serialization
+namespace NexVYaml.Serialization
 {
     public readonly struct SequenceStyleScope
     {

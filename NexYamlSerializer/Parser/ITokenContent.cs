@@ -1,4 +1,4 @@
-namespace VYaml.Parser
+namespace NexVYaml.Parser
 {
     public interface ITokenContent
     {

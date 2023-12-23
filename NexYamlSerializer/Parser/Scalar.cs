@@ -3,9 +3,9 @@ using System;
 using System.Buffers;
 using System.Buffers.Text;
 using System.Runtime.CompilerServices;
-using VYaml.Internal;
+using NexVYaml.Internal;
 
-namespace VYaml.Parser
+namespace NexVYaml.Parser
 {
     struct ScalarPool
     {

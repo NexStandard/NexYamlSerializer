@@ -1,9 +1,9 @@
 #nullable enable
 using System.Buffers.Text;
-using VYaml.Emitter;
-using VYaml.Parser;
+using NexVYaml.Emitter;
+using NexVYaml.Parser;
 
-namespace VYaml.Serialization
+namespace NexVYaml.Serialization
 {
     public class DecimalFormatter : IYamlFormatter<decimal>
     {

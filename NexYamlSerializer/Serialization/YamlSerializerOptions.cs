@@ -1,7 +1,7 @@
 #nullable enable
-using VYaml.Emitter;
+using NexVYaml.Emitter;
 
-namespace VYaml.Serialization
+namespace NexVYaml.Serialization
 {
     public class YamlSerializerOptions
     {

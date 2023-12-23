@@ -1,9 +1,9 @@
 #nullable enable
 using System;
-using VYaml.Emitter;
-using VYaml.Parser;
+using NexVYaml.Emitter;
+using NexVYaml.Parser;
 
-namespace VYaml.Serialization
+namespace NexVYaml.Serialization
 {
     public class ValueTupleFormatter<T1> : IYamlFormatter<ValueTuple<T1>>
     {

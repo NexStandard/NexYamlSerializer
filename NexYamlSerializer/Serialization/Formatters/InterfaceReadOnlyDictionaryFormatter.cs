@@ -1,9 +1,9 @@
 #nullable enable
 using System.Collections.Generic;
-using VYaml.Emitter;
-using VYaml.Parser;
+using NexVYaml.Emitter;
+using NexVYaml.Parser;
 
-namespace VYaml.Serialization
+namespace NexVYaml.Serialization
 {
     public class InterfaceReadOnlyDictionaryFormatter<TKey, TValue> : IYamlFormatter<IReadOnlyDictionary<TKey, TValue>?>
         where TKey : notnull

@@ -1,179 +1,122 @@
 ﻿
+using NexYamlSerializer;
+using NexYamlSerializer.Serialization.Formatters;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.Serialization;
-using System.Text;
-using VYaml.Core;
-using VYaml.Parser;
-using VYaml.Serialization;
-using static System.Net.Mime.MediaTypeNames;
+using NexVYaml.Core;
+using NexVYaml.Serialization;
 
-namespace VYaml
+namespace NexVYaml
 {
     public class NexYamlSerializerRegistry : IYamlFormatterResolver
     {
-        public static NexYamlSerializerRegistry Instance = new NexYamlSerializerRegistry();
-        Dictionary<Type, IYamlFormatter> DefinedFormatters = new Dictionary<Type, IYamlFormatter>()
-        {
-            // Primitive
-            { typeof(short), Int16Formatter.Instance },
-            { typeof(int), Int32Formatter.Instance },
-            { typeof(long), Int64Formatter.Instance },
-            { typeof(ushort), UInt16Formatter.Instance },
-            { typeof(uint), UInt32Formatter.Instance },
-            { typeof(ulong), UInt64Formatter.Instance },
-            { typeof(float), Float32Formatter.Instance },
-            { typeof(double), Float64Formatter.Instance },
-            { typeof(bool), BooleanFormatter.Instance },
-            { typeof(byte), ByteFormatter.Instance },
-            { typeof(sbyte), SByteFormatter.Instance },
-            { typeof(DateTime), DateTimeFormatter.Instance },
-            { typeof(char), CharFormatter.Instance },
-            { typeof(byte[]), ByteArrayFormatter.Instance },
-
-            // Nullable Primitive
-            { typeof(short?), NullableInt16Formatter.Instance },
-            { typeof(int?), NullableInt32Formatter.Instance },
-            { typeof(long?), NullableInt64Formatter.Instance },
-            { typeof(ushort?), NullableUInt16Formatter.Instance },
-            { typeof(uint?), NullableUInt32Formatter.Instance },
-            { typeof(ulong?), NullableUInt64Formatter.Instance },
-            { typeof(float?), NullableFloat32Formatter.Instance },
-            { typeof(double?), NullableFloat64Formatter.Instance },
-            { typeof(bool?), NullableBooleanFormatter.Instance },
-            { typeof(byte?), NullableByteFormatter.Instance },
-            { typeof(sbyte?), NullableSByteFormatter.Instance },
-            { typeof(DateTime?), NullableDateTimeFormatter.Instance },
-            { typeof(char?), NullableCharFormatter.Instance },
-
-            // StandardClassLibraryFormatter
-            { typeof(string), NullableStringFormatter.Instance },
-            { typeof(decimal), DecimalFormatter.Instance },
-            { typeof(decimal?), new StaticNullableFormatter<decimal>(DecimalFormatter.Instance) },
-            { typeof(TimeSpan), TimeSpanFormatter.Instance },
-            { typeof(TimeSpan?), new StaticNullableFormatter<TimeSpan>(TimeSpanFormatter.Instance) },
-            { typeof(DateTimeOffset), DateTimeOffsetFormatter.Instance },
-            { typeof(DateTimeOffset?), new StaticNullableFormatter<DateTimeOffset>(DateTimeOffsetFormatter.Instance) },
-            { typeof(Guid), GuidFormatter.Instance },
-            { typeof(Guid?), new StaticNullableFormatter<Guid>(GuidFormatter.Instance) },
-            { typeof(Uri), UriFormatter.Instance },
-        };
+        FormatterRegistry FormatterRegistry { get; } = new();
+        public static NexYamlSerializerRegistry Instance { get; } = new NexYamlSerializerRegistry();
+        
         internal NexYamlSerializerRegistry()
         {
 
         }
-        Dictionary<Type, Dictionary<Type, IYamlFormatter>> FormatterBuffer { get; } = new();
-        Dictionary<Type,Type> GenericFormatterBuffer { get; } = GenericMapDictionary.Create();
-        Dictionary<string, Type> TypeMap = new();
+        public Type GetAliasType(string alias) => FormatterRegistry.TypeMap[alias];
         public IYamlFormatter<T>? GetFormatter<T>()
         {
-            if (DefinedFormatters.TryGetValue(typeof(T), out var formatter))
+            if (FormatterRegistry.DefinedFormatters.TryGetValue(typeof(T), out var formatter))
             {
                 return (IYamlFormatter<T>)formatter;
             }
-            return null;
+            return EmptyFormatter<T>.Empty();
+        }
+        internal IYamlFormatter<T> GetGenericFormatter<T>()
+        {
+            return (IYamlFormatter<T>)GetGenericFormatter(typeof(T));
+        }
+        public IYamlFormatter GetGenericFormatter(Type type)
+        {
+            Type genericFormatter = FormatterRegistry.GenericFormatterBuffer.FindAssignableType(type); ;
+            if(genericFormatter is null)
+                genericFormatter = typeof(EmptyFormatter<>);
+            Type genericType = genericFormatter.MakeGenericType(type.GenericTypeArguments);
+            return (IYamlFormatter)Activator.CreateInstance(genericType);
         }
 
-        public Type GetAliasType(string alias) => TypeMap[alias];
+        /// <summary>
+        /// Registers all available Serializers, call only once when all assemblies are loaded.
+        /// </summary>
+        public static void Init()
+        {
+
+        }
+
+
         internal Type SynchronizeTypes(Type originalType,Type genericTarget)
         {
             return originalType;
         }
-        internal IYamlFormatter<T> CreateGenericFormatter<T>()
-        {
-            Type type = typeof(T);
-            return (IYamlFormatter<T>)CreateGenericFormatter(type);
-        }
-        internal IYamlFormatter CreateGenericFormatter(Type type)
-        {
-            Type genericFormatter = FindGenericFormatter(type);
-
-            Type genericType = genericFormatter.MakeGenericType(type.GenericTypeArguments);
-            return (IYamlFormatter)Activator.CreateInstance(genericType);
-        }
         public IYamlFormatter? GetFormatter(Type type)
         {
-            if (DefinedFormatters.TryGetValue(type, out IYamlFormatter value))
+            if (FormatterRegistry.DefinedFormatters.TryGetValue(type, out IYamlFormatter value))
             {
                 return value;
             }
-            else
-            {
-                CreateGenericFormatter(type);
-            }
-            return null;
+            return GetGenericFormatter(type);
         }
         public void RegisterFormatter<T>(IYamlFormatter<T> formatter)
         {
             Type keyType = typeof(T);
-            DefinedFormatters[keyType] = formatter;
+            FormatterRegistry.DefinedFormatters[keyType] = formatter;
         }
         public void RegisterTag(string tag,Type formatterGenericType)
         {
-            TypeMap[tag] = formatterGenericType;
+            FormatterRegistry.TypeMap[tag] = formatterGenericType;
         }
         public void RegisterFormatter(Type formatter)
         {
-            TypeMap[formatter.FullName] = formatter;
-        }
-        public Type FindGenericFormatter(Type target)
-        {
-            return GenericFormatterBuffer.FindAssignableType(target);
-        }
-        public Type FindGenericFormatter<T>()
-        {
-            return GenericFormatterBuffer.FindAssignableType(typeof(T));
+            FormatterRegistry.TypeMap[formatter.FullName] = formatter;
         }
         public void RegisterGenericFormatter(Type target, Type formatterType)
         {
-            GenericFormatterBuffer.Add(target, formatterType);
+            FormatterRegistry.GenericFormatterBuffer.Add(target, formatterType);
         }
         public void Register<T>(IYamlFormatter<T> formatter, Type interfaceType)
         {
             Type keyType = typeof(T);
-            if (!FormatterBuffer.ContainsKey(interfaceType))
+            if (!FormatterRegistry.FormatterBuffer.ContainsKey(interfaceType))
             {
-                FormatterBuffer.Add(interfaceType, new());
+                FormatterRegistry.FormatterBuffer.Add(interfaceType, new());
             }
-            if (!FormatterBuffer[interfaceType].ContainsKey(keyType))
+            if (!FormatterRegistry.FormatterBuffer[interfaceType].ContainsKey(keyType))
             {
-                FormatterBuffer[interfaceType].Add(keyType, formatter);
+                FormatterRegistry.FormatterBuffer[interfaceType].Add(keyType, formatter);
             }
             else
             {
-                FormatterBuffer[interfaceType][keyType] = formatter;
+                FormatterRegistry.FormatterBuffer[interfaceType][keyType] = formatter;
             }
         }
         public void Register(Type formatterType, Type interfaceType)
         {
-            if (!FormatterBuffer.ContainsKey(interfaceType))
+            if (!FormatterRegistry.FormatterBuffer.ContainsKey(interfaceType))
             {
-                FormatterBuffer.Add(interfaceType, new());
+                FormatterRegistry.FormatterBuffer.Add(interfaceType, new());
             }
-            if (!FormatterBuffer[interfaceType].ContainsKey(formatterType))
+            if (!FormatterRegistry.FormatterBuffer[interfaceType].ContainsKey(formatterType))
             {
-                FormatterBuffer[interfaceType].Add(formatterType, null);
+                FormatterRegistry.FormatterBuffer[interfaceType].Add(formatterType, null);
             }
             else
             {
-                FormatterBuffer[interfaceType][formatterType] = null;
+                FormatterRegistry.FormatterBuffer[interfaceType][formatterType] = null;
             }
         }
         public IYamlFormatter FindFormatter<T>(Type target)
         {
-            if (FormatterBuffer.ContainsKey(typeof(T)))
+            if (FormatterRegistry.FormatterBuffer.ContainsKey(typeof(T)))
             {
-                if (FormatterBuffer[typeof(T)].TryGetValue(target, out IYamlFormatter value))
+                if (FormatterRegistry.FormatterBuffer[typeof(T)].TryGetValue(target, out IYamlFormatter value))
                 {
-                    return FormatterBuffer[typeof(T)][target];
+                    return FormatterRegistry.FormatterBuffer[typeof(T)][target];
                 }
             }
-            Type formatterType = FindGenericFormatter(target);
-            if (formatterType == null) return null;
-            Type closedType = formatterType.MakeGenericType(typeof(T).GenericTypeArguments);
-            return (IYamlFormatter)Activator.CreateInstance(closedType);
+            return GetGenericFormatter(target);
         }
     }
 }

@@ -3,9 +3,9 @@ using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-using VYaml.Emitter;
+using NexVYaml.Emitter;
 
-namespace VYaml.Internal
+namespace NexVYaml.Internal
 {
     readonly struct EmitStringInfo
     {

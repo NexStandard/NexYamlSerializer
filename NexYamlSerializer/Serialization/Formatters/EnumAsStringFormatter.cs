@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using VYaml.Emitter;
-using VYaml.Internal;
-using VYaml.Parser;
+using NexVYaml.Emitter;
+using NexVYaml.Internal;
+using NexVYaml.Parser;
 
-namespace VYaml.Serialization
+namespace NexVYaml.Serialization
 {
     public class EnumAsStringFormatter<T> : IYamlFormatter<T> where T : Enum
     {

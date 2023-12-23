@@ -1,7 +1,7 @@
 #nullable enable
 using System;
 
-namespace VYaml.Internal
+namespace NexVYaml.Internal
 {
     public static class ByteSequenceHash
     {

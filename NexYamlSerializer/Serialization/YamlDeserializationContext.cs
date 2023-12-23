@@ -1,9 +1,9 @@
 #nullable enable
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using VYaml.Parser;
+using NexVYaml.Parser;
 
-namespace VYaml.Serialization
+namespace NexVYaml.Serialization
 {
     public class YamlDeserializationContext
     {

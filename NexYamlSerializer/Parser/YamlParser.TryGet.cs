@@ -2,7 +2,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace VYaml.Parser
+namespace NexVYaml.Parser
 {
     public partial class YamlParser
     {

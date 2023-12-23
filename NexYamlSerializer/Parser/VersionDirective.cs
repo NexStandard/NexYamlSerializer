@@ -1,5 +1,5 @@
 #nullable enable
-namespace VYaml.Parser
+namespace NexVYaml.Parser
 {
     struct VersionDirective : ITokenContent
     {

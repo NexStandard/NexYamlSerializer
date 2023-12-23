@@ -2,9 +2,9 @@
 using System;
 using System.Buffers;
 using System.Runtime.CompilerServices;
-using VYaml.Internal;
+using NexVYaml.Internal;
 
-namespace VYaml.Parser
+namespace NexVYaml.Parser
 {
     class YamlTokenizerException : Exception
     {

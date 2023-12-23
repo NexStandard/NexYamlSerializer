@@ -3,10 +3,10 @@ using System;
 using System.Buffers;
 using System.Buffers.Text;
 using System.Globalization;
-using VYaml.Emitter;
-using VYaml.Parser;
+using NexVYaml.Emitter;
+using NexVYaml.Parser;
 
-namespace VYaml.Serialization
+namespace NexVYaml.Serialization
 {
     public class DateTimeFormatter : IYamlFormatter<DateTime>
     {

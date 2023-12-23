@@ -2,11 +2,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using VYaml.Emitter;
-using VYaml.Internal;
-using VYaml.Parser;
+using NexVYaml.Emitter;
+using NexVYaml.Internal;
+using NexVYaml.Parser;
 
-namespace VYaml.Serialization
+namespace NexVYaml.Serialization
 {
     public class PrimitiveObjectFormatter : IYamlFormatter<object?>
     {

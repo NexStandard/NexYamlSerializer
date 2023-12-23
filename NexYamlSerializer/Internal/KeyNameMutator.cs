@@ -2,7 +2,7 @@
 using System;
 using System.Text;
 
-namespace VYaml.Internal
+namespace NexVYaml.Internal
 {
     static class KeyNameHelper
     {

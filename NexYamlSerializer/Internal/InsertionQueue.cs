@@ -2,7 +2,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace VYaml.Internal
+namespace NexVYaml.Internal
 {
     struct InsertionQueue<T>
     {

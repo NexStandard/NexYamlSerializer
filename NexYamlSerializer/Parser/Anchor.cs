@@ -1,7 +1,7 @@
 #nullable enable
 using System;
 
-namespace VYaml.Parser
+namespace NexVYaml.Parser
 {
     public class Anchor(string name, int id) : IEquatable<Anchor>
     {

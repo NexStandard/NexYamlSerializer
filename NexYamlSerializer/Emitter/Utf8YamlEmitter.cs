@@ -4,9 +4,9 @@ using System.Buffers;
 using System.Buffers.Text;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using VYaml.Internal;
+using NexVYaml.Internal;
 
-namespace VYaml.Emitter
+namespace NexVYaml.Emitter
 {
     public class YamlEmitterException : Exception
     {

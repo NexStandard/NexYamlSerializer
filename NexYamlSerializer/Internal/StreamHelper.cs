@@ -5,7 +5,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace VYaml.Internal
+namespace NexVYaml.Internal
 {
     static class StreamHelper
     {

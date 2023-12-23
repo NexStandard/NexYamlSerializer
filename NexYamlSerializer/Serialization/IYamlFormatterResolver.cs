@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 
-namespace VYaml.Serialization
+namespace NexVYaml.Serialization
 {
     public interface IYamlFormatterResolver
     {
@@ -36,7 +36,7 @@ namespace VYaml.Serialization
                 {
                     if(type.IsGenericType)
                     {
-                        formatter = NexYamlSerializerRegistry.Instance.CreateGenericFormatter<T>();
+                        formatter = NexYamlSerializerRegistry.Instance.GetGenericFormatter<T>();
                     }
                     else
                     {

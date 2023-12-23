@@ -1,9 +1,9 @@
 #nullable enable
-using VYaml;
-using VYaml.Emitter;
-using VYaml.Parser;
+using NexVYaml;
+using NexVYaml.Emitter;
+using NexVYaml.Parser;
 
-namespace VYaml.Serialization
+namespace NexVYaml.Serialization
 {
     public class Float32Formatter : IYamlFormatter<float>
     {

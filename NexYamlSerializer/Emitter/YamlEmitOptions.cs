@@ -1,5 +1,5 @@
 #nullable enable
-namespace VYaml.Emitter
+namespace NexVYaml.Emitter
 {
     public enum ScalarStyle
     {

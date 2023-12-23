@@ -1,10 +1,10 @@
 #nullable enable
-using VYaml;
-using VYaml.Emitter;
-using VYaml.Parser;
-using VYaml.Serialization;
+using NexVYaml;
+using NexVYaml.Emitter;
+using NexVYaml.Parser;
+using NexVYaml.Serialization;
 
-namespace VYaml
+namespace NexVYaml
 {
     public interface IYamlFormatter
     {

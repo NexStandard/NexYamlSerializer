@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace VYaml.Internal
+namespace NexVYaml.Internal
 {
     static class ReusableByteSequenceBuilderPool
     {

@@ -3,9 +3,9 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using VYaml.Internal;
+using NexVYaml.Internal;
 
-namespace VYaml.Parser
+namespace NexVYaml.Parser
 {
     public class YamlParserException : Exception
     {
