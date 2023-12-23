@@ -41,7 +41,7 @@ internal class MemberProcessor(ReferencePackage references)
     void ProcessAnalyzers<T>(List<IMemberSymbolAnalyzer<T>> analyzers, T symbol, List<SymbolInfo> result, DataMemberContext context)
         where T : ISymbol
     {
-        if (context.Exists == false)
+        if (context.State == DataMemberContextState.Excluded)
             return;
         foreach (IMemberSymbolAnalyzer<T> analyzer in analyzers)
         {

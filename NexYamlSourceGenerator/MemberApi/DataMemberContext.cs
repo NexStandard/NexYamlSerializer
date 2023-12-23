@@ -8,24 +8,39 @@ namespace NexYamlSourceGenerator.MemberApi;
 internal record DataMemberContext
 {
     private DataMemberContext() { }
-    static DataMemberContext Empty { get; } = new DataMemberContext() { Exists = false };
-    internal static DataMemberContext Create(ISymbol symbol, INamedTypeSymbol dataMemberIgnoreAttribute)
+    static DataMemberContext Empty { get; } = new DataMemberContext() { State = DataMemberContextState.Excluded };
+    internal static DataMemberContext Create(ISymbol symbol, ReferencePackage references)
     {
         DataMemberContext context = new DataMemberContext();
 
-        if (symbol.TryGetAttribute(dataMemberIgnoreAttribute, out AttributeData attributeData))
+        if (symbol.TryGetAttribute(references.DataMemberIgnoreAttribute, out AttributeData attributeData))
         {
             return Empty;
         }
         else
         {
-            context.Exists = true;
-            context.Mode = MemberMode.Assign;
-            context.Order = 0;
+            if(symbol.TryGetAttribute(references.DataMemberAttribute, out AttributeData attributeData1))
+            {
+                context.State = DataMemberContextState.Included;
+                context.Mode = MemberMode.Assign;
+                context.Order = 0;
+            }
+            else
+            {
+                context.State = DataMemberContextState.Weak;
+                context.Mode = MemberMode.Assign;
+                context.Order = 0;
+            }
         }
         return context;
     }
-    public bool Exists { get; set; }
+    public DataMemberContextState State { get; private set; }
     public MemberMode Mode { get; set; }
     public int Order { get; set; }
+}
+internal enum DataMemberContextState
+{
+    Included, // Field was Datamembered
+    Weak,     // Field wasnt Datamemberd but also not excluded
+    Excluded  // DataMemberIgnored
 }

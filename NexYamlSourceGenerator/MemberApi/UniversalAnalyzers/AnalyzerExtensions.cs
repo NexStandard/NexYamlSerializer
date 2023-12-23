@@ -5,7 +5,7 @@ internal static class AnalyzerExtensions
 {
     internal static bool IsVisibleToEditor(this Accessibility accessibility, DataMemberContext context)
     {
-        if (context.Exists)
+        if (context.State == DataMemberContextState.Included)
             return accessibility == Accessibility.Public || accessibility == Accessibility.Internal;
         return accessibility == Accessibility.Public;
     }
