@@ -10,7 +10,7 @@ internal static class Registration
         StringBuilder sb = new();
         foreach (string @abstract in package.ClassInfo.AllAbstracts)
         {
-            sb.AppendLine(Constants.SerializerRegistry + string.Format(Constants.RegisterAbstractClass, "this", @abstract));
+            sb.AppendLine(Constants.SerializerRegistry + string.Format(Constants.RegisterAbstractClass, "formatter", @abstract));
         }
         return sb.ToString();
     }
@@ -24,7 +24,8 @@ internal static class Registration
             sb.AppendLine($"{Constants.SerializerRegistry}.RegisterFormatter(typeof({package.ClassInfo.ShortDefinition}));");
             return sb.ToString();
         }
-        return sb.AppendLine(Constants.SerializerRegistry + string.Format(Constants.RegisterFormatter, $"new {package.ClassInfo.NameSpace}.{package.ClassInfo.GeneratorName}()")).ToString();
+        sb.AppendLine($"var formatter = new {package.ClassInfo.NameSpace}.{package.ClassInfo.GeneratorName}();"); ;
+        return sb.AppendLine(Constants.SerializerRegistry + string.Format(Constants.RegisterFormatter, "formatter")).ToString();
     }
     public static string CreateRegisterInterfaces(this ClassPackage package)
     {

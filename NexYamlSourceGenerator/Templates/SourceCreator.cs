@@ -1,6 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using NexYamlSourceGenerator.NexAPI;
+﻿using NexYamlSourceGenerator.NexAPI;
 using System.Text;
 
 namespace NexYamlSourceGenerator.Templates;
@@ -24,25 +22,30 @@ internal static class SourceCreator
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using VYaml;
-using VYaml.Emitter;
-using VYaml.Parser;
-using VYaml.Serialization;
+using NexVYaml;
+using NexVYaml.Emitter;
+using NexVYaml.Parser;
+using NexVYaml.Serialization;
 {ns}
+internal class {info.GeneratorName + "Helper" } : IYamlFormatterHelper
+{{
+    static readonly string AssemblyName = typeof({info.ShortDefinition}).Assembly.GetName().Name;
+
+    {info.Accessor} void Register()
+    {{
+{package.CreateRegisterThis()}
+{package.CreateRegisterAbstracts()}
+{package.CreateRegisterInterfaces()}
+    }}
+}}
 [System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]
 internal class {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<{info.NameDefinition}>
 {{
+
     {package.CreateUTF8Members()}
     static readonly string AssemblyName = typeof({info.ShortDefinition}).Assembly.GetName().Name;
     string IdentifierTag {{ get; }} = typeof({info.ShortDefinition}).Name;
     Type IdentifierType {{ get; }} = typeof({info.ShortDefinition});
-
-    {info.Accessor} static void Register()
-    {{
-        {package.CreateRegisterThis()}
-        {package.CreateRegisterAbstracts()}
-        {package.CreateRegisterInterfaces()}
-    }}
 
     {info.Accessor} void Serialize(ref Utf8YamlEmitter emitter, {info.NameDefinition} value, YamlSerializationContext context)
     {{
