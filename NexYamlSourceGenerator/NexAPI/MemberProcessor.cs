@@ -18,7 +18,7 @@ internal class MemberProcessor(ReferencePackage references)
         {
             if (symbol == null)
                 continue;
-            DataMemberContext context = DataMemberContext.Create(symbol, references.DataMemberIgnoreAttribute);
+            DataMemberContext context = DataMemberContext.Create(symbol, references);
             if (symbol is IPropertySymbol property)
                 ProcessAnalyzers(PropertyAnalyzers, property, result, context);
             else if (symbol is IFieldSymbol field)
