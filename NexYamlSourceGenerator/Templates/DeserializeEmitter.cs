@@ -1,10 +1,9 @@
 ﻿using NexYamlSourceGenerator.NexAPI;
 using System.Text;
 
-namespace NexYamlSourceGenerator.Templates.Registration;
-internal class DeserializeEmitter : ITemplate
+namespace NexYamlSourceGenerator.Templates;
+internal class DeserializeEmitter
 {
-    ITemplate TempMemberEmitter = new TempMemberEmitter();
     public string Create(ClassPackage package)
     {
         var info = package.ClassInfo;
@@ -22,7 +21,7 @@ internal class DeserializeEmitter : ITemplate
                 return default;
             }
             parser.ReadWithVerify(ParseEventType.MappingStart);
-            {{TempMemberEmitter.Create(package)}}
+            {{package.CreateTempMembers()}}
             while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
             {
                 if (parser.CurrentEventType != ParseEventType.Scalar)
@@ -81,7 +80,7 @@ internal class DeserializeEmitter : ITemplate
         if (symbol.IsByteType)
             serializeString = "context.DeserializeByteArray(ref parser);";
 
-       switchBuilder.Append($$"""
+        switchBuilder.Append($$"""
             {{start}} (key.SequenceEqual({{"UTF8" + symbol.Name}}))
             {
                 parser.Read();
@@ -89,7 +88,7 @@ internal class DeserializeEmitter : ITemplate
             }
         """);
     }
-    void AppendMember(string start, SymbolInfo symbol,StringBuilder switchBuilder)
+    void AppendMember(string start, SymbolInfo symbol, StringBuilder switchBuilder)
     {
         switchBuilder.Append($$"""
             {{start}} (key.SequenceEqual({{"UTF8" + symbol.Name}}))

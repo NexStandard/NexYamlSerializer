@@ -6,6 +6,7 @@ internal record SymbolInfo
     public static SymbolInfo Empty { get; } = new SymbolInfo() { IsEmpty = true };
     public bool IsInterface { get; internal set; }
     internal virtual bool IsEmpty { get; set; } = false;
+    internal bool IsHidden { get; set; } = false;
     internal string Name { get; set; }
     internal string Type { get; set; }
     internal string Namespace { get; set; }
