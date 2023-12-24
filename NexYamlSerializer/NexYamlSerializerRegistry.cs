@@ -4,12 +4,14 @@ using NexYamlSerializer.Serialization.Formatters;
 using System;
 using NexVYaml.Core;
 using NexVYaml.Serialization;
+using System.Linq;
+using NexVYaml;
 
 namespace NexVYaml
 {
     public class NexYamlSerializerRegistry : IYamlFormatterResolver
     {
-        FormatterRegistry FormatterRegistry { get; } = new();
+        FormatterRegistry FormatterRegistry { get; set; } = new();
         public static NexYamlSerializerRegistry Instance { get; } = new NexYamlSerializerRegistry();
         
         internal NexYamlSerializerRegistry()
@@ -39,11 +41,34 @@ namespace NexVYaml
         }
 
         /// <summary>
-        /// Registers all available Serializers, call only once when all assemblies are loaded.
+        /// Registers all available Serializers.
+        /// May be removed in future.
+        /// Performance intensive Method.
         /// </summary>
         public static void Init()
         {
+            Instance.FormatterRegistry = new();
+            // Get all loaded assemblies
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
+            // Find types implementing IYamlForamtterHelper and invoke Register method
+            foreach (var assembly in assemblies)
+            {
+                var formatterHelperTypes = assembly.GetTypes()
+                    .Where(t => typeof(IYamlFormatterHelper).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+
+                foreach (var formatterHelperType in formatterHelperTypes)
+                {
+                    var instance = Activator.CreateInstance(formatterHelperType);
+
+                    // Assuming Register method has no parameters
+                    var registerMethod = formatterHelperType.GetMethod("Register");
+                    if (registerMethod != null)
+                    {
+                        registerMethod.Invoke(instance, null);
+                    }
+                }
+            }
         }
 
 
