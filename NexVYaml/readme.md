@@ -17,7 +17,9 @@ Abstract classes can be serialized without any hassle, providing flexibility in 
 The serializer handles generic types, allowing you to serialize and deserialize objects with generic parameters, when their type is accurately given.
 
 4. **Members** 
-The Serializer currently handles public/internal(when tagged with DataMember Attribute) fields and properties ( with get and set )
+The Serializer currently handles public/internal(when tagged with DataMember Attribute) fields and properties ( with get and set/init )
+
+5. **DataMemberIgnore** The exclusion of members which got tagged with `[Stride.Core.DataMemberIgnore]`.
 
 ### Unsupported Features
 
@@ -31,12 +33,13 @@ Serialization for structs and records is not supported in this version. Please u
 The serializer ignores private fields during the serialization process. Make sure to use public/internal properties or fields for data you want to serialize.
 
 4. **DataContract Inherited**
-The serializer does not support inherited DataContracts and won't in upcomming releases, classes have to be directly.
+The serializer does not support inherited DataContracts and won't in upcomming releases, classes have to be directly tagged with `[Stride.Core.DataContract]`.
+
 
 ## Getting Started
 
-Add the Serializer to your csproj.
-Add Stride.Engine to your csproj.
+Add the Serializer nuget to your csproj.
+Add Stride.Engine nuget to your csproj.
 
 1. **Setup the Serializer**
 
@@ -55,9 +58,13 @@ namespace ExampleApp;
 [DataContract]
 public class Data<T>
 {
+    // Has to be DataMembered as it's internal and wont be viewed unless DataMembered
     [DataMember]
     internal T Value { get; set; }
     public int X2;
+    // won't be serialized
+    [DataMemberIgnore]
+    public int Ignored = 101;
 }
 ```
 
