@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
 	  <OutputType>Library</OutputType>
 	  <PackageTags>yaml,serialization</PackageTags>
-	  <Description>The Universal YamlSerializer for C#</Description>
+	  <Description>YamlSerializer for C# with Stride3D</Description>
   </PropertyGroup>
 
   <ItemGroup>
