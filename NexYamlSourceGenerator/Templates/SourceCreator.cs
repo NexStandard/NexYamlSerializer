@@ -27,7 +27,7 @@ using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using NexVYaml.Serialization;
 {ns}
-internal class {info.GeneratorName + "Helper" } : IYamlFormatterHelper
+file class {info.GeneratorName + "Helper" } : IYamlFormatterHelper
 {{
     static readonly string AssemblyName = typeof({info.ShortDefinition}).Assembly.GetName().Name;
 
@@ -39,7 +39,7 @@ internal class {info.GeneratorName + "Helper" } : IYamlFormatterHelper
     }}
 }}
 [System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]
-internal class {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<{info.NameDefinition}>
+file class {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<{info.NameDefinition}>
 {{
 
     {package.CreateUTF8Members()}

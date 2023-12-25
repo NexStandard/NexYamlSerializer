@@ -1,4 +1,5 @@
 #nullable enable
+using NexYamlSerializer.Serialization.Formatters;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -37,10 +38,12 @@ namespace NexVYaml.Serialization
                     if(type.IsGenericType)
                     {
                         formatter = NexYamlSerializerRegistry.Instance.GetGenericFormatter<T>();
+                        if (formatter is null)
+                            return EmptyFormatter<T>.Empty();
                     }
                     else
                     {
-                        formatter = GetRegistryFormatter<T>();
+                        formatter = NexYamlSerializerRegistry.Instance.GetFormatter<T>();
                     }
 
                 }
@@ -58,28 +61,8 @@ namespace NexVYaml.Serialization
             Throw(typeof(T), resolver);
             return default!; // not reachable
         }
-        private static IYamlFormatter<T> GetRegistryFormatter<T>()
-        {
-            return NexYamlSerializerRegistry.Instance.GetFormatter<T>();
-        }
-        public static IYamlFormatter<T> FindCompatibleFormatter<T>(this IYamlFormatterResolver resolver,T value,Type targetType,out bool IsRedirected)
-        {
-            Type rootType = typeof(T);
-            IsRedirected = false;
-            
-            if (targetType == rootType)
-                return GetFormatterWithVerify<T>(resolver);
-
-            var formatter = NexYamlSerializerRegistry.Instance.GetFormatter(targetType);
-
-            if(formatter == null)
-                return null;
-
-            IsRedirected = true;
-            return (IYamlFormatter<T>)formatter;
-            
-        }
-            static void Throw(Type t, IYamlFormatterResolver resolver)
+        
+        static void Throw(Type t, IYamlFormatterResolver resolver)
         {
             throw new YamlSerializerException(t.FullName + $"{t} is not registered in resolver: {resolver.GetType()}");
         }

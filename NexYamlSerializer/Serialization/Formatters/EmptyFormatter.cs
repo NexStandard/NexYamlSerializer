@@ -19,5 +19,6 @@ internal class EmptyFormatter<T> : IYamlFormatter<T>
 
     public void Serialize(ref Utf8YamlEmitter emitter, T value, YamlSerializationContext context)
     {
+        emitter.WriteNull();
     }
 }

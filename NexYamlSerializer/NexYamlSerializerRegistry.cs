@@ -19,7 +19,7 @@ namespace NexVYaml
 
         }
         public Type GetAliasType(string alias) => FormatterRegistry.TypeMap[alias];
-        public IYamlFormatter<T>? GetFormatter<T>()
+        public IYamlFormatter<T> GetFormatter<T>()
         {
             if (FormatterRegistry.DefinedFormatters.TryGetValue(typeof(T), out var formatter))
             {
@@ -27,9 +27,14 @@ namespace NexVYaml
             }
             return EmptyFormatter<T>.Empty();
         }
-        internal IYamlFormatter<T> GetGenericFormatter<T>()
+        internal IYamlFormatter<T>? GetGenericFormatter<T>()
         {
-            return (IYamlFormatter<T>)GetGenericFormatter(typeof(T));
+            Type type = typeof(T);
+            Type genericFormatter = FormatterRegistry.GenericFormatterBuffer.FindAssignableType(type); ;
+            if (genericFormatter is null)
+                return null;
+            Type genericType = genericFormatter.MakeGenericType(type.GenericTypeArguments);
+            return (IYamlFormatter<T>)Activator.CreateInstance(genericType);
         }
         public IYamlFormatter GetGenericFormatter(Type type)
         {

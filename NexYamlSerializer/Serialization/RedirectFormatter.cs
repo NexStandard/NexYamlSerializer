@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using NexYamlSerializer;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
+using NexYamlSerializer.Serialization.Formatters;
 
 namespace NexVYaml.Serialization
 {
@@ -22,7 +23,8 @@ namespace NexVYaml.Serialization
             
             alias = NexYamlSerializerRegistry.Instance.GetAliasType(tag.Handle);
             formatter = NexYamlSerializerRegistry.Instance.GetFormatter(alias);
-            
+
+            if (formatter == null) return default;
 
 
             MethodInfo method = formatter.GetType().GetMethod(nameof(Deserialize));
@@ -48,6 +50,8 @@ namespace NexVYaml.Serialization
                 if (type.IsGenericType)
                 {
                     formatter = NexYamlSerializerRegistry.Instance.GetGenericFormatter<T>();
+                    if (formatter == null)
+                        formatter = EmptyFormatter<T>.Empty();
                 }
                 else
                 {
