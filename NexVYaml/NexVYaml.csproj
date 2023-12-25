@@ -7,6 +7,8 @@
 	  <PackageTags>yaml,serialization</PackageTags>
 	  <Description>YamlSerializer for C# with Stride3D</Description>
 	  <PackageReadmeFile>readme.md</PackageReadmeFile>
+	  <RepositoryUrl>https://github.com/NexStandard/NexYamlSerializer</RepositoryUrl>
+	  <Copyright>ixllegacyixl ( zfons123@gmail.com )</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,5 +20,12 @@
     </Reference>
 	  <None Include="$(OutputPath)\NexYamlSerializer.dll" Pack="true" PackagePath="lib\net8.0" Visible="true" />
 	<None Include="$(OutputPath)\NexYamlSourceGenerator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="readme.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 </Project>
