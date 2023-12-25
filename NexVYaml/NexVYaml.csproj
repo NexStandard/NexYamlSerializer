@@ -6,6 +6,7 @@
 	  <OutputType>Library</OutputType>
 	  <PackageTags>yaml,serialization</PackageTags>
 	  <Description>YamlSerializer for C# with Stride3D</Description>
+	  <PackageReadmeFile>readme.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
