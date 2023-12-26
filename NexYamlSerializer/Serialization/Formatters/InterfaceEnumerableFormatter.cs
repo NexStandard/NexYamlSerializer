@@ -1,5 +1,6 @@
 #nullable enable
 using System.Collections.Generic;
+using System.Linq;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
 
@@ -21,7 +22,7 @@ namespace NexVYaml.Serialization
             {
                 elementFormatter.Serialize(ref emitter, x, context);
             }
-            emitter.EndSequence();
+            emitter.EndSequence(value.Any());
         }
 
         public IEnumerable<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)

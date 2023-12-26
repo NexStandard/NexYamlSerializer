@@ -1,6 +1,7 @@
 #nullable enable
 using System.Collections.Generic;
 using NexVYaml.Emitter;
+using NexVYaml.Internal;
 using NexVYaml.Parser;
 
 namespace NexVYaml.Serialization
@@ -24,7 +25,7 @@ namespace NexVYaml.Serialization
                         elementFormatter.Serialize(ref emitter, x, context);
                     }
                 }
-                emitter.EndSequence();
+                emitter.EndSequence(value.Count == 0);
             }
         }
 

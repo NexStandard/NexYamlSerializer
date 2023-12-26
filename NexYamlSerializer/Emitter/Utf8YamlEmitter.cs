@@ -157,13 +157,13 @@ namespace NexVYaml.Emitter
             }
         }
 
-        public void EndSequence()
+        public void EndSequence(bool isEmpty)
         {
             switch (CurrentState)
             {
                 case EmitState.BlockSequenceEntry:
                 {
-                    var isEmptySequence = currentElementCount <= 0;
+                    var isEmptySequence = isEmpty;
                     PopState();
 
                     // Empty sequence

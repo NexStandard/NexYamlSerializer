@@ -118,7 +118,7 @@ namespace NexVYaml.Serialization
                 {
                     Serialize(ref emitter, item, context);
                 }
-                emitter.EndSequence();
+                emitter.EndSequence(collection.Count == 0);
                 return;
             }
 

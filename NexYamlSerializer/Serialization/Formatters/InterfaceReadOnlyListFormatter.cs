@@ -24,7 +24,7 @@ namespace NexVYaml.Serialization
                     elementFormatter.Serialize(ref emitter, x, context);
                 }
             }
-            emitter.EndSequence();
+            emitter.EndSequence(value.Count == 0);
         }
 
         public IReadOnlyList<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
