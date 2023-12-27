@@ -19,7 +19,8 @@ The serializer handles generic types, allowing you to serialize and deserialize 
 4. **Members** 
 The Serializer currently handles public/internal(when tagged with DataMember Attribute) fields and properties ( with get and set/init )
 
-5. **DataMemberIgnore** The exclusion of members which got tagged with `[Stride.Core.DataMemberIgnore]`.
+5. **DataMemberIgnore**
+The exclusion of members which got tagged with `[Stride.Core.DataMemberIgnore]`.
 
 ### Unsupported Features
 
@@ -35,7 +36,8 @@ The serializer ignores private fields during the serialization process. Make sur
 4. **DataContract Inherited**
 The serializer does not support inherited DataContracts and won't in upcomming releases, classes have to be directly tagged with `[Stride.Core.DataContract]`.
 
-
+5. **Generic Restrictions**
+Currently Generic Restrictions don't work. A class with a restriction like `where T : ...` will generate a faulty serializer. This will be added in the next release.
 ## Getting Started
 
 Add the Serializer nuget to your csproj.

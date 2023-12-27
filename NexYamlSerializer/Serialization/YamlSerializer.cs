@@ -56,6 +56,11 @@ namespace NexVYaml.Serialization
             }
         }
 
+        public static void Serialize<T>(T value, Stream stream,YamlSerializerOptions? options = null)
+        {
+            stream.Write(Serialize(value, options).Span);
+        }
+
         public static void Serialize<T>(IBufferWriter<byte> writer, T value, YamlSerializerOptions? options = null)
         {
             var emitter = new Utf8YamlEmitter(writer);

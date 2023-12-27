@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NexVYaml.Serialization;
-using NexVYaml;
-using NexVYaml.Core;
 
-namespace NexYamlSerializer;
-public class FormatterRegistry
+namespace NexVYaml;
+class FormatterRegistry
 {
     internal Dictionary<Type, Dictionary<Type, IYamlFormatter>> FormatterBuffer { get; } = new();
     internal Dictionary<Type, Type> GenericFormatterBuffer { get; } = new Dictionary<Type, Type>(new GenericEqualityComparer())
