@@ -9,7 +9,7 @@ namespace NexVYaml.Serialization
     {
         static ByteArrayFormatter ByteArrayFormatter = new ByteArrayFormatter();
         public IYamlFormatterResolver Resolver { get; }
-
+        public bool SecureMode { get; set; } = false;
         readonly Dictionary<Anchor, object?> aliases = new();
 
         public YamlDeserializationContext(YamlSerializerOptions options)

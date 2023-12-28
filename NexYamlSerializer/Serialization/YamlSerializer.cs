@@ -42,11 +42,13 @@ namespace NexVYaml.Serialization
         {
             options ??= DefaultOptions;
             var contextLocal = serializationContext ??= new YamlSerializationContext(options);
+            contextLocal.SecureMode = options.SecureMode;
             var writer = contextLocal.GetArrayBufferWriter();
             var emitter = new Utf8YamlEmitter(writer);
             try
             {
                 contextLocal.Reset();
+                
                 new RedirectFormatter<T>().Serialize(ref emitter, value, contextLocal);
                 return writer.WrittenMemory;
             }

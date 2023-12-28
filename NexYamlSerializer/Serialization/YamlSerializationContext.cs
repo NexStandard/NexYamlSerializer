@@ -24,6 +24,7 @@ namespace NexVYaml.Serialization
         public bool IsRedirected { get; set; } = false;
         public bool IsMappingEnabled { get; set; } = true;
         public bool IsFirst { get; set; } = true;
+        public bool SecureMode { get; set; } = false;
         readonly byte[] primitiveValueBuffer;
         ArrayBufferWriter<byte>? arrayBufferWriter;
 
