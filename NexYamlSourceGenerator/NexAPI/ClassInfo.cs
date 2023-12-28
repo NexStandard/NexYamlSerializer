@@ -27,7 +27,6 @@ internal record ClassInfo
     internal bool IsGeneric { get; private set; }
     internal string NameSpace { get; private set; }
     internal string GeneratorName { get; private set; }
-    internal string Accessor { get; private set; }
     internal IReadOnlyList<string> AllInterfaces { get; private set; }
     internal IReadOnlyList<string> AllAbstracts { get; private set; }
 
@@ -58,7 +57,6 @@ internal record ClassInfo
             NameSpace = GetFullNamespace(type, '.'),
             AllInterfaces = type.AllInterfaces.Select(t => t.ToDisplayString()).ToList(),
             AllAbstracts = FindAbstractClasses(type),
-            Accessor = type.DeclaredAccessibility.ToString().ToLower(),
             GeneratorName = CreateGeneratorName(type)
         };
     }

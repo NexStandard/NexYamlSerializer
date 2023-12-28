@@ -31,7 +31,7 @@ file class {info.GeneratorName + "Helper" } : IYamlFormatterHelper
 {{
     static readonly string AssemblyName = typeof({info.ShortDefinition}).Assembly.GetName().Name;
 
-    {info.Accessor} void Register()
+    public void Register()
     {{
 {package.CreateRegisterThis()}
 {package.CreateRegisterAbstracts()}
@@ -47,7 +47,7 @@ file class {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<{
     string IdentifierTag {{ get; }} = typeof({info.ShortDefinition}).Name;
     Type IdentifierType {{ get; }} = typeof({info.ShortDefinition});
 
-    {info.Accessor} void Serialize(ref Utf8YamlEmitter emitter, {info.NameDefinition} value, YamlSerializationContext context)
+    public void Serialize(ref Utf8YamlEmitter emitter, {info.NameDefinition} value, YamlSerializationContext context)
     {{
         if (value is null)
         {{
@@ -67,7 +67,7 @@ file class {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<{
             emitter.EndMapping();
     }}
 
-    {info.Accessor} {info.NameDefinition}? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    public {info.NameDefinition}? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {{
         {package.CreateDeserialize()}
     }}
