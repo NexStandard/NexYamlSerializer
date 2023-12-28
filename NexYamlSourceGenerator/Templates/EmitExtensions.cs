@@ -29,7 +29,7 @@ internal static class EmitExtensions
             else
             {
                 sb.AppendLine($$"""
-                    emitter.WriteString("{{member.Name}}", NexVYaml.Emitter.ScalarStyle.Plain);
+                        emitter.WriteString("{{member.Name}}", NexVYaml.Emitter.ScalarStyle.Plain);
                         context{{serializeString}}(ref emitter, value.{{member.Name}});
                 """);
             }
