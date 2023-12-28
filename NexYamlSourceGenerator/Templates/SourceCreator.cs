@@ -39,7 +39,7 @@ file class {info.GeneratorName + "Helper" } : IYamlFormatterHelper
     }}
 }}
 [System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]
-file class {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<{info.NameDefinition}>
+file class {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<{info.NameDefinition}> {info.TypeParameterRestrictions}
 {{
 
     {package.CreateUTF8Members()}

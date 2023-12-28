@@ -1,5 +1,6 @@
 using Microsoft.CodeAnalysis;
 using System.Collections.Immutable;
+using System.Text;
 using System.Xml.Linq;
 
 namespace NexYamlSourceGenerator.NexAPI;
@@ -22,6 +23,7 @@ internal record ClassInfo
     /// or "" if its non generic
     /// </summary>
     internal string TypeParameterArguments { get; private set; }
+    internal string TypeParameterRestrictions { get; private set; }
     internal string TypeParameterArgumentsShort { get; private set; }
     internal ClassInfo() { }
     internal bool IsGeneric { get; private set; }
@@ -45,7 +47,19 @@ internal record ClassInfo
         string genericTypeArguments = "";
         string genericTypeArgumentsShort = "";
         var isGeneric = TryAddGenericsToName(type, ref shortDefinition, ref genericTypeArguments, ref genericTypeArgumentsShort);
-
+        string restrictions = "";
+        if(type is INamedTypeSymbol namedType && isGeneric)
+        { 
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("where \n");
+            foreach (var typeRestriction in namedType.TypeParameters)
+            {
+                string constraints = string.Join(",", typeRestriction.ConstraintTypes.Select(restriction => restriction.ToDisplayString()));
+                stringBuilder.AppendLine($"{typeRestriction.ToDisplayString()} : {constraints}");
+            }
+            restrictions = stringBuilder.ToString();
+        }
+        
         return new()
         {
             NameDefinition = type.ToDisplayString(),
@@ -53,6 +67,7 @@ internal record ClassInfo
             IsGeneric = isGeneric,
             ShortDefinition = shortDefinition,
             TypeParameterArguments = genericTypeArguments,
+            TypeParameterRestrictions = restrictions,
             TypeParameterArgumentsShort = genericTypeArgumentsShort,
             NameSpace = GetFullNamespace(type, '.'),
             AllInterfaces = type.AllInterfaces.Select(t => t.ToDisplayString()).ToList(),
