@@ -41,7 +41,7 @@ internal static class EmitExtensions
         StringBuilder defaultValues = new StringBuilder();
         foreach (SymbolInfo member in package.MemberSymbols)
         {
-            defaultValues.Append("var __TEMP__").Append(member.Name).Append($"= default({(member.IsArray ? member.Type + "[]" : member.Type)});\n");
+            defaultValues.Append("\t\tvar __TEMP__").Append(member.Name).Append($"= default({(member.IsArray ? member.Type + "[]" : member.Type)});\n");
         }
         return defaultValues.ToString();
     }

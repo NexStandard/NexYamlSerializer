@@ -7,7 +7,6 @@ internal class DeserializeEmitter
     public string Create(ClassPackage package)
     {
         var info = package.ClassInfo;
-        var defaultValues = new StringBuilder();
         var objectCreation = new StringBuilder();
         Dictionary<int, List<SymbolInfo>> map = MapPropertiesToLength(package.MemberSymbols);
         foreach (SymbolInfo member in package.MemberSymbols)
@@ -15,43 +14,43 @@ internal class DeserializeEmitter
             objectCreation.Append(member.Name + "=" + "__TEMP__" + member.Name + ",");
         }
         return $$"""
-            if (parser.IsNullScalar())
-            {
-                parser.Read();
-                return default;
-            }
-            parser.ReadWithVerify(ParseEventType.MappingStart);
-            {{package.CreateTempMembers()}}
-            while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
-            {
-                if (parser.CurrentEventType != ParseEventType.Scalar)
+                if (parser.IsNullScalar())
                 {
-                    throw new YamlSerializerException(parser.CurrentMark, "Custom type deserialization supports only string key");
-                }
-         
-                if (!parser.TryGetScalarAsSpan(out var key))
-                {
-                    throw new YamlSerializerException(parser.CurrentMark, "Custom type deserialization supports only string key");
-                }
-         
-                switch (key.Length)
-                {
-                {{MapPropertiesToSwitch(map)}}
-                default:
                     parser.Read();
-                    parser.SkipCurrentNode();
-                    continue;
+                    return default;
+                }
+                parser.ReadWithVerify(ParseEventType.MappingStart);
+        {{package.CreateTempMembers()}}
+                while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
+                {
+                    if (parser.CurrentEventType != ParseEventType.Scalar)
+                    {
+                        throw new YamlSerializerException(parser.CurrentMark, "Custom type deserialization supports only string key");
+                    }
+         
+                    if (!parser.TryGetScalarAsSpan(out var key))
+                    {
+                        throw new YamlSerializerException(parser.CurrentMark, "Custom type deserialization supports only string key");
+                    }
+         
+                    switch (key.Length)
+                    {
+        {{MapPropertiesToSwitch(map)}}
+                    default:
+                        parser.Read();
+                        parser.SkipCurrentNode();
+                        continue;
+                     }
                  }
-             }
 
-             parser.ReadWithVerify(ParseEventType.MappingEnd);
-             var __TEMP__RESULT = new {{info.NameDefinition}}
-             {
-                 {{objectCreation.ToString().Trim(',')}}
-             };
+                 parser.ReadWithVerify(ParseEventType.MappingEnd);
+                 var __TEMP__RESULT = new {{info.NameDefinition}}
+                 {
+                     {{objectCreation.ToString().Trim(',')}}
+                 };
              
-             return __TEMP__RESULT;
-         """;
+                 return __TEMP__RESULT;
+        """;
     }
     Dictionary<int, List<SymbolInfo>> MapPropertiesToLength(IEnumerable<SymbolInfo> properties)
     {
@@ -72,7 +71,7 @@ internal class DeserializeEmitter
     }
     static void AppendSwitchCase(StringBuilder switchFinder, int propertyLength)
     {
-        switchFinder.Append("case " + propertyLength + ":");
+        switchFinder.AppendLine("\t\t\tcase " + propertyLength + ":");
     }
     void AppendArray(string start, SymbolInfo symbol, StringBuilder switchBuilder)
     {
@@ -80,23 +79,23 @@ internal class DeserializeEmitter
         if (symbol.IsByteType)
             serializeString = "context.DeserializeByteArray(ref parser);";
 
-        switchBuilder.Append($$"""
-            {{start}} (key.SequenceEqual({{"UTF8" + symbol.Name}}))
-            {
-                parser.Read();
-                __TEMP__{{symbol.Name}} = {{serializeString}}
-            }
+        switchBuilder.AppendLine($$"""
+                    {{start}} (key.SequenceEqual({{"UTF8" + symbol.Name}}))
+                    {
+                        parser.Read();
+                        __TEMP__{{symbol.Name}} = {{serializeString}}
+                    }
         """);
     }
     void AppendMember(string start, SymbolInfo symbol, StringBuilder switchBuilder)
     {
-        switchBuilder.Append($$"""
-            {{start}} (key.SequenceEqual({{"UTF8" + symbol.Name}}))
-            {
-                parser.Read();
-                __TEMP__{{symbol.Name}} = context.DeserializeWithAlias<{{symbol.Type}}>(ref parser);
-            }
-            """);
+        switchBuilder.AppendLine($$"""
+                    {{start}} (key.SequenceEqual({{"UTF8" + symbol.Name}}))
+                    {
+                        parser.Read();
+                        __TEMP__{{symbol.Name}} = context.DeserializeWithAlias<{{symbol.Type}}>(ref parser);
+                    }
+        """);
     }
     public StringBuilder MapPropertiesToSwitch(Dictionary<int, List<SymbolInfo>> properties)
     {
@@ -143,13 +142,13 @@ internal class DeserializeEmitter
 
     void AppendElseSkip(StringBuilder switchBuilder)
     {
-        switchBuilder.Append("""
-                else
-                {
-                    parser.Read();
-                    parser.SkipCurrentNode();
-                }
-                continue;
-                """);
+        switchBuilder.AppendLine("""
+                    else
+                    {
+                        parser.Read();
+                        parser.SkipCurrentNode();
+                    }
+                    continue;
+        """);
     }
 }

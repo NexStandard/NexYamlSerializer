@@ -27,6 +27,7 @@ using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using NexVYaml.Serialization;
 {ns}
+[System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]
 file class {info.GeneratorName + "Helper" } : IYamlFormatterHelper
 {{
     static readonly string AssemblyName = typeof({info.ShortDefinition}).Assembly.GetName().Name;
@@ -69,7 +70,7 @@ file class {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<{
 
     public {info.NameDefinition}? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {{
-        {package.CreateDeserialize()}
+{package.CreateDeserialize()}
     }}
 }}
 ";
