@@ -1,4 +1,5 @@
-﻿using NexYamlSourceGenerator.NexAPI;
+﻿using Microsoft.CodeAnalysis;
+using NexYamlSourceGenerator.NexAPI;
 using System.Text;
 
 namespace NexYamlSourceGenerator.Templates;
@@ -50,7 +51,7 @@ file class {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<{
 
     public void Serialize(ref Utf8YamlEmitter emitter, {info.NameDefinition} value, YamlSerializationContext context)
     {{
-        if (value is null)
+        if (value.Equals(default({info.NameDefinition})))
         {{
             emitter.WriteNull();
             return;
@@ -68,7 +69,7 @@ file class {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<{
             emitter.EndMapping();
     }}
 
-    public {info.NameDefinition}? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    public {info.NameDefinition}{(info.Kind == TypeKind.Struct ? "" : "?")} Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {{
 {package.CreateDeserialize()}
     }}
