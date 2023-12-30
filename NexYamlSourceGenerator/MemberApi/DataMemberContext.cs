@@ -22,7 +22,9 @@ internal record DataMemberContext
             if(symbol.TryGetAttribute(references.DataMemberAttribute, out AttributeData attributeData1))
             {
                 context.State = DataMemberContextState.Included;
+                // TODO: Assign, Content Mode
                 context.Mode = MemberMode.Assign;
+                // TODO: Order Mode
                 context.Order = 0;
             }
             else

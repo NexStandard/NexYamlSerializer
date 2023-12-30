@@ -8,7 +8,6 @@ The `Stride3D.YamlSerializer` is a NuGet package designed to provide YAML serial
 
 1. **Interface Serialization:**
 The serializer fully supports the serialization of objects implementing interfaces, allowing you to store and retrieve complex object hierarchies.
-This doesn't work yet with generic classes fully.
 
 2. **Abstract Class Serialization:**
 Abstract classes can be serialized without any hassle, providing flexibility in your design patterns.
@@ -22,13 +21,19 @@ The Serializer currently handles public/internal(when tagged with DataMember Att
 5. **DataMemberIgnore**
 The exclusion of members which got tagged with `[Stride.Core.DataMemberIgnore]`.
 
+6. **Generic Restrictions**
+The `Stride3D.YamlSerializer` intelligently handles generic restrictions during serialization and deserialization. It respects constraints such as class, struct, new(), and interface constraints on generic parameters. This ensures that the serialization process adheres to the defined constraints, maintaining the integrity and correctness of your generic types.
+
+7. **Structs**
+Structs in your Stride3D projects can be easily serialized and deserialized while preserving their value-type characteristics. This feature extends the versatility of the serializer to cover a wide range of data types within your project.
+
+8. **Records**
+Efficiently serialize and deserialize record types with the Stride3D.YamlSerializer. This feature ensures seamless integration with records, maintaining their concise, immutable nature. Benefit from precise state representation in your Stride3D projects, optimizing your workflow with minimal effort.
+
 ### Unsupported Features
 
-1. **Generic Dynamic Serialization:**
+1. **Generic Dynamic Deserialization:**
 The serializer does not currently support the dynamic deserialization of generic types. Ensure that the deserialization type fits the type in the yaml.
-
-2. **Structs and Records:**
-Serialization for structs and records is not supported in this version. Please use classes or interfaces for serialization.
 
 3. **Private Fields:**
 The serializer ignores private fields during the serialization process. Make sure to use public/internal properties or fields for data you want to serialize.
@@ -36,8 +41,15 @@ The serializer ignores private fields during the serialization process. Make sur
 4. **DataContract Inherited**
 The serializer does not support inherited DataContracts and won't in upcomming releases, classes have to be directly tagged with `[Stride.Core.DataContract]`.
 
-5. **Generic Restrictions**
-Currently Generic Restrictions don't work. A class with a restriction like `where T : ...` will generate a faulty serializer. This will be added in the next release.
+5. **DataStyle**
+Compact Mapping of Values isn't supported yet e.g. { X: ... , Y: ... }.
+
+6. **Records with Constructors**
+While not currently a primary focus, support for records with constructors is not planned for the immediate future but may be considered in subsequent updates.
+
+7. **Generic Interfaces**
+As of now, the serialization of generic Interfaces is not supported and is currently blocked in the source code. Future updates will address this limitation by introducing generic dynamic deserialization, reinstating compatibility with generic interfaces. Stay tuned for upcoming releases that will enhance the Stride3D.YamlSerializer to accommodate this feature.
+
 ## Getting Started
 
 Add the Serializer nuget to your csproj.
