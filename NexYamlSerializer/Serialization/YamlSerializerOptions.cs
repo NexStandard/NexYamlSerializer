@@ -7,7 +7,8 @@ namespace NexVYaml.Serialization
     {
         public static YamlSerializerOptions Standard => new()
         {
-            Resolver = NexYamlSerializerRegistry.Instance
+            Resolver = NexYamlSerializerRegistry.Instance,
+            SecureMode = false
         };
 
         public IYamlFormatterResolver Resolver { get; set; } = null!;

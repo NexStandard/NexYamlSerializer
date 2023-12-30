@@ -41,14 +41,14 @@ namespace NexVYaml.Serialization
         public static ReadOnlyMemory<byte> Serialize<T>(T value, YamlSerializerOptions? options = null)
         {
             options ??= DefaultOptions;
-            var contextLocal = serializationContext ??= new YamlSerializationContext(options);
-            contextLocal.SecureMode = options.SecureMode;
+            var contextLocal = new YamlSerializationContext(options)
+            {
+                SecureMode = options.SecureMode,
+            };
             var writer = contextLocal.GetArrayBufferWriter();
             var emitter = new Utf8YamlEmitter(writer);
             try
             {
-                contextLocal.Reset();
-                
                 new RedirectFormatter<T>().Serialize(ref emitter, value, contextLocal);
                 return writer.WrittenMemory;
             }
@@ -74,8 +74,7 @@ namespace NexVYaml.Serialization
             try
             {
                 options ??= DefaultOptions;
-                var contextLocal = serializationContext ??= new YamlSerializationContext(options);
-                contextLocal.Reset();
+                var contextLocal = new YamlSerializationContext(options);
 
                 var formatter = NexYamlSerializerRegistry.Instance.GetFormatterWithVerify<T>();
                 formatter.Serialize(ref emitter, value, contextLocal);
@@ -126,7 +125,7 @@ namespace NexVYaml.Serialization
             try
             {
                 options ??= DefaultOptions;
-                var contextLocal = deserializationContext ??= new YamlDeserializationContext(options);
+                var contextLocal = new YamlDeserializationContext(options);
                 contextLocal.Reset();
 
                 parser.SkipAfter(ParseEventType.DocumentStart);
