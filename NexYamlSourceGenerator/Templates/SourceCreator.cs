@@ -51,11 +51,7 @@ file class {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<{
 
     public void Serialize(ref Utf8YamlEmitter emitter, {info.NameDefinition} value, YamlSerializationContext context)
     {{
-        if (value.Equals(default({info.NameDefinition})))
-        {{
-            emitter.WriteNull();
-            return;
-        }}
+{package.NullCheck()}
         emitter.{package.BeginMappingStyle()};
         if(context.IsRedirected || context.IsFirst)
         {{
@@ -67,7 +63,7 @@ file class {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<{
         emitter.EndMapping();
     }}
 
-    public {info.NameDefinition}{(info.Kind == TypeKind.Struct ? "" : "?")} Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    public {info.NameDefinition}{(info.TypeKind == TypeKind.Struct ? "" : "?")} Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {{
 {package.CreateDeserialize()}
     }}

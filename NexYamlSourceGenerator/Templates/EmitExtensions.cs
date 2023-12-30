@@ -72,4 +72,11 @@ internal static class EmitExtensions
     {
         return new DeserializeEmitter().Create(package);
     }
+    public static string NullCheck(this ClassPackage package) => package.ClassInfo.TypeKind == Microsoft.CodeAnalysis.TypeKind.Struct ? "": @$"
+        if (value is null)
+        {{
+            emitter.WriteNull();
+            return;
+        }}
+";
 }
