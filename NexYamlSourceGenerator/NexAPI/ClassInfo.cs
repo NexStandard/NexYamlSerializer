@@ -53,7 +53,7 @@ internal record ClassInfo
         if(type is INamedTypeSymbol namedType && isGeneric)
         { 
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append("where \n");
+            stringBuilder.AppendLine("where \n");
             foreach (var typeRestriction in namedType.TypeParameters)
             {
                 string constraints = string.Join(",", typeRestriction.ConstraintTypes.Select(restriction => restriction.ToDisplayString()));

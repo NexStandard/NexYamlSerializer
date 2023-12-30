@@ -49,7 +49,7 @@ internal static class EmitExtensions
         StringBuilder defaultValues = new StringBuilder();
         foreach (SymbolInfo member in package.MemberSymbols)
         {
-            defaultValues.Append("\t\tvar __TEMP__").Append(member.Name).Append($"= default({(member.IsArray ? member.Type + "[]" : member.Type)});\n");
+            defaultValues.Append("\t\tvar __TEMP__").Append(member.Name).AppendLine($"= default({(member.IsArray ? member.Type + "[]" : member.Type)});");
         }
         return defaultValues.ToString();
     }
@@ -64,7 +64,7 @@ internal static class EmitExtensions
             {
                 sb.Append(by + ",");
             }
-            utf8Members.Append($"private static readonly byte[] UTF8{member.Name} = new byte[]{{ {sb.ToString().Trim(',')} }};\n\t");
+            utf8Members.AppendLine($"private static readonly byte[] UTF8{member.Name} = new byte[]{{ {sb.ToString().Trim(',')} }};").Append("\t");
         }
         return utf8Members.ToString();
     }

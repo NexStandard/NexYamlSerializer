@@ -9,16 +9,8 @@
 	  <PackageReadmeFile>readme.md</PackageReadmeFile>
 	  <RepositoryUrl>https://github.com/NexStandard/NexYamlSerializer</RepositoryUrl>
 	  <Copyright>ixllegacyixl ( zfons123@gmail.com )</Copyright>
-	  <PackageVersion>1.0.2</PackageVersion>
+	  <PackageVersion>1.0.3</PackageVersion>
 	  <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-	  <PackageReleaseNotes>feat: added generic restrictions
-fix : public accessor bug ( internal classes work now again )
-clean: Improve generated code indentation
-feat: secure mode to block redirection
-feat: added records serialization ( no constructor )
-feat: added structs serialization
-fix: tag bug for multiple serialization invocations
-clean: remove unused checks in Formatter</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
