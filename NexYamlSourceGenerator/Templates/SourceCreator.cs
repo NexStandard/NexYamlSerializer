@@ -66,7 +66,7 @@ file class {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<{
         }}
 {package.CreateSerializationEmit()}
         if(context.IsMappingEnabled)
-            emitter.{package.EndMappingStyle()};
+            emitter.EndMapping();
     }}
 
     public {info.NameDefinition}{(info.Kind == TypeKind.Struct ? "" : "?")} Deserialize(ref YamlParser parser, YamlDeserializationContext context)

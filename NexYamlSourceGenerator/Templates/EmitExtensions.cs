@@ -37,8 +37,13 @@ internal static class EmitExtensions
         }
         return sb.ToString();
     }
-    public static string BeginMappingStyle(this ClassPackage package) => package.ClassInfo.Kind == Microsoft.CodeAnalysis.TypeKind.Struct ? "BeginSequence(SequenceStyle.Flow)" : "BeginMapping(MappingStyle.Block)";
-    public static string EndMappingStyle(this ClassPackage package) => package.ClassInfo.Kind == Microsoft.CodeAnalysis.TypeKind.Struct ? "EndSequence(false)" : "EndMapping()";
+    /// <summary>
+    /// Flow Mapping isn't supported currently
+    /// </summary>
+    /// <param name="package"></param>
+    /// <returns></returns>
+    public static string BeginMappingStyle(this ClassPackage package) => "BeginMapping(MappingStyle.Block)";
+
     public static string CreateTempMembers(this ClassPackage package)
     {
         StringBuilder defaultValues = new StringBuilder();
