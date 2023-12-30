@@ -27,7 +27,7 @@ internal record ClassInfo
     internal string TypeParameterArgumentsShort { get; private set; }
     internal ClassInfo() { }
     internal bool IsGeneric { get; private set; }
-    internal TypeKind Kind { get; private set; }
+    internal TypeKind TypeKind { get; private set; }
     internal string NameSpace { get; private set; }
     internal string GeneratorName { get; private set; }
     internal IReadOnlyList<string> AllInterfaces { get; private set; }
@@ -72,7 +72,7 @@ internal record ClassInfo
             TypeParameterRestrictions = restrictions,
             TypeParameterArgumentsShort = genericTypeArgumentsShort,
             NameSpace = GetFullNamespace(type, '.'),
-            Kind = type.TypeKind,
+            TypeKind = type.TypeKind,
             AllInterfaces = type.AllInterfaces.Select(t => t.ToDisplayString()).ToList(),
             AllAbstracts = FindAbstractClasses(type),
             GeneratorName = CreateGeneratorName(type)
