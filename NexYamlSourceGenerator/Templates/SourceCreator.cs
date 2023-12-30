@@ -56,8 +56,7 @@ file class {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<{
             emitter.WriteNull();
             return;
         }}
-        if(context.IsMappingEnabled)
-            emitter.{package.BeginMappingStyle()};
+        emitter.{package.BeginMappingStyle()};
         if(context.IsRedirected || context.IsFirst)
         {{
             emitter.Tag($""!{info.NameSpace}.{info.TypeName},{{AssemblyName}}"");
@@ -65,8 +64,7 @@ file class {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<{
             context.IsFirst = false;
         }}
 {package.CreateSerializationEmit()}
-        if(context.IsMappingEnabled)
-            emitter.EndMapping();
+        emitter.EndMapping();
     }}
 
     public {info.NameDefinition}{(info.Kind == TypeKind.Struct ? "" : "?")} Deserialize(ref YamlParser parser, YamlDeserializationContext context)

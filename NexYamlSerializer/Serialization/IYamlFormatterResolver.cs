@@ -30,7 +30,6 @@ namespace NexVYaml.Serialization
                     else
                     {
                         formatter = new RedirectFormatter<T>();
-
                     }
                 }
                 else

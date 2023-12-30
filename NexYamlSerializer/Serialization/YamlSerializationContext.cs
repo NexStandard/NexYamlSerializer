@@ -21,8 +21,10 @@ namespace NexVYaml.Serialization
         static ByteArrayFormatter ByteArrayFormatter = new ByteArrayFormatter();
         public IYamlFormatterResolver Resolver { get; }
         public YamlEmitOptions EmitOptions { get; }
+        /// <summary>
+        /// Decides if the <see cref="RedirectFormatter{T}"/> had to redirect it as it's an interface or abstract class
+        /// </summary>
         public bool IsRedirected { get; set; } = false;
-        public bool IsMappingEnabled { get; set; } = true;
         public bool IsFirst { get; set; } = true;
         public bool SecureMode { get; set; } = false;
         readonly byte[] primitiveValueBuffer;
