@@ -13,6 +13,11 @@ internal class ReferencePackage(Compilation compilation)
     public INamedTypeSymbol DataContractAttribute { get; } =
          compilation.GetTypeByMetadataName("Stride.Core.DataContractAttribute");
 
+    public INamedTypeSymbol DataStyleAttribute { get; } =
+         compilation.GetTypeByMetadataName("Stride.Core.DataStyleAttribute");
+
+    public INamedTypeSymbol DataStyle { get; } =
+     compilation.GetTypeByMetadataName("Stride.Core.DataStyle");
     public bool IsValid()
     {
         return DataMemberAttribute != null && DataMemberIgnoreAttribute != null && DataContractAttribute != null;
