@@ -1,4 +1,5 @@
 ﻿using NexYamlSourceGenerator.NexAPI;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace NexYamlSourceGenerator.Templates;
@@ -36,6 +37,8 @@ internal static class EmitExtensions
         }
         return sb.ToString();
     }
+    public static string BeginMappingStyle(this ClassPackage package) => package.ClassInfo.Kind == Microsoft.CodeAnalysis.TypeKind.Struct ? "BeginSequence(SequenceStyle.Flow)" : "BeginMapping(MappingStyle.Block)";
+    public static string EndMappingStyle(this ClassPackage package) => package.ClassInfo.Kind == Microsoft.CodeAnalysis.TypeKind.Struct ? "EndSequence(false)" : "EndMapping()";
     public static string CreateTempMembers(this ClassPackage package)
     {
         StringBuilder defaultValues = new StringBuilder();
