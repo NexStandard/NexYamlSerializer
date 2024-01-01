@@ -6,50 +6,37 @@ using System.Collections.Immutable;
 
 namespace NexYamlSourceGenerator.NexAPI;
 
-internal class MemberProcessor(ReferencePackage references)
+internal class MemberProcessor<T>(IEnumerable<IMemberSymbolAnalyzer<T>> analyzers) : IMemberSymbolAnalyzer<T>
+    where T : ISymbol
 {
-    List<IMemberSymbolAnalyzer<IPropertySymbol>> PropertyAnalyzers { get; set; } = new();
-    List<IMemberSymbolAnalyzer<IFieldSymbol>> FieldAnalyzers { get; set; } = new();
-    internal ImmutableList<SymbolInfo> Process(ITypeSymbol type)
+    public bool AppliesTo(MemberContext<T> symbol)
     {
-        var symbols = type.GetAllMembers();
-        List<SymbolInfo> result = new List<SymbolInfo>();
-        foreach (ISymbol symbol in symbols)
+        foreach(var analyzer in analyzers)
         {
-            if (symbol == null)
-                continue;
-            DataMemberContext context = DataMemberContext.Create(symbol, references);
-            if (symbol is IPropertySymbol property)
-                ProcessAnalyzers(PropertyAnalyzers, property, result, context);
-            else if (symbol is IFieldSymbol field)
-            {
-                ProcessAnalyzers(FieldAnalyzers, field, result, context);
-            }
+            return analyzer.AppliesTo(symbol);
         }
-        return ImmutableList.Create(result.ToArray());
+        return false;
     }
-    internal MemberProcessor Attach(params IMemberSymbolAnalyzer<IPropertySymbol>[] analyzer)
+
+    public SymbolInfo Analyze(MemberContext<T> symbol)
     {
-        PropertyAnalyzers.AddRange(analyzer);
-        return this;
+        if (symbol.DataMemberContext.State == DataMemberContextState.Excluded)
+            return SymbolInfo.Empty;
+
+        foreach (var analyzer in analyzers)
+        {
+            var info = analyzer.Analyze(symbol);
+            if (!info.IsEmpty)
+                return info;
+        }
+        return SymbolInfo.Empty;
     }
-    internal MemberProcessor Attach(params IMemberSymbolAnalyzer<IFieldSymbol>[] analyzer)
-    {
-        FieldAnalyzers.AddRange(analyzer);
-        return this;
-    }
-    void ProcessAnalyzers<T>(List<IMemberSymbolAnalyzer<T>> analyzers, T symbol, List<SymbolInfo> result, DataMemberContext context)
+}
+internal static class CollectionAnalyzers
+{
+    public static SymbolInfo Analyze<T>(this IEnumerable<IMemberSymbolAnalyzer<T>> symbols, MemberContext<T> member)
         where T : ISymbol
     {
-        if (context.State == DataMemberContextState.Excluded)
-            return;
-        foreach (IMemberSymbolAnalyzer<T> analyzer in analyzers)
-        {
-            MemberContext<T> memberContext = new MemberContext<T>(symbol, context);
-
-            SymbolInfo temp = analyzer.Analyze(memberContext);
-            if (!temp.IsEmpty)
-                result.Add(temp);
-        }
+        return new MemberProcessor<T>(symbols).Analyze(member);
     }
 }

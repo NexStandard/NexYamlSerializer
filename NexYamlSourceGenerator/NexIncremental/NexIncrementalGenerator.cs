@@ -7,6 +7,8 @@ using NexYamlSourceGenerator.Core;
 using NexYamlSourceGenerator.MemberApi.FieldAnalyzers;
 using NexYamlSourceGenerator.MemberApi.Analysation.PropertyAnalyzers;
 using NexYamlSourceGenerator.Templates;
+using NexYamlSourceGenerator.MemberApi;
+using System.Diagnostics;
 
 namespace NexYamlSourceGenerator.NexIncremental;
 
@@ -26,7 +28,7 @@ internal class NexIncrementalGenerator : IIncrementalGenerator
             {
                 var classDeclaration = (ITypeSymbol)ctx.TargetSymbol;
                 SemanticModel semanticModel = ctx.SemanticModel;
-                Compilation compilation = semanticModel.Compilation;
+                var compilation = semanticModel.Compilation;
                 ReferencePackage package = new ReferencePackage(compilation);
                 if (!package.IsValid())
                     return null;
@@ -44,23 +46,27 @@ internal class NexIncrementalGenerator : IIncrementalGenerator
 }
 internal class ClassSymbolConverter
 {
-internal ClassPackage Convert(ITypeSymbol namedTypeSymbol, ReferencePackage package)
-{
-    IMemberSymbolAnalyzer<IPropertySymbol> standardAssignAnalyzer = new PropertyAnalyzer()
-        .HasVisibleGetter()
-        .HasVisibleSetter();
-    IMemberSymbolAnalyzer<IFieldSymbol> standardFieldAssignAnalyzer = new FieldAnalyzer()
-        .IsVisibleToSerializer();
-
-    MemberProcessor classInfoMemberProcessor = new MemberProcessor(package)
-        .Attach(standardAssignAnalyzer)
-        .Attach(standardFieldAssignAnalyzer);
-    ImmutableList<SymbolInfo> members = classInfoMemberProcessor.Process(namedTypeSymbol);
-
-    return new ClassPackage()
+    internal ClassPackage Convert(ITypeSymbol namedTypeSymbol, ReferencePackage package)
     {
-        ClassInfo = ClassInfo.CreateFrom(namedTypeSymbol),
-        MemberSymbols = members,
-    };
-}
+        var standardAssignAnalyzer = new PropertyAnalyzer()
+            .HasVisibleGetter()
+            .HasVisibleSetter();
+        var standardFieldAssignAnalyzer = new FieldAnalyzer()
+            .IsVisibleToSerializer();
+        List<IMemberSymbolAnalyzer<IFieldSymbol>> fieldAnalyzers = new()
+        {
+            standardFieldAssignAnalyzer
+        };
+        List<IMemberSymbolAnalyzer<IPropertySymbol>> propertyAnalyzers = new()
+        {
+            standardAssignAnalyzer
+        };
+        var members = namedTypeSymbol.GetAllMembers().AsSymbolInfo(package, propertyAnalyzers, fieldAnalyzers);
+        var memberList  = ImmutableList.Create(members.ToArray());
+        return new ClassPackage()
+        {
+            ClassInfo = ClassInfo.CreateFrom(namedTypeSymbol),
+            MemberSymbols = memberList,
+        };
+    }
 }

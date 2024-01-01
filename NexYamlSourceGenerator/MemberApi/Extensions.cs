@@ -1,4 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
+using NexYamlSourceGenerator.Core;
+using NexYamlSourceGenerator.NexAPI;
+using NexYamlSourceGenerator.NexIncremental;
+using System.Collections.Immutable;
 
 namespace NexYamlSourceGenerator.MemberApi;
 
@@ -35,5 +39,18 @@ public static class Extensionss
         }
 
         return fullNamespace.TrimEnd(separator);
+    }
+    internal static IEnumerable<SymbolInfo> AnalyzeAllMembers<T>(this IEnumerable<MemberContext<T>> contexts, params IMemberSymbolAnalyzer<T>[] analyzers)
+        where T : ISymbol
+    {
+        foreach(var context in contexts)
+        {
+            foreach (var analyzer in analyzers)
+            {
+                var symbol = analyzer.Analyze(context);
+                if(symbol != SymbolInfo.Empty)
+                    yield return symbol;
+            }
+        }
     }
 }

@@ -745,8 +745,8 @@ namespace NexVYaml.Parser
             if (CurrentTokenType == TokenType.ValueStart)
             {
                 tokenizer.Read();
-                if (CurrentTokenType != TokenType.FlowEntryStart &&
-                    CurrentTokenType != TokenType.FlowMappingEnd)
+                if (CurrentTokenType is not TokenType.FlowEntryStart and
+                    not TokenType.FlowMappingEnd)
                 {
                     PushState(ParseState.FlowMappingKey);
                     ParseNode(false, false);

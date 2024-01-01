@@ -25,7 +25,7 @@ internal class PropertyAnalyzer : IMemberSymbolAnalyzer<IPropertySymbol>
             IsInterface = context.Symbol.Type.TypeKind == TypeKind.Interface,
             Type = typeName,
             Context = context.DataMemberContext,
-            IsByteType = context.Symbol.Type.SpecialType == SpecialType.System_Byte || context.Symbol.Type.SpecialType == SpecialType.System_SByte,
+            IsByteType = context.Symbol.Type.SpecialType is SpecialType.System_Byte or SpecialType.System_SByte,
             IsArray = context.Symbol.Type.TypeKind == TypeKind.Array,
         };
     }

@@ -16,4 +16,9 @@ internal class MemberContext<T>
     }
     public T Symbol { get; }
     public DataMemberContext DataMemberContext { get; }
+
+    public static explicit operator MemberContext<T>(MemberContext<ISymbol> v)
+    {
+        throw new NotImplementedException();
+    }
 }
