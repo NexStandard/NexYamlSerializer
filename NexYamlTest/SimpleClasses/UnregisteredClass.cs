@@ -1,11 +1,11 @@
-﻿using Stride.Core;
-namespace NexYamlTest;
-[DataContract]
-public record EmptyRecord
-{
-}
-[DataContract]
-public class EmptyClass
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace NexYamlTest.SimpleClasses;
+public class UnregisteredClass
 {
     public int ID { get; set; }
     public override bool Equals(object obj)
@@ -17,34 +17,37 @@ public class EmptyClass
         }
 
         // Convert the object to the same type as this instance
-        var other = (EmptyClass)obj;
+        var other = obj as EmptyClass;
 
         // Compare the ID property for equality
         return ID == other.ID;
     }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(ID);
+    }
 }
-[DataContract]
-public struct EmptyStruct
+internal class InternalUnregisteredClass
 {
     public int ID { get; set; }
     public override bool Equals(object obj)
     {
         // Check if the object is null or of a different type
-        if (obj is not EmptyStruct)
+        if (obj == null || GetType() != obj.GetType())
         {
             return false;
         }
 
         // Convert the object to the same type as this instance
-        EmptyStruct other = (EmptyStruct)obj;
+        var other = obj as InternalUnregisteredClass;
 
-        // Compare the fields or properties for equality
+        // Compare the ID property for equality
         return ID == other.ID;
     }
 
-    // Optionally, you may want to override GetHashCode as well when you override Equals
     public override int GetHashCode()
     {
-        return ID.GetHashCode();
+        return HashCode.Combine(ID);
     }
 }
