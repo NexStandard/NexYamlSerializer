@@ -42,13 +42,13 @@ internal static class TypeSymbolExtensions
     /// <returns>All base types in bottom to top order.</returns>
     private static IEnumerable<ITypeSymbol> GetBaseTypes(this ITypeSymbol type, ReferencePackage reference)
     {
-        while (type != null)
+         while (type != null)
         {
-            // Check if the type has the specified DataContractAttribute
-            if (type.GetAttributes().Any(attr => SymbolEqualityComparer.Default.Equals(attr.AttributeClass.OriginalDefinition, reference.DataContractAttribute)))
+           // Check if the type has the specified DataContractAttribute
+           if (type.GetAttributes().Any(attr => SymbolEqualityComparer.Default.Equals(attr.AttributeClass.OriginalDefinition, reference.DataContractAttribute)))
                 yield return type;
 
-            type = type.BaseType;
+           type = type.BaseType;
         }
     }
     /// <summary>

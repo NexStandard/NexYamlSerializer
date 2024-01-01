@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NexYamlSourceGenerator.Core;
 using NexYamlSourceGenerator.NexAPI;
 using NexYamlSourceGenerator.NexIncremental;
@@ -13,6 +14,14 @@ public static class Extensionss
         if (symbol.GetAttributes().Any(attr => attr.AttributeClass?.OriginalDefinition.Equals(attribute, SymbolEqualityComparer.Default) ?? false))
             return true;
         return false;
+    }
+    internal static IEnumerable<SymbolInfo> Reduce(this IEnumerable<SymbolInfo> infos)
+    {
+        foreach (var info in infos)
+        {
+            if(info != SymbolInfo.Empty)
+                yield return info;
+        }
     }
     public static bool TryGetAttribute(this ISymbol symbol, INamedTypeSymbol attribute, out AttributeData attributeData)
     {

@@ -8,6 +8,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NexYamlSourceGenerator", "N
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NexVYaml", "NexVYaml\NexVYaml.csproj", "{261CF6FC-4A06-4422-B791-640DA3423E54}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NexYamlTest", "NexYamlTest\NexYamlTest.csproj", "{1DCCD97B-943A-4299-8CD4-530FFFDD2886}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,10 @@ Global
 		{261CF6FC-4A06-4422-B791-640DA3423E54}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{261CF6FC-4A06-4422-B791-640DA3423E54}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{261CF6FC-4A06-4422-B791-640DA3423E54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DCCD97B-943A-4299-8CD4-530FFFDD2886}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DCCD97B-943A-4299-8CD4-530FFFDD2886}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DCCD97B-943A-4299-8CD4-530FFFDD2886}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DCCD97B-943A-4299-8CD4-530FFFDD2886}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
