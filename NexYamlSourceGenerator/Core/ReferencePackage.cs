@@ -4,6 +4,7 @@ namespace NexYamlSourceGenerator.Core;
 
 internal class ReferencePackage(Compilation compilation)
 {
+    public const string DataContract = "Stride.Core.DataContractAttribute";
     public INamedTypeSymbol DataMemberAttribute { get; } =
         compilation.GetTypeByMetadataName("Stride.Core.DataMemberAttribute");
 
@@ -18,6 +19,10 @@ internal class ReferencePackage(Compilation compilation)
 
     public INamedTypeSymbol DataStyle { get; } =
      compilation.GetTypeByMetadataName("Stride.Core.DataStyle");
+    /// <summary>
+    /// Checks whether the package is valid by ensuring that all necessary types are available.
+    /// </summary>
+    /// <returns><c>true</c> if the package is valid; otherwise, <c>false</c>.</returns>
     public bool IsValid()
     {
         return DataMemberAttribute != null && DataMemberIgnoreAttribute != null && DataContractAttribute != null;
