@@ -4,5 +4,6 @@
     <TargetFrameworks>net8.0</TargetFrameworks>
 	<Description>NexVYaml Serializer</Description>
 	<LangVersion>12</LangVersion>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 </Project>

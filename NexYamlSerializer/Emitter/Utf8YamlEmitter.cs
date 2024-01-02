@@ -60,7 +60,6 @@ namespace NexVYaml.Emitter
         readonly IBufferWriter<byte> writer;
         readonly YamlEmitOptions options;
 
-        ExpandBuffer<char> stringBuffer;
         ExpandBuffer<EmitState> stateStack;
         ExpandBuffer<int> elementCountStack;
         ExpandBuffer<string> tagStack;
@@ -74,7 +73,6 @@ namespace NexVYaml.Emitter
             this.options = options ?? YamlEmitOptions.Default;
 
             currentIndentLevel = 0;
-            stringBuffer = new ExpandBuffer<char>(1024);
             stateStack = new ExpandBuffer<EmitState>(16);
             elementCountStack = new ExpandBuffer<int>(16);
             stateStack.Add(EmitState.None);
@@ -87,7 +85,6 @@ namespace NexVYaml.Emitter
 
         public void Dispose()
         {
-            stringBuffer.Dispose();
             stateStack.Dispose();
             elementCountStack.Dispose();
             tagStack.Dispose();
@@ -534,11 +531,11 @@ namespace NexVYaml.Emitter
             writer.Advance(offset);
         }
 
-        void WriteLiteralScalar(string value)
+        unsafe void WriteLiteralScalar(string value)
         {
             var indentCharCount = (currentIndentLevel + 1) * options.IndentWidth;
             var scalarStringBuilt = EmitStringAnalyzer.BuildLiteralScalar(value, indentCharCount);
-            var scalarChars = stringBuffer.AsSpan(scalarStringBuilt.Length);
+            Span<char> scalarChars = stackalloc char[scalarStringBuilt.Length];
             scalarStringBuilt.CopyTo(0, scalarChars, scalarStringBuilt.Length);
 
             if (CurrentState is EmitState.BlockMappingValue or EmitState.BlockSequenceEntry)
@@ -555,10 +552,10 @@ namespace NexVYaml.Emitter
             writer.Advance(offset);
         }
 
-        void WriteQuotedScalar(string value, bool doubleQuote = true)
+        unsafe void WriteQuotedScalar(string value, bool doubleQuote = true)
         {
             var scalarStringBuilt = EmitStringAnalyzer.BuildQuotedScalar(value, doubleQuote);
-            var scalarChars = stringBuffer.AsSpan(scalarStringBuilt.Length);
+            Span<char> scalarChars = stackalloc char [scalarStringBuilt.Length];
             scalarStringBuilt.CopyTo(0, scalarChars, scalarStringBuilt.Length);
 
             var maxByteCount = StringEncoding.Utf8.GetMaxByteCount(scalarChars.Length);
