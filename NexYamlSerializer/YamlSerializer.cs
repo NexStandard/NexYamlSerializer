@@ -8,8 +8,9 @@ using System.Threading.Tasks;
 using NexVYaml.Emitter;
 using NexVYaml.Internal;
 using NexVYaml.Parser;
+using NexVYaml.Serialization;
 
-namespace NexVYaml.Serialization
+namespace NexVYaml
 {
     public class YamlSerializerException : Exception
     {
