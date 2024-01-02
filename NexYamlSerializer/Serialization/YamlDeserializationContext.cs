@@ -15,6 +15,7 @@ namespace NexVYaml.Serialization
         public YamlDeserializationContext(YamlSerializerOptions options)
         {
             Resolver = options.Resolver;
+            SecureMode = options.SecureMode;
         }
 
         public void Reset()
