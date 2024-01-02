@@ -8,7 +8,7 @@ namespace NexYamlSourceGenerator.NexAPI;
 
 internal record ShortGenericDefinition(int Count)
 {
-    public override string ToString() => $"<{string.Join(",", Count - 1)}>";
+    public override string ToString() => Count <= 0 ? "" : $"<{new string(',', Count - 1)}>";
 }
 
 /// <summary>
