@@ -38,8 +38,8 @@ public static class Extensionss
     }
     public static string GetFullNamespace(this ITypeSymbol typeSymbol, char separator)
     {
-        INamespaceSymbol namespaceSymbol = typeSymbol.ContainingNamespace;
-        string fullNamespace = "";
+        var namespaceSymbol = typeSymbol.ContainingNamespace;
+        var fullNamespace = "";
 
         while (namespaceSymbol != null && !string.IsNullOrEmpty(namespaceSymbol.Name))
         {

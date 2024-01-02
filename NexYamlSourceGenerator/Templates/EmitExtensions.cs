@@ -8,10 +8,10 @@ internal static class EmitExtensions
 {
     public static string CreateSerializationEmit(this ClassPackage package)
     {
-        StringBuilder sb = new StringBuilder();
-        foreach (SymbolInfo member in package.MemberSymbols)
+        var sb = new StringBuilder();
+        foreach (var member in package.MemberSymbols)
         {
-            string serializeString = $$""".Serialize""";
+            var serializeString = $$""".Serialize""";
             if (member.IsArray)
                 serializeString = $$""".SerializeArray""";
             if (member.IsAbstract || member.IsInterface)
@@ -46,8 +46,8 @@ internal static class EmitExtensions
 
     public static string CreateTempMembers(this ClassPackage package)
     {
-        StringBuilder defaultValues = new StringBuilder();
-        foreach (SymbolInfo member in package.MemberSymbols)
+        var defaultValues = new StringBuilder();
+        foreach (var member in package.MemberSymbols)
         {
             defaultValues.Append("\t\tvar __TEMP__").Append(member.Name).AppendLine($"= default({(member.IsArray ? member.Type + "[]" : member.Type)});");
         }
@@ -55,16 +55,16 @@ internal static class EmitExtensions
     }
     public static string CreateUTF8Members(this  ClassPackage package)
     {
-        StringBuilder utf8Members = new StringBuilder();
+        var utf8Members = new StringBuilder();
         if(package.MemberSymbols.Count == 0)
         {
             return utf8Members.AppendLine().ToString();
         }
         foreach (var member in package.MemberSymbols)
         {
-            byte[] bytes = Encoding.UTF8.GetBytes(member.Name);
-            StringBuilder sb = new StringBuilder();
-            foreach (byte by in bytes)
+            var bytes = Encoding.UTF8.GetBytes(member.Name);
+            var sb = new StringBuilder();
+            foreach (var by in bytes)
             {
                 sb.Append(by + ",");
             }

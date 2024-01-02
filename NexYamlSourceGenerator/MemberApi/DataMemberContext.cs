@@ -11,15 +11,15 @@ internal record DataMemberContext
     static DataMemberContext Empty { get; } = new DataMemberContext() { State = DataMemberContextState.Excluded };
     internal static DataMemberContext Create(ISymbol symbol, ReferencePackage references)
     {
-        DataMemberContext context = new DataMemberContext();
+        var context = new DataMemberContext();
 
-        if (symbol.TryGetAttribute(references.DataMemberIgnoreAttribute, out AttributeData attributeData))
+        if (symbol.TryGetAttribute(references.DataMemberIgnoreAttribute, out var attributeData))
         {
             return Empty;
         }
         else
         {
-            if(symbol.TryGetAttribute(references.DataMemberAttribute, out AttributeData attributeData1))
+            if(symbol.TryGetAttribute(references.DataMemberAttribute, out var attributeData1))
             {
                 context.State = DataMemberContextState.Included;
                 // TODO: Assign, Content Mode

@@ -10,7 +10,7 @@ internal class FieldAnalyzer : IMemberSymbolAnalyzer<IFieldSymbol>
         var names = context.Symbol.Type.ContainingNamespace;
         string typeName;
         ITypeSymbol type;
-        bool isArray = context.Symbol.Type.TypeKind == TypeKind.Array;
+        var isArray = context.Symbol.Type.TypeKind == TypeKind.Array;
         if (isArray)
         {
             typeName = ((IArrayTypeSymbol)context.Symbol.Type).ElementType.Name;

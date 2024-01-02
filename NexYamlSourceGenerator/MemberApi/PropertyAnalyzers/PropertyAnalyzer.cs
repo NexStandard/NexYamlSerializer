@@ -8,7 +8,7 @@ internal class PropertyAnalyzer : IMemberSymbolAnalyzer<IPropertySymbol>
     {
         string typeName;
         ITypeSymbol type;
-        bool isArray = context.Symbol.Type.TypeKind == TypeKind.Array;
+        var isArray = context.Symbol.Type.TypeKind == TypeKind.Array;
         if (isArray)
         {
             typeName = ((IArrayTypeSymbol)context.Symbol.Type).ElementType.ToDisplayString();

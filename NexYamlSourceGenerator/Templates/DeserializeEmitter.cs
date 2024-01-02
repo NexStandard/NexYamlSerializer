@@ -8,8 +8,8 @@ internal class DeserializeEmitter
     {
         var info = package.ClassInfo;
         var objectCreation = new StringBuilder();
-        Dictionary<int, List<SymbolInfo>> map = MapPropertiesToLength(package.MemberSymbols);
-        foreach (SymbolInfo member in package.MemberSymbols)
+        var map = MapPropertiesToLength(package.MemberSymbols);
+        foreach (var member in package.MemberSymbols)
         {
             objectCreation.Append(member.Name + "=" + "__TEMP__" + member.Name + ",");
         }
@@ -55,9 +55,9 @@ internal class DeserializeEmitter
     Dictionary<int, List<SymbolInfo>> MapPropertiesToLength(IEnumerable<SymbolInfo> properties)
     {
         Dictionary<int, List<SymbolInfo>> map = new();
-        foreach (SymbolInfo property in properties)
+        foreach (var property in properties)
         {
-            int propertyLength = property.Name.Length;
+            var propertyLength = property.Name.Length;
             if (!map.ContainsKey(propertyLength))
             {
                 map.Add(propertyLength, new() { property });
@@ -99,12 +99,12 @@ internal class DeserializeEmitter
     }
     public StringBuilder MapPropertiesToSwitch(Dictionary<int, List<SymbolInfo>> properties)
     {
-        StringBuilder switchBuilder = new StringBuilder();
-        foreach (KeyValuePair<int, List<SymbolInfo>> prop in properties)
+        var switchBuilder = new StringBuilder();
+        foreach (var prop in properties)
         {
             AppendSwitchCase(switchBuilder, prop.Key);
-            bool isFirstime = true;
-            foreach (SymbolInfo propert in prop.Value)
+            var isFirstime = true;
+            foreach (var propert in prop.Value)
             {
                 string ifelse;
                 if (isFirstime)

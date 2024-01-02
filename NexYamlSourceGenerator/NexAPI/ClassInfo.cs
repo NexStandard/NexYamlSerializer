@@ -5,6 +5,12 @@ using System.Xml.Linq;
 
 namespace NexYamlSourceGenerator.NexAPI;
 
+
+internal record ShortGenericDefinition(int Count)
+{
+    public override string ToString() => $"<{string.Join(",", Count - 1)}>";
+}
+
 /// <summary>
 /// Represents information about a class and its members.
 /// Usable with Incremental Source Generation.
@@ -41,25 +47,28 @@ internal record ClassInfo
 
     public static ClassInfo CreateFrom(ITypeSymbol type)
     {
-        string displayName = type.ToDisplayString();
-
-        int index = displayName.IndexOf('<');
-        string shortDefinition = index != -1 ? displayName.Substring(0, index) : displayName;
-        string genericTypeArguments = "";
-        string genericTypeArgumentsShort = "";
+        var displayName = type.ToDisplayString();
+        var namedType = (INamedTypeSymbol)type;
+        var index = displayName.IndexOf('<');
+        var shortDefinition = index != -1 ? displayName.Substring(0, index) : displayName;
+        var genericTypeArguments = "";
+        var genericTypeArgumentsShort = "";
         var isGeneric = TryAddGenericsToName(type, ref shortDefinition, ref genericTypeArguments, ref genericTypeArgumentsShort);
-        string restrictions = "";
+        var restrictions = "";
         
-        if(type is INamedTypeSymbol namedType && isGeneric)
-        { 
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine("where \n");
+        if(isGeneric)
+        {
+            var whereClause = "where ";
+            var stringBuilder = new StringBuilder();
             foreach (var typeRestriction in namedType.TypeParameters)
             {
-                string constraints = string.Join(",", typeRestriction.ConstraintTypes.Select(restriction => restriction.ToDisplayString()));
-                stringBuilder.AppendLine($"{typeRestriction.ToDisplayString()} : {constraints}");
+                var constraints = typeRestriction.ConstraintTypes.Select(restriction => restriction.ToDisplayString());
+                if (constraints.Any())
+                    stringBuilder.AppendLine($"{typeRestriction.ToDisplayString()} : {constraints}");
             }
-            restrictions = stringBuilder.ToString();
+            if(stringBuilder.Length > 0)
+                restrictions =  whereClause + stringBuilder.ToString();
+            restrictions = "";
         }
         
         return new()
@@ -70,7 +79,7 @@ internal record ClassInfo
             ShortDefinition = shortDefinition,
             TypeParameterArguments = genericTypeArguments,
             TypeParameterRestrictions = restrictions,
-            TypeParameterArgumentsShort = genericTypeArgumentsShort,
+            TypeParameterArgumentsShort = new ShortGenericDefinition(namedType.TypeArguments.Count()).ToString(),
             NameSpace = GetFullNamespace(type, '.'),
             TypeKind = type.TypeKind,
             AllInterfaces = type.AllInterfaces.Select(t => t.ToDisplayString()).ToList(),
@@ -78,7 +87,7 @@ internal record ClassInfo
             GeneratorName = CreateGeneratorName(type)
         };
     }
-
+    
     private static string CreateGeneratorName(ITypeSymbol type)
     {
         return GeneratorPrefix + GetFullNamespace(type, '_') + type.Name;
@@ -120,8 +129,8 @@ internal record ClassInfo
 
     static string GetFullNamespace(ITypeSymbol typeSymbol, char separator)
     {
-        INamespaceSymbol namespaceSymbol = typeSymbol.ContainingNamespace;
-        string fullNamespace = "";
+        var namespaceSymbol = typeSymbol.ContainingNamespace;
+        var fullNamespace = "";
 
         while (namespaceSymbol != null && !string.IsNullOrEmpty(namespaceSymbol.Name))
         {
@@ -138,8 +147,8 @@ internal record ClassInfo
     /// <returns>A list of abstract classes in the inheritance hierarchy of the specified <see cref="ITypeSymbol"/>.</returns>
     private static IReadOnlyList<string> FindAbstractClasses(ITypeSymbol typeSymbol)
     {
-        List<string> result = new List<string>();
-        INamedTypeSymbol baseType = typeSymbol.BaseType;
+        var result = new List<string>();
+        var baseType = typeSymbol.BaseType;
         while (baseType != null)
         {
             if (baseType.IsAbstract)

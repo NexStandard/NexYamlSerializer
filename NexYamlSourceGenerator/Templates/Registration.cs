@@ -8,7 +8,7 @@ internal static class Registration
     public static string CreateRegisterAbstracts(this ClassPackage package)
     {
         StringBuilder sb = new();
-        foreach (string @abstract in package.ClassInfo.AllAbstracts)
+        foreach (var @abstract in package.ClassInfo.AllAbstracts)
         {
             sb.AppendLine(Constants.SerializerRegistry + string.Format(Constants.RegisterAbstractClass, "formatter", @abstract));
         }
@@ -16,7 +16,7 @@ internal static class Registration
     }
     public static string CreateRegisterThis(this ClassPackage package)
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine($"{Constants.SerializerRegistry}.RegisterTag($\"{package.ClassInfo.NameSpace}.{package.ClassInfo.TypeName},{{AssemblyName}}\",typeof({package.ClassInfo.ShortDefinition}));");
         if (package.ClassInfo.IsGeneric)
         {
@@ -32,14 +32,14 @@ internal static class Registration
         StringBuilder sb = new();
         if (package.ClassInfo.IsGeneric)
         {
-            foreach (string interfac in package.ClassInfo.AllInterfaces)
+            foreach (var interfac in package.ClassInfo.AllInterfaces)
             {
                //  sb.AppendLine(Constants.SerializerRegistry + string.Format(Constants.RegisterInterface, $"typeof({package.ClassInfo.ShortDefinition})", interfac));
             }
         }
         else
         {
-            foreach (string interfac in package.ClassInfo.AllInterfaces)
+            foreach (var interfac in package.ClassInfo.AllInterfaces)
             {
                 sb.AppendLine(Constants.SerializerRegistry + string.Format(Constants.RegisterInterface, "formatter", interfac));
             }
