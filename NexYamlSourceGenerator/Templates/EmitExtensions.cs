@@ -56,10 +56,6 @@ internal static class EmitExtensions
     public static string CreateUTF8Members(this  ClassPackage package)
     {
         var utf8Members = new StringBuilder();
-        if(package.MemberSymbols.Count == 0)
-        {
-            return utf8Members.AppendLine().ToString();
-        }
         foreach (var member in package.MemberSymbols)
         {
             var bytes = Encoding.UTF8.GetBytes(member.Name);
