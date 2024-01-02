@@ -30,4 +30,28 @@ public class RedirectionTest
         var deserialized = YamlSerializer.Deserialize<IDAbstract>(s);
         Assert.Equal(dInterface.Id, deserialized.Id);
     }
+    [Fact]
+    public void GenericSimpleTest()
+    {
+        Setup();
+        var generic = new Generics<int>()
+        {
+            Value = 10235
+        };
+        var s = YamlSerializer.Serialize(generic);
+        var deserialized = YamlSerializer.Deserialize<Generics<int>>(s);
+        Assert.Equal(generic.Value, deserialized.Value);
+    }
+    [Fact]
+    public void StackedGenericsStack()
+    {
+        Setup();
+        var generic = new GenericWithRestriction<Generics<int>>()
+        {
+            Value = new Generics<int>() { Value = 1 }
+        };
+        var s = YamlSerializer.Serialize(generic);
+        var deserialized = YamlSerializer.Deserialize<GenericWithRestriction<Generics<int>>>(s);
+        Assert.Equal(generic.Value.Value, deserialized.Value.Value);
+    }
 }
