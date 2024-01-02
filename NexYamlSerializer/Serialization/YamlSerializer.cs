@@ -126,7 +126,6 @@ namespace NexVYaml.Serialization
             {
                 options ??= DefaultOptions;
                 var contextLocal = new YamlDeserializationContext(options);
-                contextLocal.Reset();
 
                 parser.SkipAfter(ParseEventType.DocumentStart);
 
