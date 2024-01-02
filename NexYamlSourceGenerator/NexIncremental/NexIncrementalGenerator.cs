@@ -15,10 +15,11 @@ internal class NexIncrementalGenerator : IIncrementalGenerator
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var classProvider = context.SyntaxProvider.ForAttributeWithMetadataName(ReferencePackage.DataContract,
-            (node, transform) => node is TypeDeclarationSyntax,
+            (node, transform) => node is TypeDeclarationSyntax n && !n.Modifiers.Any(x => x.IsKind(SyntaxKind.AbstractKeyword)),
             (ctx, transform) =>
             {
                 var classDeclaration = (ITypeSymbol)ctx.TargetSymbol;
+                
                 var semanticModel = ctx.SemanticModel;
                 var compilation = semanticModel.Compilation;
                 var package = new ReferencePackage(compilation);
