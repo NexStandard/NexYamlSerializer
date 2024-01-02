@@ -60,15 +60,41 @@ internal record ClassInfo
         {
             var whereClause = "where ";
             var stringBuilder = new StringBuilder();
+            bool restricted = false;
             foreach (var typeRestriction in namedType.TypeParameters)
             {
                 var constraints = typeRestriction.ConstraintTypes.Select(restriction => restriction.ToDisplayString());
+                List<string> restrictionsString = new();
+
+                if (typeRestriction.HasNotNullConstraint)
+                {
+                    restrictionsString.Add($"notnull");
+                }
+                if(typeRestriction.HasReferenceTypeConstraint)
+                {
+                    restrictionsString.Add("class");
+                }
+                if(typeRestriction.HasUnmanagedTypeConstraint)
+                {
+                    restrictionsString.Add("unmangaged");
+                }
+                if(typeRestriction.HasValueTypeConstraint)
+                {
+                    restrictionsString.Add("struct");
+                }
+                if (typeRestriction.HasConstructorConstraint)
+                {
+                    restrictionsString.Add($"new()");
+                }
                 if (constraints.Any())
-                    stringBuilder.AppendLine($"{typeRestriction.ToDisplayString()} : {constraints}");
+                    restrictionsString.AddRange(constraints);
+                if (restrictionsString.Count > 0)
+                    stringBuilder.AppendLine(typeRestriction.ToDisplayString() + " : "+ string.Join(", ", restrictionsString));
             }
             if(stringBuilder.Length > 0)
                 restrictions =  whereClause + stringBuilder.ToString();
-            restrictions = "";
+            else
+                restrictions = "";
         }
         
         return new()
