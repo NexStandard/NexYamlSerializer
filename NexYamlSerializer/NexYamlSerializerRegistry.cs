@@ -2,9 +2,14 @@
 using System;
 using NexVYaml.Serialization;
 using System.Linq;
+using System.Buffers;
+using System.IO;
 
 namespace NexVYaml;
-
+/// <summary>
+/// Default Implementation for a <see cref="IYamlFormatterResolver"/> Registry to retrieve the types from.
+/// Will be used if no <see cref="IYamlFormatterResolver"/> is given in the <see cref="YamlSerializerOptions"/> when using <see cref="YamlSerializer"/>
+/// </summary>
 public class NexYamlSerializerRegistry : IYamlFormatterResolver
 {
     FormatterRegistry FormatterRegistry { get; set; } = new();
@@ -23,10 +28,10 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
         }
         return EmptyFormatter<T>.Empty();
     }
-    internal IYamlFormatter<T>? GetGenericFormatter<T>()
+    public IYamlFormatter<T>? GetGenericFormatter<T>()
     {
-        Type type = typeof(T);
-        Type genericFormatter = FormatterRegistry.GenericFormatterBuffer.FindAssignableType(type); ;
+        var type = typeof(T);
+        var genericFormatter = FormatterRegistry.GenericFormatterBuffer.FindAssignableType(type); ;
         if (genericFormatter is null)
             return null;
         Type genericType = genericFormatter.MakeGenericType(type.GenericTypeArguments);
@@ -60,30 +65,25 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
 
             foreach (var formatterHelperType in formatterHelperTypes)
             {
-                var instance = Activator.CreateInstance(formatterHelperType);
-
-                // Assuming Register method has no parameters
-                var registerMethod = formatterHelperType.GetMethod("Register");
-                if (registerMethod != null)
-                {
-                    registerMethod.Invoke(instance, null);
-                }
+                var instance = (IYamlFormatterHelper)Activator.CreateInstance(formatterHelperType);
+                instance.Register(NexYamlSerializerRegistry.Instance);
             }
         }
     }
 
 
+    // TODO: use for mapping generic interfaces??
     internal Type SynchronizeTypes(Type originalType,Type genericTarget)
     {
         return originalType;
     }
     public IYamlFormatter? GetFormatter(Type type)
     {
-        if (FormatterRegistry.DefinedFormatters.TryGetValue(type, out IYamlFormatter value))
+        if (FormatterRegistry.DefinedFormatters.TryGetValue(type, out var value))
         {
             return value;
         }
-        return GetGenericFormatter(type);
+        return null;
     }
     public void RegisterFormatter<T>(IYamlFormatter<T> formatter)
     {
@@ -118,7 +118,7 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
             FormatterRegistry.FormatterBuffer[interfaceType][keyType] = formatter;
         }
     }
-    public void Register(Type formatterType, Type interfaceType)
+    internal void Register(Type formatterType, Type interfaceType)
     {
         if (!FormatterRegistry.FormatterBuffer.ContainsKey(interfaceType))
         {

@@ -33,7 +33,7 @@ file class {info.GeneratorName + "Helper" } : IYamlFormatterHelper
 {{
     static readonly string AssemblyName = typeof({info.ShortDefinition}).Assembly.GetName().Name;
 
-    public void Register()
+    public void Register(IYamlFormatterResolver resolver)
     {{
 {package.CreateRegisterThis()}
 {package.CreateRegisterAbstracts()}

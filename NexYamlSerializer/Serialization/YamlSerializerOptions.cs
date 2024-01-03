@@ -7,7 +7,7 @@ namespace NexVYaml.Serialization
     {
         public static YamlSerializerOptions Standard => new();
 
-        public IYamlFormatterResolver Resolver { get; set; } = NexYamlSerializerRegistry.Instance;
+        public IYamlFormatterResolver Resolver { get; set; } = IYamlFormatterResolver.Default;
         public YamlEmitOptions EmitOptions { get; set; } = new();
         /// <summary>
         /// Limits <see cref="RedirectFormatter{T}"/> Serialization/Deserialization to known Basic Formatters.

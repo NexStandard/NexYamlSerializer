@@ -17,7 +17,7 @@ namespace NexVYaml.Serialization
         {
             if (context.SecureMode)
             {
-                return NexYamlSerializerRegistry.Instance.GetFormatter<T>().Deserialize(ref parser, context);
+                return context.Resolver.GetFormatter<T>().Deserialize(ref parser, context);
             }
             var type = typeof(T);
 
@@ -25,22 +25,24 @@ namespace NexVYaml.Serialization
             IYamlFormatter formatter;
             Type alias;
 
-            alias = NexYamlSerializerRegistry.Instance.GetAliasType(tag.Handle);
-            formatter = NexYamlSerializerRegistry.Instance.GetFormatter(alias);
+            alias = context.Resolver.GetAliasType(tag.Handle);
+            formatter = context.Resolver.GetFormatter(alias);
 
             if (formatter == null)
-                return default;
+                formatter = context.Resolver.GetGenericFormatter(alias);
+            if(formatter == null)
+                return new EmptyFormatter<T>().Deserialize(ref parser,context);
             // C# forgets the cast of T when invoking Deserialize,
             // this way we can call the deserialize method with the "real type"
             // that is in the object
             var method = formatter.GetType().GetMethod(nameof(Deserialize));
             return (T)method.Invoke(formatter, new object[] { parser, context });
         }
-        public void Serialize(ref Utf8YamlEmitter emitter, T value, YamlSerializationContext context)
+        public readonly void Serialize(ref Utf8YamlEmitter emitter, T value, YamlSerializationContext context)
         {
             if (context.SecureMode)
             {
-                var protectedFormatter = NexYamlSerializerRegistry.Instance.GetFormatter<T>();
+                var protectedFormatter = context.Resolver.GetFormatter<T>();
                 protectedFormatter.Serialize(ref emitter, value, context);
                 return;
             }
@@ -48,17 +50,17 @@ namespace NexVYaml.Serialization
             IYamlFormatter formatter;
             if (type.IsInterface || type.IsAbstract)
             {
-                formatter = NexYamlSerializerRegistry.Instance.FindFormatter<T>(value.GetType());
+                formatter = context.Resolver.FindFormatter<T>(value.GetType());
                 context.IsRedirected = true;
             }
             else if (type.IsGenericType)
             {
-                formatter = NexYamlSerializerRegistry.Instance.GetGenericFormatter<T>();
+                formatter = context.Resolver.GetGenericFormatter<T>();
                 formatter ??= EmptyFormatter<T>.Empty();
             }
             else
             {
-                formatter = NexYamlSerializerRegistry.Instance.GetFormatter<T>();
+                formatter = context.Resolver.GetFormatter<T>();
             }
             // C# forgets the cast of T when invoking Deserialize,
             // this way we can call the deserialize method with the "real type"

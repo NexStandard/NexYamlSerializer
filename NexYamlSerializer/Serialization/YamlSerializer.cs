@@ -38,18 +38,30 @@ namespace NexVYaml
 
         static YamlSerializerOptions? defaultOptions;
 
+        /// <summary>
+        /// Serializes the specified value to a <see cref="ReadOnlyMemory{T}"/> using YAML format.
+        /// </summary>
+        /// <typeparam name="T">The type of the value to serialize.</typeparam>
+        /// <param name="value">The value to serialize.</param>
+        /// <param name="options">The serializer options (optional).</param>
+        /// <returns>A read-only memory containing the serialized value.</returns>
         public static ReadOnlyMemory<byte> Serialize<T>(T value, YamlSerializerOptions? options = null)
         {
             options ??= DefaultOptions;
+
             var contextLocal = new YamlSerializationContext(options)
             {
                 SecureMode = options.SecureMode,
             };
+
             var writer = contextLocal.GetArrayBufferWriter();
+
             var emitter = new Utf8YamlEmitter(writer);
+
             try
             {
                 new RedirectFormatter<T>().Serialize(ref emitter, value, contextLocal);
+
                 return writer.WrittenMemory;
             }
             finally
@@ -57,6 +69,7 @@ namespace NexVYaml
                 emitter.Dispose();
             }
         }
+
 
         public static void Serialize<T>(T value, Stream stream,YamlSerializerOptions? options = null)
         {
@@ -81,7 +94,7 @@ namespace NexVYaml
                 options ??= DefaultOptions;
                 var contextLocal = new YamlSerializationContext(options);
 
-                var formatter = NexYamlSerializerRegistry.Instance.GetFormatterWithVerify<T>();
+                var formatter = options.Resolver.GetFormatterWithVerify<T>();
                 formatter.Serialize(ref emitter, value, contextLocal);
             }
             finally

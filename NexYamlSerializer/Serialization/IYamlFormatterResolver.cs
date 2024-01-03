@@ -10,6 +10,17 @@ namespace NexVYaml.Serialization
     public interface IYamlFormatterResolver
     {
         IYamlFormatter<T>? GetFormatter<T>();
+        public IYamlFormatter? GetFormatter(Type type);
+        IYamlFormatter GetGenericFormatter(Type type);
+        IYamlFormatter<T>? GetGenericFormatter<T>();
+        public Type GetAliasType(string alias);
+        public IYamlFormatter FindFormatter<T>(Type target);
+        public void RegisterFormatter<T>(IYamlFormatter<T> formatter);
+        public void RegisterTag(string tag, Type formatterGenericType);
+        public void RegisterFormatter(Type formatter);
+        public void Register<T>(IYamlFormatter<T> formatter, Type interfaceType);
+        public void RegisterGenericFormatter(Type target, Type formatterType);
+        public static IYamlFormatterResolver Default { get; set; } = NexYamlSerializerRegistry.Instance;
     }
 
     public static class YamlFormatterResolverExtensions
@@ -20,7 +31,7 @@ namespace NexVYaml.Serialization
             IYamlFormatter<T>? formatter;
             try
             {
-                Type type = typeof(T);
+                var type = typeof(T);
                 if (type.IsInterface ||type.IsAbstract)
                 {
                     if(resolver is RedirectFormatter<T> redirector)
@@ -36,13 +47,13 @@ namespace NexVYaml.Serialization
                 {
                     if(type.IsGenericType)
                     {
-                        formatter = NexYamlSerializerRegistry.Instance.GetGenericFormatter<T>();
+                        formatter = resolver.GetGenericFormatter<T>();
                         if (formatter is null)
                             return EmptyFormatter<T>.Empty();
                     }
                     else
                     {
-                        formatter = NexYamlSerializerRegistry.Instance.GetFormatter<T>();
+                        formatter = resolver.GetFormatter<T>();
                     }
 
                 }
