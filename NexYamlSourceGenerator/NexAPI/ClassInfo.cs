@@ -34,6 +34,9 @@ internal record ClassInfo
     internal ClassInfo() { }
     internal bool IsGeneric { get; private set; }
     internal TypeKind TypeKind { get; private set; }
+    /// <summary>
+    /// i.e. AssemblyName.Namespace.Namespace.Namespace
+    /// </summary>
     internal string NameSpace { get; private set; }
     internal string GeneratorName { get; private set; }
     internal IReadOnlyList<string> AllInterfaces { get; private set; }
