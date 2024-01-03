@@ -25,12 +25,6 @@ namespace NexVYaml
 
     public static class YamlSerializer
     {
-        [ThreadStatic]
-        static YamlDeserializationContext? deserializationContext;
-
-        [ThreadStatic]
-        static YamlSerializationContext? serializationContext;
-
         public static YamlSerializerOptions DefaultOptions
         {
             get => defaultOptions ??= YamlSerializerOptions.Standard;
@@ -170,7 +164,7 @@ namespace NexVYaml
             try
             {
                 options ??= DefaultOptions;
-                var contextLocal = deserializationContext ??= new YamlDeserializationContext(options);
+                var contextLocal = new YamlDeserializationContext(options);
                 var formatter = options.Resolver.GetFormatterWithVerify<T>();
                 var documents = new List<T>();
 
