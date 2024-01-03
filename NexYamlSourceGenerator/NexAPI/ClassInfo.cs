@@ -45,22 +45,20 @@ internal record ClassInfo
     /// </summary>
     internal string ShortDefinition { get; private set; }
 
-    public static ClassInfo CreateFrom(ITypeSymbol type)
+    public static ClassInfo CreateFrom(INamedTypeSymbol namedType)
     {
-        var displayName = type.ToDisplayString();
-        var namedType = (INamedTypeSymbol)type;
+        var displayName = namedType.ToDisplayString();
         var index = displayName.IndexOf('<');
         var shortDefinition = index != -1 ? displayName.Substring(0, index) : displayName;
         var genericTypeArguments = "";
         var genericTypeArgumentsShort = "";
-        var isGeneric = TryAddGenericsToName(type, ref shortDefinition, ref genericTypeArguments, ref genericTypeArgumentsShort);
+        var isGeneric = TryAddGenericsToName(namedType, ref shortDefinition, ref genericTypeArguments, ref genericTypeArgumentsShort);
         var restrictions = "";
         
         if(isGeneric)
         {
             var whereClause = "where ";
             var stringBuilder = new StringBuilder();
-            bool restricted = false;
             foreach (var typeRestriction in namedType.TypeParameters)
             {
                 var constraints = typeRestriction.ConstraintTypes.Select(restriction => restriction.ToDisplayString());
@@ -99,22 +97,22 @@ internal record ClassInfo
         
         return new()
         {
-            NameDefinition = type.ToDisplayString(),
-            TypeName = type.Name,
+            NameDefinition = namedType.ToDisplayString(),
+            TypeName = namedType.Name,
             IsGeneric = isGeneric,
             ShortDefinition = shortDefinition,
             TypeParameterArguments = genericTypeArguments,
             TypeParameterRestrictions = restrictions,
             TypeParameterArgumentsShort = new ShortGenericDefinition(namedType.TypeArguments.Count()).ToString(),
-            NameSpace = GetFullNamespace(type, '.'),
-            TypeKind = type.TypeKind,
-            AllInterfaces = type.AllInterfaces.Select(t => t.ToDisplayString()).ToList(),
-            AllAbstracts = FindAbstractClasses(type),
-            GeneratorName = CreateGeneratorName(type)
+            NameSpace = GetFullNamespace(namedType, '.'),
+            TypeKind = namedType.TypeKind,
+            AllInterfaces = namedType.AllInterfaces.Select(t => t.ToDisplayString()).ToList(),
+            AllAbstracts = FindAbstractClasses(namedType),
+            GeneratorName = CreateGeneratorName(namedType)
         };
     }
     
-    private static string CreateGeneratorName(ITypeSymbol type)
+    private static string CreateGeneratorName(INamedTypeSymbol type)
     {
         return GeneratorPrefix + GetFullNamespace(type, '_') + type.Name;
     }
@@ -124,7 +122,7 @@ internal record ClassInfo
     /// <param name="type">The <see cref="INamedTypeSymbol"/> representing the class.</param>
     /// <param name="shortDefinition">The short definition of the class name.</param>
     /// <param name="genericTypeArguments">The type parameter arguments for the class.</param>
-    private static bool TryAddGenericsToName(ITypeSymbol type, ref string shortDefinition, ref string genericTypeArguments, ref string genericTypeArgumentsShort)
+    private static bool TryAddGenericsToName(INamedTypeSymbol type, ref string shortDefinition, ref string genericTypeArguments, ref string genericTypeArgumentsShort)
     {
         if (type is INamedTypeSymbol namedType)
         {
@@ -153,7 +151,7 @@ internal record ClassInfo
         return false;
     }
 
-    static string GetFullNamespace(ITypeSymbol typeSymbol, char separator)
+    static string GetFullNamespace(INamedTypeSymbol typeSymbol, char separator)
     {
         var namespaceSymbol = typeSymbol.ContainingNamespace;
         var fullNamespace = "";
@@ -167,11 +165,11 @@ internal record ClassInfo
         return fullNamespace.TrimEnd(separator);
     }
     /// <summary>
-    /// Finds abstract classes in the inheritance hierarchy of the specified <see cref="ITypeSymbol"/>.
+    /// Finds abstract classes in the inheritance hierarchy of the specified <see cref="INamedTypeSymbol"/>.
     /// </summary>
-    /// <param name="typeSymbol">The <see cref="ITypeSymbol"/> for which to find abstract classes.</param>
-    /// <returns>A list of abstract classes in the inheritance hierarchy of the specified <see cref="ITypeSymbol"/>.</returns>
-    private static IReadOnlyList<string> FindAbstractClasses(ITypeSymbol typeSymbol)
+    /// <param name="typeSymbol">The <see cref="INamedTypeSymbol"/> for which to find abstract classes.</param>
+    /// <returns>A list of abstract classes in the inheritance hierarchy of the specified <see cref="INamedTypeSymbol"/>.</returns>
+    private static IReadOnlyList<string> FindAbstractClasses(INamedTypeSymbol typeSymbol)
     {
         var result = new List<string>();
         var baseType = typeSymbol.BaseType;

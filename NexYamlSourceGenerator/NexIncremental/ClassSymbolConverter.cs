@@ -10,7 +10,7 @@ namespace NexYamlSourceGenerator.NexIncremental;
 
 internal class ClassSymbolConverter
 {
-    internal ClassPackage Convert(ITypeSymbol namedTypeSymbol, ReferencePackage references)
+    internal ClassPackage Convert(INamedTypeSymbol namedTypeSymbol, ReferencePackage references)
     {
         var standardAssignAnalyzer = new PropertyAnalyzer()
             .HasVisibleGetter()

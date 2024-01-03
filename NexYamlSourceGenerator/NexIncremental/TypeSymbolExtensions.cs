@@ -10,13 +10,13 @@ namespace NexYamlSourceGenerator.NexIncremental;
 internal static class TypeSymbolExtensions
 {
     /// <summary>
-    /// Retrieves all <see cref="IPropertySymbol"/> and <see cref="IFieldSymbol"/> from the specified <see cref="ITypeSymbol"/> and it's base types,
+    /// Retrieves all <see cref="IPropertySymbol"/> and <see cref="IFieldSymbol"/> from the specified <see cref="INamedTypeSymbol"/> and it's base types,
     /// returning them in reverse order of inheritance ( top to bottom ).
     /// </summary>
-    /// <param name="type">The <see cref="ITypeSymbol"/> to retrieve members for.</param>
+    /// <param name="type">The <see cref="INamedTypeSymbol"/> to retrieve members for.</param>
     /// <param name="reference">The <see cref="ReferencePackage"/> containing necessary references.</param>
     /// <returns>all <see cref="IPropertySymbol"/> and <see cref="IFieldSymbol"/> in top to bottom order of inheritance tree.</returns>
-    public static IEnumerable<ISymbol> GetAllMembers(this ITypeSymbol type, ReferencePackage reference)
+    public static IEnumerable<ISymbol> GetAllMembers(this INamedTypeSymbol type, ReferencePackage reference)
     {
         // Get the base types in reverse order
         var baseTypes = GetBaseTypes(type, reference).Reverse();
@@ -36,11 +36,11 @@ internal static class TypeSymbolExtensions
     }
 
     /// <summary>
-    /// Retrieves all base types of the specified <see cref="ITypeSymbol"/> in bottom to top order.
+    /// Retrieves all base types of the specified <see cref="INamedTypeSymbol"/> in bottom to top order.
     /// </summary>
-    /// <param name="type">The <see cref="ITypeSymbol"/> for which to retrieve base types.</param>
+    /// <param name="type">The <see cref="INamedTypeSymbol"/> for which to retrieve base types.</param>
     /// <returns>All base types in bottom to top order.</returns>
-    private static IEnumerable<ITypeSymbol> GetBaseTypes(this ITypeSymbol type, ReferencePackage reference)
+    private static IEnumerable<ITypeSymbol> GetBaseTypes(this INamedTypeSymbol type, ReferencePackage reference)
     {
          while (type != null)
         {
