@@ -22,9 +22,14 @@ namespace NexVYaml
         {
         }
     }
-
+    /// <summary>
+    /// Provides methods for serializing/deserializing objects to YAML format using the specified <see cref="YamlSerializerOptions"/>.
+    /// </summary>
     public static class YamlSerializer
     {
+        /// <summary>
+        /// Gets or sets the default serialization <see cref="YamlSerializerOptions"/> used by the YamlSerializer if no <see cref="YamlSerializerOptions"/> is given.
+        /// </summary>
         public static YamlSerializerOptions DefaultOptions
         {
             get => defaultOptions ??= YamlSerializerOptions.Standard;
