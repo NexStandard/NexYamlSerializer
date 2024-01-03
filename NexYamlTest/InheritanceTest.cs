@@ -22,6 +22,7 @@ public class InheritanceTest
             Test = 100,
             Name = "Bob"
         };
+        
         var s = YamlSerializer.SerializeToString(inherited);
         var deserialized = YamlSerializer.Deserialize<InheritedNormalClass>(s);
         Assert.NotNull(deserialized);
