@@ -58,6 +58,11 @@ namespace NexVYaml
             stream.Write(Serialize(value, options).Span);
         }
 
+        public async static Task SerializeAsync<T>(T value, Stream stream, YamlSerializerOptions? options = null)
+        {
+            await stream.WriteAsync(Serialize(value, options));
+        }
+
         public static void Serialize<T>(IBufferWriter<byte> writer, T value, YamlSerializerOptions? options = null)
         {
             var emitter = new Utf8YamlEmitter(writer);
