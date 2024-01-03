@@ -25,7 +25,7 @@ namespace NexVYaml.Emitter
 
     public class YamlEmitOptions
     {
-        public static readonly YamlEmitOptions Default = new();
+        public static YamlEmitOptions Default => new();
 
         public int IndentWidth { get; set; } = 2;
     }

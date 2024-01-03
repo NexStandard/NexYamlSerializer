@@ -18,7 +18,7 @@ internal class NexIncrementalGenerator : IIncrementalGenerator
             (node, transform) => node is TypeDeclarationSyntax n && !n.Modifiers.Any(x => x.IsKind(SyntaxKind.AbstractKeyword)),
             (ctx, transform) =>
             {
-                var classDeclaration = (ITypeSymbol)ctx.TargetSymbol;
+                var classDeclaration = (INamedTypeSymbol)ctx.TargetSymbol;
                 
                 var semanticModel = ctx.SemanticModel;
                 var compilation = semanticModel.Compilation;

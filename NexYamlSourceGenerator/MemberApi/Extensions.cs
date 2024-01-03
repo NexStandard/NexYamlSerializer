@@ -6,15 +6,8 @@ using NexYamlSourceGenerator.NexIncremental;
 using System.Collections.Immutable;
 
 namespace NexYamlSourceGenerator.MemberApi;
-
 public static class Extensionss
 {
-    public static bool HasAttribute(this ITypeSymbol symbol, INamedTypeSymbol attribute)
-    {
-        if (symbol.GetAttributes().Any(attr => attr.AttributeClass?.OriginalDefinition.Equals(attribute, SymbolEqualityComparer.Default) ?? false))
-            return true;
-        return false;
-    }
     internal static IEnumerable<SymbolInfo> Reduce(this IEnumerable<SymbolInfo> infos)
     {
         foreach (var info in infos)
