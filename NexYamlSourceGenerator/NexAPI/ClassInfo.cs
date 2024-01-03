@@ -25,6 +25,10 @@ internal record ClassInfo
     internal string NameDefinition { get; private set; }
     internal string TypeName { get; private set; }
     /// <summary>
+    /// If an alias was set with DataContract this will be set.
+    /// </summary>
+    internal string AliasTag { get; private set; } = "";
+    /// <summary>
     /// i.e. <J,K>
     /// or "" if its non generic
     /// </summary>
@@ -48,7 +52,7 @@ internal record ClassInfo
     /// </summary>
     internal string ShortDefinition { get; private set; }
 
-    public static ClassInfo CreateFrom(INamedTypeSymbol namedType)
+    public static ClassInfo CreateFrom(INamedTypeSymbol namedType, AttributeData datacontract)
     {
         var displayName = namedType.ToDisplayString();
         var index = displayName.IndexOf('<');
@@ -57,7 +61,12 @@ internal record ClassInfo
         var genericTypeArgumentsShort = "";
         var isGeneric = TryAddGenericsToName(namedType, ref shortDefinition, ref genericTypeArguments, ref genericTypeArgumentsShort);
         var restrictions = "";
-        
+        var aliasTag = "";
+        var constructor = datacontract.AttributeConstructor;
+        if (constructor.Parameters.Length > 0 && constructor.Parameters[0].Name == "aliasName") 
+        {
+            aliasTag = (string)datacontract.ConstructorArguments[0].Value;
+        }
         if(isGeneric)
         {
             var whereClause = "where ";
@@ -102,6 +111,7 @@ internal record ClassInfo
         {
             NameDefinition = namedType.ToDisplayString(),
             TypeName = namedType.Name,
+            AliasTag = aliasTag,
             IsGeneric = isGeneric,
             ShortDefinition = shortDefinition,
             TypeParameterArguments = genericTypeArguments,

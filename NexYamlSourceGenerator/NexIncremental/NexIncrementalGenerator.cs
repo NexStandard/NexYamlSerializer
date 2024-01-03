@@ -22,11 +22,12 @@ internal class NexIncrementalGenerator : IIncrementalGenerator
                     return null;
                 
                 var semanticModel = ctx.SemanticModel;
+                var attributes = ctx.Attributes;
                 var compilation = semanticModel.Compilation;
                 var package = new ReferencePackage(compilation);
                 if (!package.IsValid())
                     return null;
-                return new ClassSymbolConverter().Convert(classDeclaration, package);
+                return new ClassSymbolConverter().Convert(classDeclaration, package, attributes);
             }
         );
 

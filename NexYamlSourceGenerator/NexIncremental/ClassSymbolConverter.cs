@@ -10,7 +10,7 @@ namespace NexYamlSourceGenerator.NexIncremental;
 
 internal class ClassSymbolConverter
 {
-    internal ClassPackage Convert(INamedTypeSymbol namedTypeSymbol, ReferencePackage references)
+    internal ClassPackage Convert(INamedTypeSymbol namedTypeSymbol, ReferencePackage references, ImmutableArray<AttributeData> attributes)
     {
         var standardAssignAnalyzer = new PropertyAnalyzer()
             .HasVisibleGetter()
@@ -28,9 +28,12 @@ internal class ClassSymbolConverter
         var members = namedTypeSymbol.GetAllMembers(references).AsSymbolInfo(references, propertyAnalyzers, fieldAnalyzers).Reduce();
         
         var memberList  = ImmutableList.Create(members.ToArray());
+
+        var datacontract = attributes.First(a => a.AttributeClass.Equals(references.DataContractAttribute, SymbolEqualityComparer.Default));
+
         return new ClassPackage()
         {
-            ClassInfo = ClassInfo.CreateFrom(namedTypeSymbol),
+            ClassInfo = ClassInfo.CreateFrom(namedTypeSymbol,datacontract),
             MemberSymbols = memberList,
         };
     }

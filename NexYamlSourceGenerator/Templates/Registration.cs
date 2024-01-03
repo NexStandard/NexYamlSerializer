@@ -18,6 +18,8 @@ internal static class Registration
     {
         var sb = new StringBuilder();
         sb.AppendLine($"{Constants.SerializerRegistry}.RegisterTag($\"{package.ClassInfo.NameSpace}.{package.ClassInfo.TypeName},{{AssemblyName}}\",typeof({package.ClassInfo.ShortDefinition}));");
+        if(package.ClassInfo.AliasTag != "")
+            sb.AppendLine($"{Constants.SerializerRegistry}.RegisterTag(\"{package.ClassInfo.AliasTag}\",typeof({package.ClassInfo.ShortDefinition}));");
         if (package.ClassInfo.IsGeneric)
         {
             sb.AppendLine($"{Constants.SerializerRegistry}.RegisterGenericFormatter(typeof({package.ClassInfo.ShortDefinition}),typeof({package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}));");
