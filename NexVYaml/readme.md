@@ -30,6 +30,9 @@ Structs in your Stride3D projects can be easily serialized and deserialized whil
 8. **Records**
 Efficiently serialize and deserialize record types with the Stride3D.YamlSerializer. This feature ensures seamless integration with records, maintaining their concise, immutable nature. Benefit from precise state representation in your Stride3D projects, optimizing your workflow with minimal effort.
 
+9. **Secure Mode**
+Prevents redirection of types during serialization and deserialization processes to ensure that no unknown or unauthorized types can be injected into your code.
+
 ### Unsupported Features
 
 1. **Generic Dynamic Deserialization:**
@@ -55,15 +58,7 @@ As of now, the serialization of generic Interfaces is not supported and is curre
 Add the Serializer nuget to your csproj.
 Add Stride.Engine nuget to your csproj.
 
-1. **Setup the Serializer**
-
-```csharp
-using NexVYaml;
-
-NexYamlSerializerRegistry.Init();
-```
-
-2. **Create a class with the DataContract Attribute**
+1. **Create a class with the DataContract Attribute**
 
 ```csharp
 using Stride.Core;
