@@ -5,7 +5,6 @@ using NexYamlSourceGenerator.MemberApi;
 using NexYamlSourceGenerator.MemberApi.Analysation.PropertyAnalyzers;
 using NexYamlSourceGenerator.MemberApi.FieldAnalyzers;
 using NexYamlSourceGenerator.MemberApi.UniversalAnalyzers;
-using NexYamlSourceGenerator.NexAPI;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;

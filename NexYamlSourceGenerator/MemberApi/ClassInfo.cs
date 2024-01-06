@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using System.Text;
 using System.Xml.Linq;
 
-namespace NexYamlSourceGenerator.NexAPI;
+namespace NexYamlSourceGenerator.MemberApi;
 
 
 internal record ShortGenericDefinition(int Count)
@@ -45,7 +45,7 @@ internal record ClassInfo
     internal string NameSpace { get; private set; }
     internal string GeneratorName { get; private set; }
     internal ImmutableList<(string DisplayString, string ShortDisplayString, bool IsGeneric)> AllInterfaces { get; private set; }
-    
+
     internal ImmutableList<string> AllAbstracts { get; private set; }
 
     /// <summary>
@@ -89,12 +89,10 @@ internal record ClassInfo
         };
     }
 
-    
-
-    private static ImmutableList<(string DisplayString, string ShortDisplayString,bool IsGeneric)> GetInterfaces(ImmutableArray<INamedTypeSymbol> interfaces)
+    private static ImmutableList<(string DisplayString, string ShortDisplayString, bool IsGeneric)> GetInterfaces(ImmutableArray<INamedTypeSymbol> interfaces)
     {
         List<(string DisplayString, string ShortDisplayString, bool IsGeneric)> result = new();
-        foreach(var interf  in interfaces)
+        foreach (var interf in interfaces)
         {
             var display = interf.ToDisplayString();
             string shortI = "";
@@ -103,9 +101,9 @@ internal record ClassInfo
             {
                 isGeneric = true;
                 shortI = display.Substring(0, display.IndexOf('<'));
-                shortI = shortI + "<" + new string(',', interf.TypeArguments.Length - 1 ) + ">";
+                shortI = shortI + "<" + new string(',', interf.TypeArguments.Length - 1) + ">";
             }
-            result.Add(new() { DisplayString = interf.ToDisplayString() , ShortDisplayString = shortI , IsGeneric = isGeneric });
+            result.Add(new() { DisplayString = interf.ToDisplayString(), ShortDisplayString = shortI, IsGeneric = isGeneric });
         }
         return ImmutableList.Create(result.ToArray());
     }

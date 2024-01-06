@@ -1,5 +1,4 @@
 ﻿using Microsoft.CodeAnalysis;
-using NexYamlSourceGenerator.NexAPI;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;

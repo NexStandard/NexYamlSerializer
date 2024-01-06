@@ -1,6 +1,4 @@
 ﻿using NexYamlSourceGenerator.MemberApi;
-using NexYamlSourceGenerator.NexAPI;
-using System.Runtime.Serialization;
 using System.Text;
 
 namespace NexYamlSourceGenerator.Templates;

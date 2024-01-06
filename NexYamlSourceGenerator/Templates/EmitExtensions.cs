@@ -1,6 +1,4 @@
 ﻿using NexYamlSourceGenerator.MemberApi;
-using NexYamlSourceGenerator.NexAPI;
-using System.Linq.Expressions;
 using System.Text;
 
 namespace NexYamlSourceGenerator.Templates;
@@ -12,9 +10,9 @@ internal static class EmitExtensions
         var sb = new StringBuilder();
         foreach (var member in package.MemberSymbols)
         {
-            var serializeString = $$""".Serialize""";
+            var serializeString = $".Serialize";
             if (member.IsArray)
-                serializeString = $$""".SerializeArray""";
+                serializeString = $".SerializeArray";
             if (member.IsAbstract || member.IsInterface)
             {
 
