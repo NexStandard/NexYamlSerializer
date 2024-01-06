@@ -24,8 +24,6 @@ public static class Extensionss
     public static bool TryGetAttribute(this ISymbol symbol, INamedTypeSymbol attribute, out AttributeData attributeData)
     {
         attributeData = symbol.GetAttributes().FirstOrDefault(attr => attr.AttributeClass?.OriginalDefinition.Equals(attribute, SymbolEqualityComparer.Default) ?? false);
-        if (attributeData == null)
-            return false;
-        return true;
+        return attributeData != null;
     }
 }
