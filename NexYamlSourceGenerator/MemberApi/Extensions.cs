@@ -23,23 +23,4 @@ public static class Extensionss
             return false;
         return true;
     }
-    public static bool HasAttribute(this ISymbol symbol, INamedTypeSymbol attribute)
-    {
-        if (symbol.GetAttributes().Any(attr => attr.AttributeClass?.OriginalDefinition.Equals(attribute, SymbolEqualityComparer.Default) ?? false))
-            return true;
-        return false;
-    }
-    public static string GetFullNamespace(this ITypeSymbol typeSymbol, char separator)
-    {
-        var namespaceSymbol = typeSymbol.ContainingNamespace;
-        var fullNamespace = "";
-
-        while (namespaceSymbol != null && !string.IsNullOrEmpty(namespaceSymbol.Name))
-        {
-            fullNamespace = namespaceSymbol.Name + separator + fullNamespace;
-            namespaceSymbol = namespaceSymbol.ContainingNamespace;
-        }
-
-        return fullNamespace.TrimEnd(separator);
-    }
 }
