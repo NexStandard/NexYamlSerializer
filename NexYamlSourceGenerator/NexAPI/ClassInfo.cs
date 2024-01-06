@@ -43,8 +43,8 @@ internal record ClassInfo
     /// </summary>
     internal string NameSpace { get; private set; }
     internal string GeneratorName { get; private set; }
-    internal IReadOnlyList<string> AllInterfaces { get; private set; }
-    internal IReadOnlyList<string> AllAbstracts { get; private set; }
+    internal ImmutableList<string> AllInterfaces { get; private set; }
+    internal ImmutableList<string> AllAbstracts { get; private set; }
 
     /// <summary>
     /// i.e. Test<,,>
@@ -105,7 +105,7 @@ internal record ClassInfo
             else
                 restrictions = "";
         }
-        
+
         return new()
         {
             NameDefinition = namedType.ToDisplayString(),
@@ -118,8 +118,8 @@ internal record ClassInfo
             TypeParameterArgumentsShort = new ShortGenericDefinition(namedType.TypeArguments.Count()).ToString(),
             NameSpace = GetFullNamespace(namedType, '.'),
             TypeKind = namedType.TypeKind,
-            AllInterfaces = namedType.AllInterfaces.Select(t => t.ToDisplayString()).ToList(),
-            AllAbstracts = FindAbstractClasses(namedType),
+            AllInterfaces = ImmutableList.Create(namedType.AllInterfaces.Select(t => t.ToDisplayString()).ToArray()),
+            AllAbstracts = ImmutableList.Create(FindAbstractClasses(namedType).ToArray()),
             GeneratorName = CreateGeneratorName(namedType)
         };
     }

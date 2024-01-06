@@ -32,20 +32,13 @@ internal static class Registration
     public static string CreateRegisterInterfaces(this ClassPackage package)
     {
         StringBuilder sb = new();
-        if (package.ClassInfo.IsGeneric)
+
+
+        foreach (var interfac in package.ClassInfo.AllInterfaces)
         {
-            foreach (var interfac in package.ClassInfo.AllInterfaces)
-            {
-               //  sb.AppendLine(Constants.SerializerRegistry + string.Format(Constants.RegisterInterface, $"typeof({package.ClassInfo.ShortDefinition})", interfac));
-            }
+            sb.AppendLine(Constants.SerializerRegistry + string.Format(Constants.RegisterInterface, "formatter", interfac));
         }
-        else
-        {
-            foreach (var interfac in package.ClassInfo.AllInterfaces)
-            {
-                sb.AppendLine(Constants.SerializerRegistry + string.Format(Constants.RegisterInterface, "formatter", interfac));
-            }
-        }
+
 
         return sb.ToString();
     }
