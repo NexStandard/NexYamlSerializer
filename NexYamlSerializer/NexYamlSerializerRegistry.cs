@@ -152,6 +152,10 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
                 return FormatterRegistry.FormatterBuffer[typeof(T)][target];
             }
         }
+        if(FormatterRegistry.DefinedFormatters.TryGetValue(target, out var form))
+        {
+            return form;
+        }
         return GetGenericFormatter(target,target);
     }
 }

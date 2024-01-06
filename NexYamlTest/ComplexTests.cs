@@ -99,5 +99,18 @@ public class ComplexTests
         Assert.Equal(genericInterface.Generic.Generic, deserialized.Generic.Generic);
         Assert.Equal(genericInterface.Generic.Generic2, deserialized.Generic.Generic2);
         Assert.Equal(genericInterface.Generic2, deserialized.Generic2);
+    }    [Fact]
+    public void NoParamsImplementation()
+    {
+        Setup();
+        IGenericInterface<int,int> genericInterface = new GenericImplementedClassWithNoParams()
+        {
+            Generic2 = 1,
+            Generic = 10
+        };
+        var s = YamlSerializer.SerializeToString(genericInterface);
+        var deserialized = YamlSerializer.Deserialize<IGenericInterface<int, int>>(s);
+        Assert.Equal(genericInterface.Generic, deserialized.Generic);
+        Assert.Equal(genericInterface.Generic2, deserialized.Generic2);
     }
 }
