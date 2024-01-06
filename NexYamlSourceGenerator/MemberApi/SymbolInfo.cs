@@ -12,8 +12,6 @@ internal record SymbolInfo
     internal string Namespace { get; init; }
     internal SymbolKind TypeKind { get; init; }
     internal bool IsArray { get; init; }
-    internal bool IsGeneric { get; init; }
     internal bool IsAbstract { get; init; }
-    internal string Tag {  get => $$"""emitter.Tag($"!{typeof({{Name}})},{{Namespace}}")""";}
     internal DataMemberContext Context { get; init; }
 }
