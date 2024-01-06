@@ -9,4 +9,6 @@ namespace NexVYaml;
 public interface IYamlFormatterHelper
 {
     void Register(IYamlFormatterResolver resolver);
+    public IYamlFormatter Create<T>();
+    public IYamlFormatter Create(Type target);
 }

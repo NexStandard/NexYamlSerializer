@@ -1,4 +1,5 @@
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NexYamlSourceGenerator.NexIncremental;
 using System.Collections.Immutable;
 using System.Text;
@@ -33,6 +34,7 @@ internal record ClassInfo
     /// or "" if its non generic
     /// </summary>
     internal string TypeParameterArguments { get; private set; }
+    internal string[] TypeParameters { get; private set; }
     internal string TypeParameterRestrictions { get; private set; }
     internal string TypeParameterArgumentsShort { get; private set; }
     internal ClassInfo() { }
@@ -43,7 +45,7 @@ internal record ClassInfo
     /// </summary>
     internal string NameSpace { get; private set; }
     internal string GeneratorName { get; private set; }
-    internal ImmutableList<(string DisplayString, string ShortDisplayString, bool IsGeneric)> AllInterfaces { get; private set; }
+    internal ImmutableList<(string DisplayString, string ShortDisplayString, bool IsGeneric, string[] TypeParameters)> AllInterfaces { get; private set; }
 
     internal ImmutableList<string> AllAbstracts { get; private set; }
 
@@ -60,7 +62,8 @@ internal record ClassInfo
         var shortDefinition = index != -1 ? displayName[..index] : displayName;
         var genericTypeArguments = "";
         var genericTypeArgumentsShort = "";
-        var isGeneric = TryAddGenericsToName(namedType, ref shortDefinition, ref genericTypeArguments, ref genericTypeArgumentsShort);
+        var typeParameters = new List<string>();
+        var isGeneric = TryAddGenericsToName(namedType, ref shortDefinition, ref genericTypeArguments, ref genericTypeArgumentsShort,typeParameters);
         var restrictions = "";
         var aliasTag = "";
         if (datacontract is { AttributeConstructor.Parameters: [{ Name: "aliasName" }, ..], ConstructorArguments: [{ Value: string alias }, ..] })
@@ -78,6 +81,7 @@ internal record ClassInfo
             IsGeneric = isGeneric,
             ShortDefinition = shortDefinition,
             TypeParameterArguments = genericTypeArguments,
+            TypeParameters = typeParameters.ToArray(),
             TypeParameterRestrictions = restrictions,
             TypeParameterArgumentsShort = new ShortGenericDefinition(namedType.TypeArguments.Length).ToString(),
             NameSpace = GetFullNamespace(namedType, '.'),
@@ -88,13 +92,14 @@ internal record ClassInfo
         };
     }
 
-    private static ImmutableList<(string DisplayString, string ShortDisplayString, bool IsGeneric)> GetInterfaces(ImmutableArray<INamedTypeSymbol> interfaces)
+    private static ImmutableList<(string DisplayString, string ShortDisplayString, bool IsGeneric, string[] TypeParameters)> GetInterfaces(ImmutableArray<INamedTypeSymbol> interfaces)
     {
-        List<(string DisplayString, string ShortDisplayString, bool IsGeneric)> result = new();
+        List<(string DisplayString, string ShortDisplayString, bool IsGeneric, string[] TypeParameters)> result = new();
         foreach (var interf in interfaces)
         {
+            
             var display = interf.ToDisplayString();
-            var shortI = "";
+            var shortI = display;
             var isGeneric = false;
             if (interf.IsGenericType)
             {
@@ -102,7 +107,7 @@ internal record ClassInfo
                 shortI = display[..display.IndexOf('<')];
                 shortI = shortI + "<" + new string(',', interf.TypeArguments.Length - 1) + ">";
             }
-            result.Add(new() { DisplayString = interf.ToDisplayString(), ShortDisplayString = shortI, IsGeneric = isGeneric });
+            result.Add(new() { DisplayString = interf.ToDisplayString(), ShortDisplayString = shortI, IsGeneric = isGeneric, TypeParameters = interf.TypeArguments.Select(x => x.ToDisplayString()).ToArray() });
         }
         return ImmutableList.Create(result.ToArray());
     }
@@ -116,7 +121,7 @@ internal record ClassInfo
     /// <param name="type">The <see cref="INamedTypeSymbol"/> representing the class.</param>
     /// <param name="shortDefinition">The short definition of the class name.</param>
     /// <param name="genericTypeArguments">The type parameter arguments for the class.</param>
-    private static bool TryAddGenericsToName(INamedTypeSymbol type, ref string shortDefinition, ref string genericTypeArguments, ref string genericTypeArgumentsShort)
+    private static bool TryAddGenericsToName(INamedTypeSymbol type, ref string shortDefinition, ref string genericTypeArguments, ref string genericTypeArgumentsShort, List<string> typeParameters)
     {
         if (type is INamedTypeSymbol namedType)
         {
@@ -130,6 +135,7 @@ internal record ClassInfo
                 {
                     genericTypeArguments += argument.Name + ",";
                     genericTypeArgumentsShort += ",";
+                    typeParameters.Add(argument.Name);
                 }
                 genericTypeArguments = genericTypeArguments.TrimEnd(',');
                 genericTypeArgumentsShort = genericTypeArgumentsShort.Remove(genericTypeArgumentsShort.Length - 1);

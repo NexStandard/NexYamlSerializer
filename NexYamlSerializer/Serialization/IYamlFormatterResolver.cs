@@ -12,6 +12,7 @@ namespace NexVYaml.Serialization
         IYamlFormatter<T>? GetFormatter<T>();
         public IYamlFormatter? GetFormatter(Type type);
         IYamlFormatter GetGenericFormatter(Type type,Type origin);
+        public void Register(IYamlFormatterHelper yamlFormatterHelper, Type target);
         IYamlFormatter<T>? GetGenericFormatter<T>();
         public Type GetAliasType(string alias);
         public IYamlFormatter FindFormatter<T>(Type target);

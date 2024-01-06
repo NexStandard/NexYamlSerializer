@@ -9,7 +9,7 @@ using NexVYaml.Parser;
 using NexVYaml.Serialization;
 
 namespace NexYamlSerializer.Serialization.Formatters;
-internal class EmptyFormatter<T> : IYamlFormatter<T>
+public class EmptyFormatter<T> : IYamlFormatter<T>
 {
     public static IYamlFormatter<T> Empty() => new EmptyFormatter<T>();
     public T? Deserialize(ref YamlParser parser, YamlDeserializationContext context)

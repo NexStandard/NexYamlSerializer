@@ -16,6 +16,11 @@ internal class GenericImplementedClassWithLessParams<T> : IGenericInterface<T, i
     public int Generic2 { get; set; }
 }
 [DataContract]
+internal class SubstitutedGenericClassNoParams : GenericImplementedClassWithLessParams<int>
+{
+
+}
+[DataContract]
 internal class GenericImplementedClassWithNoParams : IGenericInterface<int, int>
 {
     public int Generic { get; set; }

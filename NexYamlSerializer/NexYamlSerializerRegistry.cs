@@ -4,6 +4,7 @@ using NexVYaml.Serialization;
 using System.Linq;
 using System.Buffers;
 using System.IO;
+using System.Collections.Generic;
 
 namespace NexVYaml;
 /// <summary>
@@ -22,6 +23,7 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
     public Type GetAliasType(string alias) => FormatterRegistry.TypeMap[alias];
     public IYamlFormatter<T> GetFormatter<T>()
     {
+
         if (FormatterRegistry.DefinedFormatters.TryGetValue(typeof(T), out var formatter))
         {
             return (IYamlFormatter<T>)formatter;
@@ -31,7 +33,7 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
     public IYamlFormatter<T>? GetGenericFormatter<T>()
     {
         var type = typeof(T);
-        var genericFormatter = FormatterRegistry.GenericFormatterBuffer.FindAssignableType(type); ;
+        var genericFormatter = FormatterRegistry.GenericFormatterBuffer.FindAssignableType(type);
         if (genericFormatter is null)
             return null;
         var genericType = genericFormatter.MakeGenericType(type.GenericTypeArguments);
@@ -46,12 +48,22 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
         var genericType = genericFormatter.MakeGenericType(type.GenericTypeArguments);
         return (IYamlFormatter)Activator.CreateInstance(genericType);
     }
+    
+    public void Register(IYamlFormatterHelper yamlFormatterHelper,Type target)
+    {
+        FormatterRegistry.Factories.Add(target, yamlFormatterHelper);
+    }
     public IYamlFormatter GetGenericFormatter(Type type, Type origin)
     {
+        
+        if (FormatterRegistry.Factories.TryGetValue(origin, out var formatter))
+        {
+            return formatter.Create(type);
+        }
         var genericFormatter = FormatterRegistry.GenericFormatterBuffer.FindAssignableType(type); ;
         if (genericFormatter is null)
             genericFormatter = typeof(EmptyFormatter<>);
-
+        
         var genericType = genericFormatter.MakeGenericType(origin.GenericTypeArguments.Take(genericFormatter.GetGenericArguments().Length).ToArray());
         return (IYamlFormatter)Activator.CreateInstance(genericType);
 

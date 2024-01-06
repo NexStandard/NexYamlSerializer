@@ -30,6 +30,7 @@ using NexVYaml;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using NexVYaml.Serialization;
+using NexYamlSerializer.Serialization.Formatters;
 {ns}
 [System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]
 file class {info.GeneratorName + "Helper" } : IYamlFormatterHelper
@@ -42,6 +43,8 @@ file class {info.GeneratorName + "Helper" } : IYamlFormatterHelper
 {package.CreateRegisterAbstracts()}
 {package.CreateRegisterInterfaces()}
     }}
+{package.CreateMethod()}
+{package.CreateMethodTyped()}
 }}
 [System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]
 file class {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<{info.NameDefinition}> {info.TypeParameterRestrictions}
@@ -49,8 +52,6 @@ file class {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<{
 
     {package.CreateUTF8Members()}
     static readonly string AssemblyName = typeof({info.ShortDefinition}).Assembly.GetName().Name;
-    string IdentifierTag {{ get; }} = typeof({info.ShortDefinition}).Name;
-    Type IdentifierType {{ get; }} = typeof({info.ShortDefinition});
 
     public void Serialize(ref Utf8YamlEmitter emitter, {info.NameDefinition} value, YamlSerializationContext context)
     {{

@@ -18,6 +18,7 @@ internal static class Registration
     {
         var sb = new StringBuilder();
         sb.AppendLine($"{Constants.SerializerRegistry}.RegisterTag($\"{package.ClassInfo.NameSpace}.{package.ClassInfo.TypeName},{{AssemblyName}}\",typeof({package.ClassInfo.ShortDefinition}));");
+        sb.AppendLine($"{Constants.SerializerRegistry}.Register(this,typeof({package.ClassInfo.ShortDefinition}));");
         if(package.ClassInfo.AliasTag != "")
             sb.AppendLine($"{Constants.SerializerRegistry}.RegisterTag(\"{package.ClassInfo.AliasTag}\",typeof({package.ClassInfo.ShortDefinition}));");
         if (package.ClassInfo.IsGeneric)
@@ -45,6 +46,12 @@ internal static class Registration
                 interfacDisplay = interfac.ShortDisplayString;
             }
             sb.AppendLine(Constants.SerializerRegistry + string.Format(Constants.RegisterInterface, refe, interfacDisplay));
+            sb.Append("//");
+            foreach(var type in interfac.TypeParameters)
+            {
+                sb.Append(type);
+            }
+            sb.AppendLine();
         }
 
         return sb.ToString();
