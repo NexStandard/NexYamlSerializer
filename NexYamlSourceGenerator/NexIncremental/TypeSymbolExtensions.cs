@@ -16,11 +16,15 @@ internal static class TypeSymbolExtensions
     /// <param name="type">The <see cref="INamedTypeSymbol"/> to retrieve members for.</param>
     /// <param name="reference">The <see cref="ReferencePackage"/> containing necessary references.</param>
     /// <returns>all <see cref="IPropertySymbol"/> and <see cref="IFieldSymbol"/> in top to bottom order of inheritance tree.</returns>
-    public static IEnumerable<ISymbol> GetAllMembers(this INamedTypeSymbol type, ReferencePackage reference)
+    public static IEnumerable<ISymbol> GetAllMembers(this INamedTypeSymbol type, ReferencePackage reference) => GetAllMembersBottomToTop(type, reference).Reverse();
+
+
+    private static IEnumerable<ISymbol> GetAllMembersBottomToTop(this INamedTypeSymbol type, ReferencePackage reference)
     {
         // Get the base types in reverse order
-        var baseTypes = GetBaseTypes(type, reference).Reverse();
-
+        var baseTypes = GetBaseTypes(type, reference);
+        List<string> properties = new();
+        List<string> fields = new();
         foreach (var baseType in baseTypes)
         {
             // Get members of the base type in reverse order
@@ -29,8 +33,24 @@ internal static class TypeSymbolExtensions
             foreach (var member in members)
             {
                 // Filter only properties and fields
-                if (member is IPropertySymbol or IFieldSymbol)
-                    yield return member;
+                if (member is IPropertySymbol property)
+                {
+                    if(property.IsAbstract || properties.Contains(property.Name))
+                    {
+                        continue;
+                    }
+                    properties.Add(property.Name);
+                    yield return property;
+                }
+                if (member is IFieldSymbol field)
+                {
+                    if(field.IsAbstract || fields.Contains(field.Name))
+                    {
+                        continue;
+                    }
+                    fields.Add(field.Name);
+                    yield return field;
+                }
             }
         }
     }

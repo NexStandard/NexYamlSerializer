@@ -5,9 +5,12 @@ namespace NexYamlTest.SimpleClasses;
 internal class InheritedNormalClass : BaseClass
 {
     public int Test {  get; set; }
+    public override int AbstractInt { get; set; }
+    public override string Name { get; set; }
 }
 [DataContract]
-internal class BaseClass
+internal abstract class BaseClass
 {
-    public string Name { get; set; }
+    public abstract int AbstractInt { get; set; }
+    public virtual string Name { get; set; }
 }
