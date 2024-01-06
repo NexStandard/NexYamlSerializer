@@ -17,23 +17,19 @@ internal record DataMemberContext
         {
             return Empty;
         }
-        else
+        if (symbol.TryGetAttribute(references.DataMemberAttribute, out var attributeData1))
         {
-            if(symbol.TryGetAttribute(references.DataMemberAttribute, out var attributeData1))
-            {
-                context.State = DataMemberContextState.Included;
-                // TODO: Assign, Content Mode
-                context.Mode = MemberMode.Assign;
-                // TODO: Order Mode
-                context.Order = 0;
-            }
-            else
-            {
-                context.State = DataMemberContextState.Weak;
-                context.Mode = MemberMode.Assign;
-                context.Order = 0;
-            }
+            context.State = DataMemberContextState.Included;
+            // TODO: Assign, Content Mode
+            context.Mode = MemberMode.Assign;
+            // TODO: Order Mode
+            context.Order = 0;
+            return context;
         }
+
+        context.State = DataMemberContextState.Weak;
+        context.Mode = MemberMode.Assign;
+        context.Order = 0;
         return context;
     }
     public DataMemberContextState State { get; private set; }
@@ -42,7 +38,17 @@ internal record DataMemberContext
 }
 internal enum DataMemberContextState
 {
-    Included, // Field was Datamembered
-    Weak,     // Field wasnt Datamemberd but also not excluded
-    Excluded  // DataMemberIgnored
+    /// <summary>
+    /// Member has a <see cref="ReferencePackage.DataMemberAttribute"/>
+    /// </summary>
+    Included,
+    /// <summary>
+    /// Member doesn't have a <see cref="ReferencePackage.DataMemberAttribute"/> but also not a <see cref="ReferencePackage.DataMemberIgnoreAttribute"/>
+    /// </summary>
+    Weak,
+    /// <summary>
+    /// Member has a <see cref="ReferencePackage.DataMemberIgnoreAttribute"/>
+    /// or // TODO Never mode
+    /// </summary>
+    Excluded
 }
