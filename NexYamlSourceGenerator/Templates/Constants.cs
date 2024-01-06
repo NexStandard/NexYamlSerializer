@@ -4,7 +4,7 @@ using System.Text;
 
 namespace NexYamlSourceGenerator.Templates;
 
-internal class Constants
+internal static class Constants
 {
     public const string SerializerRegistry = "\t\tresolver";
     public const string RegisterFormatter = ".RegisterFormatter({0});";
