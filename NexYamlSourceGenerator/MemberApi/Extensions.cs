@@ -8,6 +8,11 @@ using System.Collections.Immutable;
 namespace NexYamlSourceGenerator.MemberApi;
 public static class Extensionss
 {
+    /// <summary>
+    /// Removes all <see cref="SymbolInfo.Empty"/> from the collection.
+    /// </summary>
+    /// <param name="infos">The collection to filter</param>
+    /// <returns>A collection without Empty elements</returns>
     internal static IEnumerable<SymbolInfo> Reduce(this IEnumerable<SymbolInfo> infos)
     {
         foreach (var info in infos)
