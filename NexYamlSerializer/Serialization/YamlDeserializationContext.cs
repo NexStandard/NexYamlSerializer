@@ -7,7 +7,6 @@ namespace NexVYaml.Serialization
 {
     public class YamlDeserializationContext
     {
-        static ByteArrayFormatter ByteArrayFormatter = new ByteArrayFormatter();
         public IYamlFormatterResolver Resolver { get; }
         public bool SecureMode { get; set; } = false;
         readonly Dictionary<Anchor, object?> aliases = new();
@@ -31,10 +30,6 @@ namespace NexVYaml.Serialization
         public T[] DeserializeArray<T>(ref YamlParser parser)
         {
             return DeserializeWithAlias(new ArrayFormatter<T>(), ref parser);
-        }
-        public byte[] DeserializeByteArray(ref YamlParser parser)
-        {
-            return DeserializeWithAlias(ByteArrayFormatter, ref parser);
         }
         public T DeserializeWithAlias<T>(IYamlFormatter<T> innerFormatter, ref YamlParser parser)
         {

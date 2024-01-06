@@ -34,9 +34,7 @@ internal class FieldAnalyzer : IMemberSymbolAnalyzer<IFieldSymbol>
             IsAbstract = context.Symbol.Type.IsAbstract,
             IsInterface = context.Symbol.Type.TypeKind == TypeKind.Interface,
             Context = context.DataMemberContext,
-            IsByteType = context.Symbol.Type.SpecialType is SpecialType.System_Byte or SpecialType.System_SByte,
             IsArray = context.Symbol.Type.TypeKind == TypeKind.Array,
-
         };
     }
 

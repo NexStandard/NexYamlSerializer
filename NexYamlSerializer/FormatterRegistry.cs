@@ -37,7 +37,6 @@ class FormatterRegistry
             { typeof(sbyte), SByteFormatter.Instance },
             { typeof(DateTime), DateTimeFormatter.Instance },
             { typeof(char), CharFormatter.Instance },
-            { typeof(byte[]), ByteArrayFormatter.Instance },
 
             // Nullable Primitive
             { typeof(short?), NullableInt16Formatter.Instance },

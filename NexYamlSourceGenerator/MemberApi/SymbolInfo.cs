@@ -11,7 +11,6 @@ internal record SymbolInfo
     internal string Type { get; set; }
     internal string Namespace { get; set; }
     internal SymbolKind TypeKind { get; set; }
-    internal bool IsByteType { get; set; }
     internal bool IsArray { get; set; }
     internal bool IsGeneric { get; set; }
     internal bool IsAbstract { get; set; }

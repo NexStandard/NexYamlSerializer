@@ -76,8 +76,6 @@ internal class DeserializeEmitter
     void AppendArray(string start, SymbolInfo symbol, StringBuilder switchBuilder)
     {
         var serializeString = $$"""context.DeserializeArray<{{symbol.Type}}>(ref parser);""";
-        if (symbol.IsByteType)
-            serializeString = "context.DeserializeByteArray(ref parser);";
 
         switchBuilder.AppendLine($$"""
                     {{start}} (key.SequenceEqual({{"UTF8" + symbol.Name}}))

@@ -87,7 +87,7 @@ namespace NexVYaml.Serialization
                         emitter.WriteString((string)value);
                         return;
                     case 14:
-                        ByteArrayFormatter.Instance.Serialize(ref emitter, (byte[])value, context);
+                        new ArrayFormatter<byte>().Serialize(ref emitter, (byte[])value, context);
                         return;
                 }
             }
