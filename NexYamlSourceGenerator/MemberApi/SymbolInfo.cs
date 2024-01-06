@@ -4,16 +4,16 @@ using NexYamlSourceGenerator.MemberApi;
 internal record SymbolInfo
 {
     public static SymbolInfo Empty { get; } = new SymbolInfo() { IsEmpty = true };
-    public bool IsInterface { get; internal set; }
-    internal virtual bool IsEmpty { get; set; } = false;
-    internal bool IsHidden { get; set; } = false;
-    internal string Name { get; set; }
-    internal string Type { get; set; }
-    internal string Namespace { get; set; }
-    internal SymbolKind TypeKind { get; set; }
-    internal bool IsArray { get; set; }
-    internal bool IsGeneric { get; set; }
-    internal bool IsAbstract { get; set; }
+    public bool IsInterface { get; init; }
+    internal virtual bool IsEmpty { get; init; } = false;
+    internal bool IsHidden { get; init; } = false;
+    internal string Name { get; init; }
+    internal string Type { get; init; }
+    internal string Namespace { get; init; }
+    internal SymbolKind TypeKind { get; init; }
+    internal bool IsArray { get; init; }
+    internal bool IsGeneric { get; init; }
+    internal bool IsAbstract { get; init; }
     internal string Tag {  get => $$"""emitter.Tag($"!{typeof({{Name}})},{{Namespace}}")""";}
-    internal DataMemberContext Context { get; set; }
+    internal DataMemberContext Context { get; init; }
 }
