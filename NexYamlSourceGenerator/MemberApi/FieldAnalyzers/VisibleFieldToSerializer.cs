@@ -5,7 +5,7 @@ namespace NexYamlSourceGenerator.MemberApi.FieldAnalyzers;
 
 internal class VisibleFieldToSerializer(IMemberSymbolAnalyzer<IFieldSymbol> analyzer) : MemberSymbolAnalyzer<IFieldSymbol>(analyzer)
 {
-    public override bool AppliesTo(MemberContext<IFieldSymbol> context)
+    public override bool AppliesTo(Data<IFieldSymbol> context)
     {
         return context.Symbol.DeclaredAccessibility.IsVisibleToEditor(context.DataMemberContext);
     }

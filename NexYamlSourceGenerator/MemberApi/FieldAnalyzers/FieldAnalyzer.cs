@@ -4,7 +4,7 @@ namespace NexYamlSourceGenerator.MemberApi.FieldAnalyzers;
 
 internal class FieldAnalyzer : IMemberSymbolAnalyzer<IFieldSymbol>
 {
-    public SymbolInfo Analyze(MemberContext<IFieldSymbol> context)
+    public SymbolInfo Analyze(Data<IFieldSymbol> context)
     {
         var typeBundle = GetTypeDisplay(context.Symbol.Type);
 
@@ -20,7 +20,7 @@ internal class FieldAnalyzer : IMemberSymbolAnalyzer<IFieldSymbol>
         };
     }
 
-    public bool AppliesTo(MemberContext<IFieldSymbol> symbol) => true;
+    public bool AppliesTo(Data<IFieldSymbol> symbol) => true;
 
     string GetTypeDisplay(ITypeSymbol type)
     => type.TypeKind == TypeKind.Array ?

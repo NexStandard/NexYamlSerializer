@@ -4,7 +4,7 @@ using NexYamlSourceGenerator.MemberApi.UniversalAnalyzers;
 
 internal class HasVisibleSetter(IMemberSymbolAnalyzer<IPropertySymbol> analyzer) : MemberSymbolAnalyzer<IPropertySymbol>(analyzer)
 {
-    public override bool AppliesTo(MemberContext<IPropertySymbol> context)
+    public override bool AppliesTo(Data<IPropertySymbol> context)
     {
         if (!(context.Symbol.SetMethod != null))
             return false;

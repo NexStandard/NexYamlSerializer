@@ -4,7 +4,7 @@ namespace NexYamlSourceGenerator.MemberApi.Analysation.PropertyAnalyzers;
 
 internal class PropertyAnalyzer : IMemberSymbolAnalyzer<IPropertySymbol>
 {
-    public SymbolInfo Analyze(MemberContext<IPropertySymbol> context)
+    public SymbolInfo Analyze(Data<IPropertySymbol> context)
     {
         var typeName = GetTypeDisplay(context.Symbol.Type);
         return new SymbolInfo()
@@ -19,7 +19,7 @@ internal class PropertyAnalyzer : IMemberSymbolAnalyzer<IPropertySymbol>
         };
     }
 
-    public bool AppliesTo(MemberContext<IPropertySymbol> symbol) => true;
+    public bool AppliesTo(Data<IPropertySymbol> symbol) => true;
     string GetTypeDisplay(ITypeSymbol type)
         => type.TypeKind == TypeKind.Array ?
         ((IArrayTypeSymbol)type).ElementType.ToDisplayString() : type.ToDisplayString();

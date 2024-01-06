@@ -1,4 +1,5 @@
-﻿using NexYamlSourceGenerator.NexAPI;
+﻿using NexYamlSourceGenerator.MemberApi;
+using NexYamlSourceGenerator.NexAPI;
 using System.Linq.Expressions;
 using System.Text;
 

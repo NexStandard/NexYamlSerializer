@@ -31,10 +31,6 @@ internal class ClassSymbolConverter
 
         var datacontract = attributes.First(a => a.AttributeClass.Equals(references.DataContractAttribute, SymbolEqualityComparer.Default));
 
-        return new ClassPackage()
-        {
-            ClassInfo = ClassInfo.CreateFrom(namedTypeSymbol,datacontract),
-            MemberSymbols = memberList,
-        };
+        return new ClassPackage(ClassInfo.CreateFrom(namedTypeSymbol, datacontract), memberList);
     }
 }

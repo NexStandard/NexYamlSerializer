@@ -9,7 +9,7 @@ namespace NexYamlSourceGenerator.NexAPI;
 internal class MemberProcessor<T>(IEnumerable<IMemberSymbolAnalyzer<T>> analyzers) : IMemberSymbolAnalyzer<T>
     where T : ISymbol
 {
-    public bool AppliesTo(MemberContext<T> symbol)
+    public bool AppliesTo(Data<T> symbol)
     {
         foreach(var analyzer in analyzers)
         {
@@ -18,7 +18,7 @@ internal class MemberProcessor<T>(IEnumerable<IMemberSymbolAnalyzer<T>> analyzer
         return false;
     }
 
-    public SymbolInfo Analyze(MemberContext<T> symbol)
+    public SymbolInfo Analyze(Data<T> symbol)
     {
         if (symbol.DataMemberContext.State == DataMemberContextState.Excluded)
             return SymbolInfo.Empty;
@@ -34,7 +34,7 @@ internal class MemberProcessor<T>(IEnumerable<IMemberSymbolAnalyzer<T>> analyzer
 }
 internal static class CollectionAnalyzers
 {
-    public static SymbolInfo Analyze<T>(this IEnumerable<IMemberSymbolAnalyzer<T>> symbols, MemberContext<T> member)
+    public static SymbolInfo Analyze<T>(this IEnumerable<IMemberSymbolAnalyzer<T>> symbols, Data<T> member)
         where T : ISymbol
     {
         return new MemberProcessor<T>(symbols).Analyze(member);
