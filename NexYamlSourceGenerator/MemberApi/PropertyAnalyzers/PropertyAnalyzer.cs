@@ -6,17 +6,7 @@ internal class PropertyAnalyzer : IMemberSymbolAnalyzer<IPropertySymbol>
 {
     public SymbolInfo Analyze(MemberContext<IPropertySymbol> context)
     {
-        string typeName;
-        ITypeSymbol type;
-        var isArray = context.Symbol.Type.TypeKind == TypeKind.Array;
-        if (isArray)
-        {
-            typeName = ((IArrayTypeSymbol)context.Symbol.Type).ElementType.ToDisplayString();
-        }
-        else
-        {
-            typeName = context.Symbol.Type.ToDisplayString();
-        }
+        var typeName = GetTypeDisplay(context.Symbol.Type);
         return new SymbolInfo()
         {
             Name = context.Symbol.Name,
@@ -30,4 +20,7 @@ internal class PropertyAnalyzer : IMemberSymbolAnalyzer<IPropertySymbol>
     }
 
     public bool AppliesTo(MemberContext<IPropertySymbol> symbol) => true;
+    string GetTypeDisplay(ITypeSymbol type)
+        => type.TypeKind == TypeKind.Array ?
+        ((IArrayTypeSymbol)type).ElementType.ToDisplayString() : type.ToDisplayString();
 }
