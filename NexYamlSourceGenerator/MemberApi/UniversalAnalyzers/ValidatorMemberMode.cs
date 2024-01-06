@@ -14,7 +14,6 @@ internal class ValidatorMemberMode<T>(
     {
         return symbol.DataMemberContext.Mode == mode;
     }
-
 }
 internal enum MemberMode
 {

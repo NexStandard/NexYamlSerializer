@@ -73,7 +73,4 @@ file class {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<{
 }}
 ";
     }
-
-
-
 }
