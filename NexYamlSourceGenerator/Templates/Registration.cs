@@ -1,4 +1,4 @@
-﻿using NexYamlSourceGenerator.MemberApi;
+﻿using NexYamlSourceGenerator.MemberApi.Data;
 using System.Text;
 
 namespace NexYamlSourceGenerator.Templates;

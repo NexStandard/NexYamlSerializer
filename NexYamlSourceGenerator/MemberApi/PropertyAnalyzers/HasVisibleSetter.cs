@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
-using NexYamlSourceGenerator.MemberApi;
 using NexYamlSourceGenerator.MemberApi.Analyzers;
+using NexYamlSourceGenerator.MemberApi.Data;
 using NexYamlSourceGenerator.MemberApi.UniversalAnalyzers;
 namespace NexYamlSourceGenerator.MemberApi.PropertyAnalyzers;
 internal class HasVisibleSetter(IMemberSymbolAnalyzer<IPropertySymbol> analyzer) : MemberSymbolAnalyzer<IPropertySymbol>(analyzer)

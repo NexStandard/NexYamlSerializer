@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using NexYamlSourceGenerator.Core;
 using NexYamlSourceGenerator.MemberApi.Analyzers;
+using NexYamlSourceGenerator.MemberApi.Data;
 using NexYamlSourceGenerator.MemberApi.FieldAnalyzers;
 using NexYamlSourceGenerator.MemberApi.PropertyAnalyzers;
 using NexYamlSourceGenerator.MemberApi.UniversalAnalyzers;
@@ -76,11 +77,11 @@ internal static class Extensionss
     {
         // Get the base types in reverse order
         var baseTypes = GetBaseTypes(type, reference);
-        List<string> properties = new();
-        List<string> fields = new();
+        List<string> properties = [];
+        List<string> fields = [];
         foreach (var baseType in baseTypes)
         {
-            // Get members of the base type in reverse order
+            // Get members of the base type in bottom to top order
             foreach (var member in (ImmutableArray<ISymbol>)baseType.GetMembers())
             {
                 // Filter only properties and fields

@@ -3,7 +3,7 @@ using NexYamlSourceGenerator.Core;
 using NexYamlSourceGenerator.MemberApi.UniversalAnalyzers;
 using System.Runtime.Serialization;
 
-namespace NexYamlSourceGenerator.MemberApi;
+namespace NexYamlSourceGenerator.MemberApi.Data;
 
 internal record DataMemberContext
 {
@@ -34,20 +34,4 @@ internal record DataMemberContext
     public DataMemberContextState State { get; private set; }
     public MemberMode Mode { get; set; }
     public int Order { get; set; }
-}
-internal enum DataMemberContextState
-{
-    /// <summary>
-    /// Member has a <see cref="ReferencePackage.DataMemberAttribute"/>
-    /// </summary>
-    Included,
-    /// <summary>
-    /// Member doesn't have a <see cref="ReferencePackage.DataMemberAttribute"/> but also not a <see cref="ReferencePackage.DataMemberIgnoreAttribute"/>
-    /// </summary>
-    Weak,
-    /// <summary>
-    /// Member has a <see cref="ReferencePackage.DataMemberIgnoreAttribute"/>
-    /// or // TODO Never mode
-    /// </summary>
-    Excluded
 }

@@ -1,4 +1,5 @@
 using Microsoft.CodeAnalysis;
+using NexYamlSourceGenerator.MemberApi.Data;
 
 namespace NexYamlSourceGenerator.MemberApi;
 internal record SymbolInfo

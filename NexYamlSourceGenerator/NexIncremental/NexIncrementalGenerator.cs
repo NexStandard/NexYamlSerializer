@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using NexYamlSourceGenerator.Core;
 using NexYamlSourceGenerator.Templates;
 using NexYamlSourceGenerator.MemberApi;
+using NexYamlSourceGenerator.MemberApi.Data;
 
 namespace NexYamlSourceGenerator.NexIncremental;
 

@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using NexYamlSourceGenerator.Core;
-using NexYamlSourceGenerator.MemberApi;
 using NexYamlSourceGenerator.MemberApi.Analyzers;
+using NexYamlSourceGenerator.MemberApi.Data;
 using NexYamlSourceGenerator.NexIncremental;
 using System.Collections.Immutable;
 

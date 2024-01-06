@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using System.Text;
 using System.Xml.Linq;
 
-namespace NexYamlSourceGenerator.MemberApi;
+namespace NexYamlSourceGenerator.MemberApi.Data;
 
 internal record ShortGenericDefinition(int Count)
 {
