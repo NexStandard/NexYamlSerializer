@@ -4,14 +4,14 @@ using NexYamlSourceGenerator.MemberApi;
 using NexYamlSourceGenerator.NexIncremental;
 using System.Collections.Immutable;
 
-namespace NexYamlSourceGenerator.NexAPI;
+namespace NexYamlSourceGenerator.MemberApi.UniversalAnalyzers;
 
 internal class MemberProcessor<T>(IEnumerable<IMemberSymbolAnalyzer<T>> analyzers) : IMemberSymbolAnalyzer<T>
     where T : ISymbol
 {
     public bool AppliesTo(Data<T> symbol)
     {
-        foreach(var analyzer in analyzers)
+        foreach (var analyzer in analyzers)
         {
             return analyzer.AppliesTo(symbol);
         }
@@ -30,13 +30,5 @@ internal class MemberProcessor<T>(IEnumerable<IMemberSymbolAnalyzer<T>> analyzer
                 return info;
         }
         return SymbolInfo.Empty;
-    }
-}
-internal static class CollectionAnalyzers
-{
-    public static SymbolInfo Analyze<T>(this IEnumerable<IMemberSymbolAnalyzer<T>> symbols, Data<T> member)
-        where T : ISymbol
-    {
-        return new MemberProcessor<T>(symbols).Analyze(member);
     }
 }

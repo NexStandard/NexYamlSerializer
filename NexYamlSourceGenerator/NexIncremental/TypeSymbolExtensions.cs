@@ -2,7 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NexYamlSourceGenerator.Core;
 using NexYamlSourceGenerator.MemberApi;
-using NexYamlSourceGenerator.NexAPI;
+using NexYamlSourceGenerator.MemberApi.UniversalAnalyzers;
 using System.Linq;
 
 namespace NexYamlSourceGenerator.NexIncremental;

@@ -18,4 +18,9 @@ internal static class AnalyzerExtensions
     internal static IMemberSymbolAnalyzer<T> HasMemberMode<T>(this IMemberSymbolAnalyzer<T> memberAnalyzer,MemberMode mode)
         where T : ISymbol
         => new ValidatorMemberMode<T>(memberAnalyzer,mode);
+    public static SymbolInfo Analyze<T>(this IEnumerable<IMemberSymbolAnalyzer<T>> symbols, Data<T> member)
+    where T : ISymbol
+    {
+        return new MemberProcessor<T>(symbols).Analyze(member);
+    }
 }
