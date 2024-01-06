@@ -32,14 +32,14 @@ internal static class Registration
     public static string CreateRegisterInterfaces(this ClassPackage package)
     {
         StringBuilder sb = new();
-        string refe = "formatter";
+        var refe = "formatter";
         if(package.ClassInfo.IsGeneric)
         {
             refe = $"typeof({package.ClassInfo.ShortDefinition})";
         }
         foreach (var interfac in package.ClassInfo.AllInterfaces)
         {
-            string interfacDisplay = interfac.DisplayString;
+            var interfacDisplay = interfac.DisplayString;
             if (interfac.IsGeneric)
             {
                 interfacDisplay = interfac.ShortDisplayString;

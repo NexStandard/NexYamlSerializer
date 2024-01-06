@@ -63,7 +63,7 @@ internal record ClassInfo
         var genericTypeArgumentsShort = "";
         var isGeneric = TryAddGenericsToName(namedType, ref shortDefinition, ref genericTypeArguments, ref genericTypeArgumentsShort);
         var restrictions = "";
-        string aliasTag = "";
+        var aliasTag = "";
         if (datacontract is { AttributeConstructor.Parameters: [{ Name: "aliasName" }, ..], ConstructorArguments: [{ Value: string alias }, ..] })
         {
             aliasTag = alias;
@@ -95,8 +95,8 @@ internal record ClassInfo
         foreach (var interf in interfaces)
         {
             var display = interf.ToDisplayString();
-            string shortI = "";
-            bool isGeneric = false;
+            var shortI = "";
+            var isGeneric = false;
             if (interf.IsGenericType)
             {
                 isGeneric = true;
