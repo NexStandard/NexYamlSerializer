@@ -24,10 +24,10 @@ internal class NexIncrementalGenerator : IIncrementalGenerator
                 var semanticModel = ctx.SemanticModel;
                 var attributes = ctx.Attributes;
                 var compilation = semanticModel.Compilation;
-                var package = new ReferencePackage(compilation);
-                if (!package.IsValid())
+                var references = new ReferencePackage(compilation);
+                if (!references.IsValid())
                     return null;
-                return new ClassSymbolConverter().Convert(classDeclaration, package, attributes);
+                return classDeclaration.ConvertToPackage(references, attributes);
             }
         );
 
