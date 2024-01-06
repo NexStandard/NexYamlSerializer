@@ -6,7 +6,6 @@ using System.Xml.Linq;
 
 namespace NexYamlSourceGenerator.MemberApi;
 
-
 internal record ShortGenericDefinition(int Count)
 {
     public override string ToString() => Count <= 0 ? "" : $"<{new string(',', Count - 1)}>";
@@ -58,7 +57,7 @@ internal record ClassInfo
     {
         var displayName = namedType.ToDisplayString();
         var index = displayName.IndexOf('<');
-        var shortDefinition = index != -1 ? displayName.Substring(0, index) : displayName;
+        var shortDefinition = index != -1 ? displayName[..index] : displayName;
         var genericTypeArguments = "";
         var genericTypeArgumentsShort = "";
         var isGeneric = TryAddGenericsToName(namedType, ref shortDefinition, ref genericTypeArguments, ref genericTypeArgumentsShort);
@@ -80,7 +79,7 @@ internal record ClassInfo
             ShortDefinition = shortDefinition,
             TypeParameterArguments = genericTypeArguments,
             TypeParameterRestrictions = restrictions,
-            TypeParameterArgumentsShort = new ShortGenericDefinition(namedType.TypeArguments.Count()).ToString(),
+            TypeParameterArgumentsShort = new ShortGenericDefinition(namedType.TypeArguments.Length).ToString(),
             NameSpace = GetFullNamespace(namedType, '.'),
             TypeKind = namedType.TypeKind,
             AllInterfaces = GetInterfaces(namedType.AllInterfaces),
@@ -100,7 +99,7 @@ internal record ClassInfo
             if (interf.IsGenericType)
             {
                 isGeneric = true;
-                shortI = display.Substring(0, display.IndexOf('<'));
+                shortI = display[..display.IndexOf('<')];
                 shortI = shortI + "<" + new string(',', interf.TypeArguments.Length - 1) + ">";
             }
             result.Add(new() { DisplayString = interf.ToDisplayString(), ShortDisplayString = shortI, IsGeneric = isGeneric });

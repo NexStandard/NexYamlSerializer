@@ -7,7 +7,7 @@ internal class HasVisibleSetter(IMemberSymbolAnalyzer<IPropertySymbol> analyzer)
 {
     public override bool AppliesTo(Data<IPropertySymbol> context)
     {
-        if (!(context.Symbol.SetMethod != null))
+        if (context.Symbol.SetMethod == null)
             return false;
 
         return context.Symbol.SetMethod.DeclaredAccessibility.IsVisibleToEditor(context.DataMemberContext);

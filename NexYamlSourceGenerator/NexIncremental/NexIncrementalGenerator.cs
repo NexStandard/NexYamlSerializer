@@ -18,7 +18,7 @@ internal class NexIncrementalGenerator : IIncrementalGenerator
             {
                 if (ctx.TargetSymbol is not INamedTypeSymbol classDeclaration)
                     return null;
-                
+
                 var semanticModel = ctx.SemanticModel;
                 var attributes = ctx.Attributes;
                 var compilation = semanticModel.Compilation;

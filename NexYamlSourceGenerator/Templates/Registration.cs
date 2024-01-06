@@ -26,8 +26,8 @@ internal static class Registration
             sb.AppendLine($"{Constants.SerializerRegistry}.RegisterFormatter(typeof({package.ClassInfo.ShortDefinition}));");
             return sb.ToString();
         }
-        sb.AppendLine($"\t\tvar formatter = new {package.ClassInfo.NameSpace}.{package.ClassInfo.GeneratorName}();"); ;
-        return sb.AppendLine(Constants.SerializerRegistry + string.Format(Constants.RegisterFormatter, "formatter")).ToString();
+        sb.Append("\t\tvar formatter = new ").Append(package.ClassInfo.NameSpace).Append('.').Append(package.ClassInfo.GeneratorName).AppendLine("();");
+        return sb.Append(Constants.SerializerRegistry).AppendLine(string.Format(Constants.RegisterFormatter, "formatter")).ToString();
     }
     public static string CreateRegisterInterfaces(this ClassPackage package)
     {
@@ -46,7 +46,6 @@ internal static class Registration
             }
             sb.AppendLine(Constants.SerializerRegistry + string.Format(Constants.RegisterInterface, refe, interfacDisplay));
         }
-
 
         return sb.ToString();
     }

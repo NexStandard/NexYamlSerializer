@@ -10,9 +10,9 @@ internal static class EmitExtensions
         var sb = new StringBuilder();
         foreach (var member in package.MemberSymbols)
         {
-            var serializeString = $".Serialize";
+            var serializeString = ".Serialize";
             if (member.IsArray)
-                serializeString = $".SerializeArray";
+                serializeString = ".SerializeArray";
             if (member.IsAbstract || member.IsInterface)
             {
 
@@ -71,11 +71,11 @@ internal static class EmitExtensions
     {
         return new DeserializeEmitter().Create(package);
     }
-    public static string NullCheck(this ClassPackage package) => package.ClassInfo.TypeKind == Microsoft.CodeAnalysis.TypeKind.Struct ? "": @$"
+    public static string NullCheck(this ClassPackage package) => package.ClassInfo.TypeKind == Microsoft.CodeAnalysis.TypeKind.Struct ? "": @"
         if (value is null)
-        {{
+        {
             emitter.WriteNull();
             return;
-        }}
+        }
 ";
 }

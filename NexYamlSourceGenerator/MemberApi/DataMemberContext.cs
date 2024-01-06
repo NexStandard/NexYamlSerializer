@@ -12,8 +12,7 @@ internal record DataMemberContext
     internal static DataMemberContext Create(ISymbol symbol, ReferencePackage references)
     {
         var context = new DataMemberContext();
-
-        if (symbol.TryGetAttribute(references.DataMemberIgnoreAttribute, out var attributeData))
+        if (symbol.TryGetAttribute(references.DataMemberIgnoreAttribute, out _))
         {
             return Empty;
         }

@@ -11,7 +11,7 @@ internal class DeserializeEmitter
         var map = MapPropertiesToLength(package.MemberSymbols);
         foreach (var member in package.MemberSymbols)
         {
-            objectCreation.Append(member.Name + "=" + "__TEMP__" + member.Name + ",");
+            objectCreation.Append(member.Name + "=__TEMP__" + member.Name + ",");
         }
         return $$"""
                 if (parser.IsNullScalar())
@@ -75,7 +75,7 @@ internal class DeserializeEmitter
     }
     void AppendArray(string start, SymbolInfo symbol, StringBuilder switchBuilder)
     {
-        var serializeString = $$"""context.DeserializeArray<{{symbol.Type}}>(ref parser);""";
+        var serializeString = $"context.DeserializeArray<{symbol.Type}>(ref parser);";
 
         switchBuilder.AppendLine($$"""
                     {{start}} (key.SequenceEqual({{"UTF8" + symbol.Name}}))
