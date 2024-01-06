@@ -12,6 +12,4 @@ internal static class PropertyExtensions
         => new HasVisibleSetter(propertySymbolAnalyzer);
     internal static IMemberSymbolAnalyzer<IPropertySymbol> IsArray(this IMemberSymbolAnalyzer<IPropertySymbol> propertySymbolAnalyzer)
         => new IsArray(propertySymbolAnalyzer);
-    internal static IMemberSymbolAnalyzer<IPropertySymbol> IsByteArray(this IMemberSymbolAnalyzer<IPropertySymbol> propertySymbolAnalyzer)
-        => new IsByteArray(propertySymbolAnalyzer);
 }
