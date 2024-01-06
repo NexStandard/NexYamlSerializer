@@ -34,25 +34,25 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
         var genericFormatter = FormatterRegistry.GenericFormatterBuffer.FindAssignableType(type); ;
         if (genericFormatter is null)
             return null;
-        Type genericType = genericFormatter.MakeGenericType(type.GenericTypeArguments);
+        var genericType = genericFormatter.MakeGenericType(type.GenericTypeArguments);
         return (IYamlFormatter<T>)Activator.CreateInstance(genericType);
     }
     public IYamlFormatter GetGenericFormatter(Type type)
     {
-        Type genericFormatter = FormatterRegistry.GenericFormatterBuffer.FindAssignableType(type); ;
+        var genericFormatter = FormatterRegistry.GenericFormatterBuffer.FindAssignableType(type); ;
         if(genericFormatter is null)
             genericFormatter = typeof(EmptyFormatter<>);
 
-        Type genericType = genericFormatter.MakeGenericType(type.GenericTypeArguments);
+        var genericType = genericFormatter.MakeGenericType(type.GenericTypeArguments);
         return (IYamlFormatter)Activator.CreateInstance(genericType);
     }
     public IYamlFormatter GetGenericFormatter(Type type, Type origin)
     {
-        Type genericFormatter = FormatterRegistry.GenericFormatterBuffer.FindAssignableType(type); ;
+        var genericFormatter = FormatterRegistry.GenericFormatterBuffer.FindAssignableType(type); ;
         if (genericFormatter is null)
             genericFormatter = typeof(EmptyFormatter<>);
 
-        Type genericType = genericFormatter.MakeGenericType(origin.GenericTypeArguments.Take(genericFormatter.GetGenericArguments().Length).ToArray());
+        var genericType = genericFormatter.MakeGenericType(origin.GenericTypeArguments.Take(genericFormatter.GetGenericArguments().Length).ToArray());
         return (IYamlFormatter)Activator.CreateInstance(genericType);
 
     }
@@ -97,7 +97,7 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
     }
     public void RegisterFormatter<T>(IYamlFormatter<T> formatter)
     {
-        Type keyType = typeof(T);
+        var keyType = typeof(T);
         FormatterRegistry.DefinedFormatters[keyType] = formatter;
     }
     public void RegisterTag(string tag,Type formatterGenericType)
@@ -114,7 +114,7 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
     }
     public void Register<T>(IYamlFormatter<T> formatter, Type interfaceType)
     {
-        Type keyType = typeof(T);
+        var keyType = typeof(T);
         if (!FormatterRegistry.FormatterBuffer.ContainsKey(interfaceType))
         {
             FormatterRegistry.FormatterBuffer.Add(interfaceType, new());
@@ -147,7 +147,7 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
     {
         if (FormatterRegistry.FormatterBuffer.ContainsKey(typeof(T)))
         {
-            if (FormatterRegistry.FormatterBuffer[typeof(T)].TryGetValue(target, out IYamlFormatter value))
+            if (FormatterRegistry.FormatterBuffer[typeof(T)].TryGetValue(target, out var value))
             {
                 return FormatterRegistry.FormatterBuffer[typeof(T)][target];
             }

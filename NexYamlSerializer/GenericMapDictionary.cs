@@ -19,8 +19,8 @@ class GenericEqualityComparer : IEqualityComparer<Type>
 {
     public bool Equals(Type x, Type y)
     {
-        Type thisGenericType = x.IsGenericType ? x.GetGenericTypeDefinition() : x;
-        Type otherGenericType = y.IsGenericType ? y.GetGenericTypeDefinition() : y;
+        var thisGenericType = x.IsGenericType ? x.GetGenericTypeDefinition() : x;
+        var otherGenericType = y.IsGenericType ? y.GetGenericTypeDefinition() : y;
 
         return thisGenericType == otherGenericType;
     }

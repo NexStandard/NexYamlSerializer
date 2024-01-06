@@ -38,7 +38,7 @@ namespace NexVYaml.Serialization
                 }
                 else
                 {
-                    List<KeyValuePair<TKey,TValue>> valuepairs = new List<KeyValuePair<TKey,TValue>>(value.AsEnumerable());
+                    var valuepairs = new List<KeyValuePair<TKey,TValue>>(value.AsEnumerable());
                     var listFormatter = new ListFormatter<KeyValuePair<TKey, TValue>>();
                     listFormatter.Serialize(ref emitter, valuepairs, context);
                 }

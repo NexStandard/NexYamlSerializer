@@ -97,7 +97,7 @@ namespace NexVYaml.Parser
 
         public bool Read()
         {
-            SequenceReader<byte> reader = new SequenceReader<byte>(data);
+            var reader = new SequenceReader<byte>(data);
             reader.Advance(position);
             if (streamEndProduced)
             {
