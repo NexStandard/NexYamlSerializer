@@ -12,4 +12,6 @@ internal static class FieldExtensions
         => new ReadOnly(fieldAnalyzer);
     internal static IMemberSymbolAnalyzer<IFieldSymbol> IsArray(this IMemberSymbolAnalyzer<IFieldSymbol> fieldAnalyzer)
         => new IsArray(fieldAnalyzer);
+    internal static IMemberSymbolAnalyzer<IFieldSymbol> IsConst(this IMemberSymbolAnalyzer<IFieldSymbol> fieldAnalyzer)
+        => new ConstFieldAnalyzer(fieldAnalyzer);
 }

@@ -152,7 +152,9 @@ internal static class Extensionss
             .HasVisibleGetter()
             .HasVisibleSetter();
         var standardFieldAssignAnalyzer = new FieldAnalyzer()
-            .IsVisibleToSerializer();
+            .IsVisibleToSerializer()
+            .WhenNot(x => x.IsConst());
+
         List<IMemberSymbolAnalyzer<IFieldSymbol>> fieldAnalyzers = new()
         {
             standardFieldAssignAnalyzer
