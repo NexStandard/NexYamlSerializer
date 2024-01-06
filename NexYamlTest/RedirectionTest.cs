@@ -54,4 +54,16 @@ public class RedirectionTest
         var deserialized = YamlSerializer.Deserialize<GenericWithRestriction<Generics<int>>>(s);
         Assert.Equal(generic.Value.Value, deserialized.Value.Value);
     }
+    [Fact]
+    public void ImplementedGenericsTest()
+    {
+        Setup();
+        var generic = new GenericWithImplementation()
+        {
+            Value = 43
+        };
+        var s = YamlSerializer.Serialize(generic);
+        var deserialized = YamlSerializer.Deserialize<Generics<int>>(s);
+        Assert.Equal(generic.Value, deserialized.Value);
+    }
 }

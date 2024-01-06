@@ -17,3 +17,8 @@ internal class GenericWithRestriction<T>
 {
     public T Value { get; set; }
 }
+[DataContract]
+internal class GenericWithImplementation : Generics<int>
+{
+
+}
