@@ -78,7 +78,7 @@ namespace NexVYaml
         /// <param name="value">The object to be serialized.</param>
         /// <param name="stream">The stream to which the YAML representation will be written.</param>
         /// <param name="options">Optional settings for customizing the YAML serialization process.</param>
-        public static void Serialize<T>(T value, Stream stream,YamlSerializerOptions? options = null)
+        public static void Serialize<T>(T value, Stream stream, YamlSerializerOptions? options = null)
         {
             stream.Write(Serialize(value, options).Span);
         }
