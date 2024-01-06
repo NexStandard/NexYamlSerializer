@@ -43,7 +43,8 @@ internal record ClassInfo
     /// </summary>
     internal string NameSpace { get; private set; }
     internal string GeneratorName { get; private set; }
-    internal ImmutableList<string> AllInterfaces { get; private set; }
+    internal ImmutableList<(string DisplayString, string ShortDisplayString, bool IsGeneric)> AllInterfaces { get; private set; }
+    
     internal ImmutableList<string> AllAbstracts { get; private set; }
 
     /// <summary>
@@ -118,12 +119,29 @@ internal record ClassInfo
             TypeParameterArgumentsShort = new ShortGenericDefinition(namedType.TypeArguments.Count()).ToString(),
             NameSpace = GetFullNamespace(namedType, '.'),
             TypeKind = namedType.TypeKind,
-            AllInterfaces = ImmutableList.Create(namedType.AllInterfaces.Select(t => t.ToDisplayString()).ToArray()),
+            AllInterfaces = GetInterfaces(namedType.AllInterfaces),
             AllAbstracts = ImmutableList.Create(FindAbstractClasses(namedType).ToArray()),
             GeneratorName = CreateGeneratorName(namedType)
         };
     }
-    
+    private static ImmutableList<(string DisplayString, string ShortDisplayString,bool IsGeneric)> GetInterfaces(ImmutableArray<INamedTypeSymbol> interfaces)
+    {
+        List<(string DisplayString, string ShortDisplayString, bool IsGeneric)> result = new();
+        foreach(var interf  in interfaces)
+        {
+            var display = interf.ToDisplayString();
+            string shortI = "";
+            bool isGeneric = false;
+            if (interf.IsGenericType)
+            {
+                isGeneric = true;
+                shortI = display.Substring(0, display.IndexOf('<'));
+                shortI = shortI + "<" + new string(',', interf.TypeArguments.Length - 1 ) + ">";
+            }
+            result.Add(new() { DisplayString = interf.ToDisplayString() , ShortDisplayString = shortI , IsGeneric = isGeneric });
+        }
+        return ImmutableList.Create(result.ToArray());
+    }
     private static string CreateGeneratorName(INamedTypeSymbol type)
     {
         return GeneratorPrefix + GetFullNamespace(type, '_') + type.Name;
@@ -138,26 +156,22 @@ internal record ClassInfo
     {
         if (type is INamedTypeSymbol namedType)
         {
-            if (namedType.TypeArguments != null)
+            var genericcount = namedType.TypeArguments.Length;
+            if (genericcount > 0)
             {
-
-                var genericcount = namedType.TypeArguments.Count();
-                if (genericcount > 0)
+                shortDefinition += "<" + new string(',', genericcount - 1) + ">";
+                genericTypeArguments += "<";
+                genericTypeArgumentsShort += "<";
+                foreach (var argument in namedType.TypeArguments)
                 {
-                    shortDefinition += "<" + new string(',', genericcount - 1) + ">";
-                    genericTypeArguments += "<";
-                    genericTypeArgumentsShort += "<";
-                    foreach (var argument in namedType.TypeArguments)
-                    {
-                        genericTypeArguments += argument.Name;
-                        genericTypeArgumentsShort += ",";
-                    }
-                    genericTypeArgumentsShort = genericTypeArgumentsShort.Remove(genericTypeArgumentsShort.Length - 1);
-                    genericTypeArguments += ">";
-                    genericTypeArgumentsShort += ">";
-                    return true;
+                    genericTypeArguments += argument.Name + ",";
+                    genericTypeArgumentsShort += ",";
                 }
-
+                genericTypeArguments = genericTypeArguments.TrimEnd(',');
+                genericTypeArgumentsShort = genericTypeArgumentsShort.Remove(genericTypeArgumentsShort.Length - 1);
+                genericTypeArguments += ">";
+                genericTypeArgumentsShort += ">";
+                return true;
             }
         }
         return false;

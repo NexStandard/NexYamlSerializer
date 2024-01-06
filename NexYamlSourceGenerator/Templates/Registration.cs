@@ -1,4 +1,5 @@
 ﻿using NexYamlSourceGenerator.NexAPI;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace NexYamlSourceGenerator.Templates;
@@ -32,11 +33,19 @@ internal static class Registration
     public static string CreateRegisterInterfaces(this ClassPackage package)
     {
         StringBuilder sb = new();
-
-
+        string refe = "formatter";
+        if(package.ClassInfo.IsGeneric)
+        {
+            refe = $"typeof({package.ClassInfo.ShortDefinition})";
+        }
         foreach (var interfac in package.ClassInfo.AllInterfaces)
         {
-            sb.AppendLine(Constants.SerializerRegistry + string.Format(Constants.RegisterInterface, "formatter", interfac));
+            string interfacDisplay = interfac.DisplayString;
+            if (interfac.IsGeneric)
+            {
+                interfacDisplay = interfac.ShortDisplayString;
+            }
+            sb.AppendLine(Constants.SerializerRegistry + string.Format(Constants.RegisterInterface, refe, interfacDisplay));
         }
 
 

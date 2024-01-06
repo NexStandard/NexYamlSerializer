@@ -42,10 +42,20 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
         Type genericFormatter = FormatterRegistry.GenericFormatterBuffer.FindAssignableType(type); ;
         if(genericFormatter is null)
             genericFormatter = typeof(EmptyFormatter<>);
+
         Type genericType = genericFormatter.MakeGenericType(type.GenericTypeArguments);
         return (IYamlFormatter)Activator.CreateInstance(genericType);
     }
+    public IYamlFormatter GetGenericFormatter(Type type, Type origin)
+    {
+        Type genericFormatter = FormatterRegistry.GenericFormatterBuffer.FindAssignableType(type); ;
+        if (genericFormatter is null)
+            genericFormatter = typeof(EmptyFormatter<>);
 
+        Type genericType = genericFormatter.MakeGenericType(origin.GenericTypeArguments.Take(genericFormatter.GetGenericArguments().Length).ToArray());
+        return (IYamlFormatter)Activator.CreateInstance(genericType);
+
+    }
     /// <summary>
     /// Registers all available Serializers.
     /// May be removed in future.
@@ -118,7 +128,7 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
             FormatterRegistry.FormatterBuffer[interfaceType][keyType] = formatter;
         }
     }
-    internal void Register(Type formatterType, Type interfaceType)
+    public void Register(Type formatterType, Type interfaceType)
     {
         if (!FormatterRegistry.FormatterBuffer.ContainsKey(interfaceType))
         {
@@ -142,6 +152,6 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
                 return FormatterRegistry.FormatterBuffer[typeof(T)][target];
             }
         }
-        return GetGenericFormatter(target);
+        return GetGenericFormatter(target,target);
     }
 }

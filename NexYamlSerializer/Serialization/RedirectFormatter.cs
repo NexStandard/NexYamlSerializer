@@ -29,9 +29,11 @@ namespace NexVYaml.Serialization
             formatter = context.Resolver.GetFormatter(alias);
 
             if (formatter == null)
-                formatter = context.Resolver.GetGenericFormatter(alias);
-            if(formatter == null)
-                return new EmptyFormatter<T>().Deserialize(ref parser,context);
+            {
+                formatter = context.Resolver.GetGenericFormatter(alias, type);
+            }
+            if (formatter == null)
+                return new EmptyFormatter<T>().Deserialize(ref parser, context);
             // C# forgets the cast of T when invoking Deserialize,
             // this way we can call the deserialize method with the "real type"
             // that is in the object

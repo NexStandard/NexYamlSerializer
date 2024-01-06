@@ -53,4 +53,51 @@ public class ComplexTests
         var insecureDeserialize = YamlSerializer.Deserialize<IInSecure>(s, secureMode);
         Assert.Null(insecureDeserialize);
     }
+    [Fact]
+    public void DynamicGenerics()
+    {
+        Setup();
+        IGenericInterface<int, int> genericInterface = new GenericImplementedClass<int, int>()
+        {
+            Generic2 = 1,
+            Generic = 4
+        };
+        var s = YamlSerializer.SerializeToString(genericInterface);
+        var deserialized = YamlSerializer.Deserialize<IGenericInterface<int, int>>(s);
+        Assert.Equal(genericInterface.Generic, deserialized.Generic);
+        Assert.Equal(genericInterface.Generic2 , deserialized.Generic2);
+    }
+    [Fact]
+    public void LessGenericsThanRoot()
+    {
+        Setup();
+        IGenericInterface<int, int> genericInterface = new GenericImplementedClassWithLessParams<int>()
+        {
+            Generic2 = 1,
+            Generic = 4
+        };
+        var s = YamlSerializer.SerializeToString(genericInterface);
+        var deserialized = YamlSerializer.Deserialize<IGenericInterface<int, int>>(s);
+        Assert.Equal(genericInterface.Generic, deserialized.Generic);
+        Assert.Equal(genericInterface.Generic2, deserialized.Generic2);
+    }
+    [Fact]
+    public void NestedDynamicGenerics()
+    {
+        Setup();
+        IGenericInterface<IGenericInterface<int,int>, int> genericInterface = new GenericImplementedClassWithLessParams<IGenericInterface<int, int>>()
+        {
+            Generic2 = 1,
+            Generic = new GenericImplementedClassWithLessParams<int>()
+            {
+                Generic2 = 2,
+                Generic = 4
+            }
+        };
+        var s = YamlSerializer.SerializeToString(genericInterface);
+        var deserialized = YamlSerializer.Deserialize<IGenericInterface<IGenericInterface<int, int>, int>>(s);
+        Assert.Equal(genericInterface.Generic.Generic, deserialized.Generic.Generic);
+        Assert.Equal(genericInterface.Generic.Generic2, deserialized.Generic.Generic2);
+        Assert.Equal(genericInterface.Generic2, deserialized.Generic2);
+    }
 }
