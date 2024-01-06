@@ -5,20 +5,4 @@ using System.Text;
 
 namespace NexYamlSourceGenerator.MemberApi;
 
-internal class MemberContext<T>
-    where T : ISymbol
-{
-
-    public MemberContext(T symbol, DataMemberContext context)
-    {
-        Symbol = symbol;
-        DataMemberContext = context;
-    }
-    public T Symbol { get; }
-    public DataMemberContext DataMemberContext { get; }
-
-    public static explicit operator MemberContext<T>(MemberContext<ISymbol> v)
-    {
-        throw new NotImplementedException();
-    }
-}
+internal record MemberContext<T>(T Symbol, DataMemberContext DataMemberContext) where T : ISymbol;
