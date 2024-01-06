@@ -1,4 +1,5 @@
 using Microsoft.CodeAnalysis;
+using NexYamlSourceGenerator.NexIncremental;
 using System.Collections.Immutable;
 using System.Text;
 using System.Xml.Linq;
@@ -67,45 +68,8 @@ internal record ClassInfo
         {
             aliasTag = alias;
         }
-        if(isGeneric)
-        {
-            var whereClause = "where ";
-            var stringBuilder = new StringBuilder();
-            foreach (var typeRestriction in namedType.TypeParameters)
-            {
-                var constraints = typeRestriction.ConstraintTypes.Select(restriction => restriction.ToDisplayString());
-                List<string> restrictionsString = new();
-
-                if (typeRestriction.HasNotNullConstraint)
-                {
-                    restrictionsString.Add($"notnull");
-                }
-                if(typeRestriction.HasReferenceTypeConstraint)
-                {
-                    restrictionsString.Add("class");
-                }
-                if(typeRestriction.HasUnmanagedTypeConstraint)
-                {
-                    restrictionsString.Add("unmangaged");
-                }
-                if(typeRestriction.HasValueTypeConstraint)
-                {
-                    restrictionsString.Add("struct");
-                }
-                if (typeRestriction.HasConstructorConstraint)
-                {
-                    restrictionsString.Add($"new()");
-                }
-                if (constraints.Any())
-                    restrictionsString.AddRange(constraints);
-                if (restrictionsString.Count > 0)
-                    stringBuilder.AppendLine(typeRestriction.ToDisplayString() + " : "+ string.Join(", ", restrictionsString));
-            }
-            if(stringBuilder.Length > 0)
-                restrictions =  whereClause + stringBuilder.ToString();
-            else
-                restrictions = "";
-        }
+        if (isGeneric)
+            restrictions = namedType.GenericRestrictions();
 
         return new()
         {
@@ -124,6 +88,9 @@ internal record ClassInfo
             GeneratorName = CreateGeneratorName(namedType)
         };
     }
+
+    
+
     private static ImmutableList<(string DisplayString, string ShortDisplayString,bool IsGeneric)> GetInterfaces(ImmutableArray<INamedTypeSymbol> interfaces)
     {
         List<(string DisplayString, string ShortDisplayString, bool IsGeneric)> result = new();
