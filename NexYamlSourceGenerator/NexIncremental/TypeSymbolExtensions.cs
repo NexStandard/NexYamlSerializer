@@ -27,14 +27,28 @@ internal static class TypeSymbolExtensions
         foreach (var typeRestriction in namedType.TypeParameters)
         {
             var constraints = typeRestriction.ConstraintTypes.Select(restriction => restriction.ToDisplayString());
-            List<string> restrictionsString =
-            [
-                .. typeRestriction.HasNotNullConstraint ? ["notnull"] : [],
-                .. typeRestriction.HasReferenceTypeConstraint ? ["class"] : [],
-                .. typeRestriction.HasUnmanagedTypeConstraint ? ["unmangaged"] : [],
-                .. typeRestriction.HasValueTypeConstraint ? ["struct"] : [],
-                .. typeRestriction.HasConstructorConstraint ? ["new()"] : [],
-            ];
+            List<string> restrictionsString = new();
+
+            if (typeRestriction.HasNotNullConstraint)
+            {
+                restrictionsString.Add("notnull");
+            }
+            if (typeRestriction.HasReferenceTypeConstraint)
+            {
+                restrictionsString.Add("class");
+            }
+            if (typeRestriction.HasUnmanagedTypeConstraint)
+            {
+                restrictionsString.Add("unmangaged");
+            }
+            if (typeRestriction.HasValueTypeConstraint)
+            {
+                restrictionsString.Add("struct");
+            }
+            if (typeRestriction.HasConstructorConstraint)
+            {
+                restrictionsString.Add("new()");
+            }
             if (constraints.Any())
                 restrictionsString.AddRange(constraints);
             if (restrictionsString.Count > 0)
@@ -46,8 +60,8 @@ internal static class TypeSymbolExtensions
     {
         // Get the base types in reverse order
         var baseTypes = GetBaseTypes(type, reference);
-        List<string> properties = [];
-        List<string> fields = [];
+        List<string> properties = new();
+        List<string> fields = new();
         foreach (var baseType in baseTypes)
         {
             // Get members of the base type in reverse order
@@ -122,14 +136,14 @@ internal static class TypeSymbolExtensions
             .HasVisibleSetter();
         var standardFieldAssignAnalyzer = new FieldAnalyzer()
             .IsVisibleToSerializer();
-        List<IMemberSymbolAnalyzer<IFieldSymbol>> fieldAnalyzers =
-        [
+        List<IMemberSymbolAnalyzer<IFieldSymbol>> fieldAnalyzers = new()
+        {
             standardFieldAssignAnalyzer
-        ];
-        List<IMemberSymbolAnalyzer<IPropertySymbol>> propertyAnalyzers =
-        [
+        };
+        List<IMemberSymbolAnalyzer<IPropertySymbol>> propertyAnalyzers = new()
+        {
             standardAssignAnalyzer
-        ];
+        };
         var members = namedTypeSymbol.GetAllMembers(references).AsSymbolInfo(references, propertyAnalyzers, fieldAnalyzers).Reduce();
 
         var memberList = ImmutableList.Create(members.ToArray());
