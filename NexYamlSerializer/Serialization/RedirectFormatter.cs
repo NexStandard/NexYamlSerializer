@@ -52,7 +52,8 @@ namespace NexVYaml.Serialization
             IYamlFormatter formatter;
             if (type.IsInterface || type.IsAbstract)
             {
-                formatter = context.Resolver.FindFormatter<T>(value.GetType());
+                formatter = context.Resolver.GetGenericFormatter(value.GetType(),typeof(T));
+                //formatter = context.Resolver.FindFormatter<T>(value.GetType());
                 context.IsRedirected = true;
             }
             else if (type.IsGenericType)

@@ -54,8 +54,10 @@ internal static class CreateFromParent
                 var t = package.ClassInfo.TypeParameters;
                 var ins = inter.TypeParameters;
                 var indexArray = CreateIndexArray(t, ins);
+                var compare = inter.IsGeneric ? "type.GetGenericTypeDefinition()" : "type";
                 w += $$"""
-                            if(type == typeof({{inter.ShortDisplayString}})) {
+                            if({{compare}} == typeof({{inter.ShortDisplayString}})) 
+                            {
                                 var generatorType = typeof({{package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}});
                                 var genericParams = type.GenericTypeArguments;
                                 var param = {{indexArray}};
@@ -78,8 +80,10 @@ internal static class CreateFromParent
             public IYamlFormatter Create(Type type)
             {
                 {{w}}
-                var generic = typeof({{package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}}).MakeGenericType(type.GenericTypeArguments);
-                return (IYamlFormatter)Activator.CreateInstance(generic);
+                 var gen = typeof({{package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}});
+                 var genParams = type.GenericTypeArguments;
+                 var fillGen = gen.MakeGenericType(genParams);
+                 return (IYamlFormatter)Activator.CreateInstance(fillGen);
             }
         """;
         }
@@ -89,12 +93,10 @@ internal static class CreateFromParent
             public IYamlFormatter Create(Type type)
             {
                 {{w}}
-                var generic = typeof(EmptyFormatter<>).MakeGenericType();
-                return (IYamlFormatter)Activator.CreateInstance(generic);
+                return new {{package.ClassInfo.GeneratorName}}();
             }
         """;
         }
-
 
         return s;
     }

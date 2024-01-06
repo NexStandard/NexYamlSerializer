@@ -5,6 +5,7 @@ using System.Linq;
 using System.Buffers;
 using System.IO;
 using System.Collections.Generic;
+using Microsoft.Win32.SafeHandles;
 
 namespace NexVYaml;
 /// <summary>
@@ -52,15 +53,40 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
     public void Register(IYamlFormatterHelper yamlFormatterHelper,Type target)
     {
         FormatterRegistry.Factories.Add(target, yamlFormatterHelper);
+        
+    }
+    public void Register(IYamlFormatterHelper yamlFormatterHelper,Type target,Type interfaceType)
+    {
+        Type tar = target.IsGenericType ? target.GetGenericTypeDefinition() : target;
+        Type inter = interfaceType.IsGenericType ? interfaceType.GetGenericTypeDefinition() : interfaceType;
+        if(FormatterRegistry.Factories2.TryGetValue(inter, out var factory))
+        {
+            factory.TryAdd(tar, yamlFormatterHelper);
+        }
+        else
+        {
+            var dictionary = new Dictionary<Type, IYamlFormatterHelper>(new GenericEqualityComparer());
+            FormatterRegistry.Factories2[inter] = dictionary;
+            dictionary.Add(target, yamlFormatterHelper);
+        }
     }
     public IYamlFormatter GetGenericFormatter(Type type, Type origin)
     {
-        
-        if (FormatterRegistry.Factories.TryGetValue(origin, out var formatter))
+        if (FormatterRegistry.Factories2.TryGetValue(origin, out var formatter))
         {
-            return formatter.Create(type);
+            try
+            {
+                formatter.TryGetValue(type, out var t);
+                return t.Create(origin);
+            }
+            catch
+            {
+                return formatter[origin].Create(origin);
+            }
         }
-        var genericFormatter = FormatterRegistry.GenericFormatterBuffer.FindAssignableType(type); ;
+        
+        var genericFormatter = FormatterRegistry.GenericFormatterBuffer.FindAssignableType(type);
+
         if (genericFormatter is null)
             genericFormatter = typeof(EmptyFormatter<>);
         
@@ -168,6 +194,6 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
         {
             return form;
         }
-        return GetGenericFormatter(target,target);
+        return GetGenericFormatter(typeof(T), target);
     }
 }

@@ -6,6 +6,7 @@ namespace NexVYaml;
 class FormatterRegistry
 {
     internal Dictionary<Type, Dictionary<Type, IYamlFormatter>> FormatterBuffer { get; } = new();
+    internal Dictionary<Type, Dictionary<Type, IYamlFormatterHelper>> Factories2 { get; } = new(new GenericEqualityComparer());
     internal Dictionary<Type, IYamlFormatterHelper> Factories = new(new GenericEqualityComparer());
     internal Dictionary<Type, Type> GenericFormatterBuffer { get; } = new Dictionary<Type, Type>(new GenericEqualityComparer())
     {

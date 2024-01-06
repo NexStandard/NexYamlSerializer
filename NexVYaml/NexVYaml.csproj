@@ -9,7 +9,7 @@
 	  <PackageReadmeFile>readme.md</PackageReadmeFile>
 	  <RepositoryUrl>https://github.com/NexStandard/NexYamlSerializer</RepositoryUrl>
 	  <Copyright>ixllegacyixl ( zfons123@gmail.com )</Copyright>
-	  <PackageVersion>1.0.3</PackageVersion>
+	  <PackageVersion>1.0.4</PackageVersion>
 	  <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
