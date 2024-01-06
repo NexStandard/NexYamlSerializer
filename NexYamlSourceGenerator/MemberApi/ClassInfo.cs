@@ -91,7 +91,7 @@ internal record ClassInfo
 
     private static ImmutableList<(string DisplayString, string ShortDisplayString, bool IsGeneric)> GetInterfaces(ImmutableArray<INamedTypeSymbol> interfaces)
     {
-        List<(string DisplayString, string ShortDisplayString, bool IsGeneric)> result = new();
+        List<(string DisplayString, string ShortDisplayString, bool IsGeneric)> result = [];
         foreach (var interf in interfaces)
         {
             var display = interf.ToDisplayString();

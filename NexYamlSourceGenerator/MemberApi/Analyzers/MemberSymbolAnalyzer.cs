@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.CodeAnalysis;
 using NexYamlSourceGenerator.MemberApi;
-
+namespace NexYamlSourceGenerator.MemberApi.Analyzers;
 internal abstract class MemberSymbolAnalyzer<T>(IMemberSymbolAnalyzer<T> analyzer) : IMemberSymbolAnalyzer<T>
     where T : ISymbol
 {
@@ -16,5 +16,4 @@ internal abstract class MemberSymbolAnalyzer<T>(IMemberSymbolAnalyzer<T> analyze
     }
     public abstract bool AppliesTo(Data<T> symbol);
     protected virtual SymbolInfo CreateInfo() => SymbolInfo.Empty;
-
 }

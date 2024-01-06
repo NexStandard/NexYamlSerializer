@@ -1,6 +1,7 @@
 using Microsoft.CodeAnalysis;
+using NexYamlSourceGenerator.MemberApi.Analyzers;
 
-namespace NexYamlSourceGenerator.MemberApi.Analysation.PropertyAnalyzers;
+namespace NexYamlSourceGenerator.MemberApi.PropertyAnalyzers;
 
 internal class PropertyAnalyzer : IMemberSymbolAnalyzer<IPropertySymbol>
 {

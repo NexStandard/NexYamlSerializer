@@ -1,12 +1,11 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NexYamlSourceGenerator.Core;
 using NexYamlSourceGenerator.MemberApi;
-using NexYamlSourceGenerator.MemberApi.Analysation.PropertyAnalyzers;
+using NexYamlSourceGenerator.MemberApi.Analyzers;
 using NexYamlSourceGenerator.MemberApi.FieldAnalyzers;
+using NexYamlSourceGenerator.MemberApi.PropertyAnalyzers;
 using NexYamlSourceGenerator.MemberApi.UniversalAnalyzers;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Text;
 
 namespace NexYamlSourceGenerator.NexIncremental;
@@ -28,28 +27,14 @@ internal static class TypeSymbolExtensions
         foreach (var typeRestriction in namedType.TypeParameters)
         {
             var constraints = typeRestriction.ConstraintTypes.Select(restriction => restriction.ToDisplayString());
-            List<string> restrictionsString = new();
-
-            if (typeRestriction.HasNotNullConstraint)
-            {
-                restrictionsString.Add("notnull");
-            }
-            if (typeRestriction.HasReferenceTypeConstraint)
-            {
-                restrictionsString.Add("class");
-            }
-            if (typeRestriction.HasUnmanagedTypeConstraint)
-            {
-                restrictionsString.Add("unmangaged");
-            }
-            if (typeRestriction.HasValueTypeConstraint)
-            {
-                restrictionsString.Add("struct");
-            }
-            if (typeRestriction.HasConstructorConstraint)
-            {
-                restrictionsString.Add("new()");
-            }
+            List<string> restrictionsString =
+            [
+                .. typeRestriction.HasNotNullConstraint ? ["notnull"] : [],
+                .. typeRestriction.HasReferenceTypeConstraint ? ["class"] : [],
+                .. typeRestriction.HasUnmanagedTypeConstraint ? ["unmangaged"] : [],
+                .. typeRestriction.HasValueTypeConstraint ? ["struct"] : [],
+                .. typeRestriction.HasConstructorConstraint ? ["new()"] : [],
+            ];
             if (constraints.Any())
                 restrictionsString.AddRange(constraints);
             if (restrictionsString.Count > 0)
@@ -61,8 +46,8 @@ internal static class TypeSymbolExtensions
     {
         // Get the base types in reverse order
         var baseTypes = GetBaseTypes(type, reference);
-        List<string> properties = new();
-        List<string> fields = new();
+        List<string> properties = [];
+        List<string> fields = [];
         foreach (var baseType in baseTypes)
         {
             // Get members of the base type in reverse order
@@ -116,7 +101,7 @@ internal static class TypeSymbolExtensions
     /// <param name="propertyAnalyzers">The list of analyzers for <see cref="IPropertySymbol"/>.</param>
     /// <param name="fieldAnalyzers">The list of analyzers for <see cref="IFieldSymbol"/>.</param>
     /// <returns>An <see cref="IEnumerable{SymbolInfo}"/> representing analyzed information for each symbol.</returns>
-    public static IEnumerable<SymbolInfo> AsSymbolInfo(this IEnumerable<ISymbol> type, ReferencePackage references, List<IMemberSymbolAnalyzer<IPropertySymbol>> propertyAnalyzers, List<IMemberSymbolAnalyzer<IFieldSymbol>> fieldAnalyzers)
+    public static IEnumerable<MemberApi.SymbolInfo> AsSymbolInfo(this IEnumerable<ISymbol> type, ReferencePackage references, List<IMemberSymbolAnalyzer<IPropertySymbol>> propertyAnalyzers, List<IMemberSymbolAnalyzer<IFieldSymbol>> fieldAnalyzers)
     {
         foreach (var symbol in type)
         {
@@ -137,14 +122,14 @@ internal static class TypeSymbolExtensions
             .HasVisibleSetter();
         var standardFieldAssignAnalyzer = new FieldAnalyzer()
             .IsVisibleToSerializer();
-        List<IMemberSymbolAnalyzer<IFieldSymbol>> fieldAnalyzers = new()
-        {
+        List<IMemberSymbolAnalyzer<IFieldSymbol>> fieldAnalyzers =
+        [
             standardFieldAssignAnalyzer
-        };
-        List<IMemberSymbolAnalyzer<IPropertySymbol>> propertyAnalyzers = new()
-        {
+        ];
+        List<IMemberSymbolAnalyzer<IPropertySymbol>> propertyAnalyzers =
+        [
             standardAssignAnalyzer
-        };
+        ];
         var members = namedTypeSymbol.GetAllMembers(references).AsSymbolInfo(references, propertyAnalyzers, fieldAnalyzers).Reduce();
 
         var memberList = ImmutableList.Create(members.ToArray());

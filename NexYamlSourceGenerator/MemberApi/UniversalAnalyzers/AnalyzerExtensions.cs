@@ -1,4 +1,5 @@
 using Microsoft.CodeAnalysis;
+using NexYamlSourceGenerator.MemberApi.Analyzers;
 
 namespace NexYamlSourceGenerator.MemberApi.UniversalAnalyzers;
 internal static class AnalyzerExtensions

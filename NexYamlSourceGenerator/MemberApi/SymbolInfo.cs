@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
-using NexYamlSourceGenerator.MemberApi;
 
+namespace NexYamlSourceGenerator.MemberApi;
 internal record SymbolInfo
 {
     public static SymbolInfo Empty { get; } = new SymbolInfo() { IsEmpty = true };

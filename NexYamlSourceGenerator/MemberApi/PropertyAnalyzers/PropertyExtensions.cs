@@ -1,11 +1,11 @@
 ﻿using Microsoft.CodeAnalysis;
-using NexYamlSourceGenerator.MemberApi.PropertyAnalyzers;
+using NexYamlSourceGenerator.MemberApi.Analyzers;
 
-namespace NexYamlSourceGenerator.MemberApi.Analysation.PropertyAnalyzers;
+namespace NexYamlSourceGenerator.MemberApi.PropertyAnalyzers;
 internal static class PropertyExtensions
 {
-   internal static IMemberSymbolAnalyzer<IPropertySymbol> HasOriginalDefinition(this IMemberSymbolAnalyzer<IPropertySymbol> propertySymbolAnalyzer, INamedTypeSymbol originalDefinition)
-        => new ValidatorOriginalDefinition(propertySymbolAnalyzer, originalDefinition);
+    internal static IMemberSymbolAnalyzer<IPropertySymbol> HasOriginalDefinition(this IMemberSymbolAnalyzer<IPropertySymbol> propertySymbolAnalyzer, INamedTypeSymbol originalDefinition)
+         => new ValidatorOriginalDefinition(propertySymbolAnalyzer, originalDefinition);
     internal static IMemberSymbolAnalyzer<IPropertySymbol> HasVisibleGetter(this IMemberSymbolAnalyzer<IPropertySymbol> propertySymbolAnalyzer)
         => new HasVisibleGetter(propertySymbolAnalyzer);
     internal static IMemberSymbolAnalyzer<IPropertySymbol> HasVisibleSetter(this IMemberSymbolAnalyzer<IPropertySymbol> propertySymbolAnalyzer)
