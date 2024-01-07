@@ -46,35 +46,17 @@ internal static class CreateFromParent
     }
     public static string CreateMethodTyped(this ClassPackage package)
     {
-        string w = "";
+        StringBuilder w = new();
         foreach (var inter in package.ClassInfo.AllInterfaces)
         {
-            if (package.ClassInfo.IsGeneric)
-            {
-                var t = package.ClassInfo.TypeParameters;
-                var ins = inter.TypeParameters;
-                var indexArray = CreateIndexArray(t, ins);
-                var compare = inter.IsGeneric ? "type.GetGenericTypeDefinition()" : "type";
-                w += $$"""
-                            if({{compare}} == typeof({{inter.ShortDisplayString}})) 
-                            {
-                                var generatorType = typeof({{package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}});
-                                var genericParams = type.GenericTypeArguments;
-                                var param = {{indexArray}};
-                                var filledGeneratorType = generatorType.MakeGenericType(param);
-                                return (IYamlFormatter)Activator.CreateInstance(filledGeneratorType);
-                            }
-                    """;
-            }
-            else
-            {
-
-                w += $"if(type == typeof({inter.ShortDisplayString})) {{ return new {package.ClassInfo.GeneratorName}(); }}";
-
-            }
+            w.Append(CreateIfs(package, inter));
         }
-        string s = "";
-        if(package.ClassInfo.IsGeneric)
+        foreach (var inter in package.ClassInfo.AllAbstracts)
+        {
+            w.Append(CreateIfs(package, inter));
+        }
+        string s;
+        if (package.ClassInfo.IsGeneric)
         {
              s = $$"""
             public IYamlFormatter Create(Type type)
@@ -100,6 +82,35 @@ internal static class CreateFromParent
 
         return s;
     }
+
+    private static StringBuilder CreateIfs(ClassPackage package, DataPackage inter)
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (package.ClassInfo.IsGeneric)
+        {
+            var t = package.ClassInfo.TypeParameters;
+            var ins = inter.TypeParameters;
+            var indexArray = CreateIndexArray(t, ins);
+            var compare = inter.IsGeneric ? "type.GetGenericTypeDefinition()" : "type";
+            stringBuilder.AppendLine($$"""
+                            if({{compare}} == typeof({{inter.ShortDisplayString}})) 
+                            {
+                                var generatorType = typeof({{package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}});
+                                var genericParams = type.GenericTypeArguments;
+                                var param = {{indexArray}};
+                                var filledGeneratorType = generatorType.MakeGenericType(param);
+                                return (IYamlFormatter)Activator.CreateInstance(filledGeneratorType);
+                            }
+                    """);
+        }
+        else
+        {
+            stringBuilder.AppendLine($"\t\t\tif(type == typeof({inter.ShortDisplayString})) {{ return new {package.ClassInfo.GeneratorName}(); }}");
+        }
+
+        return stringBuilder;
+    }
+
     static string CreateIndexArray(string[] classTypeParameters, string[] parentTypeParameters)
     {
         int[] indexArray = new int[classTypeParameters.Length];
