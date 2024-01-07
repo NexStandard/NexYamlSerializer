@@ -46,55 +46,5 @@ namespace NexVYaml.Serialization
             throw new YamlSerializerException($"Cannot detect a scalar value of DateTime : {parser.CurrentEventType} {parser.GetScalarAsString()}");
         }
     }
-
-    public class NullableDateTimeFormatter : IYamlFormatter<DateTime?>
-    {
-        public static readonly NullableDateTimeFormatter Instance = new();
-
-        public void Serialize(ref Utf8YamlEmitter emitter, DateTime? value, YamlSerializationContext context)
-        {
-            if (value.HasValue)
-            {
-                var buf = context.GetBuffer64();
-                if (Utf8Formatter.TryFormat(value.Value, buf, out var bytesWritten, new StandardFormat('O')))
-                {
-                    emitter.WriteScalar(buf[..bytesWritten]);
-                }
-                else
-                {
-                    throw new YamlSerializerException($"Cannot format {value}");
-                }
-            }
-            else
-            {
-                emitter.WriteNull();
-            }
-        }
-
-        public DateTime? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-        {
-            if (parser.IsNullScalar())
-            {
-                parser.Read();
-                return default;
-            }
-
-            if (parser.TryGetScalarAsSpan(out var span) &&
-                Utf8Parser.TryParse(span, out DateTime dateTime, out var bytesConsumed) &&
-                bytesConsumed == span.Length)
-            {
-                parser.Read();
-                return dateTime;
-            }
-
-            // fallback
-            if (DateTime.TryParse(parser.GetScalarAsString(), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out dateTime))
-            {
-                parser.Read();
-                return dateTime;
-            }
-            throw new YamlSerializerException($"Cannot detect a scalar value of DateTime : {parser.CurrentEventType} {parser.GetScalarAsString()}");
-        }
-    }
 }
 

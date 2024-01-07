@@ -40,21 +40,6 @@ class FormatterRegistry
             { typeof(DateTime), DateTimeFormatter.Instance },
             { typeof(char), CharFormatter.Instance },
 
-            // Nullable Primitive
-            { typeof(short?), NullableInt16Formatter.Instance },
-            { typeof(int?), NullableInt32Formatter.Instance },
-            { typeof(long?), NullableInt64Formatter.Instance },
-            { typeof(ushort?), NullableUInt16Formatter.Instance },
-            { typeof(uint?), NullableUInt32Formatter.Instance },
-            { typeof(ulong?), NullableUInt64Formatter.Instance },
-            { typeof(float?), NullableFloat32Formatter.Instance },
-            { typeof(double?), NullableFloat64Formatter.Instance },
-            { typeof(bool?), NullableBooleanFormatter.Instance },
-            { typeof(byte?), NullableByteFormatter.Instance },
-            { typeof(sbyte?), NullableSByteFormatter.Instance },
-            { typeof(DateTime?), NullableDateTimeFormatter.Instance },
-            { typeof(char?), NullableCharFormatter.Instance },
-
             // StandardClassLibraryFormatter
             { typeof(string), NullableStringFormatter.Instance },
             { typeof(decimal), DecimalFormatter.Instance },

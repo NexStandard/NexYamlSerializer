@@ -38,9 +38,9 @@ namespace NexVYaml.Serialization
                 var type = typeof(T);
                 if (IsNullable(type, out var underlyingType))
                 {
-                    var genericFilledFormatter = NullableFormatter.MakeGenericType(underlyingType);
+                        var genericFilledFormatter = NullableFormatter.MakeGenericType(underlyingType);
 
-                    formatter = (IYamlFormatter<T>)Activator.CreateInstance(genericFilledFormatter, args:  resolver.GetFormatter(underlyingType));
+                        formatter = (IYamlFormatter<T>)Activator.CreateInstance(genericFilledFormatter, args:  resolver.GetFormatter(underlyingType));
                 }
                 else
                 if (type.IsInterface ||type.IsAbstract)

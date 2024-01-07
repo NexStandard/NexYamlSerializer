@@ -21,34 +21,4 @@ namespace NexVYaml.Serialization
             return result;
         }
     }
-
-    public class NullableInt64Formatter : IYamlFormatter<long?>
-    {
-        public static readonly NullableInt64Formatter Instance = new();
-
-        public void Serialize(ref Utf8YamlEmitter emitter, long? value, YamlSerializationContext context)
-        {
-            if (value.HasValue)
-            {
-                emitter.WriteInt64(value.Value);
-            }
-            else
-            {
-                emitter.WriteNull();
-            }
-        }
-
-        public long? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-        {
-            if (parser.IsNullScalar())
-            {
-                parser.Read();
-                return default;
-            }
-
-            var result = parser.GetScalarAsInt64();
-            parser.Read();
-            return result;
-        }
-    }
 }

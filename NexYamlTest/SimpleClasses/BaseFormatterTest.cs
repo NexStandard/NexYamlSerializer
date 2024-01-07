@@ -8,6 +8,8 @@ internal class BaseFormatterTest
     // Fields
     public int IntField;
 
+    public string StringField;
+
     public float FloatField;
 
     public double DoubleField;
@@ -33,6 +35,8 @@ internal class BaseFormatterTest
 
     // Properties
     public int IntProperty { get; set; }
+
+    public string StringProperty { get; set; }
 
     public float FloatProperty { get; set; }
 
@@ -65,6 +69,8 @@ internal class BaseFormatterNullable
 {
     // Fields
     public int? IntField { get; set; } = 42;
+
+    public string StringField { get; set; } = "asdf";
 
     public float? FloatField { get; set; } = 3.14f;
 
