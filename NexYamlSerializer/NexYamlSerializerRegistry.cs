@@ -40,21 +40,7 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
         var genericType = genericFormatter.MakeGenericType(type.GenericTypeArguments);
         return (IYamlFormatter<T>)Activator.CreateInstance(genericType);
     }
-    public IYamlFormatter GetGenericFormatter(Type type)
-    {
-        var genericFormatter = FormatterRegistry.GenericFormatterBuffer.FindAssignableType(type); ;
-        if(genericFormatter is null)
-            genericFormatter = typeof(EmptyFormatter<>);
 
-        var genericType = genericFormatter.MakeGenericType(type.GenericTypeArguments);
-        return (IYamlFormatter)Activator.CreateInstance(genericType);
-    }
-    
-    public void Register(IYamlFormatterHelper yamlFormatterHelper,Type target)
-    {
-        FormatterRegistry.Factories.Add(target, yamlFormatterHelper);
-        
-    }
     public void Register(IYamlFormatterHelper yamlFormatterHelper,Type target,Type interfaceType)
     {
         Type tar = target.IsGenericType ? target.GetGenericTypeDefinition() : target;
@@ -70,25 +56,14 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
             dictionary.Add(target, yamlFormatterHelper);
         }
     }
-    public IYamlFormatter GetGenericFormatter(Type type, Type origin)
+    public IYamlFormatter GetFormatter(Type type, Type origin)
     {
         if (FormatterRegistry.Factories2.TryGetValue(origin, out var formatter))
         {
-            try
-            {
-                formatter.TryGetValue(type, out var t);
-                return t.Create(origin);
-            }
-            catch
-            {
-                return formatter[origin].Create(origin);
-            }
+            formatter.TryGetValue(type, out var t);
+            return t.Create(origin);
         }
-        
-        var genericFormatter = FormatterRegistry.GenericFormatterBuffer.FindAssignableType(type);
-
-        if (genericFormatter is null)
-            genericFormatter = typeof(EmptyFormatter<>);
+        var genericFormatter = typeof(EmptyFormatter<>);
         
         var genericType = genericFormatter.MakeGenericType(origin.GenericTypeArguments.Take(genericFormatter.GetGenericArguments().Length).ToArray());
         return (IYamlFormatter)Activator.CreateInstance(genericType);
@@ -119,12 +94,6 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
         }
     }
 
-
-    // TODO: use for mapping generic interfaces??
-    internal Type SynchronizeTypes(Type originalType,Type genericTarget)
-    {
-        return originalType;
-    }
     public IYamlFormatter? GetFormatter(Type type)
     {
         if (FormatterRegistry.DefinedFormatters.TryGetValue(type, out var value))
@@ -149,36 +118,5 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
     public void RegisterGenericFormatter(Type target, Type formatterType)
     {
         FormatterRegistry.GenericFormatterBuffer.Add(target, formatterType);
-    }
-    public void Register<T>(IYamlFormatter<T> formatter, Type interfaceType)
-    {
-        var keyType = typeof(T);
-        if (!FormatterRegistry.FormatterBuffer.ContainsKey(interfaceType))
-        {
-            FormatterRegistry.FormatterBuffer.Add(interfaceType, new());
-        }
-        if (!FormatterRegistry.FormatterBuffer[interfaceType].ContainsKey(keyType))
-        {
-            FormatterRegistry.FormatterBuffer[interfaceType].Add(keyType, formatter);
-        }
-        else
-        {
-            FormatterRegistry.FormatterBuffer[interfaceType][keyType] = formatter;
-        }
-    }
-    public void Register(Type formatterType, Type interfaceType)
-    {
-        if (!FormatterRegistry.FormatterBuffer.ContainsKey(interfaceType))
-        {
-            FormatterRegistry.FormatterBuffer.Add(interfaceType, new());
-        }
-        if (!FormatterRegistry.FormatterBuffer[interfaceType].ContainsKey(formatterType))
-        {
-            FormatterRegistry.FormatterBuffer[interfaceType].Add(formatterType, null);
-        }
-        else
-        {
-            FormatterRegistry.FormatterBuffer[interfaceType][formatterType] = null;
-        }
     }
 }

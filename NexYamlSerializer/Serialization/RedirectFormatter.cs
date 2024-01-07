@@ -30,7 +30,7 @@ namespace NexVYaml.Serialization
 
             if (formatter == null)
             {
-                formatter = context.Resolver.GetGenericFormatter(alias, type);
+                formatter = context.Resolver.GetFormatter(alias, type);
             }
             if (formatter == null)
                 return new EmptyFormatter<T>().Deserialize(ref parser, context);
@@ -52,7 +52,7 @@ namespace NexVYaml.Serialization
             IYamlFormatter formatter;
             if (type.IsInterface || type.IsAbstract)
             {
-                formatter = context.Resolver.GetGenericFormatter(value.GetType(),typeof(T));
+                formatter = context.Resolver.GetFormatter(value.GetType(),typeof(T));
                 //formatter = context.Resolver.FindFormatter<T>(value.GetType());
                 context.IsRedirected = true;
             }

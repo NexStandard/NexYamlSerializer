@@ -11,15 +11,13 @@ namespace NexVYaml.Serialization
     {
         IYamlFormatter<T>? GetFormatter<T>();
         public IYamlFormatter? GetFormatter(Type type);
-        IYamlFormatter GetGenericFormatter(Type type,Type origin);
+        IYamlFormatter GetFormatter(Type type,Type origin);
         public void Register(IYamlFormatterHelper yamlFormatterHelper, Type target, Type interfaceType);
         IYamlFormatter<T>? GetGenericFormatter<T>();
         public Type GetAliasType(string alias);
         public void RegisterFormatter<T>(IYamlFormatter<T> formatter);
         public void RegisterTag(string tag, Type formatterGenericType);
         public void RegisterFormatter(Type formatter);
-        public void Register<T>(IYamlFormatter<T> formatter, Type interfaceType);
-        public void Register(Type formatterType, Type interfaceType);
         public void RegisterGenericFormatter(Type target, Type formatterType);
         public static IYamlFormatterResolver Default { get; set; } = NexYamlSerializerRegistry.Instance;
     }
