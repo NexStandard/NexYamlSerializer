@@ -6,6 +6,7 @@ using NexVYaml.Parser;
 
 namespace NexVYaml.Serialization
 {
+
     public class ListFormatter<T> : IYamlFormatter<List<T>?>
     {
         public void Serialize(ref Utf8YamlEmitter emitter, List<T>? value, YamlSerializationContext context)
