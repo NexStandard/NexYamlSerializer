@@ -1,4 +1,5 @@
 ﻿using NexYamlSourceGenerator.MemberApi.Data;
+using System.Collections.Immutable;
 using System.Text;
 
 namespace NexYamlSourceGenerator.Templates;
@@ -7,10 +8,14 @@ internal static class Registration
 {
     public static string CreateRegisterAbstracts(this ClassPackage package)
     {
+        return RegisterTypes(package.ClassInfo.AllAbstracts, package.ClassInfo.ShortDefinition);
+    }
+    private static string RegisterTypes(ImmutableList<DataPackage> datas,string targetTypeShort)
+    {
         StringBuilder sb = new();
-        foreach (var @abstract in package.ClassInfo.AllAbstracts)
+        foreach (var data in datas)
         {
-            sb.AppendLine(Constants.SerializerRegistry + string.Format(Constants.RegisterAbstractClass, "formatter", @abstract));
+            sb.AppendLine($"{Constants.SerializerRegistry}.Register(this,typeof({targetTypeShort}),typeof({data.ShortDisplayString}));");
         }
         return sb.ToString();
     }
@@ -32,24 +37,6 @@ internal static class Registration
     }
     public static string CreateRegisterInterfaces(this ClassPackage package)
     {
-        StringBuilder sb = new();
-        var refe = "formatter";
-        if(package.ClassInfo.IsGeneric)
-        {
-            refe = $"typeof({package.ClassInfo.ShortDefinition})";
-        }
-        foreach (var interfac in package.ClassInfo.AllInterfaces)
-        {
-            sb.AppendLine($"{Constants.SerializerRegistry}.Register(this,typeof({package.ClassInfo.ShortDefinition}),typeof({interfac.ShortDisplayString}));");
-            var interfacDisplay = interfac.DisplayString;
-            if (interfac.IsGeneric)
-            {
-                interfacDisplay = interfac.ShortDisplayString;
-            }
-            sb.AppendLine(Constants.SerializerRegistry + string.Format(Constants.RegisterInterface, refe, interfacDisplay));
-            sb.AppendLine();
-        }
-
-        return sb.ToString();
+        return RegisterTypes(package.ClassInfo.AllInterfaces, package.ClassInfo.ShortDefinition);
     }
 }

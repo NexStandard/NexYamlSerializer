@@ -45,9 +45,9 @@ internal record ClassInfo
     /// </summary>
     internal string NameSpace { get; private set; }
     internal string GeneratorName { get; private set; }
-    internal ImmutableList<(string DisplayString, string ShortDisplayString, bool IsGeneric, string[] TypeParameters)> AllInterfaces { get; private set; }
+    internal ImmutableList<DataPackage> AllInterfaces { get; private set; }
 
-    internal ImmutableList<string> AllAbstracts { get; private set; }
+    internal ImmutableList<DataPackage> AllAbstracts { get; private set; }
 
     /// <summary>
     /// i.e. Test<,,>
@@ -86,28 +86,32 @@ internal record ClassInfo
             TypeParameterArgumentsShort = new ShortGenericDefinition(namedType.TypeArguments.Length).ToString(),
             NameSpace = GetFullNamespace(namedType, '.'),
             TypeKind = namedType.TypeKind,
-            AllInterfaces = GetInterfaces(namedType.AllInterfaces),
-            AllAbstracts = ImmutableList.Create(FindAbstractClasses(namedType).ToArray()),
+            AllInterfaces = GetDataPackages(namedType.AllInterfaces),
+            AllAbstracts = GetDataPackages(FindAbstractClasses(namedType)),
             GeneratorName = CreateGeneratorName(namedType)
         };
     }
 
-    private static ImmutableList<(string DisplayString, string ShortDisplayString, bool IsGeneric, string[] TypeParameters)> GetInterfaces(ImmutableArray<INamedTypeSymbol> interfaces)
+    private static ImmutableList<DataPackage> GetDataPackages(ImmutableArray<INamedTypeSymbol> types)
     {
-        List<(string DisplayString, string ShortDisplayString, bool IsGeneric, string[] TypeParameters)> result = new();
-        foreach (var interf in interfaces)
+        List<DataPackage> result = new();
+        
+        foreach (var type in types)
         {
-            
-            var display = interf.ToDisplayString();
+            var display = type.ToDisplayString();
             var shortI = display;
-            var isGeneric = false;
-            if (interf.IsGenericType)
+            if (type.IsGenericType)
             {
-                isGeneric = true;
                 shortI = display[..display.IndexOf('<')];
-                shortI = shortI + "<" + new string(',', interf.TypeArguments.Length - 1) + ">";
+                shortI = shortI + "<" + new string(',', type.TypeArguments.Length - 1) + ">";
             }
-            result.Add(new() { DisplayString = interf.ToDisplayString(), ShortDisplayString = shortI, IsGeneric = isGeneric, TypeParameters = interf.TypeArguments.Select(x => x.ToDisplayString()).ToArray() });
+            var data = new DataPackage(
+                type.ToDisplayString(),
+                shortI,
+                type.IsGenericType,
+                type.TypeArguments.Select(x => x.ToDisplayString()).ToArray()
+            );
+            result.Add(data);
         }
         return ImmutableList.Create(result.ToArray());
     }
@@ -165,18 +169,18 @@ internal record ClassInfo
     /// </summary>
     /// <param name="typeSymbol">The <see cref="INamedTypeSymbol"/> for which to find abstract classes.</param>
     /// <returns>A list of abstract classes in the inheritance hierarchy of the specified <see cref="INamedTypeSymbol"/>.</returns>
-    private static IReadOnlyList<string> FindAbstractClasses(INamedTypeSymbol typeSymbol)
+    private static ImmutableArray<INamedTypeSymbol> FindAbstractClasses(INamedTypeSymbol typeSymbol)
     {
-        var result = new List<string>();
+        var result = new List<INamedTypeSymbol>();
         var baseType = typeSymbol.BaseType;
         while (baseType != null)
         {
             if (baseType.IsAbstract)
             {
-                result.Add(baseType.ToDisplayString());
+                result.Add(baseType);
             }
             baseType = baseType.BaseType;
         }
-        return result;
+        return ImmutableArray.Create(result.ToArray());
     }
 }

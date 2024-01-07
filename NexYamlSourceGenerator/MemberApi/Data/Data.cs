@@ -9,3 +9,5 @@ namespace NexYamlSourceGenerator.MemberApi.Data;
 internal record Data<T>(T Symbol, DataMemberContext DataMemberContext) where T : ISymbol;
 
 internal record ClassPackage(ClassInfo ClassInfo, ImmutableList<SymbolInfo> MemberSymbols);
+
+internal record DataPackage(string DisplayString, string ShortDisplayString, bool IsGeneric, string[] TypeParameters);

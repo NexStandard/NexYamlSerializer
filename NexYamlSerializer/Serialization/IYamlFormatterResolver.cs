@@ -15,7 +15,6 @@ namespace NexVYaml.Serialization
         public void Register(IYamlFormatterHelper yamlFormatterHelper, Type target, Type interfaceType);
         IYamlFormatter<T>? GetGenericFormatter<T>();
         public Type GetAliasType(string alias);
-        public IYamlFormatter FindFormatter<T>(Type target);
         public void RegisterFormatter<T>(IYamlFormatter<T> formatter);
         public void RegisterTag(string tag, Type formatterGenericType);
         public void RegisterFormatter(Type formatter);

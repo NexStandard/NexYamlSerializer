@@ -181,19 +181,4 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
             FormatterRegistry.FormatterBuffer[interfaceType][formatterType] = null;
         }
     }
-    public IYamlFormatter FindFormatter<T>(Type target)
-    {
-        if (FormatterRegistry.FormatterBuffer.ContainsKey(typeof(T)))
-        {
-            if (FormatterRegistry.FormatterBuffer[typeof(T)].TryGetValue(target, out var value))
-            {
-                return FormatterRegistry.FormatterBuffer[typeof(T)][target];
-            }
-        }
-        if(FormatterRegistry.DefinedFormatters.TryGetValue(target, out var form))
-        {
-            return form;
-        }
-        return GetGenericFormatter(typeof(T), target);
-    }
 }
