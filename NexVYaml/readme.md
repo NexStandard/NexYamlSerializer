@@ -12,8 +12,8 @@ The serializer fully supports the serialization of objects implementing interfac
 2. **Abstract Class Serialization:**
 Abstract classes can be serialized without any hassle, providing flexibility in your design patterns.
 
-3. **Generics Support:**
-The serializer handles generic types, allowing you to serialize and deserialize objects with generic parameters, when their type is accurately given.
+3. **Generic Dynamic Resolution:**
+The serializer handles generic types, allowing you to serialize and deserialize objects with generic parameters.
 
 4. **Members** 
 The Serializer currently handles public/internal(when tagged with DataMember Attribute) fields and properties ( with get and set/init )
@@ -33,25 +33,29 @@ Efficiently serialize and deserialize record types with the Stride3D.YamlSeriali
 9. **Secure Mode**
 Prevents redirection of types during serialization and deserialization processes to ensure that no unknown or unauthorized types can be injected into your code.
 
+10. **Hidden Fields**
+With the new UnsafeAccessor in net8.0 it's possible to serialize private fields when tagget with `[Stride.Core.DataMember]`
+
+
 ### Unsupported Features
 
-1. **Generic Dynamic Deserialization:**
-The serializer does not currently support the dynamic deserialization of generic types. Ensure that the deserialization type fits the type in the yaml.
-
-3. **Private Fields:**
-The serializer ignores private fields during the serialization process. Make sure to use public/internal properties or fields for data you want to serialize.
-
-4. **DataContract Inherited**
+1. **DataContract Inherited**
 The serializer does not support inherited DataContracts and won't in upcomming releases, classes have to be directly tagged with `[Stride.Core.DataContract]`.
 
-5. **DataStyle**
+2. **DataStyle**
 Compact Mapping of Values isn't supported yet e.g. { X: ... , Y: ... }.
 
-6. **Records with Constructors**
+3. **Records with Constructors**
 While not currently a primary focus, support for records with constructors is not planned for the immediate future but may be considered in subsequent updates.
 
-7. **Generic Interfaces**
-As of now, the serialization of generic Interfaces is not supported and is currently blocked in the source code. Future updates will address this limitation by introducing generic dynamic deserialization, reinstating compatibility with generic interfaces. Stay tuned for upcoming releases that will enhance the Stride3D.YamlSerializer to accommodate this feature.
+4. **Reference Serializer**
+It's not possible to use Stride's ReferenceSerializer, will be added in future.
+
+5. **Content Mode**
+Stride's Content Mode isn't supported yet.
+
+6. **Default Values**
+Default Values are currently not handled.
 
 ## Getting Started
 
