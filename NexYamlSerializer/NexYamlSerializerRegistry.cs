@@ -24,8 +24,6 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
     public Type GetAliasType(string alias) => FormatterRegistry.TypeMap[alias];
     public IYamlFormatter<T> GetFormatter<T>()
     {
-        var type = typeof(T);
-
         if (FormatterRegistry.DefinedFormatters.TryGetValue(typeof(T), out var formatter))
         {
             return (IYamlFormatter<T>)formatter;
