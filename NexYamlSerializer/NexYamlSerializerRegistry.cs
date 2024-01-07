@@ -47,20 +47,20 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
     {
         Type tar = target.IsGenericType ? target.GetGenericTypeDefinition() : target;
         Type inter = interfaceType.IsGenericType ? interfaceType.GetGenericTypeDefinition() : interfaceType;
-        if(FormatterRegistry.Factories2.TryGetValue(inter, out var factory))
+        if(FormatterRegistry.FormatterFactories.TryGetValue(inter, out var factory))
         {
             factory.TryAdd(tar, yamlFormatterHelper);
         }
         else
         {
             var dictionary = new Dictionary<Type, IYamlFormatterHelper>(new GenericEqualityComparer());
-            FormatterRegistry.Factories2[inter] = dictionary;
+            FormatterRegistry.FormatterFactories[inter] = dictionary;
             dictionary.Add(target, yamlFormatterHelper);
         }
     }
     public IYamlFormatter GetFormatter(Type type, Type origin)
     {
-        if (FormatterRegistry.Factories2.TryGetValue(origin, out var formatter))
+        if (FormatterRegistry.FormatterFactories.TryGetValue(origin, out var formatter))
         {
             formatter.TryGetValue(type, out var t);
             return t.Create(origin);
