@@ -25,4 +25,9 @@ internal static class AnalyzerExtensions
     {
         return new MemberProcessor<T>(symbols).Analyze(member);
     }
+    public static IMemberSymbolAnalyzer<T> HasAttribute<T>(this IMemberSymbolAnalyzer<T> memberAnalyzer, INamedTypeSymbol attribute)
+        where T : ISymbol
+    {
+        return new HasAttribute<T>(memberAnalyzer,attribute);
+    }
 }
