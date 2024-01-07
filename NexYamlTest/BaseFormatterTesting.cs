@@ -127,15 +127,70 @@ public class BaseFormatterTesting
     [Fact]
     public void BaseNullables()
     {
-        var x = new BaseFormatNullable()
+        var x = new BaseFormatterNullable()
         {
-            NullInt = null
+            IntField = null,
+            FloatField = null,
+            DoubleField = null,
+            DecimalField = null,
+            CharField = null,
+            BoolField = null,
+            ByteField = null,
+            SByteField = null,
+            ShortField = null,
+            UShortField = null,
+            UIntField = null,
+            LongField = null,
+            ULongField = null,
+            IntProperty = null,
+            FloatProperty = null,
+            DoubleProperty = null,
+            DecimalProperty = null,
+            CharProperty = null,
+            BoolProperty = null,
+            ByteProperty = null,
+            SByteProperty = null,
+            ShortProperty = null,
+            UShortProperty = null,
+            UIntProperty = null,
+            LongProperty = null,
+            ULongProperty = null,
+            Time = null
         };
 
         NexYamlSerializerRegistry.Init();
         var s = YamlSerializer.SerializeToString(x);
-        var d = YamlSerializer.Deserialize<BaseFormatNullable>(s);
+        var d = YamlSerializer.Deserialize<BaseFormatterNullable>(s);
 
-        Assert.Null(d.NullInt);
+        // Assert.Null() for each property to verify they are all initialized to null
+        Assert.Null(d.IntField);
+        Assert.Null(d.FloatField);
+        Assert.Null(d.DoubleField);
+        Assert.Null(d.DecimalField);
+        Assert.Null(d.CharField);
+        Assert.Null(d.BoolField);
+        Assert.Null(d.ByteField);
+        Assert.Null(d.SByteField);
+        Assert.Null(d.ShortField);
+        Assert.Null(d.UShortField);
+        Assert.Null(d.UIntField);
+        Assert.Null(d.LongField);
+        Assert.Null(d.ULongField);
+
+        Assert.Null(d.IntProperty);
+        Assert.Null(d.FloatProperty);
+        Assert.Null(d.DoubleProperty);
+        Assert.Null(d.DecimalProperty);
+        Assert.Null(d.CharProperty);
+        Assert.Null(d.BoolProperty);
+        Assert.Null(d.ByteProperty);
+        Assert.Null(d.SByteProperty);
+        Assert.Null(d.ShortProperty);
+        Assert.Null(d.UShortProperty);
+        Assert.Null(d.UIntProperty);
+        Assert.Null(d.LongProperty);
+        Assert.Null(d.ULongProperty);
+
+        Assert.Null(d.Time);
     }
 }
