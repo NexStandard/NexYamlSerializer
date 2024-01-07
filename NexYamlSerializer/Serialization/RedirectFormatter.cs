@@ -11,8 +11,12 @@ using NexYamlSerializer.Serialization.Formatters;
 
 namespace NexVYaml.Serialization
 {
-    public struct RedirectFormatter<T> : IYamlFormatter<T>
+    public readonly struct RedirectFormatter<T> : IYamlFormatter<T>
     {
+        public RedirectFormatter()
+        {
+        }
+
         public T Deserialize(ref YamlParser parser, YamlDeserializationContext context)
         {
             if (context.SecureMode)
@@ -40,7 +44,9 @@ namespace NexVYaml.Serialization
             var method = formatter.GetType().GetMethod(nameof(Deserialize));
             return (T)method.Invoke(formatter, new object[] { parser, context });
         }
-        public readonly void Serialize(ref Utf8YamlEmitter emitter, T value, YamlSerializationContext context)
+
+        readonly Type NullableFormatter { get;  } = typeof(NullableFormatter<>);
+        public readonly void Serialize(ref Utf8YamlEmitter emitter, T? value, YamlSerializationContext context)
         {
             if (context.SecureMode)
             {
@@ -50,6 +56,7 @@ namespace NexVYaml.Serialization
             }
             var type = typeof(T);
             IYamlFormatter formatter;
+
             if (type.IsInterface || type.IsAbstract)
             {
                 formatter = context.Resolver.GetFormatter(value.GetType(),typeof(T));

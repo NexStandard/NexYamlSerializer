@@ -5,5 +5,6 @@
 	<Description>NexVYaml Serializer</Description>
 	<LangVersion>12</LangVersion>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	  <Nullable>enable</Nullable>
   </PropertyGroup>
 </Project>

@@ -7,6 +7,9 @@ namespace NexVYaml.Serialization
 {
     public class NullableFormatter<T> : IYamlFormatter<T?> where T : struct
     {
+        IYamlFormatter<T> yamlFormatter;
+        public NullableFormatter(IYamlFormatter<T> formatter) { yamlFormatter = formatter; }
+
         public void Serialize(ref Utf8YamlEmitter emitter, T? value, YamlSerializationContext context)
         {
             if (value is null)
@@ -15,8 +18,7 @@ namespace NexVYaml.Serialization
             }
             else
             {
-                context.Resolver.GetFormatterWithVerify<T>()
-                    .Serialize(ref emitter, value.Value, context);
+                yamlFormatter.Serialize(ref emitter, value.Value, context);
             }
         }
 
@@ -28,7 +30,7 @@ namespace NexVYaml.Serialization
                 return null;
             }
 
-            return context.DeserializeWithAlias<T>(ref parser);
+            return new T?(yamlFormatter.Deserialize(ref parser,context));
         }
     }
 

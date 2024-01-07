@@ -24,6 +24,11 @@ namespace NexVYaml.Serialization
 
     public static class YamlFormatterResolverExtensions
     {
+        static Type NullableFormatter = typeof(NullableFormatter<>);
+        public static bool IsNullable(Type value, out Type underlyingType)
+        {
+            return (underlyingType = Nullable.GetUnderlyingType(value)) != null;
+        }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IYamlFormatter<T> GetFormatterWithVerify<T>(this IYamlFormatterResolver resolver)
         {
@@ -31,6 +36,13 @@ namespace NexVYaml.Serialization
             try
             {
                 var type = typeof(T);
+                if (IsNullable(type, out var underlyingType))
+                {
+                    var genericFilledFormatter = NullableFormatter.MakeGenericType(underlyingType);
+
+                    formatter = (IYamlFormatter<T>)Activator.CreateInstance(genericFilledFormatter, args:  resolver.GetFormatter(underlyingType));
+                }
+                else
                 if (type.IsInterface ||type.IsAbstract)
                 {
                     if(resolver is RedirectFormatter<T> redirector)

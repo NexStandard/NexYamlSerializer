@@ -60,3 +60,8 @@ internal class BaseFormatterTest
 
     public TimeSpan Time = new();
 }
+[DataContract]
+internal class BaseFormatNullable
+{
+    public int? NullInt { get; set; }
+}

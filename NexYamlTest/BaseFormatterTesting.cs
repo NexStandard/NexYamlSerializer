@@ -124,4 +124,18 @@ public class BaseFormatterTesting
         Assert.Equal(x.Time, d.Time);
 
     }
+    [Fact]
+    public void BaseNullables()
+    {
+        var x = new BaseFormatNullable()
+        {
+            NullInt = null
+        };
+
+        NexYamlSerializerRegistry.Init();
+        var s = YamlSerializer.SerializeToString(x);
+        var d = YamlSerializer.Deserialize<BaseFormatNullable>(s);
+
+        Assert.Null(d.NullInt);
+    }
 }
