@@ -25,6 +25,11 @@ abstract class GenericAbstract<T,K>
     public int Test { get; set; }
 }
 [DataContract]
+abstract class GenericAbstractWithDataContract<T, K>
+{
+    public int Test { get; set; }
+}
+[DataContract]
 class GenericAbstractImplementation<T,K> : GenericAbstract<T, K>
 {
     public T TI { get; set; }
@@ -32,6 +37,11 @@ class GenericAbstractImplementation<T,K> : GenericAbstract<T, K>
 }
 [DataContract]
 class GenericAbstractImlementationLessParams<T> : GenericAbstract<T, int>
+{
+
+}
+[DataContract]
+class GenericAbstractImlementationLessParamsDataContract<T> : GenericAbstractWithDataContract<T, int>
 {
 
 }

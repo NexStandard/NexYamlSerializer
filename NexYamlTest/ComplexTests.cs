@@ -126,16 +126,28 @@ public class ComplexTests
         var deserialized = YamlSerializer.Deserialize<GenericAbstractImplementation<int, int>>(s);
         Assert.Equal(genericInterface.Test, deserialized.Test);
     }
-    [Fact(Skip ="Presumably wrong serialization for abstracts")]
-    public void InheritedReducedGenerics()
+    [Fact()]
+    public void InheritedNoDatacontractOnAbstractClass()
     {
         Setup();
-        GenericAbstract<int, int> genericInterface = new GenericAbstractImlementationLessParams<int>()
+        GenericAbstract<int, int> abstractObject = new GenericAbstractImlementationLessParams<int>()
         {
             Test = 3
         };
-        var s = YamlSerializer.SerializeToString(genericInterface);
+        var s = YamlSerializer.SerializeToString(abstractObject);
         var deserialized = YamlSerializer.Deserialize<GenericAbstractImlementationLessParams<int>>(s);
-        Assert.Equal(genericInterface.Test, deserialized.Test);
+        Assert.Equal(0, deserialized.Test);
+    }
+    [Fact()]
+    public void InheritedNoDatacontractOnAbstractClassWithDataContract()
+    {
+        Setup();
+        GenericAbstractWithDataContract<int, int> abstractObject = new GenericAbstractImlementationLessParamsDataContract<int>()
+        {
+            Test = 3
+        };
+        var s = YamlSerializer.SerializeToString(abstractObject);
+        var deserialized = YamlSerializer.Deserialize<GenericAbstractImlementationLessParamsDataContract<int>>(s);
+        Assert.Equal(abstractObject.Test, deserialized.Test);
     }
 }
