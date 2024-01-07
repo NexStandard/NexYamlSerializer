@@ -19,6 +19,7 @@ internal class FieldAnalyzer : IMemberSymbolAnalyzer<IFieldSymbol>
             IsInterface = context.Symbol.Type.TypeKind == TypeKind.Interface,
             Context = context.DataMemberContext,
             IsArray = context.Symbol.Type.TypeKind == TypeKind.Array,
+            IsHidden = context.DataMemberContext.IsHidden,
         };
     }
 

@@ -8,8 +8,19 @@ internal static class AnalyzerExtensions
     internal static bool IsVisibleToEditor(this Accessibility accessibility, DataMemberContext context)
     {
         if (context.State == DataMemberContextState.Included)
-            return accessibility is Accessibility.Public or Accessibility.Internal;
+            return accessibility is Accessibility.Public or Accessibility.Internal or Accessibility.ProtectedAndInternal;
         return accessibility == Accessibility.Public;
+    }
+    internal static bool IsHiddenVisibleToEditor(this Accessibility accessibility, DataMemberContext context)
+    {
+        if (context.State == DataMemberContextState.Included)
+        {
+            return accessibility is 
+                Accessibility.NotApplicable or 
+                Accessibility.Private or
+                Accessibility.Protected;
+        }
+        return false;
     }
     internal static IMemberSymbolAnalyzer<T> WhenNot<T>(this IMemberSymbolAnalyzer<T> memberAnalyzer, Func<IMemberSymbolAnalyzer<T>, IMemberSymbolAnalyzer<T>> analyzerTarget)
         where T : ISymbol

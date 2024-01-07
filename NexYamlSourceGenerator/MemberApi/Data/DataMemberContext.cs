@@ -34,4 +34,5 @@ internal record DataMemberContext
     public DataMemberContextState State { get; private set; }
     public MemberMode Mode { get; set; }
     public int Order { get; set; }
+    public bool IsHidden { get; set; }
 }

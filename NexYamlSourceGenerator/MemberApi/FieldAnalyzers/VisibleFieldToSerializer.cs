@@ -12,3 +12,13 @@ internal class VisibleFieldToSerializer(IMemberSymbolAnalyzer<IFieldSymbol> anal
         return context.Symbol.DeclaredAccessibility.IsVisibleToEditor(context.DataMemberContext);
     }
 }
+
+internal class HiddenVisibleFieldToSerializer(IMemberSymbolAnalyzer<IFieldSymbol> analyzer) : MemberSymbolAnalyzer<IFieldSymbol>(analyzer)
+{
+    public override bool AppliesTo(Data<IFieldSymbol> context)
+    {
+        if(context.DataMemberContext.State == DataMemberContextState.Included)
+            return context.DataMemberContext.IsHidden = context.Symbol.DeclaredAccessibility.IsHiddenVisibleToEditor(context.DataMemberContext);
+        return false;
+    }
+}
