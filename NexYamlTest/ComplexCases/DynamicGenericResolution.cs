@@ -20,6 +20,21 @@ internal class SubstitutedGenericClassNoParams : GenericImplementedClassWithLess
 {
 
 }
+abstract class GenericAbstract<T,K>
+{
+    public int Test { get; set; }
+}
+[DataContract]
+class GenericAbstractImplementation<T,K> : GenericAbstract<T, K>
+{
+    public T TI { get; set; }
+    public K TI2 { get; set; }
+}
+[DataContract]
+class GenericAbstractImlementationLessParams<T> : GenericAbstract<T, int>
+{
+
+}
 [DataContract]
 internal class GenericImplementedClassWithNoParams : IGenericInterface<int, int>
 {

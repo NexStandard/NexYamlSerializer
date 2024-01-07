@@ -113,4 +113,29 @@ public class ComplexTests
         Assert.Equal(genericInterface.Generic, deserialized.Generic);
         Assert.Equal(genericInterface.Generic2, deserialized.Generic2);
     }
+    [Fact]
+    public void InheritedSameGenerics()
+    {
+        Setup();
+        GenericAbstract<int, int> genericInterface = new GenericAbstractImplementation<int,int>()
+        {
+            TI = 1,
+            TI2 = 10
+        };
+        var s = YamlSerializer.SerializeToString(genericInterface);
+        var deserialized = YamlSerializer.Deserialize<GenericAbstractImplementation<int, int>>(s);
+        Assert.Equal(genericInterface.Test, deserialized.Test);
+    }
+    [Fact(Skip ="Presumably wrong serialization for abstracts")]
+    public void InheritedReducedGenerics()
+    {
+        Setup();
+        GenericAbstract<int, int> genericInterface = new GenericAbstractImlementationLessParams<int>()
+        {
+            Test = 3
+        };
+        var s = YamlSerializer.SerializeToString(genericInterface);
+        var deserialized = YamlSerializer.Deserialize<GenericAbstractImlementationLessParams<int>>(s);
+        Assert.Equal(genericInterface.Test, deserialized.Test);
+    }
 }
