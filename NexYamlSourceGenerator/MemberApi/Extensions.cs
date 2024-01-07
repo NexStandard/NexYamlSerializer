@@ -150,11 +150,13 @@ internal static class Extensionss
     {
         var standardAssignAnalyzer = new PropertyAnalyzer()
             .HasVisibleGetter()
-            .HasVisibleSetter();
+            .HasVisibleSetter()
+            .IsNonStatic();
         var standardFieldAssignAnalyzer = new FieldAnalyzer()
             .IsVisibleToSerializer()
             .WhenNot(x => x.IsConst())
-            .WhenNot(x => x.IsReadOnly());
+            .WhenNot(x => x.IsReadOnly())
+            .IsNonStatic();
 
         List<IMemberSymbolAnalyzer<IFieldSymbol>> fieldAnalyzers = new()
         {
