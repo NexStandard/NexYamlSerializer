@@ -6,44 +6,6 @@ using System.Text;
 namespace NexYamlSourceGenerator.Templates;
 internal static class CreateFromParent
 {
-    public static string CreateMethod(this ClassPackage package)
-    {
-        string w = "";
-        foreach (var inter in package.ClassInfo.AllInterfaces)
-        {
-            if(package.ClassInfo.IsGeneric)
-            {
-                var t = package.ClassInfo.TypeParameters;
-                var ins = inter.TypeParameters;
-                var indexArray = CreateIndexArray(t, ins);
-                w += $$"""
-                            if(typeof(T) == typeof({{inter.ShortDisplayString}})) {
-                                var generatorType = typeof({{package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort }});
-                                var genericParams = typeof(T).GenericTypeArguments;
-                                var param = {{indexArray}};
-                                var filledGeneratorType = generatorType.MakeGenericType(param);
-                                return (IYamlFormatter)Activator.CreateInstance(filledGeneratorType);
-                            }
-                    """;
-            }
-            else
-            {
-
-                w += $"if(typeof(T) == typeof({inter.ShortDisplayString})) {{ return new {package.ClassInfo.GeneratorName}(); }}"; 
-
-            }
-        }
-
-           var s = $$"""
-            public IYamlFormatter Create<T>()
-            {
-                {{w}}
-                return new EmptyFormatter<T>();
-            }
-        """;
-        
-        return s;
-    }
     public static string CreateMethodTyped(this ClassPackage package)
     {
         StringBuilder w = new();
@@ -59,15 +21,15 @@ internal static class CreateFromParent
         if (package.ClassInfo.IsGeneric)
         {
              s = $$"""
-            public IYamlFormatter Create(Type type)
-            {
-                {{w}}
-                 var gen = typeof({{package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}});
-                 var genParams = type.GenericTypeArguments;
-                 var fillGen = gen.MakeGenericType(genParams);
-                 return (IYamlFormatter)Activator.CreateInstance(fillGen);
-            }
-        """;
+    public IYamlFormatter Create(Type type)
+    {
+{{w}}
+        var gen = typeof({{package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}});
+        var genParams = type.GenericTypeArguments;
+        var fillGen = gen.MakeGenericType(genParams);
+        return (IYamlFormatter)Activator.CreateInstance(fillGen);
+    }
+""";
         }
         else
         {
@@ -91,8 +53,10 @@ internal static class CreateFromParent
             var t = package.ClassInfo.TypeParameters;
             var ins = inter.TypeParameters;
             var indexArray = CreateIndexArray(t, ins);
-            var compare = inter.IsGeneric ? "type.GetGenericTypeDefinition()" : "type";
-            stringBuilder.AppendLine($$"""
+            if(indexArray != null)
+            {
+                var compare = inter.IsGeneric ? "type.GetGenericTypeDefinition()" : "type";
+                stringBuilder.AppendLine($$"""
                             if({{compare}} == typeof({{inter.ShortDisplayString}})) 
                             {
                                 var generatorType = typeof({{package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}});
@@ -101,7 +65,10 @@ internal static class CreateFromParent
                                 var filledGeneratorType = generatorType.MakeGenericType(param);
                                 return (IYamlFormatter)Activator.CreateInstance(filledGeneratorType);
                             }
+                    
                     """);
+            }
+
         }
         else
         {
@@ -111,7 +78,7 @@ internal static class CreateFromParent
         return stringBuilder;
     }
 
-    static string CreateIndexArray(string[] classTypeParameters, string[] parentTypeParameters)
+    public static string CreateIndexArray(string[] classTypeParameters, string[] parentTypeParameters)
     {
         int[] indexArray = new int[classTypeParameters.Length];
 
@@ -120,7 +87,8 @@ internal static class CreateFromParent
             // Find the index of the matching type parameter in parentTypeParameters
             indexArray[i] = Array.IndexOf(parentTypeParameters, classTypeParameters[i]);
         }
-
+        if (indexArray.Contains(-1))
+            return null;
         return $"new Type[] {{ {string.Join(", ", indexArray.Select(index => $"genericParams[{index}]"))} }}";
     }
 }

@@ -6,6 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NexYamlTest.ComplexCases;
+
+[DataContract]
+internal class TempList<T> : List<T>
+{ }
 [DataContract]
 internal class DoubleInheritedList : ListWithOnEditCallback<int>
 {

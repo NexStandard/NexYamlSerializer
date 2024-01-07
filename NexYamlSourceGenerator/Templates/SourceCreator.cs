@@ -43,7 +43,6 @@ file class {info.GeneratorName + "Helper" } : IYamlFormatterHelper
 {package.CreateRegisterAbstracts()}
 {package.CreateRegisterInterfaces()}
     }}
-{package.CreateMethod()}
 {package.CreateMethodTyped()}
 }}
 [System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]

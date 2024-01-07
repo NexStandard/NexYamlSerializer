@@ -8,14 +8,15 @@ internal static class Registration
 {
     public static string CreateRegisterAbstracts(this ClassPackage package)
     {
-        return RegisterTypes(package.ClassInfo.AllAbstracts, package.ClassInfo.ShortDefinition);
+        return RegisterTypes(package.ClassInfo.AllAbstracts,package.ClassInfo.ShortDefinition , package.ClassInfo.TypeParameters);
     }
-    private static string RegisterTypes(ImmutableList<DataPackage> datas,string targetTypeShort)
+    private static string RegisterTypes(ImmutableList<DataPackage> datas, string targetTypeShort, string[] classData)
     {
         StringBuilder sb = new();
         foreach (var data in datas)
         {
-            sb.AppendLine($"{Constants.SerializerRegistry}.Register(this,typeof({targetTypeShort}),typeof({data.ShortDisplayString}));");
+            if (CreateFromParent.CreateIndexArray(classData,data.TypeParameters) != null)
+                sb.AppendLine($"{Constants.SerializerRegistry}.Register(this,typeof({targetTypeShort}),typeof({data.ShortDisplayString}));");
         }
         return sb.ToString();
     }
@@ -28,6 +29,7 @@ internal static class Registration
             sb.AppendLine($"{Constants.SerializerRegistry}.RegisterTag(\"{package.ClassInfo.AliasTag}\",typeof({package.ClassInfo.ShortDefinition}));");
         if (package.ClassInfo.IsGeneric)
         {
+            
             sb.AppendLine($"{Constants.SerializerRegistry}.RegisterGenericFormatter(typeof({package.ClassInfo.ShortDefinition}),typeof({package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}));");
             sb.AppendLine($"{Constants.SerializerRegistry}.RegisterFormatter(typeof({package.ClassInfo.ShortDefinition}));");
             return sb.ToString();
@@ -37,6 +39,6 @@ internal static class Registration
     }
     public static string CreateRegisterInterfaces(this ClassPackage package)
     {
-        return RegisterTypes(package.ClassInfo.AllInterfaces, package.ClassInfo.ShortDefinition);
+        return RegisterTypes(package.ClassInfo.AllInterfaces, package.ClassInfo.ShortDefinition, package.ClassInfo.TypeParameters);
     }
 }
