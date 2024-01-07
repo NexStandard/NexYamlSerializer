@@ -1,4 +1,5 @@
 ﻿using Stride.Core;
+using System;
 namespace NexYamlTest.SimpleClasses;
 [DataContract]
 internal class BaseFormatterTest
@@ -57,4 +58,5 @@ internal class BaseFormatterTest
 
     public ulong ULongProperty { get; set; }
 
+    public TimeSpan Time = new();
 }

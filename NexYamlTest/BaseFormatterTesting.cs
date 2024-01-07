@@ -62,7 +62,7 @@ public class BaseFormatterTesting
             UIntProperty = 987654321,
 
             LongProperty = 9223372036854775807,
-
+            Time = new TimeSpan(10),
             ULongProperty = 18446744073709551614,
         //    NullableULongProperty = null,
         };
@@ -121,6 +121,7 @@ public class BaseFormatterTesting
         Assert.Equal(x.LongProperty, d.LongProperty);
 
         Assert.Equal(x.ULongProperty, d.ULongProperty);
+        Assert.Equal(x.Time, d.Time);
 
     }
 }
