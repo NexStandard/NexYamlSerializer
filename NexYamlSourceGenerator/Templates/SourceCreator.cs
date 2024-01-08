@@ -45,7 +45,7 @@ file class {info.GeneratorName + "Helper" } : IYamlFormatterHelper
 {package.CreateMethodTyped()}
 }}
 [System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]
-file class {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<{info.NameDefinition}> {info.TypeParameterRestrictions}
+file struct {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<{info.NameDefinition}> {info.TypeParameterRestrictions}
 {{
 
     {package.CreateUTF8Members()}
