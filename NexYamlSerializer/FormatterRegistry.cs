@@ -9,6 +9,7 @@ class FormatterRegistry
     internal Dictionary<Type, Type> GenericFormatterBuffer { get; } = new Dictionary<Type, Type>(new GenericEqualityComparer())
     {
         [typeof(List<>)] = typeof(ListFormatter<>),
+        [typeof(ICollection<>)] = typeof(InterfaceCollectionFormatter<>),
         [typeof(KeyValuePair<,>)] = typeof(KeyValuePairFormatter<,>),
         [typeof(Dictionary<,>)] = typeof(DictionaryFormatter<,>),
         [typeof(Tuple<>)] = typeof(TupleFormatter<>),

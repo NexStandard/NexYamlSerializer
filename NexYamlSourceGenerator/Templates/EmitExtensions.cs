@@ -13,26 +13,12 @@ internal static class EmitExtensions
             var serializeString = ".Serialize";
             if (member.IsArray)
                 serializeString = ".SerializeArray";
-            if (member.IsAbstract || member.IsInterface)
-            {
 
-                sb.AppendLine($$"""
-                        IYamlFormatter<{{member.Type}}> {{member.Name}}formatter = context.Resolver.FindCompatibleFormatter(value.{{member.Name}},value.{{member.Name}}.GetType(),out bool is{{member.Name}}Redirected);
-                            if({{member.Name}}formatter is not null)
-                            {
-                                emitter.WriteString("{{member.Name}}", NexVYaml.Emitter.ScalarStyle.Plain);
-                                context.IsRedirected = is{{member.Name}}Redirected;
-                                {{member.Name}}formatter{{serializeString}}(ref emitter, value.{{member.Name}},context);
-                            }
-                    """);
-            }
-            else
-            {
                 sb.AppendLine($$"""
                         emitter.WriteString("{{member.Name}}", NexVYaml.Emitter.ScalarStyle.Plain);
                         context{{serializeString}}(ref emitter, value.{{member.Name}});
                 """);
-            }
+            
         }
         return sb.ToString();
     }

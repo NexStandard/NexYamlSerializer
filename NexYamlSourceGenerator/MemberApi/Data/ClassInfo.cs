@@ -87,7 +87,7 @@ internal record ClassInfo
             NameSpace = GetFullNamespace(namedType, '.'),
             TypeKind = namedType.TypeKind,
             AllInterfaces = GetDataPackages(namedType.AllInterfaces),
-            AllAbstracts = GetDataPackages(namedType.FindAbstractClasses(package)),
+            AllAbstracts = GetDataPackages(namedType.FindBase(package)),
             GeneratorName = CreateGeneratorName(namedType)
         };
     }

@@ -1,5 +1,6 @@
 ﻿using NexVYaml;
 using NexYamlTest.SimpleClasses;
+using Stride.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,4 +74,23 @@ public class CollectionTest
         Assert.Contains(data1, d.values);
         Assert.Contains(data2, d.values);
     }
+    [Fact]
+    public void InterfaceList()
+    {
+        // Creating test data
+        InterfaceList data1 = new InterfaceList()
+        {
+            keyValuePairs = new List<string>() { "Hompty" , "Dompty"}
+        };
+
+        NexYamlSerializerRegistry.Init();
+        var s = YamlSerializer.SerializeToString(data1);
+        var d = YamlSerializer.Deserialize<InterfaceList>(s);
+        Assert.Equal(data1.keyValuePairs.Count, d.keyValuePairs.Count);
+    }
+}
+[DataContract]
+internal class InterfaceList
+{
+    public ICollection<string> keyValuePairs = new List<string>();
 }

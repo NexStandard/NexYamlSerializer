@@ -27,15 +27,24 @@ namespace NexVYaml.Serialization
 
             parser.TryGetCurrentTag(out var tag);
             IYamlFormatter formatter;
-            Type alias;
-
-            alias = context.Resolver.GetAliasType(tag.Handle);
-            formatter = context.Resolver.GetFormatter(alias);
-
-            if (formatter == null)
+            if(tag == null)
             {
-                formatter = context.Resolver.GetFormatter(alias, type);
+                formatter = context.Resolver.GetGenericFormatter<T>();
             }
+            else
+            {
+                Type alias;
+
+                alias = context.Resolver.GetAliasType(tag.Handle);
+                formatter = context.Resolver.GetFormatter(alias);
+                if (formatter == null)
+                {
+                    formatter = context.Resolver.GetFormatter(alias, type);
+                }
+            }
+
+
+
             if (formatter == null)
                 return new EmptyFormatter<T>().Deserialize(ref parser, context);
             // C# forgets the cast of T when invoking Deserialize,
@@ -64,21 +73,11 @@ namespace NexVYaml.Serialization
                 }
                 return;
             }
-            IYamlFormatter formatter;
-            if(type != value?.GetType())
-            {
-                formatter = context.Resolver.GetFormatter(value!.GetType(), typeof(T));
+            var valueType = value!.GetType();
+            var formatter = context.Resolver.GetFormatter(value!.GetType(), typeof(T));
+            if(valueType != type) 
                 context.IsRedirected = true;
-            }
-            else if (type.IsGenericType)
-            {
-                formatter = context.Resolver.GetGenericFormatter<T>();
-                formatter ??= EmptyFormatter<T>.Empty();
-            }
-            else
-            {
-                formatter = context.Resolver.GetFormatter<T>();
-            }
+
             // C# forgets the cast of T when invoking Deserialize,
             // this way we can call the deserialize method with the "real type"
             // that is in the object

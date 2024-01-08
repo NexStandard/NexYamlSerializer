@@ -15,6 +15,7 @@ namespace NexVYaml.Serialization
             }
             else
             {
+                context.IsRedirected = false;
                 emitter.BeginSequence();
                 if (value.Count > 0)
                 {

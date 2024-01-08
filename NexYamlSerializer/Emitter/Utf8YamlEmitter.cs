@@ -24,7 +24,7 @@ namespace NexVYaml.Emitter
         FlowSequenceEntry,
     }
     // TODO: If its ever possible to Invoke ref structs, change this to ref struct and ExpandBuffer, all invocations must be then changed to use the ref struct
-    public struct Utf8YamlEmitter
+    public class Utf8YamlEmitter
     {
         static byte[] whiteSpaces =
         {
@@ -81,7 +81,7 @@ namespace NexVYaml.Emitter
             tagStack = new ExpandBuffer<string>(4);
         }
 
-        internal readonly IBufferWriter<byte> GetWriter() => writer;
+        internal IBufferWriter<byte> GetWriter() => writer;
 
         public void Dispose()
         {

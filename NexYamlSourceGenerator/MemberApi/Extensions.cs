@@ -36,6 +36,7 @@ internal static class Extensionss
         attributeData = symbol.GetAttributes().FirstOrDefault(attr => attr.AttributeClass?.OriginalDefinition.Equals(attribute, SymbolEqualityComparer.Default) ?? false);
         return attributeData != null;
     }
+    // TODO : dont double loop over base classes with find abstracts
     /// <summary>
     /// Retrieves all <see cref="IPropertySymbol"/> and <see cref="IFieldSymbol"/> from the specified <see cref="INamedTypeSymbol"/> and it's base types,
     /// returning them in reverse order of inheritance ( top to bottom ).
@@ -43,7 +44,7 @@ internal static class Extensionss
     /// <param name="type">The <see cref="INamedTypeSymbol"/> to retrieve members for.</param>
     /// <param name="reference">The <see cref="ReferencePackage"/> containing necessary references.</param>
     /// <returns>all <see cref="IPropertySymbol"/> and <see cref="IFieldSymbol"/> in top to bottom order of inheritance tree.</returns>
-    internal static IEnumerable<ISymbol> GetAllMembers(this INamedTypeSymbol type, ReferencePackage reference) => type.GetAllMembersBottomToTop(reference).Reverse();
+    internal static IEnumerable<ISymbol> GetAllMembers(this INamedTypeSymbol type, ReferencePackage reference) => type.GetAllMembersBottomToTop(reference);
     public static string GenericRestrictions(this INamedTypeSymbol namedType)
     {
         const string whereClause = "where ";
@@ -85,7 +86,7 @@ internal static class Extensionss
     /// </summary>
     /// <param name="typeSymbol">The <see cref="INamedTypeSymbol"/> for which to find abstract classes.</param>
     /// <returns>A list of abstract/base classes in the inheritance hierarchy of the specified <see cref="INamedTypeSymbol"/>.</returns>
-    public static ImmutableArray<INamedTypeSymbol> FindAbstractClasses(this INamedTypeSymbol typeSymbol, ReferencePackage package)
+    public static ImmutableArray<INamedTypeSymbol> FindBase(this INamedTypeSymbol typeSymbol, ReferencePackage package)
     {
         var result = new List<INamedTypeSymbol>();
         var baseType = typeSymbol.BaseType;
