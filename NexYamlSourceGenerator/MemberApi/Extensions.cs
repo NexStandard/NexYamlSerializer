@@ -80,6 +80,23 @@ internal static class Extensionss
         }
         return stringBuilder.Length > 0 ? whereClause + stringBuilder : "";
     }
+    /// <summary>
+    /// Finds abstract/base classes in the inheritance hierarchy of the specified <see cref="INamedTypeSymbol"/>.
+    /// </summary>
+    /// <param name="typeSymbol">The <see cref="INamedTypeSymbol"/> for which to find abstract classes.</param>
+    /// <returns>A list of abstract/base classes in the inheritance hierarchy of the specified <see cref="INamedTypeSymbol"/>.</returns>
+    public static ImmutableArray<INamedTypeSymbol> FindAbstractClasses(this INamedTypeSymbol typeSymbol, ReferencePackage package)
+    {
+        var result = new List<INamedTypeSymbol>();
+        var baseType = typeSymbol.BaseType;
+        while (baseType != null)
+        {
+            if (baseType.IsAbstract || baseType.TryGetAttribute(package.DataContractAttribute, out var d))
+                result.Add(baseType);
+            baseType = baseType.BaseType;
+        }
+        return ImmutableArray.Create(result.ToArray());
+    }
     private static IEnumerable<ISymbol> GetAllMembersBottomToTop(this INamedTypeSymbol type, ReferencePackage reference)
     {
         // Get the base types in reverse order

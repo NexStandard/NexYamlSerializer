@@ -87,7 +87,7 @@ internal record ClassInfo
             NameSpace = GetFullNamespace(namedType, '.'),
             TypeKind = namedType.TypeKind,
             AllInterfaces = GetDataPackages(namedType.AllInterfaces),
-            AllAbstracts = GetDataPackages(FindAbstractClasses(namedType,package)),
+            AllAbstracts = GetDataPackages(namedType.FindAbstractClasses(package)),
             GeneratorName = CreateGeneratorName(namedType)
         };
     }
@@ -164,21 +164,5 @@ internal record ClassInfo
 
         return fullNamespace.TrimEnd(separator);
     }
-    /// <summary>
-    /// Finds abstract classes in the inheritance hierarchy of the specified <see cref="INamedTypeSymbol"/>.
-    /// </summary>
-    /// <param name="typeSymbol">The <see cref="INamedTypeSymbol"/> for which to find abstract classes.</param>
-    /// <returns>A list of abstract classes in the inheritance hierarchy of the specified <see cref="INamedTypeSymbol"/>.</returns>
-    private static ImmutableArray<INamedTypeSymbol> FindAbstractClasses(INamedTypeSymbol typeSymbol, ReferencePackage package)
-    {
-        var result = new List<INamedTypeSymbol>();
-        var baseType = typeSymbol.BaseType;
-        while (baseType != null)
-        {
-            if(baseType.IsAbstract || baseType.TryGetAttribute(package.DataContractAttribute,out var d))
-                result.Add(baseType);
-            baseType = baseType.BaseType;
-        }
-        return ImmutableArray.Create(result.ToArray());
-    }
+
 }
