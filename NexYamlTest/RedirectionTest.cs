@@ -1,4 +1,5 @@
 ﻿using NexVYaml;
+using NexYamlTest.ComplexCases;
 using NexYamlTest.SimpleClasses;
 using Xunit;
 
@@ -65,5 +66,18 @@ public class RedirectionTest
         var s = YamlSerializer.Serialize(generic);
         var deserialized = YamlSerializer.Deserialize<Generics<int>>(s);
         Assert.Equal(generic.Value, deserialized.Value);
+    }
+    [Fact]
+    public void InheritanceTest()
+    {
+        Setup();
+            var generic = new Inherited()
+            {
+                T = 123,
+                X = 1234
+        };
+        var s = YamlSerializer.Serialize<Base>(generic);
+        var deserialized = YamlSerializer.Deserialize<Base>(s);
+        Assert.Equal(generic.X, deserialized.X);
     }
 }

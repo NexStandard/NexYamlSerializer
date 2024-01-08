@@ -1,5 +1,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using NexYamlSourceGenerator.Core;
 using NexYamlSourceGenerator.NexIncremental;
 using System.Collections.Immutable;
 using System.Text;
@@ -54,8 +55,7 @@ internal record ClassInfo
     /// or Test if it's non generic
     /// </summary>
     internal string ShortDefinition { get; private set; }
-
-    public static ClassInfo CreateFrom(INamedTypeSymbol namedType, AttributeData datacontract)
+    public static ClassInfo CreateFrom(INamedTypeSymbol namedType, AttributeData datacontract, ReferencePackage package)
     {
         var displayName = namedType.ToDisplayString();
         var index = displayName.IndexOf('<');
@@ -87,7 +87,7 @@ internal record ClassInfo
             NameSpace = GetFullNamespace(namedType, '.'),
             TypeKind = namedType.TypeKind,
             AllInterfaces = GetDataPackages(namedType.AllInterfaces),
-            AllAbstracts = GetDataPackages(FindAbstractClasses(namedType)),
+            AllAbstracts = GetDataPackages(FindAbstractClasses(namedType,package)),
             GeneratorName = CreateGeneratorName(namedType)
         };
     }
@@ -169,16 +169,14 @@ internal record ClassInfo
     /// </summary>
     /// <param name="typeSymbol">The <see cref="INamedTypeSymbol"/> for which to find abstract classes.</param>
     /// <returns>A list of abstract classes in the inheritance hierarchy of the specified <see cref="INamedTypeSymbol"/>.</returns>
-    private static ImmutableArray<INamedTypeSymbol> FindAbstractClasses(INamedTypeSymbol typeSymbol)
+    private static ImmutableArray<INamedTypeSymbol> FindAbstractClasses(INamedTypeSymbol typeSymbol, ReferencePackage package)
     {
         var result = new List<INamedTypeSymbol>();
         var baseType = typeSymbol.BaseType;
         while (baseType != null)
         {
-            if (baseType.IsAbstract)
-            {
+            if(baseType.IsAbstract || baseType.TryGetAttribute(package.DataContractAttribute,out var d))
                 result.Add(baseType);
-            }
             baseType = baseType.BaseType;
         }
         return ImmutableArray.Create(result.ToArray());

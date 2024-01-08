@@ -52,7 +52,7 @@ internal static class Extensionss
         {
             var constraints = typeRestriction.ConstraintTypes.Select(restriction => restriction.ToDisplayString());
             List<string> restrictionsString = new();
-
+            
             if (typeRestriction.HasNotNullConstraint)
             {
                 restrictionsString.Add("notnull");
@@ -179,6 +179,6 @@ internal static class Extensionss
 
         var datacontract = attributes.First(a => a.AttributeClass.Equals(references.DataContractAttribute, SymbolEqualityComparer.Default));
 
-        return new ClassPackage(ClassInfo.CreateFrom(namedTypeSymbol, datacontract), memberList);
+        return new ClassPackage(ClassInfo.CreateFrom(namedTypeSymbol, datacontract, references), memberList);
     }
 }

@@ -56,3 +56,13 @@ interface IGenericInterface<T,K>
     public T Generic { get; set; }
     public K Generic2 { get; set; }
 }
+[DataContract]
+class Base
+{
+    public int X;
+}
+[DataContract]
+class Inherited : Base
+{
+    public double T;
+}
