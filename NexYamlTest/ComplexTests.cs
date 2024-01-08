@@ -1,6 +1,7 @@
 ﻿using NexVYaml;
 using NexVYaml.Serialization;
 using NexYamlTest.ComplexCases;
+using NexYamlTest.SimpleClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -161,5 +162,16 @@ public class ComplexTests
         var s = YamlSerializer.SerializeToString(abstractObject);
         var deserialized = YamlSerializer.Deserialize<GenericImplementedClassWithLessParams<int>>(s);
         Assert.Equal(abstractObject.Generic, deserialized.Generic);
+    }
+    [Fact()]
+    public void UnregisteredRedirection()
+    {
+        Setup();
+        UnregisteredBase abstractObject = new UnregisteredInherited()
+        {
+        };
+        var s = YamlSerializer.SerializeToString(abstractObject);
+        var deserialized = YamlSerializer.Deserialize<UnregisteredBase>(s);
+        Assert.Null(deserialized);
     }
 }

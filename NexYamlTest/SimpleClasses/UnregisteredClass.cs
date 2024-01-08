@@ -28,6 +28,14 @@ public class UnregisteredClass
         return HashCode.Combine(ID);
     }
 }
+class UnregisteredBase
+{
+    public int X;
+}
+class UnregisteredInherited : UnregisteredBase
+{
+    public double T;
+}
 internal class InternalUnregisteredClass
 {
     public int ID { get; set; }

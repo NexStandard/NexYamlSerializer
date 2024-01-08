@@ -6,6 +6,8 @@ using System.Buffers;
 using System.IO;
 using System.Collections.Generic;
 using Microsoft.Win32.SafeHandles;
+using Silk.NET.SDL;
+using Stride.Core.Diagnostics;
 
 namespace NexVYaml;
 /// <summary>
@@ -65,7 +67,7 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
         }
         var genericFormatter = typeof(EmptyFormatter<>);
         
-        var genericType = genericFormatter.MakeGenericType(origin.GenericTypeArguments.Take(genericFormatter.GetGenericArguments().Length).ToArray());
+        var genericType = genericFormatter.MakeGenericType(origin);
         return (IYamlFormatter)Activator.CreateInstance(genericType);
 
     }
