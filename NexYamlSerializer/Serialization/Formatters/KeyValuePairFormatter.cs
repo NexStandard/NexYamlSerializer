@@ -1,4 +1,5 @@
 #nullable enable
+using System;
 using System.Collections.Generic;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
@@ -27,6 +28,23 @@ namespace NexVYaml.Serialization
             var value = context.DeserializeWithAlias<TValue>(ref parser);
             parser.ReadWithVerify(ParseEventType.SequenceEnd);
             return new KeyValuePair<TKey, TValue>(key, value);
+        }
+    }
+    file class NexSourceGenerated_NexYamlTest_ComplexCasesTempListHelper : IYamlFormatterHelper
+    {
+        public void Register(IYamlFormatterResolver resolver)
+        {
+            resolver.Register(this, typeof(KeyValuePair<,>), typeof(KeyValuePair<,>));
+            resolver.RegisterGenericFormatter(typeof(KeyValuePair<,>), typeof(KeyValuePairFormatter<,>));
+            resolver.RegisterFormatter(typeof(KeyValuePairFormatter<,>));
+        }
+        public IYamlFormatter Create(Type type)
+        {
+
+            var gen = typeof(KeyValuePairFormatter<,>);
+            var genParams = type.GenericTypeArguments;
+            var fillGen = gen.MakeGenericType(genParams);
+            return (IYamlFormatter)Activator.CreateInstance(fillGen);
         }
     }
 }

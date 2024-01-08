@@ -62,6 +62,7 @@ namespace NexVYaml.Serialization
         {
             resolver.Register(this, typeof(List<>), typeof(List<>));
             resolver.RegisterFormatter(typeof(List<>));
+            resolver.RegisterGenericFormatter(typeof(List<>), typeof(ListFormatter<>));
 
             resolver.Register(this, typeof(List<>), typeof(List<>));
 

@@ -43,7 +43,7 @@ namespace NexVYaml.Serialization
                         formatter = (IYamlFormatter<T>)Activator.CreateInstance(genericFilledFormatter, args:  resolver.GetFormatter(underlyingType));
                 }
                 else
-                if (type.IsInterface ||type.IsAbstract)
+                if (type.IsInterface || type.IsAbstract || type.IsGenericType)
                 {
                     if(resolver is RedirectFormatter<T> redirector)
                     {
@@ -56,17 +56,7 @@ namespace NexVYaml.Serialization
                 }
                 else
                 {
-                    if(type.IsGenericType)
-                    {
-                        formatter = resolver.GetGenericFormatter<T>();
-                        if (formatter is null)
-                            return EmptyFormatter<T>.Empty();
-                    }
-                    else
-                    {
-                        formatter = resolver.GetFormatter<T>();
-                    }
-
+                    formatter = resolver.GetFormatter<T>();
                 }
             }
             catch (TypeInitializationException ex)

@@ -8,10 +8,7 @@ class FormatterRegistry
     internal Dictionary<Type, Dictionary<Type, IYamlFormatterHelper>> FormatterFactories { get; } = new(new GenericEqualityComparer());
     internal Dictionary<Type, Type> GenericFormatterBuffer { get; } = new Dictionary<Type, Type>(new GenericEqualityComparer())
     {
-        [typeof(List<>)] = typeof(ListFormatter<>),
         [typeof(ICollection<>)] = typeof(InterfaceCollectionFormatter<>),
-        [typeof(KeyValuePair<,>)] = typeof(KeyValuePairFormatter<,>),
-        [typeof(Dictionary<,>)] = typeof(DictionaryFormatter<,>),
         [typeof(Tuple<>)] = typeof(TupleFormatter<>),
         [typeof(Tuple<,>)] = typeof(TupleFormatter<,>),
         [typeof(Tuple<,,>)] = typeof(TupleFormatter<,,>),

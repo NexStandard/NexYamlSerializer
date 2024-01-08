@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace NexYamlTest.ComplexCases;
 
 [DataContract]
-internal class TempList<T> : List<T>
+internal struct TempList<T,K>
 { }
 [DataContract]
 internal class DoubleInheritedList : ListWithOnEditCallback<int>

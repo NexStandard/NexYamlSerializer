@@ -46,7 +46,8 @@ public class CollectionTest
         testCollections.values.Add(data2);
 
         NexYamlSerializerRegistry.Init();
-        var s = YamlSerializer.Serialize(testCollections);
+        var s = YamlSerializer.SerializeToString(testCollections);
+
         var d = YamlSerializer.Deserialize<Collections>(s);
         // Asserts
         Assert.NotNull(d);

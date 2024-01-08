@@ -98,5 +98,46 @@ namespace NexVYaml.Serialization
             return map;
         }
     }
+    file class DictionaryFormatterHelper : IYamlFormatterHelper
+    {
+        public void Register(IYamlFormatterResolver resolver)
+        {
+            resolver.RegisterTag($"Dictionary,NexYamlTest", typeof(Dictionary<,>));
+            resolver.Register(this, typeof(Dictionary<,>), typeof(Dictionary<,>));
+            resolver.RegisterGenericFormatter(typeof(Dictionary<,>), typeof(DictionaryFormatter<,>));
+            resolver.RegisterFormatter(typeof(Dictionary<,>));
+
+
+            resolver.Register(this, typeof(Dictionary<,>), typeof(System.Collections.Generic.IDictionary<,>));
+            resolver.Register(this, typeof(Dictionary<,>), typeof(System.Collections.Generic.IReadOnlyDictionary<,>));
+
+        }
+        public IYamlFormatter Create(Type type)
+        {
+            if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IDictionary<,>))
+            {
+                var generatorType = typeof(DictionaryFormatter<,>);
+                var genericParams = type.GenericTypeArguments;
+                var param = new Type[] { genericParams[0], genericParams[1] };
+                var filledGeneratorType = generatorType.MakeGenericType(param);
+                return (IYamlFormatter)Activator.CreateInstance(filledGeneratorType);
+            }
+
+            if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IReadOnlyDictionary<,>))
+            {
+                var generatorType = typeof(DictionaryFormatter<,>);
+                var genericParams = type.GenericTypeArguments;
+                var param = new Type[] { genericParams[0], genericParams[1] };
+                var filledGeneratorType = generatorType.MakeGenericType(param);
+                return (IYamlFormatter)Activator.CreateInstance(filledGeneratorType);
+            }
+
+
+            var gen = typeof(DictionaryFormatter<,>);
+            var genParams = type.GenericTypeArguments;
+            var fillGen = gen.MakeGenericType(genParams);
+            return (IYamlFormatter)Activator.CreateInstance(fillGen);
+        }
+    }
 }
 
