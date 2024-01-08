@@ -27,10 +27,11 @@ internal record DataMemberContext
             }
             else
             {
-                // TODO: Order Mode
-                context.Order = -0;
-                return context;
+                context.Mode = MemberMode.Assign;
             }
+            // TODO: Order Mode
+            context.Order = -0;
+            return context;
         }
 
         context.State = DataMemberContextState.Weak;
