@@ -25,16 +25,12 @@ internal record DataMemberContext
                 if (context.Mode == MemberMode.Never)
                     context.State = DataMemberContextState.Excluded;
             }
-                
-            
             else
             {
-                // TODO: Assign, Content Mode
-                context.Mode = MemberMode.Assign;
+                // TODO: Order Mode
+                context.Order = -0;
+                return context;
             }
-            // TODO: Order Mode
-            context.Order = 0;
-            return context;
         }
 
         context.State = DataMemberContextState.Weak;
