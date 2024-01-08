@@ -57,14 +57,14 @@ internal static class CreateFromParent
             {
                 var compare = inter.IsGeneric ? "type.GetGenericTypeDefinition()" : "type";
                 stringBuilder.AppendLine($$"""
-                            if({{compare}} == typeof({{inter.ShortDisplayString}})) 
-                            {
-                                var generatorType = typeof({{package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}});
-                                var genericParams = type.GenericTypeArguments;
-                                var param = {{indexArray}};
-                                var filledGeneratorType = generatorType.MakeGenericType(param);
-                                return (IYamlFormatter)Activator.CreateInstance(filledGeneratorType);
-                            }
+                        if({{compare}} == typeof({{inter.ShortDisplayString}})) 
+                        {
+                            var generatorType = typeof({{package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}});
+                            var genericParams = type.GenericTypeArguments;
+                            var param = {{indexArray}};
+                            var filledGeneratorType = generatorType.MakeGenericType(param);
+                            return (IYamlFormatter)Activator.CreateInstance(filledGeneratorType);
+                        }
                     
                     """);
             }
@@ -72,7 +72,7 @@ internal static class CreateFromParent
         }
         else
         {
-            stringBuilder.AppendLine($"\t\t\tif(type == typeof({inter.ShortDisplayString})) {{ return new {package.ClassInfo.GeneratorName}(); }}");
+            stringBuilder.AppendLine($"\t\tif(type == typeof({inter.ShortDisplayString})) {{ return new {package.ClassInfo.GeneratorName}(); }}");
         }
 
         return stringBuilder;

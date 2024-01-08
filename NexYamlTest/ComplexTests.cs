@@ -150,4 +150,16 @@ public class ComplexTests
         var deserialized = YamlSerializer.Deserialize<GenericAbstractImlementationLessParamsDataContract<int>>(s);
         Assert.Equal(abstractObject.Test, deserialized.Test);
     }
+    [Fact()]
+    public void SubstitutedGenericInheritedClass()
+    {
+        Setup();
+        GenericImplementedClassWithLessParams<int> abstractObject = new SubstitutedGenericClassNoParams()
+        {
+            Generic = 3
+        };
+        var s = YamlSerializer.SerializeToString(abstractObject);
+        var deserialized = YamlSerializer.Deserialize<GenericImplementedClassWithLessParams<int>>(s);
+        Assert.Equal(abstractObject.Generic, deserialized.Generic);
+    }
 }
