@@ -19,8 +19,19 @@ internal record DataMemberContext
         if (symbol.TryGetAttribute(references.DataMemberAttribute, out var attributeData1))
         {
             context.State = DataMemberContextState.Included;
-            // TODO: Assign, Content Mode
-            context.Mode = MemberMode.Assign;
+            if(attributeData1 is { AttributeConstructor.Parameters: [ .. ,{ Name: "mode" } ], ConstructorArguments: [.. , { Value: int mode }] })
+            {
+                context.Mode = (MemberMode)mode;
+                if (context.Mode == MemberMode.Never)
+                    context.State = DataMemberContextState.Excluded;
+            }
+                
+            
+            else
+            {
+                // TODO: Assign, Content Mode
+                context.Mode = MemberMode.Assign;
+            }
             // TODO: Order Mode
             context.Order = 0;
             return context;

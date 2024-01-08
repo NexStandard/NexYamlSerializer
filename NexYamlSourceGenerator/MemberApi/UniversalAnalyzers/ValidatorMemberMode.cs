@@ -19,5 +19,5 @@ internal class ValidatorMemberMode<T>(
 }
 internal enum MemberMode
 {
-    Default, Assign, Content
+    Default = 0, Assign = 1 , Content = 2 , Never = 4
 }
