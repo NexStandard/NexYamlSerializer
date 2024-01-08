@@ -24,6 +24,13 @@ internal static class Extensionss
                 yield return info;
         }
     }
+    /// <summary>
+    /// Tries to get <paramref name="attribute"/> on the <paramref name="symbol"/>
+    /// </summary>
+    /// <param name="symbol">The Symbol to search on</param>
+    /// <param name="attribute">The attribute looking for</param>
+    /// <param name="attributeData">The <see cref="AttributeData"/> of the Attribute if it is found</param>
+    /// <returns>true if the attribute is found, else false</returns>
     public static bool TryGetAttribute(this ISymbol symbol, INamedTypeSymbol attribute, out AttributeData attributeData)
     {
         attributeData = symbol.GetAttributes().FirstOrDefault(attr => attr.AttributeClass?.OriginalDefinition.Equals(attribute, SymbolEqualityComparer.Default) ?? false);
