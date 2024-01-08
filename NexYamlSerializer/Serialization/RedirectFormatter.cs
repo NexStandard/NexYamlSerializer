@@ -48,24 +48,26 @@ namespace NexVYaml.Serialization
         readonly Type NullableFormatter { get;  } = typeof(NullableFormatter<>);
         public readonly void Serialize(ref Utf8YamlEmitter emitter, T? value, YamlSerializationContext context)
         {
+            var type = typeof(T);
             if (context.SecureMode)
             {
-                var protectedFormatter = context.Resolver.GetFormatter<T>();
-                protectedFormatter.Serialize(ref emitter, value, context);
+                if (type.IsGenericType)
+                {
+                    var protectedGeneric = context.Resolver.GetGenericFormatter<T>();
+                    protectedGeneric.Serialize(ref emitter, value!, context);
+                }
+                else
+                {
+                    var protectedFormatter = context.Resolver.GetFormatter<T>();
+                    protectedFormatter.Serialize(ref emitter, value!, context);
+
+                }
                 return;
             }
-            var type = typeof(T);
             IYamlFormatter formatter;
-            if(type != value.GetType())
+            if(type != value?.GetType())
             {
-                formatter = context.Resolver.GetFormatter(value.GetType(), typeof(T));
-                //formatter = context.Resolver.FindFormatter<T>(value.GetType());
-                context.IsRedirected = true;
-            } else
-            if (type.IsInterface || type.IsAbstract)
-            {
-                formatter = context.Resolver.GetFormatter(value.GetType(),typeof(T));
-                //formatter = context.Resolver.FindFormatter<T>(value.GetType());
+                formatter = context.Resolver.GetFormatter(value!.GetType(), typeof(T));
                 context.IsRedirected = true;
             }
             else if (type.IsGenericType)

@@ -9,7 +9,7 @@ namespace NexVYaml.Serialization
 {
     public interface IYamlFormatterResolver
     {
-        IYamlFormatter<T>? GetFormatter<T>();
+        IYamlFormatter<T> GetFormatter<T>();
         public IYamlFormatter? GetFormatter(Type type);
         IYamlFormatter GetFormatter(Type type,Type origin);
         public void Register(IYamlFormatterHelper yamlFormatterHelper, Type target, Type interfaceType);
