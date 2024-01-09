@@ -38,9 +38,17 @@ namespace NexVYaml.Serialization
                 }
                 else
                 {
-                    var valuepairs = new List<KeyValuePair<TKey,TValue>>(value.AsEnumerable());
-                    var listFormatter = new ListFormatter<KeyValuePair<TKey, TValue>>();
-                    listFormatter.Serialize(ref emitter, valuepairs, context);
+                    context.IsRedirected = false;
+                    emitter.BeginSequence();
+                    if (value.Count > 0)
+                    {
+                        var elementFormatter = context.Resolver.GetFormatterWithVerify<KeyValuePair<TKey,TValue>>();
+                        foreach (var x in value)
+                        { 
+                            elementFormatter.Serialize(ref emitter, x, context);
+                        }
+                    }
+                    emitter.EndSequence(value.Count == 0);
                 }
             }
         }
