@@ -73,7 +73,7 @@ namespace NexVYaml.Serialization
             }
         }
         
-        public Dictionary<TKey, TValue>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+        public Dictionary<TKey, TValue> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
         {
             if (parser.IsNullScalar())
             {
@@ -81,23 +81,9 @@ namespace NexVYaml.Serialization
                 return default;
             }
             var map = new Dictionary<TKey, TValue>();
-            IYamlFormatter<TKey> keyFormatter = null;
-            IYamlFormatter<TValue> valueFormatter = null;
-
             if (this.IsPrimitiveType(typeof(TKey)))
             {
-                keyFormatter = context.Resolver.GetFormatter<TKey>();
-            }
-
-            if (keyFormatter == null)
-            {
-                var listFormatter = new ListFormatter<KeyValuePair<TKey, TValue>>();
-                var keyValuePairs = context.DeserializeWithAlias(listFormatter, ref parser);
-                if (keyValuePairs is not null)
-                    return keyValuePairs.ToDictionary();
-            }
-            else
-            {
+                var keyFormatter = context.Resolver.GetFormatter<TKey>();
                 parser.ReadWithVerify(ParseEventType.MappingStart);
 
 
@@ -111,7 +97,13 @@ namespace NexVYaml.Serialization
                 parser.ReadWithVerify(ParseEventType.MappingEnd);
                 return map;
             }
-            return map;
+            else
+            {
+                var listFormatter = new ListFormatter<KeyValuePair<TKey, TValue>>();
+                var keyValuePairs = context.DeserializeWithAlias(listFormatter, ref parser);
+                
+                return keyValuePairs?.ToDictionary() ?? [];
+            }
         }
     }
     file class DictionaryFormatterHelper : IYamlFormatterHelper
