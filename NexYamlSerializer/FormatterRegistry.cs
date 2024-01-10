@@ -10,6 +10,9 @@ class FormatterRegistry
     {
         [typeof(ICollection<>)] = typeof(InterfaceCollectionFormatter<>),
         [typeof(IEnumerable<>)] = typeof(InterfaceEnumerableFormatter<>),
+        [typeof(IList<>)] = typeof(InterfaceCollectionFormatter<>),
+        [typeof(IReadOnlyCollection<>)] = typeof(InterfaceReadOnlyCollectionFormatter<>),
+        [typeof(IReadOnlyDictionary<,>)] = typeof(InterfaceReadOnlyDictionaryFormatter<,>),
         [typeof(Tuple<>)] = typeof(TupleFormatter<>),
         [typeof(Tuple<,>)] = typeof(TupleFormatter<,>),
         [typeof(Tuple<,,>)] = typeof(TupleFormatter<,,>),
