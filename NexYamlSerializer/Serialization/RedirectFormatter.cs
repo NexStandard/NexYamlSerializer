@@ -48,7 +48,6 @@ namespace NexVYaml.Serialization
             return (T)method.Invoke(formatter, new object[] { parser, context });
         }
 
-        readonly Type NullableFormatter { get;  } = typeof(NullableFormatter<>);
         public readonly void Serialize(ref Utf8YamlEmitter emitter, T? value, YamlSerializationContext context)
         {
             var type = typeof(T);
