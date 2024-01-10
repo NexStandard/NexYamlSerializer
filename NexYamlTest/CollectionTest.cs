@@ -83,11 +83,12 @@ public class CollectionTest
         // Creating test data
         InterfaceList data1 = new InterfaceList()
         {
-            keyValuePairs = new List<string>() { "Hompty" , "Dompty"}
+            keyValuePairs = new List<IDInterface>() { new Data1(), new Data2() }
         };
 
         NexYamlSerializerRegistry.Init();
         var s = YamlSerializer.SerializeToString(data1);
+
         var d = YamlSerializer.Deserialize<InterfaceList>(s);
         Assert.Equal(data1.keyValuePairs.Count, d.keyValuePairs.Count);
     }
@@ -95,5 +96,15 @@ public class CollectionTest
 [DataContract]
 internal class InterfaceList
 {
-    public ICollection<string> keyValuePairs = new List<string>();
+    public ICollection<IDInterface> keyValuePairs = new List<IDInterface>();
+}
+[DataContract]
+internal class Data1 : IDInterface
+{
+    public int Id { get; set; }
+}
+[DataContract]
+internal class Data2 : IDInterface
+{
+    public int Id { get; set; }
 }
