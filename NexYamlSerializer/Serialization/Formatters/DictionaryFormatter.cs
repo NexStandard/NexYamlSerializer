@@ -88,9 +88,8 @@ namespace NexVYaml.Serialization
             {
                 keyFormatter = context.Resolver.GetFormatter<TKey>();
             }
-            if (this.IsPrimitiveType(typeof(TValue)))
-                valueFormatter = context.Resolver.GetFormatter<TValue>();
-            if (keyFormatter == null && valueFormatter == null)
+
+            if (keyFormatter == null)
             {
                 var listFormatter = new ListFormatter<KeyValuePair<TKey, TValue>>();
                 var keyValuePairs = context.DeserializeWithAlias(listFormatter, ref parser);
@@ -98,52 +97,20 @@ namespace NexVYaml.Serialization
                     return keyValuePairs.ToDictionary();
             }
             else
-            if (keyFormatter == null)
+            {
+                parser.ReadWithVerify(ParseEventType.MappingStart);
+
+
+                while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
                 {
-                    parser.ReadWithVerify(ParseEventType.MappingStart);
-
-                    valueFormatter = context.Resolver.GetFormatter<TValue>();
-
-                    while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
-                    {
-                        var key = context.DeserializeWithAlias<TKey>(ref parser);
-                        var value = context.DeserializeWithAlias(valueFormatter, ref parser);
-                        map.Add(key, value);
-                    }
-
-                    parser.ReadWithVerify(ParseEventType.MappingEnd);
+                    var key = context.DeserializeWithAlias(keyFormatter, ref parser);
+                    var value = context.DeserializeWithAlias<TValue>(ref parser);
+                    map.Add(key, value);
                 }
-                else if (valueFormatter == null)
-                {
-                    parser.ReadWithVerify(ParseEventType.MappingStart);
 
-                    keyFormatter = context.Resolver.GetFormatter<TKey>();
-
-                    while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
-                    {
-                        var key = context.DeserializeWithAlias(keyFormatter, ref parser);
-                        var value = context.DeserializeWithAlias<TValue>(ref parser);
-                        map.Add(key, value);
-                    }
-
-                    parser.ReadWithVerify(ParseEventType.MappingEnd);
-                    return map;
-                }
-                else
-                {
-                    parser.ReadWithVerify(ParseEventType.MappingStart);
-
-
-                    while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
-                    {
-                        var key = context.DeserializeWithAlias(keyFormatter, ref parser);
-                        var value = context.DeserializeWithAlias(valueFormatter, ref parser);
-                        map.Add(key, value);
-                    }
-
-                    parser.ReadWithVerify(ParseEventType.MappingEnd);
-                    return map;
-                }
+                parser.ReadWithVerify(ParseEventType.MappingEnd);
+                return map;
+            }
             return map;
         }
     }
