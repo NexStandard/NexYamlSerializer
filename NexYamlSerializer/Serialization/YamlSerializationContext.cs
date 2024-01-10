@@ -45,6 +45,21 @@ namespace NexVYaml.Serialization
         public void Serialize<T>(ref Utf8YamlEmitter emitter, T value)
         {
             var type = typeof(T);
+            if (SecureMode)
+            {
+                if (type.IsGenericType)
+                {
+                    var protectedGeneric = Resolver.GetGenericFormatter<T>();
+                    protectedGeneric.Serialize(ref emitter, value!, this);
+                }
+                else
+                {
+                    var protectedFormatter = Resolver.GetFormatter<T>();
+                    protectedFormatter.Serialize(ref emitter, value!, this);
+
+                }
+                return;
+            }
             IYamlFormatter formatter;
             if (IsNullable(type, out var underlyingType))
             {

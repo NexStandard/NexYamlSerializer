@@ -60,7 +60,7 @@ namespace NexVYaml
 
             try
             {
-                new RedirectFormatter<T>().Serialize(ref emitter, value, contextLocal);
+                contextLocal.Serialize(ref emitter, value);
 
                 return writer.WrittenMemory;
             }
