@@ -10,7 +10,22 @@ namespace NexVYaml.Serialization
     {
         public void Serialize(ref Utf8YamlEmitter emitter, ICollection<T>? value, YamlSerializationContext context)
         {
-            // Unreachable as interfaces will never serialize something
+            if (value is null)
+            {
+                emitter.WriteNull();
+                return;
+            }
+
+            emitter.BeginSequence();
+            if (value.Count > 0)
+            {
+                var elementFormatter = context.Resolver.GetFormatterWithVerify<T>();
+                foreach (var x in value)
+                {
+                    elementFormatter.Serialize(ref emitter, x, context);
+                }
+            }
+            emitter.EndSequence(value.Count == 0);
         }
 
 
