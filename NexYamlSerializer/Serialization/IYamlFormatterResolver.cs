@@ -45,14 +45,7 @@ namespace NexVYaml.Serialization
                 else
                 if (type.IsInterface || type.IsAbstract || type.IsGenericType)
                 {
-                    if(resolver is RedirectFormatter<T> redirector)
-                    {
-                        formatter = redirector;
-                    }
-                    else
-                    {
-                        formatter = new RedirectFormatter<T>();
-                    }
+                    formatter = new RedirectFormatter<T>();
                 }
                 else
                 {

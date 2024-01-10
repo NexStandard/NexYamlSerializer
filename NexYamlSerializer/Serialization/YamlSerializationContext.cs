@@ -3,6 +3,7 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using NexVYaml.Emitter;
 using NexVYaml.Internal;
 
@@ -35,11 +36,40 @@ namespace NexVYaml.Serialization
             Resolver = options.Resolver;
             EmitOptions = options.EmitOptions;
         }
-
+        public static bool IsNullable(Type value, out Type underlyingType)
+        {
+            return (underlyingType = Nullable.GetUnderlyingType(value)) != null;
+        }
+        static Type NullableFormatter = typeof(NullableFormatter<>);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Serialize<T>(ref Utf8YamlEmitter emitter, T value)
         {
-            Resolver.GetFormatterWithVerify<T>().Serialize(ref emitter, value, this);
+            var type = typeof(T);
+            IYamlFormatter formatter;
+            if (IsNullable(type, out var underlyingType))
+            {
+                var genericFilledFormatter = NullableFormatter.MakeGenericType(underlyingType);
+
+                ((IYamlFormatter<T>)Activator.CreateInstance(genericFilledFormatter, args: Resolver.GetFormatter(underlyingType))).Serialize(ref emitter, value, this);
+            }
+            else
+            if (type.IsInterface || type.IsAbstract || type.IsGenericType)
+            {
+                var valueType = value!.GetType();
+                var formatt = this.Resolver.GetFormatter(value!.GetType(), typeof(T));
+                if (valueType != type)
+                    this.IsRedirected = true;
+
+                // C# forgets the cast of T when invoking Deserialize,
+                // this way we can call the deserialize method with the "real type"
+                // that is in the object
+                var method = formatt.GetType().GetMethod("Serialize");
+                method.Invoke(formatt, new object[] { emitter, value, this });
+            }
+            else
+            {
+                Resolver.GetFormatter<T>().Serialize(ref emitter, value,this);
+            }
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SerializeCollection<T>(ref Utf8YamlEmitter emitter, T value)
