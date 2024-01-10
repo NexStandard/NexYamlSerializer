@@ -9,6 +9,7 @@ class FormatterRegistry
     internal Dictionary<Type, Type> GenericFormatterBuffer { get; } = new Dictionary<Type, Type>(new GenericEqualityComparer())
     {
         [typeof(ICollection<>)] = typeof(InterfaceCollectionFormatter<>),
+        [typeof(IEnumerable<>)] = typeof(InterfaceEnumerableFormatter<>),
         [typeof(Tuple<>)] = typeof(TupleFormatter<>),
         [typeof(Tuple<,>)] = typeof(TupleFormatter<,>),
         [typeof(Tuple<,,>)] = typeof(TupleFormatter<,,>),

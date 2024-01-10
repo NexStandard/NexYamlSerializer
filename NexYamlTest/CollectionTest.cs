@@ -29,6 +29,7 @@ public class CollectionTest
         // Creating an object of the Collections class
         Collections testCollections = new Collections();
 
+        testCollections.Homp.Add(1, 2);
         // Filling the keyValuePairs dictionary
         testCollections.keyValuePairs.Add("Key1", data1);
         testCollections.keyValuePairs.Add("Key2", data2);
@@ -52,6 +53,7 @@ public class CollectionTest
         // Asserts
         Assert.NotNull(d);
         Assert.NotNull(d.keyValuePairs);
+        Assert.Equal(2, d.Homp[1]);
         Assert.Equal(2, d.keyValuePairs.Count);
         Assert.True(d.keyValuePairs.ContainsKey("Key1"));
         Assert.True(d.keyValuePairs.ContainsKey("Key2"));

@@ -10,19 +10,7 @@ namespace NexVYaml.Serialization
     {
         public void Serialize(ref Utf8YamlEmitter emitter, IEnumerable<T>? value, YamlSerializationContext context)
         {
-            if (value is null)
-            {
-                emitter.WriteNull();
-                return;
-            }
-
-            emitter.BeginSequence();
-            var elementFormatter = context.Resolver.GetFormatterWithVerify<T>();
-            foreach (var x in value)
-            {
-                elementFormatter.Serialize(ref emitter, x, context);
-            }
-            emitter.EndSequence(value.Any());
+            // Unreachable, Interfaces never serialize
         }
 
         public IEnumerable<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
@@ -30,19 +18,16 @@ namespace NexVYaml.Serialization
             if (parser.IsNullScalar())
             {
                 parser.Read();
-                return default;
             }
 
+            List<T> list = new List<T>();
             parser.ReadWithVerify(ParseEventType.SequenceStart);
 
-            var list = new List<T>();
             var elementFormatter = context.Resolver.GetFormatterWithVerify<T>();
             while (!parser.End && parser.CurrentEventType != ParseEventType.SequenceEnd)
             {
-                var value = context.DeserializeWithAlias(elementFormatter, ref parser);
-                list.Add(value);
+                list.Add(context.DeserializeWithAlias(elementFormatter, ref parser));
             }
-
             parser.ReadWithVerify(ParseEventType.SequenceEnd);
             return list;
         }
