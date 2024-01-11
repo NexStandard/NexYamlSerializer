@@ -33,8 +33,6 @@ Efficiently serialize and deserialize record types with the Stride3D.YamlSeriali
 9. **Secure Mode**
 Prevents redirection of types during serialization and deserialization processes to ensure that no unknown or unauthorized types can be injected into your code.
 
-10. **Hidden Fields**
-With the new UnsafeAccessor in net8.0 it's possible to serialize private fields when tagget with `[Stride.Core.DataMember]`
 
 
 ### Unsupported Features
@@ -56,6 +54,10 @@ Stride's Content Mode isn't supported yet.
 
 6. **Default Values**
 Default Values are currently not handled.
+ 
+7. **Hidden Fields**
+With the new UnsafeAccessor in net8.0 it's possible to serialize private fields this is not supported yet.
+
 
 ## Getting Started
 
