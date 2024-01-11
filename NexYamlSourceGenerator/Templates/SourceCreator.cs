@@ -34,7 +34,7 @@ using NexVYaml.Serialization;
 using NexYamlSerializer.Serialization.Formatters;
 {ns}
 [System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]
-file class {info.GeneratorName + "Helper" } : IYamlFormatterHelper
+file sealed class {info.GeneratorName + "Helper" } : IYamlFormatterHelper
 {{
     public void Register(IYamlFormatterResolver resolver)
     {{
