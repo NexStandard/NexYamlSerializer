@@ -10,7 +10,6 @@ internal record SymbolInfo
     internal bool IsHidden { get; init; } = false;
     internal string Name { get; init; }
     internal string Type { get; init; }
-    internal string Namespace { get; init; }
     internal SymbolKind TypeKind { get; init; }
     internal bool IsArray { get; init; }
     internal bool IsAbstract { get; init; }
