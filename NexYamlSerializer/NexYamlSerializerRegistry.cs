@@ -31,6 +31,7 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
     public IYamlFormatter<T>? GetGenericFormatter<T>()
     {
         var type = typeof(T);
+
         var genericFormatter = FormatterRegistry.GenericFormatterBuffer.FindAssignableType(type);
         if (genericFormatter is null)
             return null;
@@ -55,6 +56,10 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
     }
     public IYamlFormatter GetFormatter(Type type, Type origin)
     {
+        if (FormatterRegistry.DefinedFormatters.TryGetValue(type, out var form))
+        {
+            return form;
+        }
         if (FormatterRegistry.FormatterFactories.TryGetValue(origin, out var formatter))
         {
             formatter.TryGetValue(type, out var t);
