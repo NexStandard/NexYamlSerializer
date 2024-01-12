@@ -38,9 +38,9 @@ namespace NexVYaml.Serialization
                     emitter.BeginSequence();
                     if (value.Count > 0)
                     {
+                        var elementFormatter = new KeyValuePairFormatter<TKey, TValue>();
                         foreach (var x in value)
                         {
-                            var elementFormatter = context.Resolver.GetFormatterWithVerify<KeyValuePair<TKey, TValue>>();
                             elementFormatter.Serialize(ref emitter, x, context);
                         }
                     }

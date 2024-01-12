@@ -74,12 +74,12 @@ namespace NexVYaml.Serialization
                 var formatt = this.Resolver.GetFormatter(value!.GetType(), typeof(T));
                 if (valueType != type)
                     this.IsRedirected = true;
-
+                // TODO : no idea how to make this without reflection
                 // C# forgets the cast of T when invoking Deserialize,
                 // this way we can call the deserialize method with the "real type"
                 // that is in the object
-                var method = formatt.GetType().GetMethod("Serialize");
-                method.Invoke(formatt, new object[] { emitter, value, this });
+                 var method = formatt.GetType().GetMethod("Serialize");
+                 method.Invoke(formatt, new object[] { emitter, value, this });
             }
             else
             {

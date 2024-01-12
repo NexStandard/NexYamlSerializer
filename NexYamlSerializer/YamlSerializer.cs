@@ -126,8 +126,7 @@ namespace NexVYaml
                 options ??= DefaultOptions;
                 var contextLocal = new YamlSerializationContext(options);
 
-                var formatter = options.Resolver.GetFormatterWithVerify<T>();
-                formatter.Serialize(ref emitter, value, contextLocal);
+                contextLocal.Serialize(ref emitter, value);
             }
             finally
             {
