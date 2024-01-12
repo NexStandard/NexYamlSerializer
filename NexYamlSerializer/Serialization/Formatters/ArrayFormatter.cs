@@ -15,11 +15,10 @@ namespace NexVYaml.Serialization
                 return;
             }
 
-            var elementFormatter = context.Resolver.GetFormatterWithVerify<T>();
             emitter.BeginSequence();
             foreach (var x in value)
             {
-                elementFormatter.Serialize(ref emitter, x, context);
+                context.Serialize(ref emitter, x);
             }
             emitter.EndSequence(value.Length == 0);
         }
@@ -35,10 +34,9 @@ namespace NexVYaml.Serialization
             parser.ReadWithVerify(ParseEventType.SequenceStart);
 
             var list = new List<T>();
-            var elementFormatter = context.Resolver.GetFormatterWithVerify<T>();
             while (!parser.End && parser.CurrentEventType != ParseEventType.SequenceEnd)
             {
-                var value = context.DeserializeWithAlias(elementFormatter, ref parser);
+                var value = context.DeserializeWithAlias<T>(ref parser);
                 list.Add(value);
             }
 

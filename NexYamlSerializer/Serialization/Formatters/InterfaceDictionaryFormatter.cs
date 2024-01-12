@@ -1,7 +1,9 @@
 #nullable enable
 using System.Collections.Generic;
+using System.Linq;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
+using NexYamlSerializer;
 
 namespace NexVYaml.Serialization
 {
@@ -9,24 +11,63 @@ namespace NexVYaml.Serialization
     {
         public void Serialize(ref Utf8YamlEmitter emitter, IDictionary<TKey, TValue>? value, YamlSerializationContext context)
         {
+
             if (value is null)
             {
                 emitter.WriteNull();
                 return;
             }
-
-            emitter.BeginMapping();
-            if (value.Count > 0)
+            else
             {
-                var keyFormatter = context.Resolver.GetFormatterWithVerify<TKey>();
-                var valueFormatter = context.Resolver.GetFormatterWithVerify<TValue>();
-                foreach (var x in value)
+                context.IsRedirected = false;
+
+                IYamlFormatter<TKey> keyFormatter = null;
+                IYamlFormatter<TValue> valueFormatter = null;
+                if (this.IsPrimitiveType(typeof(TKey)))
                 {
-                    keyFormatter.Serialize(ref emitter, x.Key, context);
-                    valueFormatter.Serialize(ref emitter, x.Value, context);
+                    keyFormatter = context.Resolver.GetFormatter<TKey>();
+                }
+                if (this.IsPrimitiveType(typeof(TValue)))
+                    valueFormatter = context.Resolver.GetFormatter<TValue>();
+
+                if (keyFormatter == null)
+                {
+                    emitter.BeginSequence();
+                    if (value.Count > 0)
+                    {
+                        var elementFormatter = new KeyValuePairFormatter<TKey, TValue>();
+                        foreach (var x in value)
+                        {
+                            elementFormatter.Serialize(ref emitter, x, context);
+                        }
+                    }
+                    emitter.EndSequence(value.Count == 0);
+                }
+                else if (valueFormatter == null)
+                {
+                    emitter.BeginMapping();
+                    {
+                        foreach (var x in value)
+                        {
+                            keyFormatter.Serialize(ref emitter, x.Key, context);
+                            context.Serialize(ref emitter, x.Value);
+                        }
+                    }
+                    emitter.EndMapping();
+                }
+                else
+                {
+                    emitter.BeginMapping();
+                    {
+                        foreach (var x in value)
+                        {
+                            keyFormatter.Serialize(ref emitter, x.Key, context);
+                            valueFormatter.Serialize(ref emitter, x.Value, context);
+                        }
+                    }
+                    emitter.EndMapping();
                 }
             }
-            emitter.EndMapping();
         }
 
         public IDictionary<TKey, TValue>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
@@ -36,23 +77,32 @@ namespace NexVYaml.Serialization
                 parser.Read();
                 return default;
             }
-
-            parser.ReadWithVerify(ParseEventType.MappingStart);
-
             var map = new Dictionary<TKey, TValue>();
-            var keyFormatter = context.Resolver.GetFormatterWithVerify<TKey>();
-            var valueFormatter = context.Resolver.GetFormatterWithVerify<TValue>();
-
-            while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
+            if (this.IsPrimitiveType(typeof(TKey)))
             {
-                var key = context.DeserializeWithAlias(keyFormatter, ref parser);
-                var value = context.DeserializeWithAlias(valueFormatter, ref parser);
-                map.Add(key, value);
-            }
+                var keyFormatter = context.Resolver.GetFormatter<TKey>();
+                parser.ReadWithVerify(ParseEventType.MappingStart);
 
-            parser.ReadWithVerify(ParseEventType.MappingEnd);
-            return map;
+
+                while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
+                {
+                    var key = context.DeserializeWithAlias(keyFormatter, ref parser);
+                    var value = context.DeserializeWithAlias<TValue>(ref parser);
+                    map.Add(key, value);
+                }
+
+                parser.ReadWithVerify(ParseEventType.MappingEnd);
+                return map;
+            }
+            else
+            {
+                var listFormatter = new ListFormatter<KeyValuePair<TKey, TValue>>();
+                var keyValuePairs = context.DeserializeWithAlias(listFormatter, ref parser);
+
+                return keyValuePairs?.ToDictionary() ?? [];
+            }
         }
     }
+    
 }
 
