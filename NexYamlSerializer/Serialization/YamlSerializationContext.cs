@@ -86,12 +86,6 @@ namespace NexVYaml.Serialization
                 Resolver.GetFormatter<T>().Serialize(ref emitter, value,this);
             }
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SerializeCollection<T>(ref Utf8YamlEmitter emitter, T value)
-            where T : ICollection<T>
-        {
-            Resolver.GetFormatterWithVerify<T>().Serialize(ref emitter, value, this);
-        }
         public void SerializeArray<T>(ref Utf8YamlEmitter emitter, T[] value)
         {
             new ArrayFormatter<T>().Serialize(ref emitter, value, this);
