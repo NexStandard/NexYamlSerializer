@@ -81,22 +81,34 @@ public class CollectionTest
     public void InterfaceList()
     {
         // Creating test data
-        InterfaceList data1 = new InterfaceList()
+        CollectionInterfaces data1 = new CollectionInterfaces()
         {
-            keyValuePairs = new List<IDInterface>() { new Data1(), new Data2() }
+            Collection = new List<IDInterface>() { new Data1(), new Data2() },
+            ReadonlyList = new List<IDInterface>() { new Data1() { Id = 1 }, new Data2() { Id = 2 } },
+            Dictionary = new Dictionary<int, IDInterface>() { [1] = new Data1() },
+            Enumerable = new List<IDInterface>()
+            {
+                new Data1() { Id = 1 },
+            },
+            ReadonlyDictioanry = new Dictionary<IDInterface, IDInterface>() { }
         };
 
         NexYamlSerializerRegistry.Init();
         var s = YamlSerializer.SerializeToString(data1);
-
-        var d = YamlSerializer.Deserialize<InterfaceList>(s);
-        Assert.Equal(data1.keyValuePairs.Count, d.keyValuePairs.Count);
+        var d = YamlSerializer.Deserialize<CollectionInterfaces>(s);
+        Assert.Equal(data1.Collection.Count, d.Collection.Count);
     }
 }
 [DataContract]
-internal class InterfaceList
+internal class CollectionInterfaces
 {
-    public ICollection<IDInterface> keyValuePairs = new List<IDInterface>();
+    public ICollection<IDInterface> Collection = new List<IDInterface>();
+    public IReadOnlyCollection<IDInterface> ReadOnlyCollection = new List<IDInterface>();
+    public IReadOnlyList<IDInterface> ReadonlyList = new List<IDInterface>();
+    public IList<IDInterface> List = new List<IDInterface>();
+    public IEnumerable<IDInterface> Enumerable = new List<IDInterface>();
+    public IDictionary<int,IDInterface> Dictionary = new Dictionary<int,IDInterface>();
+    public IReadOnlyDictionary<IDInterface, IDInterface> ReadonlyDictioanry = new Dictionary<IDInterface, IDInterface>();
 }
 [DataContract]
 internal class Data1 : IDInterface
