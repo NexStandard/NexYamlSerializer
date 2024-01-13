@@ -8,7 +8,7 @@ namespace NexVYaml;
 
 public interface IYamlFormatter
 {
-
+    void IndirectSerialize(ref Utf8YamlEmitter emitter, object value, YamlSerializationContext context) { }
 }
 /// <summary>
 /// Represents a YAML formatter for objects of type <typeparamref name="T"/>.

@@ -50,6 +50,10 @@ file struct {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<
 
     {package.CreateUTF8Members()}
 
+    public void IndirectSerialize(ref Utf8YamlEmitter emitter, object value, YamlSerializationContext context) 
+    {{
+        Serialize(ref emitter,({info.NameDefinition})value,context);
+    }}
     public void Serialize(ref Utf8YamlEmitter emitter, {info.NameDefinition} value, YamlSerializationContext context)
     {{
 {package.NullCheck()}

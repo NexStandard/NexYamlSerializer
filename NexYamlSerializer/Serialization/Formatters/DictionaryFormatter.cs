@@ -14,6 +14,10 @@ namespace NexVYaml.Serialization
     public class DictionaryFormatter<TKey, TValue> : IYamlFormatter<Dictionary<TKey, TValue>?>
         where TKey : notnull
     {
+        public void IndirectSerialize(ref Utf8YamlEmitter emitter, object value, YamlSerializationContext context)
+        {
+            Serialize(ref emitter, (Dictionary<TKey, TValue>?)value, context);
+        }
         public void Serialize(ref Utf8YamlEmitter emitter, Dictionary<TKey, TValue>? value, YamlSerializationContext context)
         {
             if (value == null)

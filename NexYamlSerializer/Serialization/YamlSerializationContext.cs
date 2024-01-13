@@ -51,7 +51,6 @@ namespace NexVYaml.Serialization
                 protectedFormatter.Serialize(ref emitter, value!, this);
                 return;
             }
-            IYamlFormatter formatter;
             if (IsNullable(type, out var underlyingType))
             {
                 var genericFilledFormatter = NullableFormatter.MakeGenericType(underlyingType);
@@ -69,8 +68,9 @@ namespace NexVYaml.Serialization
                 // C# forgets the cast of T when invoking Deserialize,
                 // this way we can call the deserialize method with the "real type"
                 // that is in the object
-                var method = formatt.GetType().GetMethod("Serialize");
-                method.Invoke(formatt, new object[] { emitter, value, this });
+                formatt.IndirectSerialize(ref emitter, value!, this);
+                // var method = formatt.GetType().GetMethod("Serialize");
+                //method.Invoke(formatt, new object[] { emitter, value, this });
             }
             else
             {
