@@ -5,8 +5,13 @@ using NexVYaml.Parser;
 
 namespace NexVYaml.Serialization
 {
+
     public class InterfaceReadOnlyListFormatter<T> : IYamlFormatter<IReadOnlyList<T>?>
     {
+        public void IndirectSerialize(ref Utf8YamlEmitter emitter, object value, YamlSerializationContext context)
+        {
+            Serialize(ref emitter, (List<T>?)value, context);
+        }
         public void Serialize(ref Utf8YamlEmitter emitter, IReadOnlyList<T>? value, YamlSerializationContext context)
         {
             if (value is null)

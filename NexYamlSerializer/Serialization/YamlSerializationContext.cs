@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using NexVYaml.Emitter;
 using NexVYaml.Internal;
+using NexYamlSerializer.Serialization.Formatters;
 
 namespace NexVYaml.Serialization
 {
@@ -50,6 +51,7 @@ namespace NexVYaml.Serialization
                 if (type.IsGenericType)
                 {
                     var protectedGeneric = Resolver.GetGenericFormatter<T>();
+                    protectedGeneric ??= new EmptyFormatter<T>();
                     protectedGeneric.Serialize(ref emitter, value!, this);
                 }
                 else
