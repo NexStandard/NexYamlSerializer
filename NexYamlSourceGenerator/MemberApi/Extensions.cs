@@ -53,7 +53,8 @@ internal static class Extensionss
         {
             var constraints = typeRestriction.ConstraintTypes.Select(restriction => restriction.ToDisplayString());
             List<string> restrictionsString = new();
-            
+            if (constraints.Any())
+                restrictionsString.AddRange(constraints);
             if (typeRestriction.HasNotNullConstraint)
             {
                 restrictionsString.Add("notnull");
@@ -74,8 +75,7 @@ internal static class Extensionss
             {
                 restrictionsString.Add("new()");
             }
-            if (constraints.Any())
-                restrictionsString.AddRange(constraints);
+            
             if (restrictionsString.Count > 0)
                 stringBuilder.Append(typeRestriction.ToDisplayString()).Append(" : ").AppendLine(string.Join(", ", restrictionsString));
         }
