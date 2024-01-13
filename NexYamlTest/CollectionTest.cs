@@ -1,4 +1,6 @@
 ﻿using NexVYaml;
+using NexVYaml.Parser;
+using NexVYaml.Serialization;
 using NexYamlTest.SimpleClasses;
 using Stride.Core;
 using System;
@@ -97,6 +99,12 @@ public class CollectionTest
         var s = YamlSerializer.SerializeToString(data1);
         var d = YamlSerializer.Deserialize<CollectionInterfaces>(s);
         Assert.Equal(data1.Collection.Count, d.Collection.Count);
+        var option = new YamlSerializerOptions()
+        {
+            SecureMode = true,
+        };
+        var secure = YamlSerializer.SerializeToString(data1,option);
+        Assert.Throws(typeof(YamlSerializerException), () => YamlSerializer.Deserialize<CollectionInterfaces>(secure, option));
     }
 }
 [DataContract]

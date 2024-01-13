@@ -53,7 +53,7 @@ It's not possible to use Stride's ReferenceSerializer, will be added in future.
 Stride's Content Mode isn't supported yet.
 
 6. **Default Values**
-Default Values are currently not handled.
+Default Values are not handled during Deserialization, if a value doesn't exist in the file it will be set to default during deserialization.
  
 7. **Hidden Fields**
 With the new UnsafeAccessor in net8.0 it's possible to serialize private fields this is not supported yet.
