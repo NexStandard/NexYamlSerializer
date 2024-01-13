@@ -47,8 +47,17 @@ namespace NexVYaml.Serialization
             var type = typeof(T);
             if (SecureMode)
             {
-                var protectedFormatter = Resolver.GetFormatter<T>();
-                protectedFormatter.Serialize(ref emitter, value!, this);
+                if (type.IsGenericType)
+                {
+                    var protectedGeneric = Resolver.GetGenericFormatter<T>();
+                    protectedGeneric.Serialize(ref emitter, value!, this);
+                }
+                else
+                {
+                    var protectedFormatter = Resolver.GetFormatter<T>();
+                    protectedFormatter.Serialize(ref emitter, value!, this);
+
+                }
                 return;
             }
             if (IsNullable(type, out var underlyingType))
