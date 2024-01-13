@@ -3,12 +3,14 @@ using NexVYaml;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using NexVYaml.Serialization;
+using System;
 
 namespace NexVYaml;
 
 public interface IYamlFormatter
 {
     void IndirectSerialize(ref Utf8YamlEmitter emitter, object value, YamlSerializationContext context) { }
+    object? IndirectDeserialize(ref YamlParser parser, YamlDeserializationContext context) { throw new NotImplementedException($"The method {nameof(IndirectSerialize)} isn't implemented on {this.GetType()}"); }
 }
 /// <summary>
 /// Represents a YAML formatter for objects of type <typeparamref name="T"/>.

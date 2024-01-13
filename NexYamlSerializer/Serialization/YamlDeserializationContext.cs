@@ -68,11 +68,12 @@ namespace NexVYaml.Serialization
                 }
                 if (formatter == null)
                     return new EmptyFormatter<T>().Deserialize(ref parser, this);
+                return (T?)formatter.IndirectDeserialize(ref parser, this);
                 // C# forgets the cast of T when invoking Deserialize,
                 // this way we can call the deserialize method with the "real type"
                 // that is in the object
-                var method = formatter.GetType().GetMethod("Deserialize");
-                return (T)method.Invoke(formatter, new object[] { parser, this });
+                // var method = formatter.GetType().GetMethod("Deserialize");
+                // return (T)method.Invoke(formatter, new object[] { parser, this });
             }
             else
             {

@@ -54,6 +54,10 @@ file struct {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<
     {{
         Serialize(ref emitter,({info.NameDefinition})value,context);
     }}
+    public object{(info.TypeKind == TypeKind.Struct ? "" : "?")} IndirectDeserialize(ref YamlParser parser, YamlDeserializationContext context) 
+    {{
+        return Deserialize(ref parser, context);
+    }}
     public void Serialize(ref Utf8YamlEmitter emitter, {info.NameDefinition} value, YamlSerializationContext context)
     {{
 {package.NullCheck()}
