@@ -126,8 +126,7 @@ namespace NexVYaml
                 options ??= DefaultOptions;
                 var contextLocal = new YamlSerializationContext(options);
 
-                var formatter = options.Resolver.GetFormatterWithVerify<T>();
-                formatter.Serialize(ref emitter, value, contextLocal);
+                contextLocal.Serialize(ref emitter, value);
             }
             finally
             {
@@ -215,7 +214,7 @@ namespace NexVYaml
         /// <param name="parser">The YamlParser used for deserializing the YAML content.</param>
         /// <param name="options">Optional settings for customizing the YAML deserialization process.</param>
         /// <returns>An object of type <typeparamref name="T"/> representing the deserialized YAML content.</returns>
-        public static T Deserialize<T>(ref YamlParser parser, YamlSerializerOptions? options = null)
+        public static T? Deserialize<T>(ref YamlParser parser, YamlSerializerOptions? options = null)
         {
             try
             {
@@ -224,8 +223,7 @@ namespace NexVYaml
 
                 parser.SkipAfter(ParseEventType.DocumentStart);
 
-                var formatter = options.Resolver.GetFormatterWithVerify<T>();
-                return contextLocal.DeserializeWithAlias(formatter, ref parser);
+                return contextLocal.DeserializeWithAlias<T>( ref parser);
             }
             finally
             {

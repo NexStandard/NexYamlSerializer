@@ -19,10 +19,9 @@ namespace NexVYaml.Serialization
             emitter.BeginSequence();
             if (value.Any())
             {
-                var elementFormatter = context.Resolver.GetFormatterWithVerify<T>();
                 foreach (var x in value)
                 {
-                    elementFormatter.Serialize(ref emitter, x, context);
+                    context.Serialize(ref emitter, x);
                 }
                 emitter.EndSequence(true);
                 return;
@@ -40,10 +39,9 @@ namespace NexVYaml.Serialization
             List<T> list = new List<T>();
             parser.ReadWithVerify(ParseEventType.SequenceStart);
 
-            var elementFormatter = context.Resolver.GetFormatterWithVerify<T>();
             while (!parser.End && parser.CurrentEventType != ParseEventType.SequenceEnd)
             {
-                list.Add(context.DeserializeWithAlias(elementFormatter, ref parser));
+                list.Add(context.DeserializeWithAlias<T>(ref parser)!);
             }
             parser.ReadWithVerify(ParseEventType.SequenceEnd);
             return list;
