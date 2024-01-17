@@ -16,7 +16,13 @@ namespace NexVYaml.Emitter
         Block,
         Flow,
     }
-
+    public enum YamlStyle
+    {
+        BlockMapping,
+        FlowMapping,
+        BlockSequence,
+        FlowSequence
+    }
     public enum MappingStyle
     {
         Block,
