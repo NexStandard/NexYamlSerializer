@@ -137,7 +137,7 @@ unsafe ref struct StringWriter(Utf8YamlEmitter emitter)
         offset += StringEncoding.Utf8.GetBytes(value, output[offset..]);
         emitter.EndScalar(output, ref offset);
     }
-    public unsafe void WriteQuotedScalar(string value, bool doubleQuote = true)
+    public readonly unsafe void WriteQuotedScalar(string value, bool doubleQuote = true)
     {
         var scalarStringBuilt = EmitStringAnalyzer.BuildQuotedScalar(value, doubleQuote);
         Span<char> scalarChars = stackalloc char[scalarStringBuilt.Length];
@@ -150,7 +150,7 @@ unsafe ref struct StringWriter(Utf8YamlEmitter emitter)
         offset += StringEncoding.Utf8.GetBytes(scalarChars, output[offset..]);
         emitter.EndScalar(output, ref offset);
     }
-    public unsafe void WriteLiteralScalar(string value)
+    public readonly unsafe void WriteLiteralScalar(string value)
     {
         var indentCharCount = (emitter.CurrentIndentLevel + 1) * emitter.Options.IndentWidth;
         var scalarStringBuilt = EmitStringAnalyzer.BuildLiteralScalar(value, indentCharCount);
