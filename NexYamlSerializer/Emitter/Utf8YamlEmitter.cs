@@ -5,6 +5,7 @@ using System.Buffers.Text;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using NexVYaml.Internal;
+using NexYamlSerializer.Emitter;
 
 namespace NexVYaml.Emitter
 {
@@ -35,6 +36,8 @@ namespace NexVYaml.Emitter
         static readonly byte[] MappingKeyFooter = { (byte)':', (byte)' ' };
         static readonly byte[] FlowMappingEmpty = { (byte)'{', (byte)'}' };
 
+        IndentationManager IndentationManager { get; } = new();
+
         bool IsFirstElement
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -48,7 +51,7 @@ namespace NexVYaml.Emitter
         ExpandBuffer<int> elementCountStack;
         ExpandBuffer<string> tagStack;
 
-        public int CurrentIndentLevel { get; private set; }
+        public int CurrentIndentLevel => IndentationManager.CurrentIndentLevel;
         int currentElementCount;
 
         public Utf8YamlEmitter(IBufferWriter<byte> writer, YamlEmitOptions? options = null)
@@ -56,7 +59,6 @@ namespace NexVYaml.Emitter
             Writer = writer;
             Options = options ?? YamlEmitOptions.Default;
 
-            CurrentIndentLevel = 0;
             StateStack = new ExpandBuffer<EmitState>(16);
             elementCountStack = new ExpandBuffer<int>(16);
             StateStack.Add(EmitState.None);
@@ -159,7 +161,7 @@ namespace NexVYaml.Emitter
                         case EmitState.BlockSequenceEntry:
                             if (!isEmptySequence)
                             {
-                                DecreaseIndent();
+                                IndentationManager.DecreaseIndent();
                             }
                             currentElementCount++;
                             break;
@@ -279,7 +281,7 @@ namespace NexVYaml.Emitter
                 case EmitState.BlockSequenceEntry:
                     if (!isEmptyMapping)
                     {
-                        DecreaseIndent();
+                        IndentationManager.DecreaseIndent();
                     }
                     currentElementCount++;
                     break;
@@ -287,7 +289,7 @@ namespace NexVYaml.Emitter
                 case EmitState.BlockMappingValue:
                     if (!isEmptyMapping)
                     {
-                        DecreaseIndent();
+                        IndentationManager.DecreaseIndent();
                     }
                     StateStack.Current = EmitState.BlockMappingKey;
                     currentElementCount++;
@@ -379,7 +381,7 @@ namespace NexVYaml.Emitter
                 {
                     case EmitState.BlockSequenceEntry:
                         WriteRaw1(YamlCodes.Lf);
-                        IncreaseIndent();
+                        IndentationManager.IncreaseIndent();
                         break;
                     case EmitState.BlockMappingValue:
                         WriteRaw1(YamlCodes.Lf);
@@ -439,7 +441,7 @@ namespace NexVYaml.Emitter
                         switch (StateStack.Previous)
                         {
                             case EmitState.BlockSequenceEntry:
-                                IncreaseIndent();
+                                IndentationManager.IncreaseIndent();
                                 output[offset++] = YamlCodes.Lf;
                                 break;
                             case EmitState.BlockMappingValue:
@@ -468,7 +470,7 @@ namespace NexVYaml.Emitter
                         {
                             case EmitState.BlockSequenceEntry:
                             {
-                                IncreaseIndent();
+                                IndentationManager.IncreaseIndent();
 
                                 // Try write tag
                                 if (tagStack.TryPop(out var tag))
@@ -486,7 +488,7 @@ namespace NexVYaml.Emitter
                             }
                             case EmitState.BlockMappingValue:
                             {
-                                IncreaseIndent();
+                                IndentationManager.IncreaseIndent();
                                 // Try write tag
                                 if (tagStack.TryPop(out var tag))
                                 {
@@ -575,19 +577,6 @@ namespace NexVYaml.Emitter
         {
             StateStack.Pop();
             currentElementCount = elementCountStack.Length > 0 ? elementCountStack.Pop() : 0;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void IncreaseIndent()
-        {
-            CurrentIndentLevel++;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void DecreaseIndent()
-        {
-            if (CurrentIndentLevel > 0)
-                CurrentIndentLevel--;
         }
     }
 }
