@@ -126,6 +126,74 @@ public static class UTF8YamlEmitterExtensions
         }
     }
 }
+public static class ExperimentalExtensions
+{
+    /// <summary>
+    /// Experimental Feature to write Custom Yaml
+    /// writes it in the style of "key : value"
+    /// </summary>
+    /// <param name="emitter"></param>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    public static void WriteMapping(this Utf8YamlEmitter emitter, string key, int value,bool lineBreak=true)
+    {
+        emitter.WriteString(key, ScalarStyle.Plain);
+        emitter.WriteString(" : ", ScalarStyle.Plain);
+        emitter.WriteInt32(value);
+        if (lineBreak)
+            emitter.WriteString("\n");
+    }
+    /// <summary>
+    /// Experimental Feature to write Custom Yaml
+    /// writes it in the style of "key : value"
+    /// </summary>
+    /// <param name="emitter"></param>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    public static void WriteMapping(this Utf8YamlEmitter emitter, string key, float value,bool lineBreak=true)
+    {
+        emitter.WriteString(key, ScalarStyle.Plain);
+        emitter.WriteString(" : ", ScalarStyle.Plain);
+        emitter.WriteFloat(value);
+        if (lineBreak)
+            emitter.WriteString("\n");
+    }
+
+    /// <summary>
+    /// Experimental Feature to write Custom Yaml
+    /// writes it in the style of "key: value"
+    /// Based on the <paramref name="style"/> this output can change
+    /// </summary>
+    /// <param name="emitter"></param>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    public static void WriteMapping(this Utf8YamlEmitter emitter, string key, string value, ScalarStyle style = ScalarStyle.Plain, bool lineBreak = true)
+    {
+        emitter.WriteString(key, ScalarStyle.Plain);
+        emitter.WriteString(": ", ScalarStyle.Plain);
+        emitter.WriteString(value,style);
+        if (lineBreak)
+            emitter.WriteString("\n");
+    }
+
+    /// <summary>
+    /// Experimental Feature to write Custom Yaml
+    /// writes it in the style of "key: value"
+    /// Based on the <paramref name="style"/> this output can change
+    /// </summary>
+    /// <param name="emitter"></param>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    public static void WriteSequenceElement(this Utf8YamlEmitter emitter, string key, string value, ScalarStyle style = ScalarStyle.Plain, bool lineBreak = true)
+    {
+        emitter.WriteString("- ");
+        emitter.WriteString(key, ScalarStyle.Plain);
+        emitter.WriteString(": ", ScalarStyle.Plain);
+        emitter.WriteString(value,style);
+        if(lineBreak)
+            emitter.WriteString("\n");
+    }
+}
 unsafe ref struct StringWriter(Utf8YamlEmitter emitter)
 {
     public readonly void WritePlainScalar(ref string value)
