@@ -33,6 +33,7 @@ namespace NexVYaml.Emitter
         static readonly byte[] MappingKeyFooter = { (byte)':', (byte)' ' };
         static readonly byte[] FlowMappingEmpty = { (byte)'{', (byte)'}' };
         static readonly byte[] FlowMappingStart = { (byte)'{', (byte)' ' };
+        static readonly byte[] FlowMappingEnd = { (byte)' ', (byte)'}' };
         public int CurrentIndentLevel => IndentationManager.CurrentIndentLevel;
         public ExpandBuffer<EmitState> StateStack { get; }
         public IBufferWriter<byte> Writer { get; }
@@ -291,12 +292,21 @@ namespace NexVYaml.Emitter
         }
         public void EndMapping()
         {
-            if (StateStack.Current != EmitState.BlockMappingKey)
+            if (StateStack.Current != EmitState.BlockMappingKey && StateStack.Current != EmitState.FlowMappingKey)
             {
                 throw new YamlEmitterException($"Invalid block mapping end: {StateStack.Current}");
             }
+            
 
             var isEmptyMapping = currentElementCount <= 0;
+            if (StateStack.Current == EmitState.FlowMappingKey && !isEmptyMapping)
+            {
+                WriteRaw(FlowMappingEnd, false, true);
+            } 
+            else if(StateStack.Current == EmitState.FlowMappingKey && isEmptyMapping)
+            {
+                WriteRaw(YamlCodes.FlowMapEnd);
+            }
             PopState();
 
             if (isEmptyMapping)
@@ -376,12 +386,4 @@ namespace NexVYaml.Emitter
             currentElementCount = elementCountStack.Length > 0 ? elementCountStack.Pop() : 0;
         }
     }
-}
-class EmitterData
-{
-    public IndentationManager IndentationManager { get; } = new();
-    public ExpandBuffer<EmitState> StateStack { get; } = new(16);
-    public ExpandBuffer<int> ElementCountStack { get; } = new(16);
-    public ExpandBuffer<string> TagStack { get; } = new(4);
-    public int CurrentElementCount { get; set; }
 }

@@ -112,10 +112,24 @@ public partial class Utf8YamlEmitter
                 }
             case EmitState.BlockMappingValue:
                 break;
-
+            case EmitState.FlowMappingValue: break;
             case EmitState.FlowMappingKey:
-                FlowMappingStart.CopyTo(output[offset..]);
-                offset += FlowMappingStart.Length;
+                if(IsFirstElement)
+                {
+                    if (tagStack.TryPop(out var tag))
+                    {
+                        offset += StringEncoding.Utf8.GetBytes(tag, output[offset..]);
+                        output[offset++] = YamlCodes.Space;
+                        WriteIndent(output, ref offset);
+                    }
+                    FlowMappingStart.CopyTo(output[offset..]);
+                    offset += 2;
+                }
+                if(!IsFirstElement)
+                {
+                    FlowSequenceSeparator.CopyTo(output[offset..]);
+                    offset += FlowSequenceSeparator.Length;
+                }
                 break;
             case EmitState.None:
                 break;
@@ -133,10 +147,19 @@ public partial class Utf8YamlEmitter
                 output[offset++] = YamlCodes.Lf;
                 currentElementCount++;
                 break;
-            case EmitState.BlockMappingKey or EmitState.FlowMappingKey:
+            case EmitState.BlockMappingKey:
                 MappingKeyFooter.CopyTo(output[offset..]);
                 offset += MappingKeyFooter.Length;
                 StateStack.Current = EmitState.BlockMappingValue;
+                break;
+            case EmitState.FlowMappingKey:
+                MappingKeyFooter.CopyTo(output[offset..]);
+                offset += MappingKeyFooter.Length;
+                StateStack.Current = EmitState.FlowMappingValue;
+                break;
+            case EmitState.FlowMappingValue:
+                StateStack.Current = EmitState.FlowMappingKey;
+                currentElementCount++;
                 break;
             case EmitState.BlockMappingValue:
                 output[offset++] = YamlCodes.Lf;
