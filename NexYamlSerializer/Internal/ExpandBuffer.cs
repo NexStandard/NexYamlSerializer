@@ -1,6 +1,8 @@
 #nullable enable
+using NexVYaml.Emitter;
 using System;
 using System.Buffers;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 
 namespace NexVYaml.Internal
@@ -24,7 +26,19 @@ namespace NexVYaml.Internal
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => ref buffer[index];
         }
-
+        /// <summary>
+        /// Gets the current highest element on the Stack.
+        /// Set replaces the current highest element with the value
+        /// </summary>
+        public T Current
+        {
+            get => this[^1];
+            set => this[^1] = value;
+        }
+        public T Previous
+        {
+            get => this[^2];
+        }
         public int Length { get; private set; }
 
         public void Dispose()

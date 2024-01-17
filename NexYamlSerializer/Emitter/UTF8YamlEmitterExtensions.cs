@@ -157,7 +157,7 @@ unsafe ref struct StringWriter(Utf8YamlEmitter emitter)
         Span<char> scalarChars = stackalloc char[scalarStringBuilt.Length];
         scalarStringBuilt.CopyTo(0, scalarChars, scalarStringBuilt.Length);
 
-        if (emitter.CurrentState is EmitState.BlockMappingValue or EmitState.BlockSequenceEntry)
+        if (emitter.StateStack.Current is EmitState.BlockMappingValue or EmitState.BlockSequenceEntry)
         {
             scalarChars = scalarChars[..^1]; // Remove duplicate last line-break;
         }

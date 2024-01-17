@@ -35,18 +35,6 @@ namespace NexVYaml.Emitter
         static readonly byte[] MappingKeyFooter = { (byte)':', (byte)' ' };
         static readonly byte[] FlowMappingEmpty = { (byte)'{', (byte)'}' };
 
-        public EmitState CurrentState
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => stateStack[^1];
-        }
-
-        EmitState PreviousState
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => stateStack[^2];
-        }
-
         bool IsFirstElement
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -56,7 +44,7 @@ namespace NexVYaml.Emitter
         public IBufferWriter<byte> Writer { get; }
         public YamlEmitOptions Options { get; }
 
-        ExpandBuffer<EmitState> stateStack;
+        public ExpandBuffer<EmitState> StateStack;
         ExpandBuffer<int> elementCountStack;
         ExpandBuffer<string> tagStack;
 
@@ -69,9 +57,9 @@ namespace NexVYaml.Emitter
             Options = options ?? YamlEmitOptions.Default;
 
             CurrentIndentLevel = 0;
-            stateStack = new ExpandBuffer<EmitState>(16);
+            StateStack = new ExpandBuffer<EmitState>(16);
             elementCountStack = new ExpandBuffer<int>(16);
-            stateStack.Add(EmitState.None);
+            StateStack.Add(EmitState.None);
             currentElementCount = 0;
 
             tagStack = new ExpandBuffer<string>(4);
@@ -81,7 +69,7 @@ namespace NexVYaml.Emitter
 
         public void Dispose()
         {
-            stateStack.Dispose();
+            StateStack.Dispose();
             elementCountStack.Dispose();
             tagStack.Dispose();
         }
@@ -92,7 +80,7 @@ namespace NexVYaml.Emitter
             {
                 case SequenceStyle.Block:
                 {
-                    switch (CurrentState)
+                    switch (StateStack.Current)
                     {
                         case EmitState.BlockSequenceEntry:
                             WriteBlockSequenceEntryHeader();
@@ -112,7 +100,7 @@ namespace NexVYaml.Emitter
                 }
                 case SequenceStyle.Flow:
                 {
-                    switch (CurrentState)
+                    switch (StateStack.Current)
                     {
                         case EmitState.BlockMappingKey:
                             throw new YamlEmitterException("To start flow-mapping in the mapping key is not supported.");
@@ -152,7 +140,7 @@ namespace NexVYaml.Emitter
 
         public void EndSequence(bool isEmpty)
         {
-            switch (CurrentState)
+            switch (StateStack.Current)
             {
                 case EmitState.BlockSequenceEntry:
                 {
@@ -162,11 +150,11 @@ namespace NexVYaml.Emitter
                     // Empty sequence
                     if (isEmptySequence)
                     {
-                        var lineBreak = CurrentState is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
+                        var lineBreak = StateStack.Current is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
                         WriteRaw(FlowSequenceEmpty, false, lineBreak);
                     }
 
-                    switch (CurrentState)
+                    switch (StateStack.Current)
                     {
                         case EmitState.BlockSequenceEntry:
                             if (!isEmptySequence)
@@ -180,7 +168,7 @@ namespace NexVYaml.Emitter
                             throw new YamlEmitterException("Complex key is not supported.");
 
                         case EmitState.BlockMappingValue:
-                            ReplaceCurrentState(EmitState.BlockMappingKey);
+                            StateStack.Current = EmitState.BlockMappingKey;
                             currentElementCount++;
                             break;
 
@@ -196,14 +184,14 @@ namespace NexVYaml.Emitter
                     PopState();
 
                     var needsLineBreak = false;
-                    switch (CurrentState)
+                    switch (StateStack.Current)
                     {
                         case EmitState.BlockSequenceEntry:
                             needsLineBreak = true;
                             currentElementCount++;
                             break;
                         case EmitState.BlockMappingValue:
-                            ReplaceCurrentState(EmitState.BlockMappingKey); // end mapping value
+                            StateStack.Current = EmitState.BlockMappingKey; // end mapping value
                             needsLineBreak = true;
                             currentElementCount++;
                             break;
@@ -227,7 +215,7 @@ namespace NexVYaml.Emitter
                 }
 
                 default:
-                    throw new YamlEmitterException($"Current state is not sequence: {CurrentState}");
+                    throw new YamlEmitterException($"Current state is not sequence: {StateStack.Current}");
             }
         }
 
@@ -237,7 +225,7 @@ namespace NexVYaml.Emitter
             {
                 case MappingStyle.Block:
                 {
-                    switch (CurrentState)
+                    switch (StateStack.Current)
                     {
                         case EmitState.BlockMappingKey:
                             throw new YamlEmitterException("To start block-mapping in the mapping key is not supported.");
@@ -264,9 +252,9 @@ namespace NexVYaml.Emitter
 
         public void EndMapping()
         {
-            if (CurrentState != EmitState.BlockMappingKey)
+            if (StateStack.Current != EmitState.BlockMappingKey)
             {
-                throw new YamlEmitterException($"Invalid block mapping end: {CurrentState}");
+                throw new YamlEmitterException($"Invalid block mapping end: {StateStack.Current}");
             }
 
             var isEmptyMapping = currentElementCount <= 0;
@@ -274,7 +262,7 @@ namespace NexVYaml.Emitter
 
             if (isEmptyMapping)
             {
-                var lineBreak = CurrentState is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
+                var lineBreak = StateStack.Current is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
                 if (tagStack.TryPop(out var tag))
                 {
                     var tagBytes = StringEncoding.Utf8.GetBytes(tag + " "); // TODO:
@@ -286,7 +274,7 @@ namespace NexVYaml.Emitter
                 }
             }
 
-            switch (CurrentState)
+            switch (StateStack.Current)
             {
                 case EmitState.BlockSequenceEntry:
                     if (!isEmptyMapping)
@@ -301,7 +289,7 @@ namespace NexVYaml.Emitter
                     {
                         DecreaseIndent();
                     }
-                    ReplaceCurrentState(EmitState.BlockMappingKey);
+                    StateStack.Current = EmitState.BlockMappingKey;
                     currentElementCount++;
                     break;
 
@@ -387,7 +375,7 @@ namespace NexVYaml.Emitter
         {
             if (IsFirstElement)
             {
-                switch (PreviousState)
+                switch (StateStack.Previous)
                 {
                     case EmitState.BlockSequenceEntry:
                         WriteRaw1(YamlCodes.Lf);
@@ -441,14 +429,14 @@ namespace NexVYaml.Emitter
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void BeginScalar(Span<byte> output, ref int offset)
         {
-            switch (CurrentState)
+            switch (StateStack.Current)
             {
                 case EmitState.BlockSequenceEntry:
                 {
                     // first nested element
                     if (IsFirstElement)
                     {
-                        switch (PreviousState)
+                        switch (StateStack.Previous)
                         {
                             case EmitState.BlockSequenceEntry:
                                 IncreaseIndent();
@@ -476,7 +464,7 @@ namespace NexVYaml.Emitter
                 {
                     if (IsFirstElement)
                     {
-                        switch (PreviousState)
+                        switch (StateStack.Previous)
                         {
                             case EmitState.BlockSequenceEntry:
                             {
@@ -547,7 +535,7 @@ namespace NexVYaml.Emitter
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void EndScalar(Span<byte> output, ref int offset)
         {
-            switch (CurrentState)
+            switch (StateStack.Current)
             {
                 case EmitState.BlockSequenceEntry:
                     output[offset++] = YamlCodes.Lf;
@@ -556,11 +544,11 @@ namespace NexVYaml.Emitter
                 case EmitState.BlockMappingKey:
                     MappingKeyFooter.CopyTo(output[offset..]);
                     offset += MappingKeyFooter.Length;
-                    ReplaceCurrentState(EmitState.BlockMappingValue);
+                    StateStack.Current = EmitState.BlockMappingValue;
                     break;
                 case EmitState.BlockMappingValue:
                     output[offset++] = YamlCodes.Lf;
-                    ReplaceCurrentState(EmitState.BlockMappingKey);
+                    StateStack.Current = EmitState.BlockMappingKey;
                     currentElementCount++;
                     break;
                 case EmitState.FlowSequenceEntry:
@@ -575,15 +563,9 @@ namespace NexVYaml.Emitter
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void ReplaceCurrentState(EmitState newState)
-        {
-            stateStack[^1] = newState;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void PushState(EmitState state)
         {
-            stateStack.Add(state);
+            StateStack.Add(state);
             elementCountStack.Add(currentElementCount);
             currentElementCount = 0;
         }
@@ -591,7 +573,7 @@ namespace NexVYaml.Emitter
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void PopState()
         {
-            stateStack.Pop();
+            StateStack.Pop();
             currentElementCount = elementCountStack.Length > 0 ? elementCountStack.Pop() : 0;
         }
 
