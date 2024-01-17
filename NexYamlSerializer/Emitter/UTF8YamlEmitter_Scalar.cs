@@ -10,17 +10,7 @@ using System.Threading.Tasks;
 namespace NexVYaml.Emitter;
 public partial class Utf8YamlEmitter
 {
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WriteScalar(ReadOnlySpan<byte> value)
-    {
-        var offset = 0;
-        var output = Writer.GetSpan(CalculateMaxScalarBufferLength(value.Length));
 
-        BeginScalar(output, ref offset);
-        value.CopyTo(output[offset..]);
-        offset += value.Length;
-        EndScalar(output, ref offset);
-    }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void BeginScalar(Span<byte> output, ref int offset)
     {

@@ -17,7 +17,18 @@ public partial class Utf8YamlEmitter
             (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ',
     };
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    void WriteIndent(Span<byte> output, ref int offset, int forceWidth = -1)
+    public void WriteScalar(ReadOnlySpan<byte> value)
+    {
+        var offset = 0;
+        var output = Writer.GetSpan(CalculateMaxScalarBufferLength(value.Length));
+
+        BeginScalar(output, ref offset);
+        value.CopyTo(output[offset..]);
+        offset += value.Length;
+        EndScalar(output, ref offset);
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal void WriteIndent(Span<byte> output, ref int offset, int forceWidth = -1)
     {
         int length;
         if (forceWidth > -1)
