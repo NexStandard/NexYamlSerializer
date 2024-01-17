@@ -15,7 +15,7 @@ namespace NexVYaml.Emitter
         }
     }
 
-    enum EmitState
+    public enum EmitState
     {
         None,
         BlockSequenceEntry,
@@ -39,7 +39,7 @@ namespace NexVYaml.Emitter
         static readonly byte[] MappingKeyFooter = { (byte)':', (byte)' ' };
         static readonly byte[] FlowMappingEmpty = { (byte)'{', (byte)'}' };
 
-        EmitState CurrentState
+        public EmitState CurrentState
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => stateStack[^1];
@@ -57,22 +57,22 @@ namespace NexVYaml.Emitter
             get => currentElementCount <= 0;
         }
 
-        readonly IBufferWriter<byte> writer;
-        readonly YamlEmitOptions options;
+        public IBufferWriter<byte> Writer { get; }
+        public YamlEmitOptions Options { get; }
 
         ExpandBuffer<EmitState> stateStack;
         ExpandBuffer<int> elementCountStack;
         ExpandBuffer<string> tagStack;
 
-        int currentIndentLevel;
+        public int CurrentIndentLevel { get; private set; }
         int currentElementCount;
 
         public Utf8YamlEmitter(IBufferWriter<byte> writer, YamlEmitOptions? options = null)
         {
-            this.writer = writer;
-            this.options = options ?? YamlEmitOptions.Default;
+            Writer = writer;
+            Options = options ?? YamlEmitOptions.Default;
 
-            currentIndentLevel = 0;
+            CurrentIndentLevel = 0;
             stateStack = new ExpandBuffer<EmitState>(16);
             elementCountStack = new ExpandBuffer<int>(16);
             stateStack.Add(EmitState.None);
@@ -81,7 +81,7 @@ namespace NexVYaml.Emitter
             tagStack = new ExpandBuffer<string>(4);
         }
 
-        internal IBufferWriter<byte> GetWriter() => writer;
+        internal IBufferWriter<byte> GetWriter() => Writer;
 
         public void Dispose()
         {
@@ -123,23 +123,23 @@ namespace NexVYaml.Emitter
 
                         case EmitState.BlockSequenceEntry:
                         {
-                            var output = writer.GetSpan(currentIndentLevel * options.IndentWidth + BlockSequenceEntryHeader.Length + 1);
+                            var output = Writer.GetSpan(CurrentIndentLevel * Options.IndentWidth + BlockSequenceEntryHeader.Length + 1);
                             var offset = 0;
                             WriteIndent(output, ref offset);
                             BlockSequenceEntryHeader.CopyTo(output[offset..]);
                             offset += BlockSequenceEntryHeader.Length;
                             output[offset++] = YamlCodes.FlowSequenceStart;
-                            writer.Advance(offset);
+                            Writer.Advance(offset);
                             break;
                         }
                         case EmitState.FlowSequenceEntry:
                         {
-                            var output = writer.GetSpan(FlowSequenceSeparator.Length + 1);
+                            var output = Writer.GetSpan(FlowSequenceSeparator.Length + 1);
                             var offset = 0;
                             FlowSequenceSeparator.CopyTo(output);
                             offset += FlowSequenceSeparator.Length;
                             output[offset++] = YamlCodes.FlowSequenceStart;
-                            writer.Advance(offset);
+                            Writer.Advance(offset);
                             break;
                         }
                         default:
@@ -220,13 +220,13 @@ namespace NexVYaml.Emitter
                     if (needsLineBreak) suffixLength++;
 
                     var offset = 0;
-                    var output = writer.GetSpan(suffixLength);
+                    var output = Writer.GetSpan(suffixLength);
                     output[offset++] = YamlCodes.FlowSequenceEnd;
                     if (needsLineBreak)
                     {
                         output[offset++] = YamlCodes.Lf;
                     }
-                    writer.Advance(offset);
+                    Writer.Advance(offset);
                     break;
                 }
 
@@ -319,11 +319,11 @@ namespace NexVYaml.Emitter
         public void WriteRaw(ReadOnlySpan<byte> value, bool indent, bool lineBreak)
         {
             var length = value.Length +
-                         (indent ? currentIndentLevel * options.IndentWidth : 0) +
+                         (indent ? CurrentIndentLevel * Options.IndentWidth : 0) +
                          (lineBreak ? 1 : 0);
 
             var offset = 0;
-            var output = writer.GetSpan(length);
+            var output = Writer.GetSpan(length);
             if (indent)
             {
                 WriteIndent(output, ref offset);
@@ -333,17 +333,17 @@ namespace NexVYaml.Emitter
             {
                 output[length - 1] = YamlCodes.Lf;
             }
-            writer.Advance(length);
+            Writer.Advance(length);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void WriteRaw(ReadOnlySpan<byte> value1, ReadOnlySpan<byte> value2, bool indent, bool lineBreak)
         {
             var length = value1.Length + value2.Length +
-                         (indent ? currentIndentLevel * options.IndentWidth : 0) +
+                         (indent ? CurrentIndentLevel * Options.IndentWidth : 0) +
                          (lineBreak ? 1 : 0);
             var offset = 0;
-            var output = writer.GetSpan(length);
+            var output = Writer.GetSpan(length);
             if (indent)
             {
                 WriteIndent(output, ref offset);
@@ -357,7 +357,7 @@ namespace NexVYaml.Emitter
             {
                 output[length - 1] = YamlCodes.Lf;
             }
-            writer.Advance(length);
+            Writer.Advance(length);
         }
 
         public void Tag(string value)
@@ -369,210 +369,21 @@ namespace NexVYaml.Emitter
         public void WriteScalar(ReadOnlySpan<byte> value)
         {
             var offset = 0;
-            var output = writer.GetSpan(CalculateMaxScalarBufferLength(value.Length));
+            var output = Writer.GetSpan(CalculateMaxScalarBufferLength(value.Length));
 
             BeginScalar(output, ref offset);
             value.CopyTo(output[offset..]);
             offset += value.Length;
             EndScalar(output, ref offset);
-
-            writer.Advance(offset);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void WriteNull()
-        {
-            WriteScalar(YamlCodes.Null0);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void WriteBool(bool value)
-        {
-            WriteScalar(value ? YamlCodes.True0 : YamlCodes.False0);
-        }
-
-        public void WriteInt32(int value)
-        {
-            var offset = 0;
-            var output = writer.GetSpan(CalculateMaxScalarBufferLength(11)); // -2147483648
-
-            BeginScalar(output, ref offset);
-            if (!Utf8Formatter.TryFormat(value, output[offset..], out var bytesWritten))
-            {
-                throw new YamlEmitterException($"Failed to emit : {value}");
-            }
-            offset += bytesWritten;
-            EndScalar(output, ref offset);
-            writer.Advance(offset);
-        }
-
-        public void WriteUInt32(uint value)
-        {
-            var offset = 0;
-            var output = writer.GetSpan(CalculateMaxScalarBufferLength(10)); // 4294967295
-
-            BeginScalar(output, ref offset);
-            if (!Utf8Formatter.TryFormat(value, output[offset..], out var bytesWritten))
-            {
-                throw new YamlEmitterException($"Failed to emit : {value}");
-            }
-            offset += bytesWritten;
-            EndScalar(output, ref offset);
-
-            writer.Advance(offset);
-        }
-
-        public void WriteInt64(long value)
-        {
-            var offset = 0;
-            var output = writer.GetSpan(CalculateMaxScalarBufferLength(20)); // -9223372036854775808
-
-            BeginScalar(output, ref offset);
-            if (!Utf8Formatter.TryFormat(value, output[offset..], out var bytesWritten))
-            {
-                throw new YamlEmitterException($"Failed to emit : {value}");
-            }
-            offset += bytesWritten;
-            EndScalar(output, ref offset);
-
-            writer.Advance(offset);
-        }
-
-        public void WriteUInt64(ulong value)
-        {
-            var offset = 0;
-            var output = writer.GetSpan(CalculateMaxScalarBufferLength(20)); // 18446744073709551615
-
-            BeginScalar(output, ref offset);
-            if (!Utf8Formatter.TryFormat(value, output[offset..], out var bytesWritten))
-            {
-                throw new YamlEmitterException($"Failed to emit : {value}");
-            }
-            offset += bytesWritten;
-            EndScalar(output, ref offset);
-
-            writer.Advance(offset);
-        }
-
-        public void WriteFloat(float value)
-        {
-            var offset = 0;
-            var output = writer.GetSpan(CalculateMaxScalarBufferLength(12));
-
-            BeginScalar(output, ref offset);
-            if (!Utf8Formatter.TryFormat(value, output[offset..], out var bytesWritten))
-            {
-                throw new YamlEmitterException($"Failed to emit : {value}");
-            }
-            offset += bytesWritten;
-            EndScalar(output, ref offset);
-
-            writer.Advance(offset);
-        }
-
-        public void WriteDouble(double value)
-        {
-            var offset = 0;
-            var output = writer.GetSpan(CalculateMaxScalarBufferLength(17));
-
-            BeginScalar(output, ref offset);
-            if (!Utf8Formatter.TryFormat(value, output[offset..], out var bytesWritten))
-            {
-                throw new YamlEmitterException($"Failed to emit : {value}");
-            }
-            offset += bytesWritten;
-            EndScalar(output, ref offset);
-
-            writer.Advance(offset);
-        }
-
-        public void WriteString(string value, ScalarStyle style = ScalarStyle.Any)
-        {
-            if (style == ScalarStyle.Any)
-            {
-                var analyzeInfo = EmitStringAnalyzer.Analyze(value);
-                style = analyzeInfo.SuggestScalarStyle();
-            }
-
-            switch (style)
-            {
-                case ScalarStyle.Plain:
-                    WritePlainScalar(value);
-                    break;
-
-                case ScalarStyle.SingleQuoted:
-                    WriteQuotedScalar(value, doubleQuote: false);
-                    break;
-
-                case ScalarStyle.DoubleQuoted:
-                    WriteQuotedScalar(value, doubleQuote: true);
-                    break;
-
-                case ScalarStyle.Literal:
-                    WriteLiteralScalar(value);
-                    break;
-
-                case ScalarStyle.Folded:
-                    throw new NotSupportedException();
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(style), style, null);
-            }
-        }
-
-        void WritePlainScalar(string value)
-        {
-            var stringMaxByteCount = StringEncoding.Utf8.GetMaxByteCount(value.Length);
-            var output = writer.GetSpan(CalculateMaxScalarBufferLength(stringMaxByteCount));
-            var offset = 0;
-            BeginScalar(output, ref offset);
-            offset += StringEncoding.Utf8.GetBytes(value, output[offset..]);
-            EndScalar(output, ref offset);
-            writer.Advance(offset);
-        }
-
-        unsafe void WriteLiteralScalar(string value)
-        {
-            var indentCharCount = (currentIndentLevel + 1) * options.IndentWidth;
-            var scalarStringBuilt = EmitStringAnalyzer.BuildLiteralScalar(value, indentCharCount);
-            Span<char> scalarChars = stackalloc char[scalarStringBuilt.Length];
-            scalarStringBuilt.CopyTo(0, scalarChars, scalarStringBuilt.Length);
-
-            if (CurrentState is EmitState.BlockMappingValue or EmitState.BlockSequenceEntry)
-            {
-                scalarChars = scalarChars[..^1]; // Remove duplicate last line-break;
-            }
-
-            var maxByteCount = StringEncoding.Utf8.GetMaxByteCount(scalarChars.Length);
-            var offset = 0;
-            var output = writer.GetSpan(CalculateMaxScalarBufferLength(maxByteCount));
-            BeginScalar(output, ref offset);
-            offset += StringEncoding.Utf8.GetBytes(scalarChars, output[offset..]);
-            EndScalar(output, ref offset);
-            writer.Advance(offset);
-        }
-
-        unsafe void WriteQuotedScalar(string value, bool doubleQuote = true)
-        {
-            var scalarStringBuilt = EmitStringAnalyzer.BuildQuotedScalar(value, doubleQuote);
-            Span<char> scalarChars = stackalloc char [scalarStringBuilt.Length];
-            scalarStringBuilt.CopyTo(0, scalarChars, scalarStringBuilt.Length);
-
-            var maxByteCount = StringEncoding.Utf8.GetMaxByteCount(scalarChars.Length);
-            var offset = 0;
-            var output = writer.GetSpan(CalculateMaxScalarBufferLength(maxByteCount));
-            BeginScalar(output, ref offset);
-            offset += StringEncoding.Utf8.GetBytes(scalarChars, output[offset..]);
-            EndScalar(output, ref offset);
-            writer.Advance(offset);
-        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void WriteRaw1(byte value)
         {
-            var output = writer.GetSpan(1);
+            var output = Writer.GetSpan(1);
             output[0] = value;
-            writer.Advance(1);
+            Writer.Advance(1);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -603,9 +414,9 @@ namespace NexVYaml.Emitter
                 if (forceWidth <= 0) return;
                 length = forceWidth;
             }
-            else if (currentIndentLevel > 0)
+            else if (CurrentIndentLevel > 0)
             {
-                length = currentIndentLevel * options.IndentWidth;
+                length = CurrentIndentLevel * Options.IndentWidth;
             }
             else
             {
@@ -621,9 +432,9 @@ namespace NexVYaml.Emitter
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        int CalculateMaxScalarBufferLength(int length)
+        public int CalculateMaxScalarBufferLength(int length)
         {
-            var around = (currentIndentLevel + 1) * options.IndentWidth + 3;
+            var around = (CurrentIndentLevel + 1) * Options.IndentWidth + 3;
             if (tagStack.Length > 0)
             {
                 length += StringEncoding.Utf8.GetMaxByteCount(tagStack.Peek().Length) + around; // TODO:
@@ -684,7 +495,7 @@ namespace NexVYaml.Emitter
                                 }
                                 else
                                 {
-                                    WriteIndent(output, ref offset, options.IndentWidth - 2);
+                                    WriteIndent(output, ref offset, Options.IndentWidth - 2);
                                 }
                                 // The first key in block-sequence is like so that: "- key: .."
                                 break;
@@ -764,6 +575,7 @@ namespace NexVYaml.Emitter
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+            Writer.Advance(offset);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -790,15 +602,14 @@ namespace NexVYaml.Emitter
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void IncreaseIndent()
         {
-            currentIndentLevel++;
+            CurrentIndentLevel++;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void DecreaseIndent()
         {
-            if (currentIndentLevel > 0)
-                currentIndentLevel--;
+            if (CurrentIndentLevel > 0)
+                CurrentIndentLevel--;
         }
     }
 }
-
