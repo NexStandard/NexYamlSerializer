@@ -8,11 +8,8 @@ using NexVYaml.Internal;
 
 namespace NexVYaml.Emitter
 {
-    public class YamlEmitterException : Exception
+    public class YamlEmitterException(string message) : Exception(message)
     {
-        public YamlEmitterException(string message) : base(message)
-        {
-        }
     }
 
     public enum EmitState
