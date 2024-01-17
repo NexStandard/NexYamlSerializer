@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace NexVYaml.Internal
 {
-    public struct ExpandBuffer<T>
+    public class ExpandBuffer<T>
     {
         const int MinimumGrow = 4;
         const int GrowFactor = 200;
