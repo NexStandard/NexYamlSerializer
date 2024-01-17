@@ -372,7 +372,7 @@ namespace NexVYaml.Emitter
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void PushState(EmitState state)
+        void PushState(EmitState state)
         {
             StateStack.Add(state);
             elementCountStack.Add(currentElementCount);
