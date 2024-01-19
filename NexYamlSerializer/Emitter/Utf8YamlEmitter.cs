@@ -157,12 +157,7 @@ namespace NexVYaml.Emitter
                     }
                 case EmitState.FlowSequenceEntry:
                     {
-                        var output = Writer.GetSpan(FlowSequenceSeparator.Length + 1);
-                        var offset = 0;
-                        FlowSequenceSeparator.CopyTo(output);
-                        offset += FlowSequenceSeparator.Length;
-                        output[offset++] = YamlCodes.FlowSequenceStart;
-                        Writer.Advance(offset);
+
                         break;
                     }
                 default:

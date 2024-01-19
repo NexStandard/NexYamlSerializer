@@ -21,6 +21,12 @@ public partial class Utf8YamlEmitter
                     // first nested element
                     if (IsFirstElement)
                     {
+                        var output2 = Writer.GetSpan(FlowSequenceSeparator.Length + 1);
+                        var offset2 = 0;
+                        FlowSequenceSeparator.CopyTo(output2);
+                        offset2 += FlowSequenceSeparator.Length;
+                        output2[offset2++] = YamlCodes.FlowSequenceStart;
+                        Writer.Advance(offset);
                         switch (StateStack.Previous)
                         {
                             case EmitState.BlockSequenceEntry:
