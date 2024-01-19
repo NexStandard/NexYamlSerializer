@@ -7,7 +7,6 @@ namespace NexYamlSourceGenerator.MemberApi.FieldAnalyzers;
 
 internal class FieldAnalyzer(ReferencePackage package) : IMemberSymbolAnalyzer<IFieldSymbol>
 {
-    public DataStyleAnalyzer DataStyleAnalyzer { get; init; }
     public SymbolInfo Analyze(MemberData<IFieldSymbol> context)
     {
         var typeBundle = GetTypeDisplay(context.Symbol.Type);
