@@ -56,7 +56,15 @@ public class CompactTest
     [Fact]
     public void Compact_Array()
     {
-        var compact = new CompactArray();
-        YamlHelper.Run(compact);
+        YamlHelper.SetUp();
+        var compact = new CompactArray()
+        {
+            Ints = [8, 7, 5]
+        };
+        var serialized = YamlSerializer.SerializeToString(compact);
+        var deserialized = YamlSerializer.Deserialize<CompactArray>(serialized);
+        Assert.Equal(compact.Ints[0] , deserialized.Ints[0]);
+        Assert.Equal(compact.Ints[1] , deserialized.Ints[1]);
+        Assert.Equal(compact.Ints[2] , deserialized.Ints[2]);
     }
 }

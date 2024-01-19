@@ -52,15 +52,23 @@ public partial class Utf8YamlEmitter
                     break;
                 }
             case EmitState.FlowSequenceEntry:
-                if(!IsFirstElement)
+                if (StateStack.Previous is not EmitState.BlockMappingValue)
+                    break;
+                if(IsFirstElement)
                 {
-                    switch (StateStack.Previous)
+                    if (tagStack.TryPop(out var tag))
                     {
-                        case EmitState.BlockMappingValue:
-                            FlowSequenceSeparator.CopyTo(output[offset..]);
-                            offset += FlowSequenceSeparator.Length;
-                            break;
+                        offset += StringEncoding.Utf8.GetBytes(tag, output[offset..]);
+                        output[offset++] = YamlCodes.Space;
                     }
+                    FlowSequenceEntryHeader.CopyTo(output[offset..]);
+                    offset += FlowSequenceEntryHeader.Length;
+                }
+                else
+                {
+                    FlowSequenceSeparator.CopyTo(output[offset..]);
+                    offset += FlowSequenceSeparator.Length;
+                    break;
                 }
                 break;
             case EmitState.BlockMappingKey:

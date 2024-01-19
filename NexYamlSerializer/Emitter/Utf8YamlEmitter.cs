@@ -29,6 +29,7 @@ namespace NexVYaml.Emitter
     {
 
         static readonly byte[] BlockSequenceEntryHeader = { (byte)'-', (byte)' ' };
+        static readonly byte[] FlowSequenceEntryHeader = { (byte)'[', (byte)' ' };
         static readonly byte[] FlowSequenceEmpty = { (byte)'[', (byte)']' };
         static readonly byte[] FlowSequenceSeparator = { (byte)',', (byte)' ' };
         static readonly byte[] MappingKeyFooter = { (byte)':', (byte)' ' };
@@ -145,22 +146,15 @@ namespace NexVYaml.Emitter
                     throw new YamlEmitterException("To start flow-mapping in the mapping key is not supported.");
 
                 case EmitState.BlockSequenceEntry:
-                    {
-                        var output = Writer.GetSpan(CurrentIndentLevel * Options.IndentWidth + BlockSequenceEntryHeader.Length + 1);
-                        var offset = 0;
-                        WriteIndent(output, ref offset);
-                        BlockSequenceEntryHeader.CopyTo(output[offset..]);
-                        offset += BlockSequenceEntryHeader.Length;
-                        output[offset++] = YamlCodes.FlowSequenceStart;
-                        Writer.Advance(offset);
-                        break;
-                    }
+                    throw new YamlEmitterException("To start flow-mapping in the mapping key is not supported.");
                 case EmitState.FlowSequenceEntry:
                     {
-
                         break;
                     }
+                case EmitState.BlockMappingValue:
+                    break;
                 default:
+                    throw new Exception(StateStack.Current.ToString());
                     WriteRaw(YamlCodes.FlowSequenceStart);
                     break;
             }

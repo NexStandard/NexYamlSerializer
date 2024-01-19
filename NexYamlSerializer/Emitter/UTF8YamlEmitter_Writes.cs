@@ -104,7 +104,7 @@ public partial class Utf8YamlEmitter
         }
         Writer.Advance(length);
     }
-
+    
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void WriteBlockSequenceEntryHeader()
     {
