@@ -6,7 +6,7 @@ using System.Text;
 
 namespace NexYamlSourceGenerator.MemberApi.Data;
 
-internal record Data<T>(T Symbol, DataMemberContext DataMemberContext) where T : ISymbol;
+internal record MemberData<T>(T Symbol, DataMemberContext DataMemberContext) where T : ISymbol;
 
 internal record ClassPackage(ClassInfo ClassInfo, ImmutableList<SymbolInfo> MemberSymbols);
 

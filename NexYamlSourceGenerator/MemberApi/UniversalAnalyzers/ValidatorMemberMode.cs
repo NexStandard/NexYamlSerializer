@@ -12,7 +12,7 @@ internal class ValidatorMemberMode<T>(
     ) : MemberSymbolAnalyzer<T>(analyzer)
     where T : ISymbol
 {
-    public override bool AppliesTo(Data<T> symbol)
+    public override bool AppliesTo(MemberData<T> symbol)
     {
         return symbol.DataMemberContext.Mode == mode;
     }

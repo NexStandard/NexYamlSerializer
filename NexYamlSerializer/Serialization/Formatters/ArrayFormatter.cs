@@ -12,7 +12,7 @@ namespace NexVYaml.Serialization
         {
             if(style is DataStyle.Any)
             {
-                style = DataStyle.Compact;
+                style = DataStyle.Normal;
             }
             if (value is null)
             {

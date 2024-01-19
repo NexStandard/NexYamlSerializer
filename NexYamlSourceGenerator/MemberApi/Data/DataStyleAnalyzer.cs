@@ -7,9 +7,13 @@ using System.Text;
 namespace NexYamlSourceGenerator.MemberApi.Data;
 internal class DataStyleAnalyzer(ISymbol namedType, ReferencePackage package)
 {
-    public string Analyze()
+    public string Analyze(bool defaultValue = false)
     {
         string dataStyle = "DataStyle.Normal";
+        if (!defaultValue)
+        {
+            dataStyle = "";
+        }
         if (namedType.TryGetAttribute(package.DataStyleAttribute, out var dataStyleData))
         {
             if (dataStyleData is { AttributeConstructor.Parameters: [.., { Name: "style" }], ConstructorArguments: [.., { Value: int value }] })

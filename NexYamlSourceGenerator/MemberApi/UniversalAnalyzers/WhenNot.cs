@@ -9,7 +9,7 @@ internal class WhenNot<T>(
     ) : MemberSymbolAnalyzer<T>(analyzer)
     where T : ISymbol
 {
-    public override bool AppliesTo(Data<T> symbol)
+    public override bool AppliesTo(MemberData<T> symbol)
     {
         return !analyzerTarget.Invoke(base._analyzer).AppliesTo(symbol);
     }

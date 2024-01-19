@@ -163,11 +163,11 @@ internal static class Extensionss
         {
             if (symbol is IPropertySymbol prop)
             {
-                yield return propertyAnalyzers.Analyze(new Data<IPropertySymbol>(prop, DataMemberContext.Create(symbol, references)));
+                yield return propertyAnalyzers.Analyze(new MemberData<IPropertySymbol>(prop, DataMemberContext.Create(symbol, references)));
             }
             if (symbol is IFieldSymbol field)
             {
-                yield return fieldAnalyzers.Analyze(new Data<IFieldSymbol>(field, DataMemberContext.Create(symbol, references)));
+                yield return fieldAnalyzers.Analyze(new MemberData<IFieldSymbol>(field, DataMemberContext.Create(symbol, references)));
             }
         }
     }

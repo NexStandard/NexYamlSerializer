@@ -8,7 +8,7 @@ internal class ValidatorOriginalDefinition(IMemberSymbolAnalyzer<IFieldSymbol> a
 {
     private static readonly SymbolEqualityComparer Comparer = SymbolEqualityComparer.Default;
 
-    public override bool AppliesTo(Data<IFieldSymbol> context)
+    public override bool AppliesTo(MemberData<IFieldSymbol> context)
     {
         return context.Symbol.Type.AllInterfaces.Any(x => x.OriginalDefinition.Equals(originalDefinition, Comparer));
     }

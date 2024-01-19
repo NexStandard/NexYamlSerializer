@@ -11,7 +11,7 @@ internal class WhenOne<T>(
     ) : MemberSymbolAnalyzer<T>(analyzer)
     where T : ISymbol
 {
-    public override bool AppliesTo(Data<T> symbol)
+    public override bool AppliesTo(MemberData<T> symbol)
     {
         if (first.Invoke(_analyzer).AppliesTo(symbol))
             return true;

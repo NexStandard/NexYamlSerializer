@@ -79,7 +79,7 @@ internal record ClassInfo
             aliasTag = alias;
         }
         DataStyleAnalyzer dataStyleAnalyzer = new DataStyleAnalyzer(namedType, package);
-        var dataStyle = dataStyleAnalyzer.Analyze();
+        var dataStyle = dataStyleAnalyzer.Analyze(true);
 
         if (isGeneric)
             restrictions = namedType.GenericRestrictions();

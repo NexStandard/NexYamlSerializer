@@ -7,13 +7,13 @@ internal abstract class MemberSymbolAnalyzer<T>(IMemberSymbolAnalyzer<T> analyze
 {
     protected readonly IMemberSymbolAnalyzer<T> _analyzer = analyzer;
 
-    public virtual SymbolInfo Analyze(Data<T> symbol)
+    public virtual SymbolInfo Analyze(MemberData<T> symbol)
     {
         if (AppliesTo(symbol))
             return _analyzer.Analyze(symbol);
         else
             return CreateInfo();
     }
-    public abstract bool AppliesTo(Data<T> symbol);
+    public abstract bool AppliesTo(MemberData<T> symbol);
     protected virtual SymbolInfo CreateInfo() => SymbolInfo.Empty;
 }
