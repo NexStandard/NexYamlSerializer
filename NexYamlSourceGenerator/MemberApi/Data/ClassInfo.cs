@@ -46,6 +46,14 @@ internal record ClassInfo
     /// </summary>
     internal string NameSpace { get; private set; }
     internal string GeneratorName { get; private set; }
+    /// <summary>
+    /// ie. 
+    /// DataStyle.Any
+    /// DataStyle.Normal,
+    /// DataStyle.Compact
+    /// of Stride.Core.DataStyleAttribute
+    /// </summary>
+    internal string DataStyle { get; init; }
     internal ImmutableList<DataPackage> AllInterfaces { get; private set; }
 
     internal ImmutableList<DataPackage> AllAbstracts { get; private set; }
@@ -70,6 +78,14 @@ internal record ClassInfo
         {
             aliasTag = alias;
         }
+        string dataStyle = "DataStyle.Normal";
+        if(namedType.TryGetAttribute(package.DataStyleAttribute, out var dataStyleData))
+        {
+            if (dataStyleData is { AttributeConstructor.Parameters: [.., { Name: "style" }], ConstructorArguments: [.., { Value: int value }] })
+            {
+                dataStyle = GetDataStyle(value);
+            }
+        }
         if (isGeneric)
             restrictions = namedType.GenericRestrictions();
 
@@ -79,6 +95,7 @@ internal record ClassInfo
             TypeName = namedType.Name,
             AliasTag = aliasTag,
             IsGeneric = isGeneric,
+            DataStyle = dataStyle,
             ShortDefinition = shortDefinition,
             TypeParameterArguments = genericTypeArguments,
             TypeParameters = typeParameters.ToArray(),
@@ -91,7 +108,13 @@ internal record ClassInfo
             GeneratorName = CreateGeneratorName(namedType)
         };
     }
-
+    private static string GetDataStyle(int style) => style switch
+    {
+        // DataStyle.Any
+        0 => "DataStyle.Normal",
+        1 => "DataStyle.Normal",
+        2 => "DataStyle.Compact"
+    };
     private static ImmutableList<DataPackage> GetDataPackages(ImmutableArray<INamedTypeSymbol> types)
     {
         List<DataPackage> result = new();

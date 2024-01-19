@@ -61,7 +61,7 @@ file struct {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<
     {{
         return Deserialize(ref parser, context);
     }}
-    public void Serialize(ref Utf8YamlEmitter emitter, {info.NameDefinition} value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
+    public void Serialize(ref Utf8YamlEmitter emitter, {info.NameDefinition} value, YamlSerializationContext context, DataStyle style = {info.DataStyle})
     {{
 {package.NullCheck()}
         emitter.{package.BeginMappingStyle()};
