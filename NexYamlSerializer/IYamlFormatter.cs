@@ -3,6 +3,7 @@ using NexVYaml;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using NexVYaml.Serialization;
+using Stride.Core;
 using System;
 
 namespace NexVYaml;
@@ -24,7 +25,7 @@ public interface IYamlFormatter<T> : IYamlFormatter
     /// <param name="emitter">The <see cref="Utf8YamlEmitter"/> to write YAML data to.</param>
     /// <param name="value">The value of type <typeparamref name="T"/> to be serialized.</param>
     /// <param name="context">The <see cref="YamlSerializationContext"/> providing serialization context.</param>
-    void Serialize(ref Utf8YamlEmitter emitter, T value, YamlSerializationContext context);
+    void Serialize(ref Utf8YamlEmitter emitter, T value, YamlSerializationContext context, DataStyle style = DataStyle.Normal);
 
     /// <summary>
     /// Deserializes a YAML representation from the provided <see cref="YamlParser"/> and <see cref="YamlDeserializationContext"/>.

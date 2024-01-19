@@ -6,6 +6,8 @@ using System.Runtime.Serialization;
 using NexVYaml.Emitter;
 using NexVYaml.Internal;
 using NexVYaml.Parser;
+using Stride.Core;
+using ScalarStyle = NexVYaml.Emitter.ScalarStyle;
 
 namespace NexVYaml.Serialization
 {
@@ -30,10 +32,6 @@ namespace NexVYaml.Serialization
                 {
                     names.Add(enumMemberValue);
                 }
-                else if (attributes.OfType<DataMemberAttribute>().FirstOrDefault() is { Name: { } dataMemberName })
-                {
-                    names.Add(dataMemberName);
-                }
                 else
                 {
                     var name = Enum.GetName(type, value);
@@ -51,7 +49,7 @@ namespace NexVYaml.Serialization
             }
         }
 
-        public void Serialize(ref Utf8YamlEmitter emitter, T value, YamlSerializationContext context)
+        public void Serialize(ref Utf8YamlEmitter emitter, T value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {
             if (ValueNameMapping.TryGetValue(value, out var name))
             {

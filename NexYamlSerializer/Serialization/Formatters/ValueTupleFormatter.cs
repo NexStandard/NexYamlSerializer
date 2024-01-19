@@ -8,7 +8,7 @@ namespace NexVYaml.Serialization
 {
     public class ValueTupleFormatter<T1> : IYamlFormatter<ValueTuple<T1>>
     {
-        public void Serialize(ref Utf8YamlEmitter emitter, ValueTuple<T1> value, YamlSerializationContext context)
+        public void Serialize(ref Utf8YamlEmitter emitter, ValueTuple<T1> value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {
             emitter.BeginSequence(DataStyle.Compact);
             context.Serialize(ref emitter, value.Item1);
@@ -31,7 +31,7 @@ namespace NexVYaml.Serialization
 
     public class ValueTupleFormatter<T1, T2> : IYamlFormatter<ValueTuple<T1, T2>>
     {
-        public void Serialize(ref Utf8YamlEmitter emitter, (T1, T2) value, YamlSerializationContext context)
+        public void Serialize(ref Utf8YamlEmitter emitter, (T1, T2) value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {
             emitter.BeginSequence(DataStyle.Compact);
             context.Serialize(ref emitter, value.Item1);
@@ -56,7 +56,7 @@ namespace NexVYaml.Serialization
 
     public class ValueTupleFormatter<T1, T2, T3> : IYamlFormatter<ValueTuple<T1, T2, T3>>
     {
-        public void Serialize(ref Utf8YamlEmitter emitter, (T1, T2, T3) value, YamlSerializationContext context)
+        public void Serialize(ref Utf8YamlEmitter emitter, (T1, T2, T3) value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {
             emitter.BeginSequence(DataStyle.Compact);
             context.Serialize(ref emitter, value.Item1);
@@ -83,7 +83,7 @@ namespace NexVYaml.Serialization
 
     public class ValueTupleFormatter<T1, T2, T3, T4> : IYamlFormatter<ValueTuple<T1, T2, T3, T4>>
     {
-        public void Serialize(ref Utf8YamlEmitter emitter, (T1, T2, T3, T4) value, YamlSerializationContext context)
+        public void Serialize(ref Utf8YamlEmitter emitter, (T1, T2, T3, T4) value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {
             emitter.BeginSequence(DataStyle.Compact);
             context.Serialize(ref emitter, value.Item1);
@@ -112,7 +112,7 @@ namespace NexVYaml.Serialization
 
     public class ValueTupleFormatter<T1, T2, T3, T4, T5> : IYamlFormatter<ValueTuple<T1, T2, T3, T4, T5>>
     {
-        public void Serialize(ref Utf8YamlEmitter emitter, (T1, T2, T3, T4, T5) value, YamlSerializationContext context)
+        public void Serialize(ref Utf8YamlEmitter emitter, (T1, T2, T3, T4, T5) value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {
             emitter.BeginSequence(DataStyle.Compact);
             context.Serialize(ref emitter, value.Item1);
@@ -143,7 +143,7 @@ namespace NexVYaml.Serialization
 
     public class ValueTupleFormatter<T1, T2, T3, T4, T5, T6> : IYamlFormatter<ValueTuple<T1, T2, T3, T4, T5, T6>>
     {
-        public void Serialize(ref Utf8YamlEmitter emitter, (T1, T2, T3, T4, T5, T6) value, YamlSerializationContext context)
+        public void Serialize(ref Utf8YamlEmitter emitter, (T1, T2, T3, T4, T5, T6) value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {
             emitter.BeginSequence(DataStyle.Compact);
             context.Serialize(ref emitter, value.Item1);
@@ -176,7 +176,7 @@ namespace NexVYaml.Serialization
 
     public class ValueTupleFormatter<T1, T2, T3, T4, T5, T6, T7> : IYamlFormatter<ValueTuple<T1, T2, T3, T4, T5, T6, T7>>
     {
-        public void Serialize(ref Utf8YamlEmitter emitter, (T1, T2, T3, T4, T5, T6, T7) value, YamlSerializationContext context)
+        public void Serialize(ref Utf8YamlEmitter emitter, (T1, T2, T3, T4, T5, T6, T7) value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {
             emitter.BeginSequence(DataStyle.Compact);
             context.Serialize(ref emitter, value.Item1);
@@ -212,7 +212,7 @@ namespace NexVYaml.Serialization
     public class ValueTupleFormatter<T1, T2, T3, T4, T5, T6, T7, TRest> : IYamlFormatter<ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest>>
         where TRest : struct
     {
-        public void Serialize(ref Utf8YamlEmitter emitter, ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest> value, YamlSerializationContext context)
+        public void Serialize(ref Utf8YamlEmitter emitter, ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest> value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {
             emitter.BeginSequence(DataStyle.Compact);
             context.Serialize(ref emitter, value.Item1);

@@ -2,6 +2,7 @@
 using NexVYaml;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
+using Stride.Core;
 
 namespace NexVYaml.Serialization
 {
@@ -9,7 +10,7 @@ namespace NexVYaml.Serialization
     {
         public static readonly Int16Formatter Instance = new();
 
-        public void Serialize(ref Utf8YamlEmitter emitter, short value, YamlSerializationContext context)
+        public void Serialize(ref Utf8YamlEmitter emitter, short value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {
             emitter.WriteInt32(value);
         }

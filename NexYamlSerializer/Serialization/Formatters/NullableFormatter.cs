@@ -2,6 +2,7 @@
 using NexVYaml;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
+using Stride.Core;
 
 namespace NexVYaml.Serialization
 {
@@ -10,7 +11,7 @@ namespace NexVYaml.Serialization
         IYamlFormatter<T> yamlFormatter;
         public NullableFormatter(IYamlFormatter<T> formatter) { yamlFormatter = formatter; }
 
-        public void Serialize(ref Utf8YamlEmitter emitter, T? value, YamlSerializationContext context)
+        public void Serialize(ref Utf8YamlEmitter emitter, T? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {
             if (value is null)
             {
@@ -43,7 +44,7 @@ namespace NexVYaml.Serialization
             this.underlyingFormatter = underlyingFormatter;
         }
 
-        public void Serialize(ref Utf8YamlEmitter emitter, T? value, YamlSerializationContext context)
+        public void Serialize(ref Utf8YamlEmitter emitter, T? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {
             if (value.HasValue)
             {

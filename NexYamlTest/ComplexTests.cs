@@ -254,7 +254,7 @@ file struct NexSourceGenerated_NexYamlTestHomp : IYamlFormatter<NexYamlTest.Homp
     {
         return Deserialize(ref parser, context);
     }
-    public void Serialize(ref Utf8YamlEmitter emitter, NexYamlTest.Homp value, YamlSerializationContext context)
+    public void Serialize(ref Utf8YamlEmitter emitter, NexYamlTest.Homp value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
     {
 
         if (value is null)

@@ -5,6 +5,7 @@ using System.Buffers.Text;
 using System.Globalization;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
+using Stride.Core;
 
 namespace NexVYaml.Serialization
 {
@@ -12,7 +13,7 @@ namespace NexVYaml.Serialization
     {
         public static readonly DateTimeFormatter Instance = new();
 
-        public void Serialize(ref Utf8YamlEmitter emitter, DateTime value, YamlSerializationContext context)
+        public void Serialize(ref Utf8YamlEmitter emitter, DateTime value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {
             // 2017-06-12T12:30:45.1234578+00:00
             // Span<byte> buf = stackalloc byte[29];

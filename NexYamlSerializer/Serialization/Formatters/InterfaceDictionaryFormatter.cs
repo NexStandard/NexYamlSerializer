@@ -4,12 +4,13 @@ using System.Linq;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using NexYamlSerializer;
+using Stride.Core;
 
 namespace NexVYaml.Serialization
 {
     public class InterfaceDictionaryFormatter<TKey, TValue> : IYamlFormatter<IDictionary<TKey, TValue>?>
     {
-        public void Serialize(ref Utf8YamlEmitter emitter, IDictionary<TKey, TValue>? value, YamlSerializationContext context)
+        public void Serialize(ref Utf8YamlEmitter emitter, IDictionary<TKey, TValue>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {
 
             if (value is null)

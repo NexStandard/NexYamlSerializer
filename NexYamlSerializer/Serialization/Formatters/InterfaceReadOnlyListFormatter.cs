@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
+using Stride.Core;
 
 namespace NexVYaml.Serialization
 {
@@ -12,7 +13,7 @@ namespace NexVYaml.Serialization
         {
             Serialize(ref emitter, (List<T>?)value, context);
         }
-        public void Serialize(ref Utf8YamlEmitter emitter, IReadOnlyList<T>? value, YamlSerializationContext context)
+        public void Serialize(ref Utf8YamlEmitter emitter, IReadOnlyList<T>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {
             if (value is null)
             {

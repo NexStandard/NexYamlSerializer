@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
+using Stride.Core;
 
 namespace NexVYaml.Serialization
 {
     public class InterfaceListFormatter<T> : IYamlFormatter<IList<T>?>
     {
-        public void Serialize(ref Utf8YamlEmitter emitter, IList<T>? value, YamlSerializationContext context)
+        public void Serialize(ref Utf8YamlEmitter emitter, IList<T>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {
             if (value is null)
             {

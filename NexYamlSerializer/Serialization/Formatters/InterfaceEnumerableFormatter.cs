@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
+using Stride.Core;
 
 namespace NexVYaml.Serialization
 {
     public class InterfaceEnumerableFormatter<T> : IYamlFormatter<IEnumerable<T>?>
     {
-        public void Serialize(ref Utf8YamlEmitter emitter, IEnumerable<T>? value, YamlSerializationContext context)
+        public void Serialize(ref Utf8YamlEmitter emitter, IEnumerable<T>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {
             if (value is null)
             {

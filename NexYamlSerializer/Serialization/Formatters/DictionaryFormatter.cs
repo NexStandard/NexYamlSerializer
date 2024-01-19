@@ -8,6 +8,7 @@ using System.Text.Unicode;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using NexYamlSerializer;
+using Stride.Core;
 
 namespace NexVYaml.Serialization
 {
@@ -18,7 +19,7 @@ namespace NexVYaml.Serialization
         {
             Serialize(ref emitter, (Dictionary<TKey, TValue>?)value, context);
         }
-        public void Serialize(ref Utf8YamlEmitter emitter, Dictionary<TKey, TValue>? value, YamlSerializationContext context)
+        public void Serialize(ref Utf8YamlEmitter emitter, Dictionary<TKey, TValue>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {
             if (value == null)
             {

@@ -4,6 +4,7 @@ using System.Buffers;
 using System.Buffers.Text;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
+using Stride.Core;
 
 namespace NexVYaml.Serialization
 {
@@ -11,7 +12,7 @@ namespace NexVYaml.Serialization
     {
         public static readonly DateTimeOffsetFormatter Instance = new();
 
-        public void Serialize(ref Utf8YamlEmitter emitter, DateTimeOffset value, YamlSerializationContext context)
+        public void Serialize(ref Utf8YamlEmitter emitter, DateTimeOffset value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {
             var buf = context.GetBuffer64();
             if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten, new StandardFormat('O')))

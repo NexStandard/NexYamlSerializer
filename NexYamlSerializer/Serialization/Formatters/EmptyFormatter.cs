@@ -7,6 +7,7 @@ using NexVYaml;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using NexVYaml.Serialization;
+using Stride.Core;
 
 namespace NexYamlSerializer.Serialization.Formatters;
 public struct EmptyFormatter<T> : IYamlFormatter<T>
@@ -17,7 +18,7 @@ public struct EmptyFormatter<T> : IYamlFormatter<T>
         return default!;
     }
 
-    public void Serialize(ref Utf8YamlEmitter emitter, T value, YamlSerializationContext context)
+    public void Serialize(ref Utf8YamlEmitter emitter, T value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
     {
         emitter.WriteNull();
     }

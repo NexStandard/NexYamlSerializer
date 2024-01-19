@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using NexVYaml.Emitter;
 using NexVYaml.Internal;
 using NexVYaml.Parser;
+using Stride.Core;
+using ScalarStyle = NexVYaml.Emitter.ScalarStyle;
 
 namespace NexVYaml.Serialization
 {
@@ -31,7 +33,7 @@ namespace NexVYaml.Serialization
             { typeof(byte[]), 14 },
         };
 
-        public void Serialize(ref Utf8YamlEmitter emitter, object? value, YamlSerializationContext context)
+        public void Serialize(ref Utf8YamlEmitter emitter, object? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {
             if (value is null)
             {

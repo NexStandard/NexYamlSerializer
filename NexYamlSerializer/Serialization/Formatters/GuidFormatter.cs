@@ -3,6 +3,7 @@ using System;
 using System.Buffers.Text;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
+using Stride.Core;
 
 namespace NexVYaml.Serialization
 {
@@ -10,7 +11,7 @@ namespace NexVYaml.Serialization
     {
         public static readonly GuidFormatter Instance = new();
 
-        public void Serialize(ref Utf8YamlEmitter emitter, Guid value, YamlSerializationContext context)
+        public void Serialize(ref Utf8YamlEmitter emitter, Guid value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {
             // nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn
             var buf = context.GetBuffer64();
