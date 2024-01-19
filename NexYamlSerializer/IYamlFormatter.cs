@@ -10,7 +10,7 @@ namespace NexVYaml;
 
 public interface IYamlFormatter
 {
-    void IndirectSerialize(ref Utf8YamlEmitter emitter, object value, YamlSerializationContext context) { }
+    void IndirectSerialize(ref Utf8YamlEmitter emitter, object value, YamlSerializationContext context, DataStyle style = DataStyle.Normal) {   }
     object? IndirectDeserialize(ref YamlParser parser, YamlDeserializationContext context) { throw new NotImplementedException($"The method {nameof(IndirectSerialize)} isn't implemented on {this.GetType()}"); }
 }
 /// <summary>
@@ -25,7 +25,7 @@ public interface IYamlFormatter<T> : IYamlFormatter
     /// <param name="emitter">The <see cref="Utf8YamlEmitter"/> to write YAML data to.</param>
     /// <param name="value">The value of type <typeparamref name="T"/> to be serialized.</param>
     /// <param name="context">The <see cref="YamlSerializationContext"/> providing serialization context.</param>
-    void Serialize(ref Utf8YamlEmitter emitter, T value, YamlSerializationContext context, DataStyle style = DataStyle.Normal);
+    void Serialize(ref Utf8YamlEmitter emitter, T value, YamlSerializationContext context, DataStyle style = DataStyle.Any);
 
     /// <summary>
     /// Deserializes a YAML representation from the provided <see cref="YamlParser"/> and <see cref="YamlDeserializationContext"/>.

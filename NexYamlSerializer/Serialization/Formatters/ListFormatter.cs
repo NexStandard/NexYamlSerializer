@@ -12,9 +12,9 @@ namespace NexVYaml.Serialization
 
     public class ListFormatter<T> : IYamlFormatter<List<T>?>
     {
-        public void IndirectSerialize(ref Utf8YamlEmitter emitter, object value, YamlSerializationContext context)
+        public void IndirectSerialize(ref Utf8YamlEmitter emitter, object value, YamlSerializationContext context,DataStyle style = DataStyle.Normal)
         {
-            Serialize(ref emitter,(List<T>?)value, context);
+            Serialize(ref emitter,(List<T>?)value, context, style);
         }
         public void Serialize(ref Utf8YamlEmitter emitter, List<T>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {

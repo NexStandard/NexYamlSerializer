@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using NexVYaml.Emitter;
 using NexVYaml.Internal;
 using NexYamlSerializer.Serialization.Formatters;
+using Stride.Core;
 
 namespace NexVYaml.Serialization
 {
@@ -43,8 +44,9 @@ namespace NexVYaml.Serialization
         }
         static Type NullableFormatter = typeof(NullableFormatter<>);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Serialize<T>(ref Utf8YamlEmitter emitter, T value)
+        public void Serialize<T>(ref Utf8YamlEmitter emitter, T value, DataStyle style = DataStyle.Any)
         {
+
             var type = typeof(T);
             if (SecureMode)
             {

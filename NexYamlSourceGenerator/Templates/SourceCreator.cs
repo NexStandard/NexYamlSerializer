@@ -53,9 +53,9 @@ file struct {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<
 
     {package.CreateUTF8Members()}
 
-    public void IndirectSerialize(ref Utf8YamlEmitter emitter, object value, YamlSerializationContext context) 
+    public void IndirectSerialize(ref Utf8YamlEmitter emitter, object value, YamlSerializationContext context, DataStyle style = {info.DataStyle}) 
     {{
-        Serialize(ref emitter,({info.NameDefinition})value,context);
+        Serialize(ref emitter,({info.NameDefinition})value,context, style);
     }}
     public object{(info.TypeKind == TypeKind.Struct ? "" : "?")} IndirectDeserialize(ref YamlParser parser, YamlDeserializationContext context) 
     {{
@@ -63,6 +63,10 @@ file struct {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<
     }}
     public void Serialize(ref Utf8YamlEmitter emitter, {info.NameDefinition} value, YamlSerializationContext context, DataStyle style = {info.DataStyle})
     {{
+        if(style is DataStyle.Any)
+        {{
+            style = {info.DataStyle};
+        }}
 {package.NullCheck()}
         emitter.{package.BeginMappingStyle()};
         if(context.IsRedirected || context.IsFirst)

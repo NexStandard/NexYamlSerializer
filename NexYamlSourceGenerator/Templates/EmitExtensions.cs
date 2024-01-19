@@ -27,7 +27,7 @@ internal static class EmitExtensions
     /// </summary>
     /// <param name="package"></param>
     /// <returns></returns>
-    public static string BeginMappingStyle(this ClassPackage package) => "BeginMapping(DataStyle.Normal)";
+    public static string BeginMappingStyle(this ClassPackage package) => "BeginMapping(style)";
 
     public static string CreateTempMembers(this ClassPackage package)
     {
