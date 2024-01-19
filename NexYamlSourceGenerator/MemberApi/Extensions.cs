@@ -171,13 +171,13 @@ internal static class Extensionss
             }
         }
     }
-    internal static ClassPackage ConvertToPackage(this INamedTypeSymbol namedTypeSymbol, ReferencePackage references, ImmutableArray<AttributeData> attributes)
+    internal static ClassPackage ConvertToPackage(this INamedTypeSymbol namedTypeSymbol, ReferencePackage package, ImmutableArray<AttributeData> attributes)
     {
-        var standardAssignAnalyzer = new PropertyAnalyzer()
+        var standardAssignAnalyzer = new PropertyAnalyzer(package)
             .HasVisibleGetter()
             .HasVisibleSetter()
             .IsNonStatic();
-        var standardFieldAssignAnalyzer = new FieldAnalyzer()
+        var standardFieldAssignAnalyzer = new FieldAnalyzer(package)
             .IsVisibleToSerializer()
             .WhenNot(x => x.IsConst())
             .WhenNot(x => x.IsReadOnly())
@@ -191,12 +191,12 @@ internal static class Extensionss
         {
             standardAssignAnalyzer
         };
-        var members = namedTypeSymbol.GetAllMembers(references).AsSymbolInfo(references, propertyAnalyzers, fieldAnalyzers).Reduce();
+        var members = namedTypeSymbol.GetAllMembers(package).AsSymbolInfo(package, propertyAnalyzers, fieldAnalyzers).Reduce();
 
         var memberList = ImmutableList.Create(members.ToArray());
 
-        var datacontract = attributes.First(a => a.AttributeClass.Equals(references.DataContractAttribute, SymbolEqualityComparer.Default));
+        var datacontract = attributes.First(a => a.AttributeClass.Equals(package.DataContractAttribute, SymbolEqualityComparer.Default));
 
-        return new ClassPackage(ClassInfo.CreateFrom(namedTypeSymbol, datacontract, references), memberList);
+        return new ClassPackage(ClassInfo.CreateFrom(namedTypeSymbol, datacontract, package), memberList);
     }
 }

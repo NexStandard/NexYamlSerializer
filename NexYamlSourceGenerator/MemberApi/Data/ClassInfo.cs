@@ -78,14 +78,9 @@ internal record ClassInfo
         {
             aliasTag = alias;
         }
-        string dataStyle = "DataStyle.Normal";
-        if(namedType.TryGetAttribute(package.DataStyleAttribute, out var dataStyleData))
-        {
-            if (dataStyleData is { AttributeConstructor.Parameters: [.., { Name: "style" }], ConstructorArguments: [.., { Value: int value }] })
-            {
-                dataStyle = GetDataStyle(value);
-            }
-        }
+        DataStyleAnalyzer dataStyleAnalyzer = new DataStyleAnalyzer(namedType, package);
+        var dataStyle = dataStyleAnalyzer.Analyze();
+
         if (isGeneric)
             restrictions = namedType.GenericRestrictions();
 

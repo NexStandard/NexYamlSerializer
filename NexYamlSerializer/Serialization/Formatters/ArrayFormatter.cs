@@ -8,15 +8,19 @@ namespace NexVYaml.Serialization
 {
     public class ArrayFormatter<T> : IYamlFormatter<T[]?>
     {
-        public void Serialize(ref Utf8YamlEmitter emitter, T[]? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
+        public void Serialize(ref Utf8YamlEmitter emitter, T[]? value, YamlSerializationContext context, DataStyle style)
         {
+            if(style is DataStyle.Any)
+            {
+                style = DataStyle.Compact;
+            }
             if (value is null)
             {
                 emitter.WriteNull();
                 return;
             }
 
-            emitter.BeginSequence();
+            emitter.BeginSequence(style);
             foreach (var x in value)
             {
                 context.Serialize(ref emitter, x);

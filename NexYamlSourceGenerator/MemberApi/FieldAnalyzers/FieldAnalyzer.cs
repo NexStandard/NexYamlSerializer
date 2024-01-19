@@ -1,11 +1,13 @@
 using Microsoft.CodeAnalysis;
+using NexYamlSourceGenerator.Core;
 using NexYamlSourceGenerator.MemberApi.Analyzers;
 using NexYamlSourceGenerator.MemberApi.Data;
 
 namespace NexYamlSourceGenerator.MemberApi.FieldAnalyzers;
 
-internal class FieldAnalyzer : IMemberSymbolAnalyzer<IFieldSymbol>
+internal class FieldAnalyzer(ReferencePackage package) : IMemberSymbolAnalyzer<IFieldSymbol>
 {
+    public DataStyleAnalyzer DataStyleAnalyzer { get; init; }
     public SymbolInfo Analyze(Data<IFieldSymbol> context)
     {
         var typeBundle = GetTypeDisplay(context.Symbol.Type);
@@ -14,6 +16,7 @@ internal class FieldAnalyzer : IMemberSymbolAnalyzer<IFieldSymbol>
         {
             Name = context.Symbol.Name,
             TypeKind = SymbolKind.Field,
+            DataStyle = new DataStyleAnalyzer(context.Symbol, package).Analyze(),
             Type = typeBundle,
             IsAbstract = context.Symbol.Type.IsAbstract,
             IsInterface = context.Symbol.Type.TypeKind == TypeKind.Interface,

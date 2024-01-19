@@ -54,12 +54,12 @@ namespace NexVYaml.Serialization
                 {
                     var protectedGeneric = Resolver.GetGenericFormatter<T>();
                     protectedGeneric ??= new EmptyFormatter<T>();
-                    protectedGeneric.Serialize(ref emitter, value!, this);
+                    protectedGeneric.Serialize(ref emitter, value!, this, style);
                 }
                 else
                 {
                     var protectedFormatter = Resolver.GetFormatter<T>();
-                    protectedFormatter.Serialize(ref emitter, value!, this);
+                    protectedFormatter.Serialize(ref emitter, value!, this, style);
 
                 }
                 return;
@@ -68,7 +68,7 @@ namespace NexVYaml.Serialization
             {
                 var genericFilledFormatter = NullableFormatter.MakeGenericType(underlyingType);
 
-                ((IYamlFormatter<T>)Activator.CreateInstance(genericFilledFormatter, args: Resolver.GetFormatter(underlyingType))).Serialize(ref emitter, value, this);
+                ((IYamlFormatter<T>)Activator.CreateInstance(genericFilledFormatter, args: Resolver.GetFormatter(underlyingType))).Serialize(ref emitter, value, this, style);
             }
             else
             if (type.IsInterface || type.IsAbstract || type.IsGenericType)
@@ -87,12 +87,12 @@ namespace NexVYaml.Serialization
             }
             else
             {
-                Resolver.GetFormatter<T>().Serialize(ref emitter, value,this);
+                Resolver.GetFormatter<T>().Serialize(ref emitter, value,this, style);
             }
         }
-        public void SerializeArray<T>(ref Utf8YamlEmitter emitter, T[] value)
+        public void SerializeArray<T>(ref Utf8YamlEmitter emitter, T[] value,DataStyle style = DataStyle.Any)
         {
-            new ArrayFormatter<T>().Serialize(ref emitter, value, this);
+            new ArrayFormatter<T>().Serialize(ref emitter, value, this, style);
         }
         public ArrayBufferWriter<byte> GetArrayBufferWriter()
         {

@@ -13,10 +13,10 @@ internal static class EmitExtensions
             var serializeString = ".Serialize";
             if (member.IsArray)
                 serializeString = ".SerializeArray";
-
+            var dataStyle = member.DataStyle == "" ? "" : $", {member.DataStyle}";
                 sb.AppendLine($$"""
                         emitter.WriteString("{{member.Name}}", NexVYaml.Emitter.ScalarStyle.Plain);
-                        context{{serializeString}}(ref emitter, value.{{member.Name}});
+                        context{{serializeString}}(ref emitter, value.{{member.Name}}{{dataStyle}});
                 """);
             
         }

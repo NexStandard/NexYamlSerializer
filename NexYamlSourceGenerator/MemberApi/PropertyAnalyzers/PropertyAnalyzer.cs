@@ -1,10 +1,11 @@
 using Microsoft.CodeAnalysis;
+using NexYamlSourceGenerator.Core;
 using NexYamlSourceGenerator.MemberApi.Analyzers;
 using NexYamlSourceGenerator.MemberApi.Data;
 
 namespace NexYamlSourceGenerator.MemberApi.PropertyAnalyzers;
 
-internal class PropertyAnalyzer : IMemberSymbolAnalyzer<IPropertySymbol>
+internal class PropertyAnalyzer(ReferencePackage package) : IMemberSymbolAnalyzer<IPropertySymbol>
 {
     public SymbolInfo Analyze(Data<IPropertySymbol> context)
     {
@@ -13,6 +14,7 @@ internal class PropertyAnalyzer : IMemberSymbolAnalyzer<IPropertySymbol>
         {
             Name = context.Symbol.Name,
             TypeKind = SymbolKind.Property,
+            DataStyle = new DataStyleAnalyzer(context.Symbol, package).Analyze(),
             IsAbstract = context.Symbol.Type.IsAbstract,
             IsInterface = context.Symbol.Type.TypeKind == TypeKind.Interface,
             Type = typeName,

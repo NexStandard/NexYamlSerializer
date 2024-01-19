@@ -10,7 +10,7 @@ namespace NexVYaml;
 
 public interface IYamlFormatter
 {
-    void IndirectSerialize(ref Utf8YamlEmitter emitter, object value, YamlSerializationContext context, DataStyle style = DataStyle.Normal) {   }
+    void IndirectSerialize(ref Utf8YamlEmitter emitter, object value, YamlSerializationContext context, DataStyle style = DataStyle.Normal) { throw new NotImplementedException($"The method {nameof(IndirectSerialize)} isn't implemented on {this.GetType()}"); }
     object? IndirectDeserialize(ref YamlParser parser, YamlDeserializationContext context) { throw new NotImplementedException($"The method {nameof(IndirectSerialize)} isn't implemented on {this.GetType()}"); }
 }
 /// <summary>

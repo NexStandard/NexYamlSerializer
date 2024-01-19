@@ -13,5 +13,6 @@ internal record SymbolInfo
     internal SymbolKind TypeKind { get; init; }
     internal bool IsArray { get; init; }
     internal bool IsAbstract { get; init; }
+    internal string DataStyle { get; init; }
     internal DataMemberContext Context { get; init; }
 }
