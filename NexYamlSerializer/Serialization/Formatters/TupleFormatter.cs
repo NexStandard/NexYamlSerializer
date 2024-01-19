@@ -2,6 +2,7 @@
 using System;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
+using Stride.Core;
 
 namespace NexVYaml.Serialization
 {
@@ -15,7 +16,7 @@ namespace NexVYaml.Serialization
                 return;
             }
 
-            emitter.BeginSequence(SequenceStyle.Flow);
+            emitter.BeginSequence(DataStyle.Compact);
             context.Serialize(ref emitter, value.Item1);
             emitter.EndSequence(false);
         }
@@ -44,7 +45,7 @@ namespace NexVYaml.Serialization
                 return;
             }
 
-            emitter.BeginSequence(SequenceStyle.Flow);
+            emitter.BeginSequence(DataStyle.Compact);
             context.Serialize(ref emitter, value.Item1);
             context.Serialize(ref emitter, value.Item2);
             emitter.EndSequence(false);
@@ -75,7 +76,7 @@ namespace NexVYaml.Serialization
                 return;
             }
 
-            emitter.BeginSequence(SequenceStyle.Flow);
+            emitter.BeginSequence(DataStyle.Compact);
             context.Serialize(ref emitter, value.Item1);
             context.Serialize(ref emitter, value.Item2);
             context.Serialize(ref emitter, value.Item3);
@@ -108,7 +109,7 @@ namespace NexVYaml.Serialization
                 return;
             }
 
-            emitter.BeginSequence(SequenceStyle.Flow);
+            emitter.BeginSequence(DataStyle.Compact);
             context.Serialize(ref emitter, value.Item1);
             context.Serialize(ref emitter, value.Item2);
             context.Serialize(ref emitter, value.Item3);
@@ -144,7 +145,7 @@ namespace NexVYaml.Serialization
                 return;
             }
 
-            emitter.BeginSequence(SequenceStyle.Flow);
+            emitter.BeginSequence(DataStyle.Compact);
             context.Serialize(ref emitter, value.Item1);
             context.Serialize(ref emitter, value.Item2);
             context.Serialize(ref emitter, value.Item3);
@@ -182,7 +183,7 @@ namespace NexVYaml.Serialization
                 return;
             }
 
-            emitter.BeginSequence(SequenceStyle.Flow);
+            emitter.BeginSequence(DataStyle.Compact);
             context.Serialize(ref emitter, value.Item1);
             context.Serialize(ref emitter, value.Item2);
             context.Serialize(ref emitter, value.Item3);
@@ -221,7 +222,7 @@ namespace NexVYaml.Serialization
                 return;
             }
 
-            emitter.BeginSequence(SequenceStyle.Flow);
+            emitter.BeginSequence(DataStyle.Compact);
             context.Serialize(ref emitter, value.Item1);
             context.Serialize(ref emitter, value.Item2);
             context.Serialize(ref emitter, value.Item3);
@@ -264,7 +265,7 @@ namespace NexVYaml.Serialization
                 return;
             }
 
-            emitter.BeginSequence(SequenceStyle.Flow);
+            emitter.BeginSequence(DataStyle.Compact);
             context.Serialize(ref emitter, value.Item1);
             context.Serialize(ref emitter, value.Item2);
             context.Serialize(ref emitter, value.Item3);

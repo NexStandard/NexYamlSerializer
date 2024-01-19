@@ -31,6 +31,8 @@ using NexVYaml;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using NexVYaml.Serialization;
+using Stride.Core;
+
 using NexYamlSerializer.Serialization.Formatters;
 {ns}
 [System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]

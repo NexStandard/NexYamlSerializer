@@ -7,7 +7,8 @@ using System.Runtime.CompilerServices;
 using NexVYaml.Emitter;
 using NexVYaml.Internal;
 using NexYamlSerializer.Emitter;
-
+using Stride.Core;
+using Stride.Engine;
 namespace NexVYaml.Emitter
 {
     public class YamlEmitterException(string message) : Exception(message)
@@ -183,18 +184,18 @@ namespace NexVYaml.Emitter
             }
             PushState(EmitState.FlowSequenceEntry);
         }
-        public void BeginSequence(SequenceStyle style = SequenceStyle.Block)
+        public void BeginSequence(DataStyle style = DataStyle.Normal)
         {
             switch (style)
             {
-                case SequenceStyle.Block:
+                case DataStyle.Normal:
                     {
-                        Begin(YamlStyle.BlockSequence);
+                        BeginBlockSequence();
                         break;
                     }
-                case SequenceStyle.Flow:
+                case DataStyle.Compact:
                     {
-                        Begin(YamlStyle.FlowSequence);
+                        BeginFlowSequence();
                         break;
                     }
                 default:
@@ -281,11 +282,11 @@ namespace NexVYaml.Emitter
                     throw new YamlEmitterException($"Current state is not sequence: {StateStack.Current}");
             }
         }
-        public void BeginMapping(MappingStyle style = MappingStyle.Block)
-        { 
-           if(style is MappingStyle.Block)
-                Begin(YamlStyle.BlockMapping);
-            else if(style is MappingStyle.Flow)
+        public void BeginMapping(DataStyle style = DataStyle.Normal)
+        {
+            if (style is DataStyle.Normal)
+                BeginBlockMapping();
+            else if(style is DataStyle.Compact)
                 Begin(YamlStyle.FlowMapping);
             else
                 throw new ArgumentOutOfRangeException(nameof(style), style, null);

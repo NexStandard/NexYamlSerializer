@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Stride.Core;
+using System;
 using System.Buffers;
 
 namespace NexVYaml.Emitter;
@@ -9,9 +10,9 @@ public interface IUtf8YamlEmitter : IDisposable
     IBufferWriter<byte> Writer { get; }
 
     int CalculateMaxScalarBufferLength(int length);
-    void BeginMapping(MappingStyle style = MappingStyle.Block);
+    void BeginMapping(DataStyle style = DataStyle.Normal);
     void EndMapping();
-    void BeginSequence(SequenceStyle style = SequenceStyle.Block);
+    void BeginSequence(DataStyle style = DataStyle.Normal);
     void EndSequence(bool isEmpty);
     void Tag(string value);
     void BeginScalar(Span<byte> output, ref int offset);
