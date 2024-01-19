@@ -10,13 +10,12 @@ using Xunit;
 namespace NexYamlTest.Helper;
 internal class YamlHelper
 {
-    private static void SetUp () => NexYamlSerializerRegistry.Init ();
+    public static void SetUp () => NexYamlSerializerRegistry.Init ();
     public static void Run<T>(T target)
         where T: IEquatable<T>
     {
         SetUp();
         var serialized = YamlSerializer.SerializeToString(target);
-        Assert.Null(serialized);
         var deserialized = YamlSerializer.Deserialize<T>(serialized);
         Assert.Equal(target, deserialized);
     }

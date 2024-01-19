@@ -48,5 +48,5 @@ internal record class NonCompactClass
 internal record class CompactArray
 {
     [DataStyle(DataStyle.Compact)]
-    public List<int> Ints { get; set; } = [1, 2, 3];
+    public int[] Ints { get; set; } = [1, 2, 3];
 }
