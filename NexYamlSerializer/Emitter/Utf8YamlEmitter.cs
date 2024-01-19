@@ -70,33 +70,15 @@ namespace NexVYaml.Emitter
             elementCountStack.Dispose();
             tagStack.Dispose();
         }
-        public void Begin(YamlStyle style)
-        {
-            if(style is YamlStyle.BlockMapping)
-            {
-                BeginBlockMapping();
-            }
-            else if(style is YamlStyle.FlowMapping)
-            {
-                BeginFlowMapping();
-            }
-            else if(style is YamlStyle.BlockSequence)
-            {
-                BeginBlockSequence();
-            }
-            else if(style is YamlStyle.FlowSequence)
-            { 
-                BeginFlowSequence(); 
-            }
-            else throw new NotSupportedException($"The Style '{style}' is not supported");
-        }
+
         void BeginBlockMapping()
         {
             switch (StateStack.Current)
             {
                 case EmitState.BlockMappingKey:
                     throw new YamlEmitterException("To start block-mapping in the mapping key is not supported.");
-
+                case EmitState.FlowMappingKey:
+                    throw new YamlEmitterException("To start flow-mapping in the mapping key is not supported.");
                 case EmitState.FlowSequenceEntry:
                     throw new YamlEmitterException("Cannot start block-mapping in the flow-sequence");
 
@@ -113,10 +95,11 @@ namespace NexVYaml.Emitter
             switch (StateStack.Current)
             {
                 case EmitState.BlockMappingKey:
-                    throw new YamlEmitterException("To start block-mapping in the mapping key is not supported.");
-
+                    throw new YamlEmitterException("To start block-mapping in the flow mapping key is not supported.");
+                case EmitState.BlockSequenceEntry:
+                    throw new YamlEmitterException("To start block-sequence in the flow mapping key is not supported.");
                 case EmitState.FlowSequenceEntry:
-                    throw new YamlEmitterException("Cannot start block-mapping in the flow-sequence");
+                    throw new YamlEmitterException("Cannot start flow-mapping in the flow-sequence");
 
                 case EmitState.FlowMappingKey:
                     {
@@ -142,7 +125,9 @@ namespace NexVYaml.Emitter
                 case EmitState.FlowSequenceEntry:
                     throw new YamlEmitterException(
                         "To start block-sequence in the flow-sequence is not supported.");
-
+                case EmitState.FlowMappingKey:
+                    throw new YamlEmitterException(
+                        "To start block-sequence in the flow mapping key is not supported.");
                 case EmitState.BlockMappingKey:
                     throw new YamlEmitterException(
                         "To start block-sequence in the mapping key is not supported.");
@@ -155,6 +140,8 @@ namespace NexVYaml.Emitter
             switch (StateStack.Current)
             {
                 case EmitState.BlockMappingKey:
+                    throw new YamlEmitterException("To start block-mapping in the mapping key is not supported.");
+                case EmitState.FlowMappingKey:
                     throw new YamlEmitterException("To start flow-mapping in the mapping key is not supported.");
 
                 case EmitState.BlockSequenceEntry:
@@ -286,8 +273,8 @@ namespace NexVYaml.Emitter
         {
             if (style is DataStyle.Normal)
                 BeginBlockMapping();
-            else if(style is DataStyle.Compact)
-                Begin(YamlStyle.FlowMapping);
+            else if (style is DataStyle.Compact)
+                BeginFlowMapping();
             else
                 throw new ArgumentOutOfRangeException(nameof(style), style, null);
         }
