@@ -16,6 +16,7 @@ internal class YamlHelper
     {
         SetUp();
         var serialized = YamlSerializer.SerializeToString(target);
+        Assert.Null(serialized);
         var deserialized = YamlSerializer.Deserialize<T>(serialized);
         Assert.Equal(target, deserialized);
     }

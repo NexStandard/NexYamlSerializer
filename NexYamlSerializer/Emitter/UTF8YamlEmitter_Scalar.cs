@@ -45,6 +45,18 @@ public partial class Utf8YamlEmitter
                     }
                     break;
                 }
+            case EmitState.FlowSequenceEntry:
+                if(!IsFirstElement)
+                {
+                    switch (StateStack.Previous)
+                    {
+                        case EmitState.BlockMappingValue:
+                            FlowSequenceSeparator.CopyTo(output[offset..]);
+                            offset += FlowSequenceSeparator.Length;
+                            break;
+                    }
+                }
+                break;
             case EmitState.BlockMappingKey:
                 {
                     if (IsFirstElement)

@@ -44,3 +44,9 @@ internal record class NonCompactClass
     public int Y { get; set; }
     public string W { get; set; }
 }
+[DataContract]
+internal record class CompactArray
+{
+    [DataStyle(DataStyle.Compact)]
+    public List<int> Ints { get; set; } = [1, 2, 3];
+}

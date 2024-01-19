@@ -18,6 +18,10 @@ namespace NexVYaml.Serialization
         }
         public void Serialize(ref Utf8YamlEmitter emitter, List<T>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
         {
+            if(style is DataStyle.Any)
+            {
+                style = DataStyle.Normal;
+            }
             if (value is null)
             {
                 emitter.WriteNull();
@@ -25,7 +29,7 @@ namespace NexVYaml.Serialization
             else
             {
                 context.IsRedirected = false;
-                emitter.BeginSequence();
+                emitter.BeginSequence(style);
                 if (value.Count > 0)
                 {
                     foreach (var x in value)

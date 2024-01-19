@@ -42,7 +42,6 @@ public class CompactTest
             Y = 2,
         };
         YamlHelper.Run(compact);
-
     }
     [Fact]
     public void Compact_Members()
@@ -52,6 +51,12 @@ public class CompactTest
             NonCompactClass = new() { W = "st", Y = 20 },
             X = new() {  X = 1 },
         };
+        YamlHelper.Run(compact);
+    }
+    [Fact]
+    public void Compact_Array()
+    {
+        var compact = new CompactArray();
         YamlHelper.Run(compact);
     }
 }
