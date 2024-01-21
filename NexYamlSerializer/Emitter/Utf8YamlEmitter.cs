@@ -27,15 +27,6 @@ namespace NexVYaml.Emitter
     }
     public partial class Utf8YamlEmitter : IUtf8YamlEmitter
     {
-
-        static readonly byte[] BlockSequenceEntryHeader = { (byte)'-', (byte)' ' };
-        static readonly byte[] FlowSequenceEntryHeader = { (byte)'[', (byte)' ' };
-        static readonly byte[] FlowSequenceEmpty = { (byte)'[', (byte)']' };
-        static readonly byte[] FlowSequenceSeparator = { (byte)',', (byte)' ' };
-        static readonly byte[] MappingKeyFooter = { (byte)':', (byte)' ' };
-        static readonly byte[] FlowMappingEmpty = { (byte)'{', (byte)'}' };
-        static readonly byte[] FlowMappingStart = { (byte)'{', (byte)' ' };
-        static readonly byte[] FlowMappingEnd = { (byte)' ', (byte)'}' };
         public int CurrentIndentLevel => IndentationManager.CurrentIndentLevel;
         public ExpandBuffer<EmitState> StateStack { get; }
         public IBufferWriter<byte> Writer { get; }
@@ -100,14 +91,13 @@ namespace NexVYaml.Emitter
                 case EmitState.BlockSequenceEntry:
                     throw new YamlEmitterException("To start block-sequence in the flow mapping key is not supported.");
                 case EmitState.FlowSequenceEntry:
-                    throw new YamlEmitterException("Cannot start flow-mapping in the flow-sequence");
-
+                    break;
                 case EmitState.FlowMappingKey:
                     {
-                        var output = Writer.GetSpan(FlowMappingStart.Length + 1);
+                        var output = Writer.GetSpan(EmitCodes.FlowMappingStart.Length + 1);
                         var offset = 0;
-                        FlowMappingStart.CopyTo(output);
-                        offset += FlowMappingStart.Length;
+                        EmitCodes.FlowMappingStart.CopyTo(output);
+                        offset += EmitCodes.FlowMappingStart.Length;
                         output[offset++] = YamlCodes.FlowSequenceStart;
                         Writer.Advance(offset);
                         break;
@@ -191,7 +181,7 @@ namespace NexVYaml.Emitter
                         if (isEmptySequence)
                         {
                             var lineBreak = StateStack.Current is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
-                            WriteRaw(FlowSequenceEmpty, false, lineBreak);
+                            WriteRaw(EmitCodes.FlowSequenceEmpty, false, lineBreak);
                         }
 
                         switch (StateStack.Current)
@@ -278,7 +268,7 @@ namespace NexVYaml.Emitter
             var isEmptyMapping = currentElementCount <= 0;
             if (StateStack.Current == EmitState.FlowMappingKey && !isEmptyMapping)
             {
-                WriteRaw(FlowMappingEnd, false, true);
+                WriteRaw(EmitCodes.FlowMappingEnd, false, true);
             } 
             else if(StateStack.Current == EmitState.FlowMappingKey && isEmptyMapping)
             {
@@ -292,11 +282,11 @@ namespace NexVYaml.Emitter
                 if (tagStack.TryPop(out var tag))
                 {
                     var tagBytes = StringEncoding.Utf8.GetBytes(tag + " "); // TODO:
-                    WriteRaw(tagBytes, FlowMappingEmpty, false, lineBreak);
+                    WriteRaw(tagBytes, EmitCodes.FlowMappingEmpty, false, lineBreak);
                 }
                 else
                 {
-                    WriteRaw(FlowMappingEmpty, false, lineBreak);
+                    WriteRaw(EmitCodes.FlowMappingEmpty, false, false);
                 }
             }
 

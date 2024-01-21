@@ -21,10 +21,10 @@ public partial class Utf8YamlEmitter
                     // first nested element
                     if (IsFirstElement)
                     {
-                        var output2 = Writer.GetSpan(FlowSequenceSeparator.Length + 1);
+                        var output2 = Writer.GetSpan(EmitCodes.FlowSequenceSeparator.Length + 1);
                         var offset2 = 0;
-                        FlowSequenceSeparator.CopyTo(output2);
-                        offset2 += FlowSequenceSeparator.Length;
+                        EmitCodes.FlowSequenceSeparator.CopyTo(output2);
+                        offset2 += EmitCodes.FlowSequenceSeparator.Length;
                         output2[offset2++] = YamlCodes.FlowSequenceStart;
                         Writer.Advance(offset);
                         switch (StateStack.Previous)
@@ -39,8 +39,8 @@ public partial class Utf8YamlEmitter
                         }
                     }
                     WriteIndent(output, ref offset);
-                    BlockSequenceEntryHeader.CopyTo(output[offset..]);
-                    offset += BlockSequenceEntryHeader.Length;
+                    EmitCodes.BlockSequenceEntryHeader.CopyTo(output[offset..]);
+                    offset += EmitCodes.BlockSequenceEntryHeader.Length;
 
                     // Write tag
                     if (tagStack.TryPop(out var tag))
@@ -61,13 +61,14 @@ public partial class Utf8YamlEmitter
                         offset += StringEncoding.Utf8.GetBytes(tag, output[offset..]);
                         output[offset++] = YamlCodes.Space;
                     }
-                    FlowSequenceEntryHeader.CopyTo(output[offset..]);
-                    offset += FlowSequenceEntryHeader.Length;
+
+                    EmitCodes.FlowSequenceEntryHeader.CopyTo(output[offset..]);
+                    offset += EmitCodes.FlowSequenceEntryHeader.Length;
                 }
                 else
                 {
-                    FlowSequenceSeparator.CopyTo(output[offset..]);
-                    offset += FlowSequenceSeparator.Length;
+                    EmitCodes.FlowSequenceSeparator.CopyTo(output[offset..]);
+                    offset += EmitCodes.FlowSequenceSeparator.Length;
                     break;
                 }
                 break;
@@ -138,13 +139,14 @@ public partial class Utf8YamlEmitter
                         output[offset++] = YamlCodes.Space;
                         WriteIndent(output, ref offset);
                     }
-                    FlowMappingStart.CopyTo(output[offset..]);
+
+                    EmitCodes.FlowMappingStart.CopyTo(output[offset..]);
                     offset += 2;
                 }
                 if(!IsFirstElement)
                 {
-                    FlowSequenceSeparator.CopyTo(output[offset..]);
-                    offset += FlowSequenceSeparator.Length;
+                    EmitCodes.FlowSequenceSeparator.CopyTo(output[offset..]);
+                    offset += EmitCodes.FlowSequenceSeparator.Length;
                 }
                 break;
             case EmitState.None:
@@ -164,13 +166,13 @@ public partial class Utf8YamlEmitter
                 currentElementCount++;
                 break;
             case EmitState.BlockMappingKey:
-                MappingKeyFooter.CopyTo(output[offset..]);
-                offset += MappingKeyFooter.Length;
+                EmitCodes.MappingKeyFooter.CopyTo(output[offset..]);
+                offset += EmitCodes.MappingKeyFooter.Length;
                 StateStack.Current = EmitState.BlockMappingValue;
                 break;
             case EmitState.FlowMappingKey:
-                MappingKeyFooter.CopyTo(output[offset..]);
-                offset += MappingKeyFooter.Length;
+                EmitCodes.MappingKeyFooter.CopyTo(output[offset..]);
+                offset += EmitCodes.MappingKeyFooter.Length;
                 StateStack.Current = EmitState.FlowMappingValue;
                 break;
             case EmitState.FlowMappingValue:

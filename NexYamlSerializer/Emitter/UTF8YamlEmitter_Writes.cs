@@ -121,6 +121,6 @@ public partial class Utf8YamlEmitter
                     break;
             }
         }
-        WriteRaw(BlockSequenceEntryHeader, true, false);
+        WriteRaw(EmitCodes.BlockSequenceEntryHeader, true, false);
     }
 }
