@@ -168,7 +168,6 @@ namespace NexVYaml.Emitter
                         }
                         break;
                     }
-
                 case EmitState.FlowSequenceEntry:
                     {
                         PopState();
@@ -223,63 +222,10 @@ namespace NexVYaml.Emitter
             {
                 throw new YamlEmitterException($"Invalid block mapping end: {StateStack.Current}");
             }
-            
-
-            var isEmptyMapping = currentElementCount <= 0;
-            if (StateStack.Current == EmitState.FlowMappingKey && !isEmptyMapping)
-            {
-                WriteRaw(EmitCodes.FlowMappingEnd, false, true);
-            } 
-            else if(StateStack.Current == EmitState.FlowMappingKey && isEmptyMapping)
-            {
-                WriteRaw(YamlCodes.FlowMapEnd);
-            }
-            PopState();
-
-            if (isEmptyMapping)
-            {
-                var lineBreak = StateStack.Current is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
-                if (tagStack.TryPop(out var tag))
-                {
-                    var tagBytes = StringEncoding.Utf8.GetBytes(tag + " "); // TODO:
-                    WriteRaw(tagBytes, EmitCodes.FlowMappingEmpty, false, lineBreak);
-                }
-                else
-                {
-                    WriteRaw(EmitCodes.FlowMappingEmpty, false, false);
-                }
-            }
-
-            switch (StateStack.Current)
-            {
-                case EmitState.BlockSequenceEntry:
-                    if (!isEmptyMapping)
-                    {
-                        IndentationManager.DecreaseIndent();
-                    }
-                    currentElementCount++;
-                    break;
-
-                case EmitState.BlockMappingValue:
-                    if (!isEmptyMapping)
-                    {
-                        IndentationManager.DecreaseIndent();
-                    }
-                    StateStack.Current = EmitState.BlockMappingKey;
-                    currentElementCount++;
-                    break;
-                case EmitState.FlowMappingValue:
-                    if(!isEmptyMapping)
-                    {
-                        IndentationManager.DecreaseIndent();
-                    }
-                    StateStack.Current = EmitState.BlockMappingKey;
-                    currentElementCount++;
-                    break;
-                case EmitState.FlowSequenceEntry:
-                    currentElementCount++;
-                    break;
-            }
+            if (StateStack.Current is EmitState.BlockMappingKey)
+                blockMapKeySerializer.End();
+            else if(StateStack.Current is EmitState.FlowMappingKey)
+                flowMapKeySerializer.End();
         }
 
         public void Tag(string value)

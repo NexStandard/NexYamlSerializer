@@ -110,10 +110,6 @@ internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : ISerializer
     }
     public void End()
     {
-        if (emitter.StateStack.Current is not EmitState.BlockMappingKey and not EmitState.FlowMappingKey)
-        {
-            throw new YamlEmitterException($"Invalid block mapping end: {emitter.StateStack.Current}");
-        }
         var isEmptyMapping = emitter.currentElementCount <= 0;
         if (emitter.StateStack.Current == EmitState.FlowMappingKey && !isEmptyMapping)
         {
@@ -124,6 +120,21 @@ internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : ISerializer
             emitter.WriteRaw(YamlCodes.FlowMapEnd);
         }
         emitter.PopState();
+
+        if (isEmptyMapping)
+        {
+            var lineBreak = emitter.StateStack.Current is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
+            if (emitter.tagStack.TryPop(out var tag))
+            {
+                var tagBytes = StringEncoding.Utf8.GetBytes(tag + " "); // TODO:
+                emitter.WriteRaw(tagBytes, EmitCodes.FlowMappingEmpty, false, lineBreak);
+            }
+            else
+            {
+                emitter.WriteRaw(EmitCodes.FlowMappingEmpty, false, false);
+            }
+        }
+
         switch (emitter.StateStack.Current)
         {
             case EmitState.BlockSequenceEntry:
