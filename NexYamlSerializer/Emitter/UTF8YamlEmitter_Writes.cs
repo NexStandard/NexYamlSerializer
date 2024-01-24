@@ -54,7 +54,7 @@ public partial class Utf8YamlEmitter
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    void WriteRaw(byte value)
+    internal void WriteRaw(byte value)
     {
         var output = Writer.GetSpan(1);
         output[0] = value;
@@ -62,7 +62,7 @@ public partial class Utf8YamlEmitter
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    void WriteRaw(ReadOnlySpan<byte> value, bool indent, bool lineBreak)
+    internal void WriteRaw(ReadOnlySpan<byte> value, bool indent, bool lineBreak)
     {
         var length = value.Length +
                      (indent ? CurrentIndentLevel * Options.IndentWidth : 0) +
@@ -82,7 +82,7 @@ public partial class Utf8YamlEmitter
         Writer.Advance(length);
     }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    void WriteRaw(ReadOnlySpan<byte> value1, ReadOnlySpan<byte> value2, bool indent, bool lineBreak)
+    internal void WriteRaw(ReadOnlySpan<byte> value1, ReadOnlySpan<byte> value2, bool indent, bool lineBreak)
     {
         var length = value1.Length + value2.Length +
                      (indent ? CurrentIndentLevel * Options.IndentWidth : 0) +
@@ -106,7 +106,7 @@ public partial class Utf8YamlEmitter
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    void WriteBlockSequenceEntryHeader()
+    internal void WriteBlockSequenceEntryHeader()
     {
         if (IsFirstElement)
         {

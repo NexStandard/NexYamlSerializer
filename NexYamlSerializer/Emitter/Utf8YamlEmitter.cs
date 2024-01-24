@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using NexVYaml.Emitter;
 using NexVYaml.Internal;
 using NexYamlSerializer.Emitter;
+using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
 using Stride.Engine;
 namespace NexVYaml.Emitter
@@ -31,17 +32,18 @@ namespace NexVYaml.Emitter
         public ExpandBuffer<EmitState> StateStack { get; }
         public IBufferWriter<byte> Writer { get; }
         public YamlEmitOptions Options { get; }
-
-        bool IsFirstElement
+        private ISerializer blockMapKeySerializer;
+        private ISerializer flowMapKeySerializer;
+        internal bool IsFirstElement
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => currentElementCount <= 0;
         }
 
-        IndentationManager IndentationManager { get; } = new();
+        internal IndentationManager IndentationManager { get; } = new();
         ExpandBuffer<int> elementCountStack;
-        ExpandBuffer<string> tagStack;
-        int currentElementCount;
+        internal ExpandBuffer<string> tagStack;
+        internal int currentElementCount;
 
         public Utf8YamlEmitter(IBufferWriter<byte> writer, YamlEmitOptions? options = null)
         {
@@ -52,7 +54,8 @@ namespace NexVYaml.Emitter
             elementCountStack = new ExpandBuffer<int>(16);
             StateStack.Add(EmitState.None);
             currentElementCount = 0;
-
+            blockMapKeySerializer = new BlockMapKeySerializer(this);
+            flowMapKeySerializer = new FlowMapKeySerializer(this);
             tagStack = new ExpandBuffer<string>(4);
         }
 
@@ -63,48 +66,6 @@ namespace NexVYaml.Emitter
             tagStack.Dispose();
         }
 
-        void BeginBlockMapping()
-        {
-            switch (StateStack.Current)
-            {
-                case EmitState.BlockMappingKey:
-                    throw new YamlEmitterException("To start block-mapping in the mapping key is not supported.");
-                case EmitState.FlowMappingKey:
-                    throw new YamlEmitterException("To start flow-mapping in the mapping key is not supported.");
-                case EmitState.FlowSequenceEntry:
-                    throw new YamlEmitterException("Cannot start block-mapping in the flow-sequence");
-
-                case EmitState.BlockSequenceEntry:
-                    {
-                        WriteBlockSequenceEntryHeader();
-                        break;
-                    }
-            }
-            PushState(EmitState.BlockMappingKey);
-        }
-        void BeginFlowMapping()
-        {
-            switch (StateStack.Current)
-            {
-                case EmitState.BlockMappingKey:
-                    throw new YamlEmitterException("To start block-mapping in the flow mapping key is not supported.");
-                case EmitState.BlockSequenceEntry:
-                    throw new YamlEmitterException("To start block-sequence in the flow mapping key is not supported.");
-                case EmitState.FlowSequenceEntry:
-                    break;
-                case EmitState.FlowMappingKey:
-                    {
-                        var output = Writer.GetSpan(EmitCodes.FlowMappingStart.Length + 1);
-                        var offset = 0;
-                        EmitCodes.FlowMappingStart.CopyTo(output);
-                        offset += EmitCodes.FlowMappingStart.Length;
-                        output[offset++] = YamlCodes.FlowSequenceStart;
-                        Writer.Advance(offset);
-                        break;
-                    }
-            }
-            PushState(EmitState.FlowMappingKey);
-        }
         void BeginBlockSequence()
         {
             switch (StateStack.Current)
@@ -144,7 +105,6 @@ namespace NexVYaml.Emitter
                 case EmitState.BlockMappingValue:
                     break;
                 default:
-                    throw new Exception(StateStack.Current.ToString());
                     WriteRaw(YamlCodes.FlowSequenceStart);
                     break;
             }
@@ -251,15 +211,15 @@ namespace NexVYaml.Emitter
         public void BeginMapping(DataStyle style = DataStyle.Normal)
         {
             if (style is DataStyle.Normal)
-                BeginBlockMapping();
+                blockMapKeySerializer.Begin();
             else if (style is DataStyle.Compact)
-                BeginFlowMapping();
+                flowMapKeySerializer.Begin();
             else
                 throw new ArgumentOutOfRangeException(nameof(style), style, null);
         }
         public void EndMapping()
         {
-            if (StateStack.Current != EmitState.BlockMappingKey && StateStack.Current != EmitState.FlowMappingKey)
+            if (StateStack.Current is not EmitState.BlockMappingKey and not EmitState.FlowMappingKey)
             {
                 throw new YamlEmitterException($"Invalid block mapping end: {StateStack.Current}");
             }
@@ -339,7 +299,7 @@ namespace NexVYaml.Emitter
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void PushState(EmitState state)
+        internal void PushState(EmitState state)
         {
             StateStack.Add(state);
             elementCountStack.Add(currentElementCount);
@@ -347,7 +307,7 @@ namespace NexVYaml.Emitter
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void PopState()
+        internal void PopState()
         {
             StateStack.Pop();
             currentElementCount = elementCountStack.Length > 0 ? elementCountStack.Pop() : 0;
