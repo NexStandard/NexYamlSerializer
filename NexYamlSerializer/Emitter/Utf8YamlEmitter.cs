@@ -96,38 +96,7 @@ namespace NexVYaml.Emitter
             {
                 case EmitState.BlockSequenceEntry:
                     {
-                        var isEmptySequence = currentElementCount == 0;
-                        PopState();
-
-                        // Empty sequence
-                        if (isEmptySequence)
-                        {
-                            var lineBreak = StateStack.Current is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
-                            WriteRaw(EmitCodes.FlowSequenceEmpty, false, lineBreak);
-                        }
-
-                        switch (StateStack.Current)
-                        {
-                            case EmitState.BlockSequenceEntry:
-                                if (!isEmptySequence)
-                                {
-                                    IndentationManager.DecreaseIndent();
-                                }
-                                currentElementCount++;
-                                break;
-
-                            case EmitState.BlockMappingKey:
-                                throw new YamlEmitterException("Complex key is not supported.");
-
-                            case EmitState.BlockMappingValue:
-                                StateStack.Current = EmitState.BlockMappingKey;
-                                currentElementCount++;
-                                break;
-
-                            case EmitState.FlowSequenceEntry:
-                                currentElementCount++;
-                                break;
-                        }
+                        blockSequenceEntrySerializer.End();
                         break;
                     }
                 case EmitState.FlowSequenceEntry:

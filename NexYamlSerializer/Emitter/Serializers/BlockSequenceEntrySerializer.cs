@@ -70,7 +70,38 @@ internal class BlockSequenceEntrySerializer(Utf8YamlEmitter emitter) : ISerializ
 
     public void End()
     {
-        throw new NotImplementedException();
+        var isEmptySequence = emitter.currentElementCount == 0;
+        emitter.PopState();
+
+        // Empty sequence
+        if (isEmptySequence)
+        {
+            var lineBreak = emitter.StateStack.Current is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
+            emitter.WriteRaw(EmitCodes.FlowSequenceEmpty, false, lineBreak);
+        }
+
+        switch (emitter.StateStack.Current)
+        {
+            case EmitState.BlockSequenceEntry:
+                if (!isEmptySequence)
+                {
+                    emitter.IndentationManager.DecreaseIndent();
+                }
+                emitter.currentElementCount++;
+                break;
+
+            case EmitState.BlockMappingKey:
+                throw new YamlEmitterException("Complex key is not supported.");
+
+            case EmitState.BlockMappingValue:
+                emitter.StateStack.Current = EmitState.BlockMappingKey;
+                emitter.currentElementCount++;
+                break;
+
+            case EmitState.FlowSequenceEntry:
+                emitter.currentElementCount++;
+                break;
+        }
     }
 
     public void EndScalar(Span<byte> output, ref int offset)
