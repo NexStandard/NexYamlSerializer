@@ -36,6 +36,7 @@ namespace NexVYaml.Emitter
         private ISerializer flowMapKeySerializer;
         private ISerializer blockSequenceEntrySerializer;
         private ISerializer flowSequenceEntrySerializer;
+        private ISerializer emptySerializer;
         internal bool IsFirstElement
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -60,6 +61,7 @@ namespace NexVYaml.Emitter
             flowMapKeySerializer = new FlowMapKeySerializer(this);
             blockSequenceEntrySerializer = new BlockSequenceEntrySerializer(this);
             flowSequenceEntrySerializer = new FlowSequenceEntrySerializer(this);
+            emptySerializer = EmptySerializer.Instance;
             tagStack = new ExpandBuffer<string>(4);
         }
 
@@ -151,21 +153,12 @@ namespace NexVYaml.Emitter
         {
             if (StateStack.Current is not EmitState.BlockMappingKey and not EmitState.FlowMappingKey)
             {
-                throw new YamlEmitterException($"Invalid block mapping end: {StateStack.Current}");
+                throw new Exception($"Invalid block mapping end: {StateStack.Current}");
             }
             if (StateStack.Current is EmitState.BlockMappingKey)
                 blockMapKeySerializer.End();
             else if(StateStack.Current is EmitState.FlowMappingKey)
                 flowMapKeySerializer.End();
         }
-
-        public void Tag(string value)
-        {
-            tagStack.Add(value);
-        }
-
-
-
-
     }
 }
