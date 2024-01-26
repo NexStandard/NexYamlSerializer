@@ -24,10 +24,8 @@ namespace NexVYaml.Serialization
                 {
                     context.Serialize(ref emitter, x);
                 }
-                emitter.EndSequence(true);
-                return;
             }
-            emitter.EndSequence(false);
+            emitter.EndSequence();
         }
 
         public IEnumerable<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)

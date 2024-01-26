@@ -12,7 +12,7 @@ namespace NexVYaml.Serialization
         {
             emitter.BeginSequence(DataStyle.Compact);
             context.Serialize(ref emitter, value.Item1);
-            emitter.EndSequence(false);
+            emitter.EndSequence();
         }
 
         public ValueTuple<T1> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
@@ -36,7 +36,7 @@ namespace NexVYaml.Serialization
             emitter.BeginSequence(DataStyle.Compact);
             context.Serialize(ref emitter, value.Item1);
             context.Serialize(ref emitter, value.Item2);
-            emitter.EndSequence(false);
+            emitter.EndSequence();
         }
 
         public ValueTuple<T1, T2> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
@@ -62,7 +62,7 @@ namespace NexVYaml.Serialization
             context.Serialize(ref emitter, value.Item1);
             context.Serialize(ref emitter, value.Item2);
             context.Serialize(ref emitter, value.Item3);
-            emitter.EndSequence(false);
+            emitter.EndSequence();
         }
 
         public ValueTuple<T1, T2, T3> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
@@ -90,7 +90,7 @@ namespace NexVYaml.Serialization
             context.Serialize(ref emitter, value.Item2);
             context.Serialize(ref emitter, value.Item3);
             context.Serialize(ref emitter, value.Item4);
-            emitter.EndSequence(false);
+            emitter.EndSequence();
         }
 
         public ValueTuple<T1, T2, T3, T4> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
@@ -120,7 +120,7 @@ namespace NexVYaml.Serialization
             context.Serialize(ref emitter, value.Item3);
             context.Serialize(ref emitter, value.Item4);
             context.Serialize(ref emitter, value.Item5);
-            emitter.EndSequence(false);
+            emitter.EndSequence();
         }
 
         public ValueTuple<T1, T2, T3, T4, T5> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
@@ -152,7 +152,7 @@ namespace NexVYaml.Serialization
             context.Serialize(ref emitter, value.Item4);
             context.Serialize(ref emitter, value.Item5);
             context.Serialize(ref emitter, value.Item6);
-            emitter.EndSequence(false);
+            emitter.EndSequence();
         }
 
         public ValueTuple<T1, T2, T3, T4, T5, T6> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
@@ -186,7 +186,7 @@ namespace NexVYaml.Serialization
             context.Serialize(ref emitter, value.Item5);
             context.Serialize(ref emitter, value.Item6);
             context.Serialize(ref emitter, value.Item7);
-            emitter.EndSequence(false);
+            emitter.EndSequence();
         }
 
         public ValueTuple<T1, T2, T3, T4, T5, T6, T7> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
@@ -223,7 +223,7 @@ namespace NexVYaml.Serialization
             context.Serialize(ref emitter, value.Item6);
             context.Serialize(ref emitter, value.Item7);
             context.Serialize(ref emitter, value.Rest);
-            emitter.EndSequence(false);
+            emitter.EndSequence();
         }
 
         public ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest> Deserialize(ref YamlParser parser, YamlDeserializationContext context)

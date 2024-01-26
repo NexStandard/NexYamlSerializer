@@ -90,13 +90,13 @@ namespace NexVYaml.Emitter
                     throw new ArgumentOutOfRangeException(nameof(style), style, null);
             }
         }
-        public void EndSequence(bool isEmpty)
+        public void EndSequence()
         {
             switch (StateStack.Current)
             {
                 case EmitState.BlockSequenceEntry:
                     {
-                        var isEmptySequence = isEmpty;
+                        var isEmptySequence = currentElementCount == 0;
                         PopState();
 
                         // Empty sequence

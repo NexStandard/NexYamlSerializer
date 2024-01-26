@@ -49,7 +49,7 @@ namespace NexVYaml.Serialization
                             elementFormatter.Serialize(ref emitter, x, context);
                         }
                     }
-                    emitter.EndSequence(value.Count == 0);
+                    emitter.EndSequence();
                 }
                 else if(valueFormatter == null)
                 {

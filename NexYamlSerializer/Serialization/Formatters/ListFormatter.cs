@@ -37,7 +37,7 @@ namespace NexVYaml.Serialization
                         context.Serialize(ref emitter, x);
                     }
                 }
-                emitter.EndSequence(value.Count == 0);
+                emitter.EndSequence();
             }
         }
 

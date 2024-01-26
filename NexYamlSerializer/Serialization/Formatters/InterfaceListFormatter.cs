@@ -23,7 +23,7 @@ namespace NexVYaml.Serialization
                     context.Serialize(ref emitter, x);
                 }
             }
-            emitter.EndSequence(value.Count == 0);
+            emitter.EndSequence();
         }
 
         public IList<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)

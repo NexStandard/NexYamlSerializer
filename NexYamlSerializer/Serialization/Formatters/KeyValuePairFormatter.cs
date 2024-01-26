@@ -14,7 +14,7 @@ namespace NexVYaml.Serialization
             emitter.BeginSequence();
             context.Serialize(ref emitter, value.Key);
             context.Serialize(ref emitter, value.Value);
-            emitter.EndSequence(false);
+            emitter.EndSequence();
         }
 
         public KeyValuePair<TKey, TValue> Deserialize(ref YamlParser parser, YamlDeserializationContext context)

@@ -13,9 +13,10 @@ public interface IUtf8YamlEmitter : IDisposable
     void BeginMapping(DataStyle style = DataStyle.Normal);
     void EndMapping();
     void BeginSequence(DataStyle style = DataStyle.Normal);
-    void EndSequence(bool isEmpty);
+    void EndSequence();
     void Tag(string value);
     void BeginScalar(Span<byte> output, ref int offset);
     void EndScalar(Span<byte> output, ref int offset);
     void WriteScalar(ReadOnlySpan<byte> value);
+    void Dispose();
 }

@@ -85,7 +85,7 @@ public class CollectionTest
         // Creating test data
         CollectionInterfaces data1 = new CollectionInterfaces()
         {
-            Collection = new List<IDInterface>() { new Data1(), new Data2() },
+            Collection = new List<IDInterface>() {  },
             ReadonlyList = new List<IDInterface>() { new Data1() { Id = 1 }, new Data2() { Id = 2 } },
             Dictionary = new Dictionary<int, IDInterface>() { [1] = new Data1() },
             Enumerable = new List<IDInterface>()
@@ -104,7 +104,7 @@ public class CollectionTest
             SecureMode = true,
         };
         var secure = YamlSerializer.SerializeToString(data1,option);
-        Assert.Throws(typeof(YamlSerializerException), () => YamlSerializer.Deserialize<CollectionInterfaces>(secure, option));
+        Assert.Throws<YamlSerializerException>(() => YamlSerializer.Deserialize<CollectionInterfaces>(secure, option));
     }
 }
 [DataContract]
