@@ -126,6 +126,9 @@ public static class UTF8YamlEmitterExtensions
         }
     }
 }
+/// <summary>
+/// Methods in this class aren't guaranteed to be kept
+/// </summary>
 public static class ExperimentalExtensions
 {
     /// <summary>

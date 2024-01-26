@@ -33,6 +33,7 @@ public partial class Utf8YamlEmitter
                 flowMapKeySerializer.BeginScalar(output, ref offset);
                 break;
             case EmitState.None:
+                emptySerializer.BeginScalar(output, ref offset);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(StateStack.Current.ToString());
