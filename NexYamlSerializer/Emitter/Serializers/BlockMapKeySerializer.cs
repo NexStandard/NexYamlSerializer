@@ -86,28 +86,14 @@ internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : ISerializer
             emitter.WriteIndent(output, ref offset);
         }
     }
+
     public void EndScalar(Span<byte> output, ref int offset)
     {
-        output[offset++] = YamlCodes.Lf;
-        emitter.StateStack.Current = EmitState.BlockMappingKey;
-        emitter.currentElementCount++;
-        emitter.Writer.Advance(offset);
+        EmitCodes.MappingKeyFooter.CopyTo(output[offset..]);
+        offset += EmitCodes.MappingKeyFooter.Length;
+        emitter.StateStack.Current = EmitState.BlockMappingValue;
     }
-    public void BeginBlockSequence()
-    {
 
-        var current = emitter.StateStack.Current;
-        if (current is EmitState.BlockSequenceEntry)
-        {
-            emitter.WriteBlockSequenceEntryHeader();
-        }
-        if (current is EmitState.FlowSequenceEntry or EmitState.FlowMappingKey or EmitState.BlockMappingKey)
-        {
-            throw new InvalidOperationException($"To start block-sequence in the {current} is not supported");
-        }
-
-        emitter.PushState(EmitState.BlockSequenceEntry);
-    }
     public void End()
     {
         var isEmptyMapping = emitter.currentElementCount <= 0;

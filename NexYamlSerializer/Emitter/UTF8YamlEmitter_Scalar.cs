@@ -73,81 +73,13 @@ public partial class Utf8YamlEmitter
                 }
                 break;
             case EmitState.BlockMappingKey:
-                {
-                    if (IsFirstElement)
-                    {
-                        switch (StateStack.Previous)
-                        {
-                            case EmitState.BlockSequenceEntry:
-                                {
-                                    IndentationManager.IncreaseIndent();
-
-                                    // Try write tag
-                                    if (tagStack.TryPop(out var tag))
-                                    {
-                                        offset += StringEncoding.Utf8.GetBytes(tag, output[offset..]);
-                                        output[offset++] = YamlCodes.Lf;
-                                        WriteIndent(output, ref offset);
-                                    }
-                                    else
-                                    {
-                                        WriteIndent(output, ref offset, Options.IndentWidth - 2);
-                                    }
-                                    // The first key in block-sequence is like so that: "- key: .."
-                                    break;
-                                }
-                            case EmitState.BlockMappingValue:
-                                {
-                                    IndentationManager.IncreaseIndent();
-                                    // Try write tag
-                                    if (tagStack.TryPop(out var tag))
-                                    {
-                                        offset += StringEncoding.Utf8.GetBytes(tag, output[offset..]);
-                                    }
-                                    output[offset++] = YamlCodes.Lf;
-                                    WriteIndent(output, ref offset);
-                                    break;
-                                }
-                            default:
-                                WriteIndent(output, ref offset);
-                                break;
-                        }
-
-                        // Write tag
-                        if (tagStack.TryPop(out var tag2))
-                        {
-                            offset += StringEncoding.Utf8.GetBytes(tag2, output[offset..]);
-                            output[offset++] = YamlCodes.Lf;
-                            WriteIndent(output, ref offset);
-                        }
-                    }
-                    else
-                    {
-                        WriteIndent(output, ref offset);
-                    }
-                    break;
-                }
+                blockMapKeySerializer.BeginScalar(output,ref offset);
+                break;
             case EmitState.BlockMappingValue:
                 break;
             case EmitState.FlowMappingValue: break;
             case EmitState.FlowMappingKey:
-                if(IsFirstElement)
-                {
-                    if (tagStack.TryPop(out var tag))
-                    {
-                        offset += StringEncoding.Utf8.GetBytes(tag, output[offset..]);
-                        output[offset++] = YamlCodes.Space;
-                        WriteIndent(output, ref offset);
-                    }
-
-                    EmitCodes.FlowMappingStart.CopyTo(output[offset..]);
-                    offset += 2;
-                }
-                if(!IsFirstElement)
-                {
-                    EmitCodes.FlowSequenceSeparator.CopyTo(output[offset..]);
-                    offset += EmitCodes.FlowSequenceSeparator.Length;
-                }
+                flowMapKeySerializer.BeginScalar(output,ref offset);
                 break;
             case EmitState.None:
                 break;
@@ -166,14 +98,10 @@ public partial class Utf8YamlEmitter
                 currentElementCount++;
                 break;
             case EmitState.BlockMappingKey:
-                EmitCodes.MappingKeyFooter.CopyTo(output[offset..]);
-                offset += EmitCodes.MappingKeyFooter.Length;
-                StateStack.Current = EmitState.BlockMappingValue;
+                blockMapKeySerializer.EndScalar(output, ref offset);
                 break;
             case EmitState.FlowMappingKey:
-                EmitCodes.MappingKeyFooter.CopyTo(output[offset..]);
-                offset += EmitCodes.MappingKeyFooter.Length;
-                StateStack.Current = EmitState.FlowMappingValue;
+                flowMapKeySerializer.EndScalar(output, ref offset);
                 break;
             case EmitState.FlowMappingValue:
                 StateStack.Current = EmitState.FlowMappingKey;
