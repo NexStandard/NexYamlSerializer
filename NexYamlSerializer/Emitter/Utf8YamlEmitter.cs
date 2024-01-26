@@ -34,6 +34,8 @@ namespace NexVYaml.Emitter
         public YamlEmitOptions Options { get; }
         private ISerializer blockMapKeySerializer;
         private ISerializer flowMapKeySerializer;
+        private ISerializer blockSequenceEntrySerializer;
+        private ISerializer flowSequenceEntrySerializer;
         internal bool IsFirstElement
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -56,6 +58,8 @@ namespace NexVYaml.Emitter
             currentElementCount = 0;
             blockMapKeySerializer = new BlockMapKeySerializer(this);
             flowMapKeySerializer = new FlowMapKeySerializer(this);
+            blockSequenceEntrySerializer = new BlockSequenceEntrySerializer(this);
+            flowSequenceEntrySerializer = new FlowSequenceEntrySerializer(this);
             tagStack = new ExpandBuffer<string>(4);
         }
 
@@ -66,62 +70,18 @@ namespace NexVYaml.Emitter
             tagStack.Dispose();
         }
 
-        void BeginBlockSequence()
-        {
-            switch (StateStack.Current)
-            {
-                case EmitState.BlockSequenceEntry:
-                    WriteBlockSequenceEntryHeader();
-                    break;
-
-                case EmitState.FlowSequenceEntry:
-                    throw new YamlEmitterException(
-                        "To start block-sequence in the flow-sequence is not supported.");
-                case EmitState.FlowMappingKey:
-                    throw new YamlEmitterException(
-                        "To start block-sequence in the flow mapping key is not supported.");
-                case EmitState.BlockMappingKey:
-                    throw new YamlEmitterException(
-                        "To start block-sequence in the mapping key is not supported.");
-            }
-
-            PushState(EmitState.BlockSequenceEntry);
-        }
-        void BeginFlowSequence()
-        {
-            switch (StateStack.Current)
-            {
-                case EmitState.BlockMappingKey:
-                    throw new YamlEmitterException("To start block-mapping in the mapping key is not supported.");
-                case EmitState.FlowMappingKey:
-                    throw new YamlEmitterException("To start flow-mapping in the mapping key is not supported.");
-
-                case EmitState.BlockSequenceEntry:
-                    throw new YamlEmitterException("To start flow-mapping in the mapping key is not supported.");
-                case EmitState.FlowSequenceEntry:
-                    {
-                        break;
-                    }
-                case EmitState.BlockMappingValue:
-                    break;
-                default:
-                    WriteRaw(YamlCodes.FlowSequenceStart);
-                    break;
-            }
-            PushState(EmitState.FlowSequenceEntry);
-        }
         public void BeginSequence(DataStyle style = DataStyle.Normal)
         {
             switch (style)
             {
-                case DataStyle.Normal:
+                case DataStyle.Normal or DataStyle.Any:
                     {
-                        BeginBlockSequence();
+                        blockSequenceEntrySerializer.Begin();
                         break;
                     }
                 case DataStyle.Compact:
                     {
-                        BeginFlowSequence();
+                        flowSequenceEntrySerializer.Begin();
                         break;
                     }
                 default:
@@ -170,36 +130,7 @@ namespace NexVYaml.Emitter
                     }
                 case EmitState.FlowSequenceEntry:
                     {
-                        PopState();
-
-                        var needsLineBreak = false;
-                        switch (StateStack.Current)
-                        {
-                            case EmitState.BlockSequenceEntry:
-                                needsLineBreak = true;
-                                currentElementCount++;
-                                break;
-                            case EmitState.BlockMappingValue:
-                                StateStack.Current = EmitState.BlockMappingKey; // end mapping value
-                                needsLineBreak = true;
-                                currentElementCount++;
-                                break;
-                            case EmitState.FlowSequenceEntry:
-                                currentElementCount++;
-                                break;
-                        }
-
-                        var suffixLength = 1;
-                        if (needsLineBreak) suffixLength++;
-
-                        var offset = 0;
-                        var output = Writer.GetSpan(suffixLength);
-                        output[offset++] = YamlCodes.FlowSequenceEnd;
-                        if (needsLineBreak)
-                        {
-                            output[offset++] = YamlCodes.Lf;
-                        }
-                        Writer.Advance(offset);
+                        flowSequenceEntrySerializer.End();
                         break;
                     }
 
@@ -233,30 +164,8 @@ namespace NexVYaml.Emitter
             tagStack.Add(value);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int CalculateMaxScalarBufferLength(int length)
-        {
-            var around = (CurrentIndentLevel + 1) * Options.IndentWidth + 3;
-            if (tagStack.Length > 0)
-            {
-                length += StringEncoding.Utf8.GetMaxByteCount(tagStack.Peek().Length) + around; // TODO:
-            }
-            return length;
-        }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void PushState(EmitState state)
-        {
-            StateStack.Add(state);
-            elementCountStack.Add(currentElementCount);
-            currentElementCount = 0;
-        }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void PopState()
-        {
-            StateStack.Pop();
-            currentElementCount = elementCountStack.Length > 0 ? elementCountStack.Pop() : 0;
-        }
+
     }
 }

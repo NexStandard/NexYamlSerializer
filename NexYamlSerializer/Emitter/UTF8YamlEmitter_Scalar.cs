@@ -17,69 +17,20 @@ public partial class Utf8YamlEmitter
         switch (StateStack.Current)
         {
             case EmitState.BlockSequenceEntry:
-                {
-                    // first nested element
-                    if (IsFirstElement)
-                    {
-                        var output2 = Writer.GetSpan(EmitCodes.FlowSequenceSeparator.Length + 1);
-                        var offset2 = 0;
-                        EmitCodes.FlowSequenceSeparator.CopyTo(output2);
-                        offset2 += EmitCodes.FlowSequenceSeparator.Length;
-                        output2[offset2++] = YamlCodes.FlowSequenceStart;
-                        Writer.Advance(offset);
-                        switch (StateStack.Previous)
-                        {
-                            case EmitState.BlockSequenceEntry:
-                                IndentationManager.IncreaseIndent();
-                                output[offset++] = YamlCodes.Lf;
-                                break;
-                            case EmitState.BlockMappingValue:
-                                output[offset++] = YamlCodes.Lf;
-                                break;
-                        }
-                    }
-                    WriteIndent(output, ref offset);
-                    EmitCodes.BlockSequenceEntryHeader.CopyTo(output[offset..]);
-                    offset += EmitCodes.BlockSequenceEntryHeader.Length;
-
-                    // Write tag
-                    if (tagStack.TryPop(out var tag))
-                    {
-                        offset += StringEncoding.Utf8.GetBytes(tag, output[offset..]);
-                        output[offset++] = YamlCodes.Lf;
-                        WriteIndent(output, ref offset);
-                    }
-                    break;
-                }
+                blockSequenceEntrySerializer.BeginScalar(output, ref offset);
+                break;
             case EmitState.FlowSequenceEntry:
-                if (StateStack.Previous is not EmitState.BlockMappingValue)
-                    break;
-                if(IsFirstElement)
-                {
-                    if (tagStack.TryPop(out var tag))
-                    {
-                        offset += StringEncoding.Utf8.GetBytes(tag, output[offset..]);
-                        output[offset++] = YamlCodes.Space;
-                    }
-
-                    EmitCodes.FlowSequenceEntryHeader.CopyTo(output[offset..]);
-                    offset += EmitCodes.FlowSequenceEntryHeader.Length;
-                }
-                else
-                {
-                    EmitCodes.FlowSequenceSeparator.CopyTo(output[offset..]);
-                    offset += EmitCodes.FlowSequenceSeparator.Length;
-                    break;
-                }
+                flowSequenceEntrySerializer.BeginScalar(output, ref offset);
                 break;
             case EmitState.BlockMappingKey:
-                blockMapKeySerializer.BeginScalar(output,ref offset);
+                blockMapKeySerializer.BeginScalar(output, ref offset);
                 break;
             case EmitState.BlockMappingValue:
                 break;
-            case EmitState.FlowMappingValue: break;
+            case EmitState.FlowMappingValue:
+                break;
             case EmitState.FlowMappingKey:
-                flowMapKeySerializer.BeginScalar(output,ref offset);
+                flowMapKeySerializer.BeginScalar(output, ref offset);
                 break;
             case EmitState.None:
                 break;
@@ -94,8 +45,7 @@ public partial class Utf8YamlEmitter
         switch (StateStack.Current)
         {
             case EmitState.BlockSequenceEntry:
-                output[offset++] = YamlCodes.Lf;
-                currentElementCount++;
+                blockSequenceEntrySerializer.EndScalar(output, ref offset);
                 break;
             case EmitState.BlockMappingKey:
                 blockMapKeySerializer.EndScalar(output, ref offset);
@@ -113,7 +63,7 @@ public partial class Utf8YamlEmitter
                 currentElementCount++;
                 break;
             case EmitState.FlowSequenceEntry:
-                currentElementCount++;
+                flowSequenceEntrySerializer.EndScalar(output, ref offset);
                 break;
             case EmitState.None:
                 break;

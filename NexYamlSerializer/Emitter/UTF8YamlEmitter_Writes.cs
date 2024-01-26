@@ -104,7 +104,8 @@ public partial class Utf8YamlEmitter
         }
         Writer.Advance(length);
     }
-    
+
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal void WriteBlockSequenceEntryHeader()
     {
@@ -123,4 +124,31 @@ public partial class Utf8YamlEmitter
         }
         WriteRaw(EmitCodes.BlockSequenceEntryHeader, true, false);
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public int CalculateMaxScalarBufferLength(int length)
+    {
+        var around = (CurrentIndentLevel + 1) * Options.IndentWidth + 3;
+        if (tagStack.Length > 0)
+        {
+            length += StringEncoding.Utf8.GetMaxByteCount(tagStack.Peek().Length) + around; // TODO:
+        }
+        return length;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal void PushState(EmitState state)
+    {
+        StateStack.Add(state);
+        elementCountStack.Add(currentElementCount);
+        currentElementCount = 0;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal void PopState()
+    {
+        StateStack.Pop();
+        currentElementCount = elementCountStack.Length > 0 ? elementCountStack.Pop() : 0;
+    }
+
 }
