@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace NexYamlSerializer.Emitter.Serializers;
 internal class EmptySerializer : ISerializer
 {
-    public static readonly EmptySerializer Instance = new EmptySerializer();
+    public static readonly EmptySerializer Instance = new();
     private EmptySerializer() { }
     public EmitState State { get; } = EmitState.None;
 

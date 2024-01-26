@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace NexYamlSerializer.Emitter.Serializers;
 internal class BlockSequenceEntrySerializer(Utf8YamlEmitter emitter) : ISerializer
 {
-    public EmitState State { get; }
+    public EmitState State { get; } = EmitState.BlockSequenceEntry;
 
     public void Begin()
     {
@@ -30,7 +30,7 @@ internal class BlockSequenceEntrySerializer(Utf8YamlEmitter emitter) : ISerializ
                     "To start block-sequence in the mapping key is not supported.");
         }
 
-        emitter.PushState(EmitState.BlockSequenceEntry);
+        emitter.PushState(State);
     }
 
     public void BeginScalar(Span<byte> output, ref int offset)

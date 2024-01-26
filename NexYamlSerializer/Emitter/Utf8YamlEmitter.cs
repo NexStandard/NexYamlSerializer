@@ -26,7 +26,7 @@ namespace NexVYaml.Emitter
         FlowMappingKey,
         FlowMappingValue,
     }
-    public partial class Utf8YamlEmitter : IUtf8YamlEmitter
+    public sealed partial class Utf8YamlEmitter : IUtf8YamlEmitter
     {
         public int CurrentIndentLevel => IndentationManager.CurrentIndentLevel;
         public ExpandBuffer<EmitState> StateStack { get; }

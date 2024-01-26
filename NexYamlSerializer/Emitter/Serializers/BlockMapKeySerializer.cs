@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace NexYamlSerializer.Emitter.Serializers;
 internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : ISerializer
 {
-    public EmitState State { get; }
+    public EmitState State { get; } = EmitState.BlockMappingKey;
 
     public void Begin()
     {
@@ -29,7 +29,7 @@ internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : ISerializer
                     break;
                 }
         }
-        emitter.PushState(EmitState.BlockMappingKey);
+        emitter.PushState(State);
 
     }
     public void BeginScalar(Span<byte> output, ref int offset)

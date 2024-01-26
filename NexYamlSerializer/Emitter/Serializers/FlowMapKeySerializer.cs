@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace NexYamlSerializer.Emitter.Serializers;
 internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : ISerializer
 {
-    public EmitState State { get; }
+    public EmitState State { get; } = EmitState.FlowMappingKey;
 
     public void Begin()
     {
@@ -22,7 +22,7 @@ internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : ISerializer
         {
             throw new InvalidOperationException($"To start flow-mapping in the {current} is not supported");
         }
-        emitter.PushState(EmitState.FlowMappingKey);
+        emitter.PushState(State);
     }
 
     public void BeginScalar(Span<byte> output, ref int offset)

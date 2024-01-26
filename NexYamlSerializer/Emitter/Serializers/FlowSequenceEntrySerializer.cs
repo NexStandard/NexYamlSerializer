@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace NexYamlSerializer.Emitter.Serializers;
 internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : ISerializer
 {
-    public EmitState State { get; }
+    public EmitState State { get; } = EmitState.FlowSequenceEntry;
 
     public void Begin()
     {
@@ -32,7 +32,7 @@ internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : ISerialize
                 emitter.WriteRaw(YamlCodes.FlowSequenceStart);
                 break;
         }
-        emitter.PushState(EmitState.FlowSequenceEntry);
+        emitter.PushState(State);
     }
 
     public void BeginScalar(Span<byte> output, ref int offset)
