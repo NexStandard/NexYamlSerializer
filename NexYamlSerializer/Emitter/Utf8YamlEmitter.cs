@@ -32,11 +32,11 @@ public sealed partial class Utf8YamlEmitter : IUtf8YamlEmitter
     internal ExpandBuffer<EmitState> StateStack { get; }
     public IBufferWriter<byte> Writer { get; }
     public YamlEmitOptions Options { get; }
-    private ISerializer blockMapKeySerializer;
-    private ISerializer flowMapKeySerializer;
-    private ISerializer blockSequenceEntrySerializer;
-    private ISerializer flowSequenceEntrySerializer;
-    private ISerializer emptySerializer;
+    private IEmitter blockMapKeySerializer;
+    private IEmitter flowMapKeySerializer;
+    private IEmitter blockSequenceEntrySerializer;
+    private IEmitter flowSequenceEntrySerializer;
+    private IEmitter emptySerializer;
     internal bool IsFirstElement
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

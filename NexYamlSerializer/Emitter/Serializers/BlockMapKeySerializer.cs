@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NexYamlSerializer.Emitter.Serializers;
-internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : ISerializer
+internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
 {
     public EmitState State { get; } = EmitState.BlockMappingKey;
 
@@ -97,14 +97,6 @@ internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : ISerializer
     public void End()
     {
         var isEmptyMapping = emitter.currentElementCount <= 0;
-        if (emitter.StateStack.Current == EmitState.FlowMappingKey && !isEmptyMapping)
-        {
-            emitter.WriteRaw(EmitCodes.FlowMappingEnd, false, true);
-        }
-        else if (emitter.StateStack.Current == EmitState.FlowMappingKey && isEmptyMapping)
-        {
-            emitter.WriteRaw(YamlCodes.FlowMapEnd);
-        }
         emitter.PopState();
 
         if (isEmptyMapping)

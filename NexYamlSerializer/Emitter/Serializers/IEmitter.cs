@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NexYamlSerializer.Emitter.Serializers;
-internal interface ISerializer
+internal interface IEmitter
 {
     EmitState State { get; }
     void End();

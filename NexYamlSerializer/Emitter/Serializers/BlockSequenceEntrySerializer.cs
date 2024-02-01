@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NexYamlSerializer.Emitter.Serializers;
-internal class BlockSequenceEntrySerializer(Utf8YamlEmitter emitter) : ISerializer
+internal class BlockSequenceEntrySerializer(Utf8YamlEmitter emitter) : IEmitter
 {
     public EmitState State { get; } = EmitState.BlockSequenceEntry;
 

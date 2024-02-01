@@ -6,14 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NexYamlSerializer.Emitter.Serializers;
-internal class EmptySerializer : IEmitter
+internal class FlowMapValueSerializer(Utf8YamlEmitter emitter) : IEmitter
 {
-    public static readonly EmptySerializer Instance = new();
-    private EmptySerializer() { }
-    public EmitState State { get; } = EmitState.None;
+    public EmitState State { get; } = EmitState.FlowMappingValue;
 
     public void Begin()
     {
+        throw new InvalidOperationException($"Can't start a {State} as Mapping");
     }
 
     public void BeginScalar(Span<byte> output, ref int offset)
@@ -22,9 +21,12 @@ internal class EmptySerializer : IEmitter
 
     public void End()
     {
+        throw new NotImplementedException();
     }
 
     public void EndScalar(Span<byte> output, ref int offset)
     {
+        emitter.StateStack.Current = EmitState.FlowMappingKey;
+        emitter.currentElementCount++;
     }
 }

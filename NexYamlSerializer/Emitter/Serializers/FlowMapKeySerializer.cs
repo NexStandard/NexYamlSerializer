@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NexYamlSerializer.Emitter.Serializers;
-internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : ISerializer
+internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
 {
     public EmitState State { get; } = EmitState.FlowMappingKey;
 
@@ -16,9 +16,32 @@ internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : ISerializer
         var current = emitter.StateStack.Current;
         if (current is EmitState.BlockSequenceEntry)
         {
+            var output = emitter.Writer.GetSpan(emitter.CurrentIndentLevel * emitter.Options.IndentWidth + EmitCodes.BlockSequenceEntryHeader.Length + EmitCodes.FlowMappingStart.Length);
+            var offset = 0;
+            emitter.WriteIndent(output, ref offset);
+
+            EmitCodes.BlockSequenceEntryHeader.CopyTo(output[offset..]);
+            offset += EmitCodes.BlockSequenceEntryHeader.Length;
+
+            EmitCodes.FlowMappingStart.CopyTo(output[offset..]);
+            offset += EmitCodes.FlowMappingStart.Length;
+            emitter.Writer.Advance(offset);
             emitter.WriteBlockSequenceEntryHeader();
         }
-        if (current is EmitState.BlockMappingKey or EmitState.BlockSequenceEntry or EmitState.FlowSequenceEntry)
+        else if(current is EmitState.FlowSequenceEntry)
+        {
+            var output = emitter.Writer.GetSpan(EmitCodes.FlowSequenceSeparator.Length + EmitCodes.FlowMappingStart.Length);
+            var offset = 0;
+            if (emitter.currentElementCount > 0)
+            {
+                EmitCodes.FlowSequenceSeparator.CopyTo(output);
+                offset += EmitCodes.FlowSequenceSeparator.Length;
+            }
+            EmitCodes.FlowMappingStart.CopyTo(output[offset..]);
+            offset += EmitCodes.FlowMappingStart.Length;
+            emitter.Writer.Advance(offset);
+        }
+        else if (current is EmitState.BlockMappingKey )
         {
             throw new InvalidOperationException($"To start flow-mapping in the {current} is not supported");
         }
@@ -37,7 +60,7 @@ internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : ISerializer
             }
 
             EmitCodes.FlowMappingStart.CopyTo(output[offset..]);
-            offset += 2;
+            offset += EmitCodes.FlowMappingStart.Length;
         }
         if (!emitter.IsFirstElement)
         {

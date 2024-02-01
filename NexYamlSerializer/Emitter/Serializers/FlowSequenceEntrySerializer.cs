@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NexYamlSerializer.Emitter.Serializers;
-internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : ISerializer
+internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : IEmitter
 {
     public EmitState State { get; } = EmitState.FlowSequenceEntry;
 
@@ -17,13 +17,28 @@ internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : ISerialize
         {
             case EmitState.BlockMappingKey:
                 throw new YamlEmitterException("To start block-mapping in the mapping key is not supported.");
-            case EmitState.FlowMappingKey:
-                throw new YamlEmitterException("To start flow-mapping in the mapping key is not supported.");
-
             case EmitState.BlockSequenceEntry:
-                throw new YamlEmitterException("To start flow-mapping in the mapping key is not supported.");
+                {
+                    var output = emitter.Writer.GetSpan(emitter.CurrentIndentLevel * emitter.Options.IndentWidth + EmitCodes.BlockSequenceEntryHeader.Length + 1);
+                    var offset = 0;
+                    emitter.WriteIndent(output, ref offset);
+                    EmitCodes.BlockSequenceEntryHeader.CopyTo(output[offset..]);
+                    offset += EmitCodes.BlockSequenceEntryHeader.Length;
+                    output[offset++] = YamlCodes.FlowSequenceStart;
+                    emitter.Writer.Advance(offset);
+                    break;
+                }
             case EmitState.FlowSequenceEntry:
                 {
+                    var output = emitter.Writer.GetSpan(EmitCodes.FlowSequenceSeparator.Length + 1);
+                    var offset = 0;
+                    if (emitter.currentElementCount > 0)
+                    {
+                        EmitCodes.FlowSequenceSeparator.CopyTo(output);
+                        offset += EmitCodes.FlowSequenceSeparator.Length;
+                    }
+                    output[offset++] = YamlCodes.FlowSequenceStart;
+                    emitter.Writer.Advance(offset);
                     break;
                 }
             case EmitState.BlockMappingValue:
@@ -72,6 +87,10 @@ internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : ISerialize
             case EmitState.BlockMappingValue:
                 emitter.StateStack.Current = EmitState.BlockMappingKey; // end mapping value
                 needsLineBreak = true;
+                emitter.currentElementCount++;
+                break;
+            case EmitState.FlowMappingValue:
+                emitter.StateStack.Current = EmitState.FlowMappingKey;
                 emitter.currentElementCount++;
                 break;
             case EmitState.FlowSequenceEntry:
