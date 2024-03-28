@@ -4,35 +4,34 @@ using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using Stride.Core;
 
-namespace NexVYaml.Serialization
+namespace NexVYaml.Serialization;
+
+public class DecimalFormatter : IYamlFormatter<decimal>
 {
-    public class DecimalFormatter : IYamlFormatter<decimal>
+    public static readonly DecimalFormatter Instance = new();
+
+    public void Serialize(ref Utf8YamlEmitter emitter, decimal value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
     {
-        public static readonly DecimalFormatter Instance = new();
-
-        public void Serialize(ref Utf8YamlEmitter emitter, decimal value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
+        var buf = context.GetBuffer64();
+        if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten))
         {
-            var buf = context.GetBuffer64();
-            if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten))
-            {
-                emitter.WriteScalar(buf[..bytesWritten]);
-            }
-            else
-            {
-                throw new YamlSerializerException($"Cannot serialize a value: {value}");
-            }
+            emitter.WriteScalar(buf[..bytesWritten]);
         }
-
-        public decimal Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+        else
         {
-            if (parser.TryGetScalarAsSpan(out var span) &&
-                Utf8Parser.TryParse(span, out decimal value, out var bytesConsumed) &&
-                bytesConsumed == span.Length)
-            {
-                parser.Read();
-                return value;
-            }
-            throw new YamlSerializerException($"Cannot detect a scalar value of decimal : {parser.CurrentEventType} {parser.GetScalarAsString()}");
+            throw new YamlSerializerException($"Cannot serialize a value: {value}");
         }
+    }
+
+    public decimal Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    {
+        if (parser.TryGetScalarAsSpan(out var span) &&
+            Utf8Parser.TryParse(span, out decimal value, out var bytesConsumed) &&
+            bytesConsumed == span.Length)
+        {
+            parser.Read();
+            return value;
+        }
+        throw new YamlSerializerException($"Cannot detect a scalar value of decimal : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 }

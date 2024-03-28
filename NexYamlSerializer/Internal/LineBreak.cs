@@ -1,10 +1,9 @@
-namespace NexVYaml.Internal
+namespace NexVYaml.Internal;
+
+enum LineBreakState
 {
-    enum LineBreakState
-    {
-        None,
-        Lf,
-        CrLf,
-        Cr
-    }
+    None,
+    Lf,
+    CrLf,
+    Cr
 }

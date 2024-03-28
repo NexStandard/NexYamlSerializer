@@ -10,147 +10,146 @@ using NexVYaml.Parser;
 using NexYamlSerializer;
 using Stride.Core;
 
-namespace NexVYaml.Serialization
+namespace NexVYaml.Serialization;
+
+public class DictionaryFormatter<TKey, TValue> : IYamlFormatter<Dictionary<TKey, TValue>?>
+    where TKey : notnull
 {
-    public class DictionaryFormatter<TKey, TValue> : IYamlFormatter<Dictionary<TKey, TValue>?>
-        where TKey : notnull
+    public void IndirectSerialize(ref Utf8YamlEmitter emitter, object value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
     {
-        public void IndirectSerialize(ref Utf8YamlEmitter emitter, object value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
+        Serialize(ref emitter, (Dictionary<TKey, TValue>?)value, context);
+    }
+    public void Serialize(ref Utf8YamlEmitter emitter, Dictionary<TKey, TValue>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
+    {
+        if (value == null)
         {
-            Serialize(ref emitter, (Dictionary<TKey, TValue>?)value, context);
+            emitter.WriteNull();
         }
-        public void Serialize(ref Utf8YamlEmitter emitter, Dictionary<TKey, TValue>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
+        else
         {
-            if (value == null)
-            {
-                emitter.WriteNull();
-            }
-            else
-            {
-                context.IsRedirected = false;
+            context.IsRedirected = false;
 
-                IYamlFormatter<TKey> keyFormatter = null;
-                IYamlFormatter<TValue> valueFormatter = null;
-                if (this.IsPrimitiveType(typeof(TKey)))
-                {
-                    keyFormatter = context.Resolver.GetFormatter<TKey>();
-                }
-                if (this.IsPrimitiveType(typeof(TValue)))
-                    valueFormatter = context.Resolver.GetFormatter<TValue>();
-
-                if(keyFormatter == null)
-                {
-                    emitter.BeginSequence();
-                    if (value.Count > 0)
-                    {
-                        var elementFormatter = new KeyValuePairFormatter<TKey, TValue>();
-                        foreach (var x in value)
-                        {
-                            elementFormatter.Serialize(ref emitter, x, context);
-                        }
-                    }
-                    emitter.EndSequence();
-                }
-                else if(valueFormatter == null)
-                {
-                    emitter.BeginMapping();
-                    {
-                        foreach (var x in value)
-                        {
-                            keyFormatter.Serialize(ref emitter, x.Key, context);
-                            context.Serialize(ref emitter,x.Value);
-                        }
-                    }
-                    emitter.EndMapping();
-                }
-                else
-                {
-                    emitter.BeginMapping();
-                    {
-                        foreach (var x in value)
-                        {
-                            keyFormatter.Serialize(ref emitter, x.Key, context);
-                            valueFormatter.Serialize(ref emitter, x.Value, context);
-                        }
-                    }
-                    emitter.EndMapping();
-                }
-            }
-        }
-        
-        public Dictionary<TKey, TValue> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-        {
-            if (parser.IsNullScalar())
-            {
-                parser.Read();
-                return default;
-            }
-            var map = new Dictionary<TKey, TValue>();
+            IYamlFormatter<TKey> keyFormatter = null;
+            IYamlFormatter<TValue> valueFormatter = null;
             if (this.IsPrimitiveType(typeof(TKey)))
             {
-                var keyFormatter = context.Resolver.GetFormatter<TKey>();
-                parser.ReadWithVerify(ParseEventType.MappingStart);
+                keyFormatter = context.Resolver.GetFormatter<TKey>();
+            }
+            if (this.IsPrimitiveType(typeof(TValue)))
+                valueFormatter = context.Resolver.GetFormatter<TValue>();
 
-
-                while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
+            if(keyFormatter == null)
+            {
+                emitter.BeginSequence();
+                if (value.Count > 0)
                 {
-                    var key = context.DeserializeWithAlias(keyFormatter, ref parser);
-                    var value = context.DeserializeWithAlias<TValue>(ref parser);
-                    map.Add(key, value);
+                    var elementFormatter = new KeyValuePairFormatter<TKey, TValue>();
+                    foreach (var x in value)
+                    {
+                        elementFormatter.Serialize(ref emitter, x, context);
+                    }
                 }
-
-                parser.ReadWithVerify(ParseEventType.MappingEnd);
-                return map;
+                emitter.EndSequence();
+            }
+            else if(valueFormatter == null)
+            {
+                emitter.BeginMapping();
+                {
+                    foreach (var x in value)
+                    {
+                        keyFormatter.Serialize(ref emitter, x.Key, context);
+                        context.Serialize(ref emitter,x.Value);
+                    }
+                }
+                emitter.EndMapping();
             }
             else
             {
-                var listFormatter = new ListFormatter<KeyValuePair<TKey, TValue>>();
-                var keyValuePairs = context.DeserializeWithAlias(listFormatter, ref parser);
-                
-                return keyValuePairs?.ToDictionary() ?? [];
+                emitter.BeginMapping();
+                {
+                    foreach (var x in value)
+                    {
+                        keyFormatter.Serialize(ref emitter, x.Key, context);
+                        valueFormatter.Serialize(ref emitter, x.Value, context);
+                    }
+                }
+                emitter.EndMapping();
             }
         }
     }
-    file class DictionaryFormatterHelper : IYamlFormatterHelper
+    
+    public Dictionary<TKey, TValue> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
-        public void Register(IYamlFormatterResolver resolver)
+        if (parser.IsNullScalar())
         {
-            resolver.RegisterTag($"Dictionary,NexYamlTest", typeof(Dictionary<,>));
-            resolver.Register(this, typeof(Dictionary<,>), typeof(Dictionary<,>));
-            resolver.RegisterGenericFormatter(typeof(Dictionary<,>), typeof(DictionaryFormatter<,>));
-            resolver.RegisterFormatter(typeof(Dictionary<,>));
-
-
-            resolver.Register(this, typeof(Dictionary<,>), typeof(System.Collections.Generic.IDictionary<,>));
-            resolver.Register(this, typeof(Dictionary<,>), typeof(System.Collections.Generic.IReadOnlyDictionary<,>));
-
+            parser.Read();
+            return default;
         }
-        public IYamlFormatter Create(Type type)
+        var map = new Dictionary<TKey, TValue>();
+        if (this.IsPrimitiveType(typeof(TKey)))
         {
-            if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IDictionary<,>))
+            var keyFormatter = context.Resolver.GetFormatter<TKey>();
+            parser.ReadWithVerify(ParseEventType.MappingStart);
+
+
+            while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
             {
-                var generatorType = typeof(DictionaryFormatter<,>);
-                var genericParams = type.GenericTypeArguments;
-                var param = new Type[] { genericParams[0], genericParams[1] };
-                var filledGeneratorType = generatorType.MakeGenericType(param);
-                return (IYamlFormatter)Activator.CreateInstance(filledGeneratorType);
+                var key = context.DeserializeWithAlias(keyFormatter, ref parser);
+                var value = context.DeserializeWithAlias<TValue>(ref parser);
+                map.Add(key, value);
             }
 
-            if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IReadOnlyDictionary<,>))
-            {
-                var generatorType = typeof(DictionaryFormatter<,>);
-                var genericParams = type.GenericTypeArguments;
-                var param = new Type[] { genericParams[0], genericParams[1] };
-                var filledGeneratorType = generatorType.MakeGenericType(param);
-                return (IYamlFormatter)Activator.CreateInstance(filledGeneratorType);
-            }
-
-
-            var gen = typeof(DictionaryFormatter<,>);
-            var genParams = type.GenericTypeArguments;
-            var fillGen = gen.MakeGenericType(genParams);
-            return (IYamlFormatter)Activator.CreateInstance(fillGen);
+            parser.ReadWithVerify(ParseEventType.MappingEnd);
+            return map;
         }
+        else
+        {
+            var listFormatter = new ListFormatter<KeyValuePair<TKey, TValue>>();
+            var keyValuePairs = context.DeserializeWithAlias(listFormatter, ref parser);
+            
+            return keyValuePairs?.ToDictionary() ?? [];
+        }
+    }
+}
+file class DictionaryFormatterHelper : IYamlFormatterHelper
+{
+    public void Register(IYamlFormatterResolver resolver)
+    {
+        resolver.RegisterTag($"Dictionary,NexYamlTest", typeof(Dictionary<,>));
+        resolver.Register(this, typeof(Dictionary<,>), typeof(Dictionary<,>));
+        resolver.RegisterGenericFormatter(typeof(Dictionary<,>), typeof(DictionaryFormatter<,>));
+        resolver.RegisterFormatter(typeof(Dictionary<,>));
+
+
+        resolver.Register(this, typeof(Dictionary<,>), typeof(System.Collections.Generic.IDictionary<,>));
+        resolver.Register(this, typeof(Dictionary<,>), typeof(System.Collections.Generic.IReadOnlyDictionary<,>));
+
+    }
+    public IYamlFormatter Create(Type type)
+    {
+        if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IDictionary<,>))
+        {
+            var generatorType = typeof(DictionaryFormatter<,>);
+            var genericParams = type.GenericTypeArguments;
+            var param = new Type[] { genericParams[0], genericParams[1] };
+            var filledGeneratorType = generatorType.MakeGenericType(param);
+            return (IYamlFormatter)Activator.CreateInstance(filledGeneratorType);
+        }
+
+        if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IReadOnlyDictionary<,>))
+        {
+            var generatorType = typeof(DictionaryFormatter<,>);
+            var genericParams = type.GenericTypeArguments;
+            var param = new Type[] { genericParams[0], genericParams[1] };
+            var filledGeneratorType = generatorType.MakeGenericType(param);
+            return (IYamlFormatter)Activator.CreateInstance(filledGeneratorType);
+        }
+
+
+        var gen = typeof(DictionaryFormatter<,>);
+        var genParams = type.GenericTypeArguments;
+        var fillGen = gen.MakeGenericType(genParams);
+        return (IYamlFormatter)Activator.CreateInstance(fillGen);
     }
 }
 

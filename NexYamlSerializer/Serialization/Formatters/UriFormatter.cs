@@ -4,26 +4,25 @@ using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using Stride.Core;
 
-namespace NexVYaml.Serialization
+namespace NexVYaml.Serialization;
+
+public class UriFormatter : IYamlFormatter<Uri>
 {
-    public class UriFormatter : IYamlFormatter<Uri>
+    public static readonly UriFormatter Instance = new();
+
+    public void Serialize(ref Utf8YamlEmitter emitter, Uri value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
     {
-        public static readonly UriFormatter Instance = new();
+        emitter.WriteString(value.ToString());
+    }
 
-        public void Serialize(ref Utf8YamlEmitter emitter, Uri value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
+    public Uri Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    {
+        if (parser.TryGetScalarAsString(out var scalar) && scalar != null)
         {
-            emitter.WriteString(value.ToString());
+            var uri = new Uri(scalar, UriKind.RelativeOrAbsolute);
+            parser.Read();
+            return uri;
         }
-
-        public Uri Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-        {
-            if (parser.TryGetScalarAsString(out var scalar) && scalar != null)
-            {
-                var uri = new Uri(scalar, UriKind.RelativeOrAbsolute);
-                parser.Read();
-                return uri;
-            }
-            throw new YamlSerializerException($"Cannot detect a scalar value of Uri : {parser.CurrentEventType} {parser.GetScalarAsString()}");
-        }
+        throw new YamlSerializerException($"Cannot detect a scalar value of Uri : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 }

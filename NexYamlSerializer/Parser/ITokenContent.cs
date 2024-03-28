@@ -1,6 +1,5 @@
-namespace NexVYaml.Parser
+namespace NexVYaml.Parser;
+
+interface ITokenContent
 {
-    interface ITokenContent
-    {
-    }
 }

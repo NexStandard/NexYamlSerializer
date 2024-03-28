@@ -22,6 +22,20 @@ public static class YamlStreamExtensions
             stream.SerializeContext.Serialize(ref emitter, value, style);
         }
     }
+    public static void Write<T>(this IYamlStream stream, string key, ref T? value, DataStyle style = DataStyle.Any)
+        where T : struct
+    {
+        stream.Serialize(ref key);
+        if (value == null)
+        {
+            stream.WriteNull();
+        }
+        else
+        {
+            var emitter = stream.Emitter;
+            stream.SerializeContext.Serialize(ref emitter, value, style);
+        }
+    }
     public static void Write<T>(this IYamlStream stream, string key, ref T[] value, DataStyle style = DataStyle.Any)
     {
         stream.Serialize(ref key);

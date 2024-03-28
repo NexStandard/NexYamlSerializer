@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NexVYaml.Serialization
+namespace NexVYaml.Serialization;
+
+public interface IRegisterYamlFormatter
 {
-    public interface IRegisterYamlFormatter
-    {
-        void Register();
-    }
+    void Register();
 }

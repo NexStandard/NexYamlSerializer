@@ -5,45 +5,44 @@ using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using Stride.Core;
 
-namespace NexVYaml.Serialization
+namespace NexVYaml.Serialization;
+
+public class InterfaceEnumerableFormatter<T> : IYamlFormatter<IEnumerable<T>?>
 {
-    public class InterfaceEnumerableFormatter<T> : IYamlFormatter<IEnumerable<T>?>
+    public void Serialize(ref Utf8YamlEmitter emitter, IEnumerable<T>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
     {
-        public void Serialize(ref Utf8YamlEmitter emitter, IEnumerable<T>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
+        if (value is null)
         {
-            if (value is null)
-            {
-                emitter.WriteNull();
-                return;
-            }
-
-            emitter.BeginSequence();
-            if (value.Any())
-            {
-                foreach (var x in value)
-                {
-                    context.Serialize(ref emitter, x);
-                }
-            }
-            emitter.EndSequence();
+            emitter.WriteNull();
+            return;
         }
 
-        public IEnumerable<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+        emitter.BeginSequence();
+        if (value.Any())
         {
-            if (parser.IsNullScalar())
+            foreach (var x in value)
             {
-                parser.Read();
+                context.Serialize(ref emitter, x);
             }
-
-            List<T> list = new List<T>();
-            parser.ReadWithVerify(ParseEventType.SequenceStart);
-
-            while (!parser.End && parser.CurrentEventType != ParseEventType.SequenceEnd)
-            {
-                list.Add(context.DeserializeWithAlias<T>(ref parser)!);
-            }
-            parser.ReadWithVerify(ParseEventType.SequenceEnd);
-            return list;
         }
+        emitter.EndSequence();
+    }
+
+    public IEnumerable<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    {
+        if (parser.IsNullScalar())
+        {
+            parser.Read();
+        }
+
+        List<T> list = new List<T>();
+        parser.ReadWithVerify(ParseEventType.SequenceStart);
+
+        while (!parser.End && parser.CurrentEventType != ParseEventType.SequenceEnd)
+        {
+            list.Add(context.DeserializeWithAlias<T>(ref parser)!);
+        }
+        parser.ReadWithVerify(ParseEventType.SequenceEnd);
+        return list;
     }
 }

@@ -22,5 +22,6 @@ public interface IYamlStream
     void Serialize(ref byte value);
     void Serialize(ref bool value);
     void Serialize(ref string value);
+    void Serialize(ref decimal value);
     void Serialize(ReadOnlySpan<byte> value);
 }

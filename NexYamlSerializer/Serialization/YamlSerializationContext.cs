@@ -9,109 +9,108 @@ using NexVYaml.Internal;
 using NexYamlSerializer.Serialization.Formatters;
 using Stride.Core;
 
-namespace NexVYaml.Serialization
+namespace NexVYaml.Serialization;
+
+public readonly struct SequenceStyleScope
 {
-    public readonly struct SequenceStyleScope
+}
+
+public readonly struct ScalarStyleScope
+{
+}
+
+public class YamlSerializationContext : IDisposable
+{
+    public IYamlFormatterResolver Resolver { get; }
+    public YamlEmitOptions EmitOptions { get; }
+    /// <summary>
+    /// Decides if the <see cref="RedirectFormatter{T}"/> had to redirect it as it's an interface or abstract class
+    /// </summary>
+    public bool IsRedirected { get; set; } = false;
+    public bool IsFirst { get; set; } = true;
+    public bool SecureMode { get; set; } = false;
+    readonly byte[] primitiveValueBuffer;
+    ArrayBufferWriter<byte>? arrayBufferWriter;
+
+    public YamlSerializationContext(YamlSerializerOptions options)
     {
+        primitiveValueBuffer = ArrayPool<byte>.Shared.Rent(64);
+        Resolver = options.Resolver;
+        EmitOptions = options.EmitOptions;
     }
-
-    public readonly struct ScalarStyleScope
+    public static bool IsNullable(Type value, out Type underlyingType)
     {
+        return (underlyingType = Nullable.GetUnderlyingType(value)) != null;
     }
-
-    public class YamlSerializationContext : IDisposable
+    static Type NullableFormatter = typeof(NullableFormatter<>);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Serialize<T>(ref Utf8YamlEmitter emitter, T value, DataStyle style = DataStyle.Any)
     {
-        public IYamlFormatterResolver Resolver { get; }
-        public YamlEmitOptions EmitOptions { get; }
-        /// <summary>
-        /// Decides if the <see cref="RedirectFormatter{T}"/> had to redirect it as it's an interface or abstract class
-        /// </summary>
-        public bool IsRedirected { get; set; } = false;
-        public bool IsFirst { get; set; } = true;
-        public bool SecureMode { get; set; } = false;
-        readonly byte[] primitiveValueBuffer;
-        ArrayBufferWriter<byte>? arrayBufferWriter;
 
-        public YamlSerializationContext(YamlSerializerOptions options)
+        var type = typeof(T);
+        if (SecureMode)
         {
-            primitiveValueBuffer = ArrayPool<byte>.Shared.Rent(64);
-            Resolver = options.Resolver;
-            EmitOptions = options.EmitOptions;
-        }
-        public static bool IsNullable(Type value, out Type underlyingType)
-        {
-            return (underlyingType = Nullable.GetUnderlyingType(value)) != null;
-        }
-        static Type NullableFormatter = typeof(NullableFormatter<>);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Serialize<T>(ref Utf8YamlEmitter emitter, T value, DataStyle style = DataStyle.Any)
-        {
-
-            var type = typeof(T);
-            if (SecureMode)
+            if (type.IsGenericType)
             {
-                if (type.IsGenericType)
-                {
-                    var protectedGeneric = Resolver.GetGenericFormatter<T>();
-                    protectedGeneric ??= new EmptyFormatter<T>();
-                    protectedGeneric.Serialize(ref emitter, value!, this, style);
-                }
-                else
-                {
-                    var protectedFormatter = Resolver.GetFormatter<T>();
-                    protectedFormatter.Serialize(ref emitter, value!, this, style);
-
-                }
-                return;
-            }
-            if (IsNullable(type, out var underlyingType))
-            {
-                var genericFilledFormatter = NullableFormatter.MakeGenericType(underlyingType);
-
-                ((IYamlFormatter<T>)Activator.CreateInstance(genericFilledFormatter, args: Resolver.GetFormatter(underlyingType))).Serialize(ref emitter, value, this, style);
-            }
-            else
-            if (type.IsInterface || type.IsAbstract || type.IsGenericType)
-            {
-                var valueType = value!.GetType();
-                var formatt = this.Resolver.GetFormatter(value!.GetType(), typeof(T));
-                if (valueType != type)
-                    this.IsRedirected = true;
-
-                // C# forgets the cast of T when invoking Deserialize,
-                // this way we can call the deserialize method with the "real type"
-                // that is in the object
-                formatt.IndirectSerialize(ref emitter, value!, this, style);
-                // var method = formatt.GetType().GetMethod("Serialize");
-                //method.Invoke(formatt, new object[] { emitter, value, this });
+                var protectedGeneric = Resolver.GetGenericFormatter<T>();
+                protectedGeneric ??= new EmptyFormatter<T>();
+                protectedGeneric.Serialize(ref emitter, value!, this, style);
             }
             else
             {
-                Resolver.GetFormatter<T>().Serialize(ref emitter, value,this, style);
+                var protectedFormatter = Resolver.GetFormatter<T>();
+                protectedFormatter.Serialize(ref emitter, value!, this, style);
+
             }
+            return;
         }
-        public void SerializeArray<T>(ref Utf8YamlEmitter emitter, T[] value,DataStyle style = DataStyle.Any)
+        if (IsNullable(type, out var underlyingType))
         {
-            new ArrayFormatter<T>().Serialize(ref emitter, value, this, style);
+            var genericFilledFormatter = NullableFormatter.MakeGenericType(underlyingType);
+
+            ((IYamlFormatter<T>)Activator.CreateInstance(genericFilledFormatter, args: Resolver.GetFormatter(underlyingType))).Serialize(ref emitter, value, this, style);
         }
-        public ArrayBufferWriter<byte> GetArrayBufferWriter()
+        else
+        if (type.IsInterface || type.IsAbstract || type.IsGenericType)
         {
-            return arrayBufferWriter ??= new ArrayBufferWriter<byte>(65536);
-        }
+            var valueType = value!.GetType();
+            var formatt = this.Resolver.GetFormatter(value!.GetType(), typeof(T));
+            if (valueType != type)
+                this.IsRedirected = true;
 
-        public void Reset()
+            // C# forgets the cast of T when invoking Deserialize,
+            // this way we can call the deserialize method with the "real type"
+            // that is in the object
+            formatt.IndirectSerialize(ref emitter, value!, this, style);
+            // var method = formatt.GetType().GetMethod("Serialize");
+            //method.Invoke(formatt, new object[] { emitter, value, this });
+        }
+        else
         {
-            arrayBufferWriter?.Clear();
+            Resolver.GetFormatter<T>().Serialize(ref emitter, value,this, style);
         }
+    }
+    public void SerializeArray<T>(ref Utf8YamlEmitter emitter, T[] value,DataStyle style = DataStyle.Any)
+    {
+        new ArrayFormatter<T>().Serialize(ref emitter, value, this, style);
+    }
+    public ArrayBufferWriter<byte> GetArrayBufferWriter()
+    {
+        return arrayBufferWriter ??= new ArrayBufferWriter<byte>(65536);
+    }
 
-        public void Dispose()
-        {
-            ArrayPool<byte>.Shared.Return(primitiveValueBuffer);
-        }
+    public void Reset()
+    {
+        arrayBufferWriter?.Clear();
+    }
 
-        public byte[] GetBuffer64() => primitiveValueBuffer;
+    public void Dispose()
+    {
+        ArrayPool<byte>.Shared.Return(primitiveValueBuffer);
+    }
 
-        // readonly Stack<SequenceStyle> sequenceStyleStack = new();
-        // readonly Stack<ScalarStyle> sequenceStyleStack = new();
-   }
+    public byte[] GetBuffer64() => primitiveValueBuffer;
+
+    // readonly Stack<SequenceStyle> sequenceStyleStack = new();
+    // readonly Stack<ScalarStyle> sequenceStyleStack = new();
 }

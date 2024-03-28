@@ -1,34 +1,33 @@
 #nullable enable
 using System;
 
-namespace NexVYaml.Parser
+namespace NexVYaml.Parser;
+
+public class Tag : ITokenContent
 {
-    public class Tag : ITokenContent
+    public string Prefix { get; }
+    public string Handle { get; }
+
+    public Tag(string prefix, string handle)
     {
-        public string Prefix { get; }
-        public string Handle { get; }
+        Prefix = prefix;
+        Handle = handle;
+    }
 
-        public Tag(string prefix, string handle)
+    public override string ToString() => $"{Prefix}{Handle}";
+
+    public bool Equals(string tagString)
+    {
+        if (tagString.Length != Prefix.Length + Handle.Length)
         {
-            Prefix = prefix;
-            Handle = handle;
+            return false;
         }
-
-        public override string ToString() => $"{Prefix}{Handle}";
-
-        public bool Equals(string tagString)
+        var handleIndex = tagString.IndexOf(Prefix, StringComparison.Ordinal);
+        if (handleIndex < 0)
         {
-            if (tagString.Length != Prefix.Length + Handle.Length)
-            {
-                return false;
-            }
-            var handleIndex = tagString.IndexOf(Prefix, StringComparison.Ordinal);
-            if (handleIndex < 0)
-            {
-                return false;
-            }
-            return tagString.IndexOf(Handle, handleIndex, StringComparison.Ordinal) > 0;
+            return false;
         }
+        return tagString.IndexOf(Handle, handleIndex, StringComparison.Ordinal) > 0;
     }
 }
 

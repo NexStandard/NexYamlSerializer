@@ -1,9 +1,8 @@
 ﻿using System.Text;
 
-namespace NexVYaml.Internal
+namespace NexVYaml.Internal;
+
+static class StringEncoding
 {
-    static class StringEncoding
-    {
-        public static readonly Encoding Utf8 = new UTF8Encoding(false);
-    }
+    public static readonly Encoding Utf8 = new UTF8Encoding(false);
 }

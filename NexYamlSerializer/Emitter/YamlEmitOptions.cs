@@ -1,39 +1,38 @@
 #nullable enable
-namespace NexVYaml.Emitter
+namespace NexVYaml.Emitter;
+
+public enum ScalarStyle
 {
-    public enum ScalarStyle
-    {
-        Any,
-        Plain,
-        SingleQuoted,
-        DoubleQuoted,
-        Literal,
-        Folded,
-    }
+    Any,
+    Plain,
+    SingleQuoted,
+    DoubleQuoted,
+    Literal,
+    Folded,
+}
 
-    public enum SequenceStyle
-    {
-        Block,
-        Flow,
-    }
-    public enum YamlStyle
-    {
-        BlockMapping,
-        FlowMapping,
-        BlockSequence,
-        FlowSequence
-    }
-    public enum MappingStyle
-    {
-        Block,
-        Flow,
-    }
+public enum SequenceStyle
+{
+    Block,
+    Flow,
+}
+public enum YamlStyle
+{
+    BlockMapping,
+    FlowMapping,
+    BlockSequence,
+    FlowSequence
+}
+public enum MappingStyle
+{
+    Block,
+    Flow,
+}
 
-    public class YamlEmitOptions
-    {
-        public static YamlEmitOptions Default => new();
+public class YamlEmitOptions
+{
+    public static YamlEmitOptions Default => new();
 
-        public int IndentWidth { get; set; } = 2;
-    }
+    public int IndentWidth { get; set; } = 2;
 }
 

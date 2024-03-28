@@ -117,7 +117,8 @@ internal class YamlSerializationWriter : IYamlStream
 
     public void Serialize(ref byte value)
     {
-        throw new NotImplementedException();
+        var b = (int)value;
+        Serialize (ref b);
     }
 
     public void Serialize(ref char value)
@@ -145,5 +146,18 @@ internal class YamlSerializationWriter : IYamlStream
     public void Serialize(ReadOnlySpan<byte> value)
     {
         Emitter.WriteScalar(value);
+    }
+
+    public void Serialize(ref decimal value)
+    {
+        var buf = SerializeContext.GetBuffer64();
+        if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten))
+        {
+            Emitter.WriteScalar(buf[..bytesWritten]);
+        }
+        else
+        {
+            throw new YamlSerializerException($"Cannot serialize a value: {value}");
+        }
     }
 }

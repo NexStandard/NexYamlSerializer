@@ -5,35 +5,34 @@ using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using Stride.Core;
 
-namespace NexVYaml.Serialization
+namespace NexVYaml.Serialization;
+
+public class TimeSpanFormatter : IYamlFormatter<TimeSpan>
 {
-    public class TimeSpanFormatter : IYamlFormatter<TimeSpan>
+    public static readonly TimeSpanFormatter Instance = new();
+
+    public void Serialize(ref Utf8YamlEmitter emitter, TimeSpan value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
     {
-        public static readonly TimeSpanFormatter Instance = new();
-
-        public void Serialize(ref Utf8YamlEmitter emitter, TimeSpan value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
+        var buf = context.GetBuffer64();
+        if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten))
         {
-            var buf = context.GetBuffer64();
-            if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten))
-            {
-                emitter.WriteScalar(buf[..bytesWritten]);
-            }
-            else
-            {
-                throw new YamlSerializerException($"Cannot serialize a value: {value}");
-            }
+            emitter.WriteScalar(buf[..bytesWritten]);
         }
-
-        public TimeSpan Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+        else
         {
-            if (parser.TryGetScalarAsSpan(out var span) &&
-                Utf8Parser.TryParse(span, out TimeSpan timeSpan, out var bytesConsumed) &&
-                bytesConsumed == span.Length)
-            {
-                parser.Read();
-                return timeSpan;
-            }
-            throw new YamlSerializerException($"Cannot detect a scalar value of TimeSpan : {parser.CurrentEventType} {parser.GetScalarAsString()}");
+            throw new YamlSerializerException($"Cannot serialize a value: {value}");
         }
+    }
+
+    public TimeSpan Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    {
+        if (parser.TryGetScalarAsSpan(out var span) &&
+            Utf8Parser.TryParse(span, out TimeSpan timeSpan, out var bytesConsumed) &&
+            bytesConsumed == span.Length)
+        {
+            parser.Read();
+            return timeSpan;
+        }
+        throw new YamlSerializerException($"Cannot detect a scalar value of TimeSpan : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 }
