@@ -1,11 +1,6 @@
 ﻿using NexVYaml.Emitter;
 using NexVYaml.Internal;
-using SharpDX.DXGI;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NexYamlSerializer.Emitter.Serializers;
 internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter

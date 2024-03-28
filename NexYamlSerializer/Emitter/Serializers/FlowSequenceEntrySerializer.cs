@@ -42,6 +42,17 @@ internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : IEmitter
                     break;
                 }
             case EmitState.BlockMappingValue:
+                {
+                    var output = emitter.Writer.GetSpan(EmitCodes.FlowSequenceSeparator.Length + 1);
+                    var offset = 0;
+                    if (emitter.currentElementCount > 0)
+                    {
+                        EmitCodes.FlowSequenceSeparator.CopyTo(output);
+                        offset += EmitCodes.FlowSequenceSeparator.Length;
+                    }
+                    output[offset++] = YamlCodes.FlowSequenceStart;
+                    emitter.Writer.Advance(offset);
+                }
                 break;
             default:
                 emitter.WriteRaw(YamlCodes.FlowSequenceStart);
@@ -52,9 +63,6 @@ internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : IEmitter
 
     public void BeginScalar(Span<byte> output, ref int offset)
     {
-
-        if (emitter.StateStack.Previous is not EmitState.BlockMappingValue)
-            return;
         if (emitter.IsFirstElement)
         {
             if (emitter.tagStack.TryPop(out var tag))
@@ -62,9 +70,6 @@ internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : IEmitter
                 offset += StringEncoding.Utf8.GetBytes(tag, output[offset..]);
                 output[offset++] = YamlCodes.Space;
             }
-
-            EmitCodes.FlowSequenceEntryHeader.CopyTo(output[offset..]);
-            offset += EmitCodes.FlowSequenceEntryHeader.Length;
         }
         else
         {

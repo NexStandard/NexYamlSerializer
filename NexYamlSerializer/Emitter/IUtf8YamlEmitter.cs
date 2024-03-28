@@ -3,7 +3,7 @@ using System;
 using System.Buffers;
 
 namespace NexVYaml.Emitter;
-public interface IUtf8YamlEmitter : IDisposable
+public interface IUTF8Emitter
 {
     int CurrentIndentLevel { get; }
     YamlEmitOptions Options { get; }
@@ -18,5 +18,6 @@ public interface IUtf8YamlEmitter : IDisposable
     void BeginScalar(Span<byte> output, ref int offset);
     void EndScalar(Span<byte> output, ref int offset);
     void WriteScalar(ReadOnlySpan<byte> value);
-    void Dispose();
+
+
 }
