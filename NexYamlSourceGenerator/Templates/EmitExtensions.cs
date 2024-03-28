@@ -22,6 +22,23 @@ internal static class EmitExtensions
         }
         return sb.ToString();
     }
+    public static string CreateNewSerializationEmit(this ClassPackage package)
+    {
+        var sb = new StringBuilder();
+        foreach (var member in package.MemberSymbols)
+        {
+            var serializeString = ".Serialize";
+            //TODO
+            //if (member.IsArray)
+            //    serializeString = ".SerializeArray";
+            var dataStyle = member.DataStyle == "" ? "" : $", {member.DataStyle}";
+            sb.AppendLine($$"""
+                        stream.Write("{{member.Name}}", value.{{member.Name}}{{dataStyle}});
+                """);
+
+        }
+        return sb.ToString();
+    }
     /// <summary>
     /// Flow Mapping isn't supported currently
     /// </summary>

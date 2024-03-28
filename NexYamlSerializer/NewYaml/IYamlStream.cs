@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NexYaml2.NewYaml;
+namespace NexVYaml;
 public interface IYamlStream
 {
     public YamlSerializationContext SerializeContext { get; init; }

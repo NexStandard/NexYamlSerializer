@@ -1,4 +1,4 @@
-﻿namespace NexYaml2.NewYaml;
+﻿namespace NexVYaml;
 
 public static class YamlStreamExtensionsInt
 {

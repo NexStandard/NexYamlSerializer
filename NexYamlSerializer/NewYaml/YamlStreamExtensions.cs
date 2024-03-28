@@ -5,7 +5,7 @@ using System;
 using System.Runtime.CompilerServices;
 using ScalarStyle = NexVYaml.Emitter.ScalarStyle;
 
-namespace NexYaml2.NewYaml;
+namespace NexVYaml;
 
 public static class YamlStreamExtensions
 {
@@ -22,8 +22,78 @@ public static class YamlStreamExtensions
             stream.SerializeContext.Serialize(ref emitter, value, style);
         }
     }
+    public static void Write<T>(this IYamlStream stream, string key, ref T[] value, DataStyle style = DataStyle.Any)
+    {
+        stream.Serialize(ref key);
+        if (value == null)
+        {
+            stream.WriteNull();
+        }
+        else
+        {
+            stream.Emitter.BeginSequence(style);
+            foreach (var item in value)
+            {
+                var x = item;
+                stream.Write(ref x,style);
+            }
+            stream.Emitter.EndSequence();
+        }
+    }
+    public static void Write<T>(this IYamlStream stream, ref T[] value, DataStyle style = DataStyle.Any)
+    {
+        if (value == null)
+        {
+            stream.WriteNull();
+        }
+        else
+        {
+            stream.Emitter.BeginSequence(style);
+            foreach (var item in value)
+            {
+                var x = item;
+                stream.Write(ref x, style);
+            }
+            stream.Emitter.EndSequence();
+        }
+    }
+    public static void Write<T>(this IYamlStream stream, T[] value, DataStyle style = DataStyle.Any)
+    {
+        stream.Write(ref value, style);
+    }
+    public static void Write<T>(this IYamlStream stream, string key, T[] value, DataStyle style = DataStyle.Any)
+    {
+        stream.Write(key, ref value, style);
+    }
+
+    public static void Write<T>(this IYamlStream stream, string key, T value, DataStyle style = DataStyle.Any)
+    {
+        stream.Serialize(ref key);
+        if (value == null)
+        {
+            stream.WriteNull();
+        }
+        else
+        {
+            var emitter = stream.Emitter;
+            stream.SerializeContext.Serialize(ref emitter, value, style);
+        }
+    }
+    public static void WriteTag(this IYamlStream stream, string tag)
+    {
+        if (stream.SerializeContext.IsRedirected || stream.SerializeContext.IsFirst)
+        {
+            stream.Emitter.Tag($"!{tag}");
+            stream.SerializeContext.IsRedirected = false;
+            stream.SerializeContext.IsFirst = false;
+        }
+    }
     public static void Write<T>(this IYamlStream stream, ref T? value, DataStyle style = DataStyle.Any)
     {
+        if (style is DataStyle.Any)
+        {
+            style = DataStyle.Normal;
+        }
         if (value == null)
         {
             stream.WriteNull();

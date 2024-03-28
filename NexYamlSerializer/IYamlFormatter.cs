@@ -1,5 +1,4 @@
 #nullable enable
-using NexVYaml;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using NexVYaml.Serialization;
@@ -37,21 +36,16 @@ public interface IYamlFormatter<T> : IYamlFormatter
 }
 public abstract class YamlSerializer2
 {
-    public abstract void Serialize(ref Utf8YamlEmitter emitter, object value, YamlSerializationContext context, DataStyle style = DataStyle.Normal);
+    public abstract void Serialize(ref IYamlStream emitter, object value, DataStyle style = DataStyle.Normal);
     // object? Read(ref YamlParser parser, YamlDeserializationContext context) { throw new NotImplementedException($"The method {nameof(IndirectSerialize)} isn't implemented on {this.GetType()}"); }
 
 }
 
-public abstract class YamlSerializer2<T> : YamlSerializer2, IYamlFormatter<T>
+public abstract class YamlSerializer2<T> : YamlSerializer2
 {
-    public T? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    public override void Serialize(ref IYamlStream stream, object value,  DataStyle style = DataStyle.Normal)
     {
-        throw new NotImplementedException();
+        Serialize(ref stream, (T)stream, style);
     }
-
-    public override void Serialize(ref Utf8YamlEmitter emitter, object value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        Serialize(ref emitter, (T)value, context, style);
-    }
-    public abstract void Serialize(ref Utf8YamlEmitter emitter, T value, YamlSerializationContext context, DataStyle style = DataStyle.Normal);
+    public abstract void Serialize(ref IYamlStream stream, T value, DataStyle style = DataStyle.Normal);
 }

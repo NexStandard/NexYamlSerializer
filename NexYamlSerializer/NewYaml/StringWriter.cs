@@ -2,7 +2,7 @@
 using NexVYaml.Internal;
 using System;
 
-namespace NexYaml2.NewYaml;
+namespace NexVYaml;
 
 unsafe ref struct StringWriter(Utf8YamlEmitter emitter)
 {

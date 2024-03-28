@@ -48,7 +48,7 @@ file sealed class {info.GeneratorName + "Helper" } : IYamlFormatterHelper
 {package.CreateMethodTyped()}
 }}
 [System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]
-file struct {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<{info.NameDefinition}> {info.TypeParameterRestrictions}
+file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSerializer2<{info.NameDefinition}>, IYamlFormatter<{info.NameDefinition}> {info.TypeParameterRestrictions}
 {{
 
     {package.CreateUTF8Members()}
@@ -61,6 +61,14 @@ file struct {info.GeneratorName + info.TypeParameterArguments} : IYamlFormatter<
     {{
         return Deserialize(ref parser, context);
     }}
+    public override void Serialize(ref IYamlStream stream, {info.NameDefinition} value, DataStyle style = DataStyle.Normal)
+    {{
+        stream.Emitter.{package.BeginMappingStyle()};
+        stream.WriteTag(""{tag}"");
+{package.CreateNewSerializationEmit()}
+        stream.Emitter.EndMapping();
+    }}
+
     public void Serialize(ref Utf8YamlEmitter emitter, {info.NameDefinition} value, YamlSerializationContext context, DataStyle style = {info.DataStyle})
     {{
         if(style is DataStyle.Any)

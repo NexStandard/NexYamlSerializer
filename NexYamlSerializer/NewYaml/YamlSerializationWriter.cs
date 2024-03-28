@@ -6,7 +6,7 @@ using System;
 using System.Buffers.Text;
 using ScalarStyle = NexVYaml.Emitter.ScalarStyle;
 
-namespace NexYaml2.NewYaml;
+namespace NexVYaml;
 internal class YamlSerializationWriter : IYamlStream
 {
     public Utf8YamlEmitter Emitter { get; set; }
@@ -98,7 +98,16 @@ internal class YamlSerializationWriter : IYamlStream
 
     public void Serialize(ref short value)
     {
-        throw new NotImplementedException();
+        var offset = 0;
+        var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(11)); // -2147483648
+
+        Emitter.BeginScalar(output, ref offset);
+        if (!Utf8Formatter.TryFormat(value, output[offset..], out var bytesWritten))
+        {
+            throw new YamlEmitterException($"Failed to emit : {value}");
+        }
+        offset += bytesWritten;
+        Emitter.EndScalar(output, ref offset);
     }
 
     public void Serialize(ref ushort value)
