@@ -64,13 +64,6 @@ public class YamlSerializationContext : IDisposable
             }
             return;
         }
-        if (IsNullable(type, out var underlyingType))
-        {
-            var genericFilledFormatter = NullableFormatter.MakeGenericType(underlyingType);
-
-            ((IYamlFormatter<T>)Activator.CreateInstance(genericFilledFormatter, args: Resolver.GetFormatter(underlyingType))).Serialize(ref emitter, value, this, style);
-        }
-        else
         if (type.IsInterface || type.IsAbstract || type.IsGenericType)
         {
             var valueType = value!.GetType();

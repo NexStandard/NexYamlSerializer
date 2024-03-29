@@ -34,18 +34,3 @@ public interface IYamlFormatter<T> : IYamlFormatter
     /// <returns>The deserialized value of type <typeparamref name="T"/>.</returns>
     T? Deserialize(ref YamlParser parser, YamlDeserializationContext context);
 }
-public abstract class YamlSerializer2
-{
-    public abstract void Serialize(ref IYamlStream emitter, object value, DataStyle style = DataStyle.Normal);
-    // object? Read(ref YamlParser parser, YamlDeserializationContext context) { throw new NotImplementedException($"The method {nameof(IndirectSerialize)} isn't implemented on {this.GetType()}"); }
-
-}
-
-public abstract class YamlSerializer2<T> : YamlSerializer2
-{
-    public override void Serialize(ref IYamlStream stream, object value,  DataStyle style = DataStyle.Normal)
-    {
-        Serialize(ref stream, (T)stream, style);
-    }
-    public abstract void Serialize(ref IYamlStream stream, T value, DataStyle style = DataStyle.Normal);
-}

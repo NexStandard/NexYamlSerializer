@@ -10,6 +10,7 @@ using NexVYaml.Emitter;
 using NexVYaml.Internal;
 using NexVYaml.Parser;
 using NexVYaml.Serialization;
+using Stride.Core;
 
 namespace NexVYaml;
 
@@ -26,7 +27,7 @@ public class YamlSerializerException : Exception
 /// <summary>
 /// Provides methods for serializing/deserializing objects to YAML format using the specified <see cref="YamlSerializerOptions"/>.
 /// </summary>
-public static class YamlSerializer
+public abstract class YamlSerializer
 {
     /// <summary>
     /// Gets or sets the default serialization <see cref="YamlSerializerOptions"/> used by the YamlSerializer if no <see cref="YamlSerializerOptions"/> is given.
@@ -58,17 +59,28 @@ public static class YamlSerializer
         var writer = contextLocal.GetArrayBufferWriter();
 
         var emitter = new Utf8YamlEmitter(writer);
-
+        var stream = new YamlSerializationWriter()
+        {
+            Emitter = emitter,
+            SerializeContext = contextLocal,
+        };
         try
         {
-            contextLocal.Serialize(ref emitter, value);
-
+            stream.Write(ref value);
             return writer.WrittenMemory;
         }
         finally
         {
             emitter.Dispose();
         }
+    }
+    public static ReadOnlyMemory<byte> Serialize<T>(T? value, YamlSerializerOptions? options = null)
+        where T : struct
+    {
+        if (value == null)
+            return new ReadOnlyMemory<byte>();
+        else 
+            return Serialize(value.Value, options);
     }
 
     /// <summary>
@@ -126,8 +138,40 @@ public static class YamlSerializer
         {
             options ??= DefaultOptions;
             var contextLocal = new YamlSerializationContext(options);
-
-            contextLocal.Serialize(ref emitter, value);
+            IYamlStream stream = new YamlSerializationWriter()
+            {
+                Emitter = emitter,
+                SerializeContext = contextLocal,
+            };
+            stream.Write(ref value);
+            // contextLocal.Serialize(ref emitter, value);
+        }
+        finally
+        {
+            emitter.Dispose();
+        }
+    }
+    /// <summary>
+    /// Serializes the specified object of type <typeparamref name="T"/> or any derived class/interface of type <typeparamref name="T"/> to YAML format 
+    /// using the provided <paramref name="emitter"/> and <paramref name="options"/> and disposes the emitter afterward.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to be serialized, or any type derived from <typeparamref name="T"/>.</typeparam>
+    /// <param name="emitter">The Utf8YamlEmitter used for serializing the YAML content.</param>
+    /// <param name="value">The object to be serialized.</param>
+    /// <param name="options">Optional settings for customizing the YAML serialization process.</param>
+    public static void Serialize<T>(ref Utf8YamlEmitter emitter, T? value, YamlSerializerOptions? options = null)
+        where T : struct
+    {
+        try
+        {
+            options ??= DefaultOptions;
+            var contextLocal = new YamlSerializationContext(options);
+            IYamlStream stream = new YamlSerializationWriter()
+            {
+                Emitter = emitter,
+                SerializeContext = contextLocal,
+            };
+            stream.Write(ref value);
         }
         finally
         {
@@ -231,4 +275,26 @@ public static class YamlSerializer
             parser.Dispose();
         }
     }
+    public abstract void Serialize(ref IYamlStream emitter, object value, DataStyle style = DataStyle.Normal);
+    public abstract object? IndirectDeserialize(ref YamlParser parser, YamlDeserializationContext context);
+}
+public abstract class YamlSerializer<T> : YamlSerializer
+{
+    public override void Serialize(ref IYamlStream stream, object value, DataStyle style = DataStyle.Normal)
+    {
+        Serialize(ref stream, (T)stream, style);
+    }
+    public abstract void Serialize(ref IYamlStream stream, T value, DataStyle style = DataStyle.Normal);
+
+    public override object? IndirectDeserialize(ref YamlParser parser, YamlDeserializationContext context)
+    {
+        return Deserialize(ref parser, context);
+    }
+    /// <summary>
+    /// Deserializes a YAML representation from the provided <see cref="YamlParser"/> and <see cref="YamlDeserializationContext"/>.
+    /// </summary>
+    /// <param name="parser">The <see cref="YamlParser"/> containing the YAML data to be deserialized.</param>
+    /// <param name="context">The <see cref="YamlDeserializationContext"/> providing deserialization context.</param>
+    /// <returns>The deserialized value of type <typeparamref name="T"/>.</returns>
+    public abstract T? Deserialize(ref YamlParser parser, YamlDeserializationContext context);
 }

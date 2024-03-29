@@ -1,5 +1,4 @@
 ﻿using NexVYaml;
-using NexVYaml.Serialization;
 using NexYamlTest.SimpleClasses;
 using Xunit;
 

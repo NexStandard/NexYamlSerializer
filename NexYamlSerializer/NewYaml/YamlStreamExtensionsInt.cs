@@ -176,7 +176,14 @@ public static class YamlStreamExtensionsFloat
 
     public static void Write(this IYamlStream stream, string key, float? value)
     {
-        stream.Write(key, ref value);
+        stream.Serialize(ref key);
+        if (value is null)
+            stream.WriteNull();
+        else
+        {
+            var x = value.Value;
+            stream.Serialize(ref x);
+        }
     }
 
     public static void Write(this IYamlStream stream, string key, float value)
@@ -244,7 +251,14 @@ public static class YamlStreamExtensionsbool
 
     public static void Write(this IYamlStream stream, string key, bool? value)
     {
-        stream.Write(key, ref value);
+        stream.Serialize(ref key);
+        if (value is null)
+            stream.WriteNull();
+        else
+        {
+            var x = value.Value;
+            stream.Serialize(ref x);
+        }
     }
 
     public static void Write(this IYamlStream stream, string key, bool value)
@@ -313,7 +327,14 @@ public static class YamlStreamExtensionsuint
 
     public static void Write(this IYamlStream stream, string key, uint? value)
     {
-        stream.Write(key, ref value);
+        stream.Serialize(ref key);
+        if(value is null)
+            stream.WriteNull();
+        else
+        {
+            var x = value.Value;
+            stream.Serialize(ref x);
+        }
     }
 
     public static void Write(this IYamlStream stream, string key, uint value)

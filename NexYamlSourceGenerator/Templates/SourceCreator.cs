@@ -48,7 +48,7 @@ file sealed class {info.GeneratorName + "Helper" } : IYamlFormatterHelper
 {package.CreateMethodTyped()}
 }}
 [System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]
-file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSerializer2<{info.NameDefinition}>, IYamlFormatter<{info.NameDefinition}> {info.TypeParameterRestrictions}
+file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSerializer<{info.NameDefinition}>, IYamlFormatter<{info.NameDefinition}> {info.TypeParameterRestrictions}
 {{
 
     {package.CreateUTF8Members()}
@@ -57,10 +57,7 @@ file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSeria
     {{
         Serialize(ref emitter,({info.NameDefinition})value,context, style);
     }}
-    public object{(info.TypeKind == TypeKind.Struct ? "" : "?")} IndirectDeserialize(ref YamlParser parser, YamlDeserializationContext context) 
-    {{
-        return Deserialize(ref parser, context);
-    }}
+
     public override void Serialize(ref IYamlStream stream, {info.NameDefinition} value, DataStyle style = DataStyle.Normal)
     {{
         stream.Emitter.{package.BeginMappingStyle()};
@@ -87,7 +84,7 @@ file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSeria
         emitter.EndMapping();
     }}
 
-    public {info.NameDefinition}{(info.TypeKind == TypeKind.Struct ? "" : "?")} Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    public override {info.NameDefinition}{(info.TypeKind == TypeKind.Struct ? "" : "?")} Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {{
 {package.CreateDeserialize()}
     }}

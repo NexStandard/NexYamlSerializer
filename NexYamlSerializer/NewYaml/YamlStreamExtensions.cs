@@ -93,6 +93,21 @@ public static class YamlStreamExtensions
             stream.SerializeContext.Serialize(ref emitter, value, style);
         }
     }
+    public static void Write<T>(this IYamlStream stream, string key, T? value, DataStyle style = DataStyle.Any)
+        where T : struct
+    {
+        stream.Serialize(ref key);
+        if (value == null)
+        {
+            stream.WriteNull();
+        }
+        else
+        {
+            var emitter = stream.Emitter;
+            var val = value.Value;
+            stream.SerializeContext.Serialize(ref emitter, val, style);
+        }
+    }
     public static void WriteTag(this IYamlStream stream, string tag)
     {
         if (stream.SerializeContext.IsRedirected || stream.SerializeContext.IsFirst)
