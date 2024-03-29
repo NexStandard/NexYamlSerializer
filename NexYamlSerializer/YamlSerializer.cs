@@ -144,7 +144,6 @@ public abstract class YamlSerializer
                 SerializeContext = contextLocal,
             };
             stream.Write(ref value);
-            // contextLocal.Serialize(ref emitter, value);
         }
         finally
         {

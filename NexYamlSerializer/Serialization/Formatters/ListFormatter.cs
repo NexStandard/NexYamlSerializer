@@ -142,4 +142,67 @@ file class ListHelper : IYamlFormatterHelper
         var fillGen = gen.MakeGenericType(genParams);
         return (IYamlFormatter)Activator.CreateInstance(fillGen);
     }
+
+    public YamlSerializer Instantiate(Type type)
+    {
+        if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IList<>))
+        {
+            var generatorType = typeof(ListFormatter<>);
+            var genericParams = type.GenericTypeArguments;
+            var param = new Type[] { genericParams[0] };
+            var filledGeneratorType = generatorType.MakeGenericType(param);
+            return (YamlSerializer)Activator.CreateInstance(filledGeneratorType);
+        }
+
+        if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.ICollection<>))
+        {
+            var generatorType = typeof(ListFormatter<>);
+            var genericParams = type.GenericTypeArguments;
+            var param = new Type[] { genericParams[0] };
+            var filledGeneratorType = generatorType.MakeGenericType(param);
+            return (YamlSerializer)Activator.CreateInstance(filledGeneratorType);
+        }
+
+        if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IReadOnlyList<>))
+        {
+            var generatorType = typeof(ListFormatter<>);
+            var genericParams = type.GenericTypeArguments;
+            var param = new Type[] { genericParams[0] };
+            var filledGeneratorType = generatorType.MakeGenericType(param);
+            return (YamlSerializer)Activator.CreateInstance(filledGeneratorType);
+        }
+
+        if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IReadOnlyCollection<>))
+        {
+            var generatorType = typeof(ListFormatter<>);
+            var genericParams = type.GenericTypeArguments;
+            var param = new Type[] { genericParams[0] };
+            var filledGeneratorType = generatorType.MakeGenericType(param);
+            return (YamlSerializer)Activator.CreateInstance(filledGeneratorType);
+        }
+
+        if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IEnumerable<>))
+        {
+            var generatorType = typeof(ListFormatter<>);
+            var genericParams = type.GenericTypeArguments;
+            var param = new Type[] { genericParams[0] };
+            var filledGeneratorType = generatorType.MakeGenericType(param);
+            return (YamlSerializer)Activator.CreateInstance(filledGeneratorType);
+        }
+
+        if (type.GetGenericTypeDefinition() == typeof(List<>))
+        {
+            var generatorType = typeof(ListFormatter<>);
+            var genericParams = type.GenericTypeArguments;
+            var param = new Type[] { genericParams[0] };
+            var filledGeneratorType = generatorType.MakeGenericType(param);
+            return (YamlSerializer)Activator.CreateInstance(filledGeneratorType);
+        }
+
+
+        var gen = typeof(ListFormatter<>);
+        var genParams = type.GenericTypeArguments;
+        var fillGen = gen.MakeGenericType(genParams);
+        return (YamlSerializer)Activator.CreateInstance(fillGen);
+    }
 }

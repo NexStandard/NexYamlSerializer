@@ -6,16 +6,54 @@ using System.Text;
 namespace NexYamlSourceGenerator.Templates;
 internal static class CreateFromParent
 {
+    public static string CreateInstantiateMethodTyped(this ClassPackage package)
+    {
+        StringBuilder w = new();
+        foreach (var inter in package.ClassInfo.AllInterfaces)
+        {
+            w.Append(CreateIfs(package, inter, "YamlSerializer"));
+        }
+        foreach (var inter in package.ClassInfo.AllAbstracts)
+        {
+            w.Append(CreateIfs(package, inter, "YamlSerializer"));
+        }
+        string s;
+        if (package.ClassInfo.IsGeneric)
+        {
+            s = $$"""
+    public YamlSerializer Instantiate(Type type)
+    {
+{{w}}
+        var gen = typeof({{package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}});
+        var genParams = type.GenericTypeArguments;
+        var fillGen = gen.MakeGenericType(genParams);
+        return (YamlSerializer)Activator.CreateInstance(fillGen);
+    }
+""";
+        }
+        else
+        {
+            s = $$"""
+            public YamlSerializer Instantiate(Type type)
+            {
+        {{w}}
+                return new {{package.ClassInfo.GeneratorName}}();
+            }
+        """;
+        }
+
+        return s;
+    }
     public static string CreateMethodTyped(this ClassPackage package)
     {
         StringBuilder w = new();
         foreach (var inter in package.ClassInfo.AllInterfaces)
         {
-            w.Append(CreateIfs(package, inter));
+            w.Append(CreateIfs(package, inter, "IYamlFormatter"));
         }
         foreach (var inter in package.ClassInfo.AllAbstracts)
         {
-            w.Append(CreateIfs(package, inter));
+            w.Append(CreateIfs(package, inter, "IYamlFormatter"));
         }
         string s;
         if (package.ClassInfo.IsGeneric)
@@ -36,7 +74,7 @@ internal static class CreateFromParent
             s = $$"""
             public IYamlFormatter Create(Type type)
             {
-                {{w}}
+        {{w}}
                 return new {{package.ClassInfo.GeneratorName}}();
             }
         """;
@@ -45,7 +83,7 @@ internal static class CreateFromParent
         return s;
     }
 
-    private static StringBuilder CreateIfs(ClassPackage package, DataPackage inter)
+    private static StringBuilder CreateIfs(ClassPackage package, DataPackage inter, string cast)
     {
         StringBuilder stringBuilder = new StringBuilder();
         if (package.ClassInfo.IsGeneric)
@@ -63,7 +101,7 @@ internal static class CreateFromParent
                             var genericParams = type.GenericTypeArguments;
                             var param = {{indexArray}};
                             var filledGeneratorType = generatorType.MakeGenericType(param);
-                            return (IYamlFormatter)Activator.CreateInstance(filledGeneratorType);
+                            return ({{cast}})Activator.CreateInstance(filledGeneratorType);
                         }
                     
                     """);

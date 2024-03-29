@@ -1,4 +1,6 @@
-﻿namespace NexVYaml;
+﻿using System;
+
+namespace NexVYaml;
 
 public static class YamlStreamExtensionsInt
 {
@@ -360,5 +362,32 @@ public static class YamlStreamExtensionsuint
             var val = value.Value;
             stream.Serialize(ref val);
         }
+    }
+}
+public static class YamlStreamExtensionsUri
+{
+    public static void Write(this IYamlStream stream, Uri value)
+    {
+        var s = value.ToString();
+        stream.Serialize(ref s);
+    }
+
+    public static void Write(this IYamlStream stream, ref Uri value)
+    {
+        var s = value.ToString();
+        stream.Serialize(ref s);
+    }
+
+    public static void Write(this IYamlStream stream, string key, Uri value)
+    {
+        var s = value.ToString();
+        stream.Write(key, ref s);
+    }
+
+    public static void Write(this IYamlStream stream, string key, ref Uri value)
+    {
+        stream.Serialize(ref key);
+        var s = value.ToString();
+        stream.Serialize(ref s);
     }
 }

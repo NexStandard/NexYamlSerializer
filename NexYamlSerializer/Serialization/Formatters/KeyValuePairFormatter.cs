@@ -47,5 +47,13 @@ file class NexSourceGenerated_NexYamlTest_ComplexCasesTempListHelper : IYamlForm
         var fillGen = gen.MakeGenericType(genParams);
         return (IYamlFormatter)Activator.CreateInstance(fillGen);
     }
+
+    public YamlSerializer Instantiate(Type type)
+    {
+        var gen = typeof(KeyValuePairFormatter<,>);
+        var genParams = type.GenericTypeArguments;
+        var fillGen = gen.MakeGenericType(genParams);
+        return (YamlSerializer)Activator.CreateInstance(fillGen);
+    }
 }
 

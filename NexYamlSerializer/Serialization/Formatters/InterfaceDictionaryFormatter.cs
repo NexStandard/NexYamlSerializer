@@ -4,11 +4,13 @@ using System.Linq;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using NexYamlSerializer;
+using NexYamlSerializer.Emitter.Serializers;
+using Stride.Audio;
 using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
-public class InterfaceDictionaryFormatter<TKey, TValue> : IYamlFormatter<IDictionary<TKey, TValue>?>
+public class InterfaceDictionaryFormatter<TKey, TValue> : YamlSerializer<IDictionary<TKey, TValue>?>,IYamlFormatter<IDictionary<TKey, TValue>?>
 {
     public void Serialize(ref Utf8YamlEmitter emitter, IDictionary<TKey, TValue>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
     {
@@ -71,7 +73,7 @@ public class InterfaceDictionaryFormatter<TKey, TValue> : IYamlFormatter<IDictio
         }
     }
 
-    public IDictionary<TKey, TValue>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    public override IDictionary<TKey, TValue>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())
         {
@@ -103,6 +105,57 @@ public class InterfaceDictionaryFormatter<TKey, TValue> : IYamlFormatter<IDictio
             return keyValuePairs?.ToDictionary() ?? [];
         }
     }
-}
 
+    public override void Serialize(ref IYamlStream stream, IDictionary<TKey, TValue>? value, DataStyle style = DataStyle.Normal)
+    {
+        /*stream.SerializeContext.IsRedirected = false;
+
+        IYamlFormatter<TKey> keyFormatter = null;
+        IYamlFormatter<TValue> valueFormatter = null;
+        if (this.IsPrimitiveType(typeof(TKey)))
+        {
+            keyFormatter = stream.SerializeContext.Resolver.GetFormatter<TKey>();
+        }
+        if (this.IsPrimitiveType(typeof(TValue)))
+            valueFormatter = stream.SerializeContext.Resolver.GetFormatter<TValue>();
+
+        if (keyFormatter == null)
+        {
+            stream.Emitter.BeginSequence();
+            if (value.Count > 0)
+            {
+                var elementFormatter = new KeyValuePairFormatter<TKey, TValue>();
+                foreach (var x in value)
+                {
+                    elementFormatter.Serialize(ref stream, x, stream.SerializeContext);
+                }
+            }
+            stream.Emitter.EndSequence();
+        }
+        else if (valueFormatter == null)
+        {
+            stream.Emitter.BeginMapping();
+            {
+                foreach (var x in value)
+                {
+                    keyFormatter.Serialize(ref stream,x.Key, stream.SerializeContext);
+                    stream.Write(x.Value);
+                }
+            }
+            stream.Emitter.EndMapping();
+        }
+        else
+        {
+            stream.Emitter.BeginMapping();
+            {
+                foreach (var x in value)
+                {
+                    keyFormatter.Serialize(ref stream, x.Key, stream.SerializeContext);
+                    valueFormatter.Serialize(ref stream, x.Value, stream.SerializeContext);
+                }
+            }
+            stream.Emitter.EndMapping();
+        }*/
+    }
+}
 

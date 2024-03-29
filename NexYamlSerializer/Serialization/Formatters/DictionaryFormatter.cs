@@ -151,5 +151,10 @@ file class DictionaryFormatterHelper : IYamlFormatterHelper
         var fillGen = gen.MakeGenericType(genParams);
         return (IYamlFormatter)Activator.CreateInstance(fillGen);
     }
+
+    public YamlSerializer Instantiate(Type target)
+    {
+        throw new NotImplementedException();
+    }
 }
 

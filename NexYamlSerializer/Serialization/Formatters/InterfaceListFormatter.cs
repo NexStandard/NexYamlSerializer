@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
+using NexYamlSerializer.Emitter.Serializers;
+using Stride.Audio;
 using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
-public class InterfaceListFormatter<T> : IYamlFormatter<IList<T>?>
+public class InterfaceListFormatter<T> : YamlSerializer<IList<T>>,IYamlFormatter<IList<T>?>
 {
     public void Serialize(ref Utf8YamlEmitter emitter, IList<T>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
     {
@@ -26,7 +28,7 @@ public class InterfaceListFormatter<T> : IYamlFormatter<IList<T>?>
         emitter.EndSequence();
     }
 
-    public IList<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    public override IList<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())
         {
@@ -45,5 +47,18 @@ public class InterfaceListFormatter<T> : IYamlFormatter<IList<T>?>
 
         parser.ReadWithVerify(ParseEventType.SequenceEnd);
         return list!;
+    }
+
+    public override void Serialize(ref IYamlStream stream, IList<T> value, DataStyle style = DataStyle.Normal)
+    {
+        stream.Emitter.BeginSequence();
+        if (value.Count > 0)
+        {
+            foreach (var x in value)
+            {
+                stream.Write(x);
+            }
+        }
+        stream.Emitter.EndSequence();
     }
 }

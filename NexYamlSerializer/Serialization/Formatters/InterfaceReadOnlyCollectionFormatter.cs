@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
+using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
-public class InterfaceReadOnlyCollectionFormatter<T> : IYamlFormatter<IReadOnlyCollection<T>?>
+public class InterfaceReadOnlyCollectionFormatter<T> : YamlSerializer<IReadOnlyCollection<T>?>,IYamlFormatter<IReadOnlyCollection<T>?>
 {
     public void Serialize(ref Utf8YamlEmitter emitter, IReadOnlyCollection<T>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
     {
@@ -27,7 +28,7 @@ public class InterfaceReadOnlyCollectionFormatter<T> : IYamlFormatter<IReadOnlyC
         emitter.EndSequence();
     }
 
-    public IReadOnlyCollection<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    public override IReadOnlyCollection<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())
         {
@@ -46,5 +47,18 @@ public class InterfaceReadOnlyCollectionFormatter<T> : IYamlFormatter<IReadOnlyC
 
         parser.ReadWithVerify(ParseEventType.SequenceEnd);
         return list;
+    }
+
+    public override void Serialize(ref IYamlStream stream, IReadOnlyCollection<T>? value, DataStyle style = DataStyle.Normal)
+    {
+        stream.Emitter.BeginSequence();
+        if (value.Count > 0)
+        {
+            foreach (var x in value)
+            {
+                stream.Write(x);
+            }
+        }
+        stream.Emitter.EndSequence();
     }
 }
