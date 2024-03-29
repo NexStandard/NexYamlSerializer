@@ -2,11 +2,12 @@
 using NexVYaml;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
+using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
-public class NullableStringFormatter : IYamlFormatter<string?>
+public class NullableStringFormatter : YamlSerializer<string?>,IYamlFormatter<string?>
 {
     public static readonly NullableStringFormatter Instance = new();
 
@@ -22,7 +23,7 @@ public class NullableStringFormatter : IYamlFormatter<string?>
         }
     }
 
-    public string? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    public override string? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())
         {
@@ -30,6 +31,11 @@ public class NullableStringFormatter : IYamlFormatter<string?>
             return null;
         }
         return parser.ReadScalarAsString();
+    }
+
+    public override void Serialize(ref IYamlStream stream, string? value, DataStyle style = DataStyle.Normal)
+    {
+        stream.Serialize(ref value!);
     }
 }
 

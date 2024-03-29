@@ -187,4 +187,18 @@ public class ComplexTests
         var deserialized = YamlSerializer.Deserialize<UnregisteredBase>(s);
         Assert.Null(deserialized);
     }
+    [Fact()]
+    public void GenericNullableTest()
+    {
+        Setup();
+        GenericAbstractImplementation<int?, int?> H = new GenericAbstractImplementation<int?, int?>
+        {
+            Test = 1,
+            TI = 2,
+            TI2 = null
+        };
+        var s = YamlSerializer.SerializeToString(H);
+        var deserialized = YamlSerializer.Deserialize<UnregisteredBase>(s);
+        Assert.Null(deserialized);
+    }
 }

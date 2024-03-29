@@ -23,7 +23,7 @@ public class ByteArrayTest
         {
             Data = [1, 2]
         };
-        var s = YamlSerializer.Serialize(byteArray);
+        var s = YamlSerializer.SerializeToString(byteArray);
         var d = YamlSerializer.Deserialize<ByteArray>(s);
         Assert.Equal(byteArray.Data, d.Data);
     }

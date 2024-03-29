@@ -1,5 +1,6 @@
 ﻿using NexVYaml.Emitter;
 using NexVYaml.Internal;
+using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
 using System;
 using System.Runtime.CompilerServices;
@@ -38,6 +39,10 @@ public static class YamlStreamExtensions
     }
     public static void Write<T>(this IYamlStream stream, string key, ref T[] value, DataStyle style = DataStyle.Any)
     {
+        if (style is DataStyle.Any)
+        {
+            style = DataStyle.Normal;
+        }
         stream.Serialize(ref key);
         if (value == null)
         {
@@ -75,6 +80,12 @@ public static class YamlStreamExtensions
     {
         stream.Write(ref value, style);
     }
+    public static void Write<T>(this IYamlStream stream, T?[] value, DataStyle style = DataStyle.Any)
+        where T : struct
+    {
+        stream.Write(ref value, style);
+    }
+
     public static void Write<T>(this IYamlStream stream, string key, T[] value, DataStyle style = DataStyle.Any)
     {
         stream.Write(key, ref value, style);

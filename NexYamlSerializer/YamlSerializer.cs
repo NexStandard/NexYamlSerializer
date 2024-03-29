@@ -281,7 +281,7 @@ public abstract class YamlSerializer<T> : YamlSerializer
 {
     public override void Serialize(ref IYamlStream stream, object value, DataStyle style = DataStyle.Normal)
     {
-        Serialize(ref stream, (T)stream, style);
+        Serialize(ref stream, (T)value, style);
     }
     public abstract void Serialize(ref IYamlStream stream, T value, DataStyle style = DataStyle.Normal);
 
