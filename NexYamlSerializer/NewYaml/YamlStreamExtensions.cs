@@ -130,7 +130,7 @@ public static class YamlStreamExtensions
         else
         {
             var emitter = stream.Emitter;
-            stream.SerializeContext.Serialize(ref emitter, value, style);
+            stream.SerializeContext.Serialize(ref stream, value, style);
         }
     }
     public static void Write<T>(this IYamlStream stream, T? value, DataStyle style = DataStyle.Any)
