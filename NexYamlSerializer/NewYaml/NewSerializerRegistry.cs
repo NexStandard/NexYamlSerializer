@@ -7,8 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using NexYamlSerializer.Serialization.Formatters;
 
-namespace NexYamlSerializer.NewYaml;
-internal class NewSerializerRegistry
+namespace NexVYaml;
+public class NewSerializerRegistry
 {
     public SerializerRegistry FormatterRegistry { get; set; } = new();
     public static NewSerializerRegistry Instance { get; } = new NewSerializerRegistry();
@@ -50,7 +50,7 @@ internal class NewSerializerRegistry
         {
             var dictionary = new Dictionary<Type, IYamlFormatterHelper>(new GenericEqualityComparer());
             FormatterRegistry.FormatterFactories[inter] = dictionary;
-            dictionary.Add(target, yamlFormatterHelper);
+            dictionary.TryAdd(target, yamlFormatterHelper);
         }
     }
     public YamlSerializer GetFormatter(Type type, Type origin)
@@ -118,7 +118,7 @@ internal class NewSerializerRegistry
     }
     public void RegisterGenericFormatter(Type target, Type formatterType)
     {
-        FormatterRegistry.GenericFormatterBuffer.Add(target, formatterType);
+        FormatterRegistry.GenericFormatterBuffer.TryAdd(target, formatterType);
     }
 }
 public class SerializerRegistry

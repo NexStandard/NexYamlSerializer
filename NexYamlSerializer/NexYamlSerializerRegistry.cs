@@ -119,6 +119,6 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
     }
     public void RegisterGenericFormatter(Type target, Type formatterType)
     {
-        FormatterRegistry.GenericFormatterBuffer.Add(target, formatterType);
+        FormatterRegistry.GenericFormatterBuffer.TryAdd(target, formatterType);
     }
 }
