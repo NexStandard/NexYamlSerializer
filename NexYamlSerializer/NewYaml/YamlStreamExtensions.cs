@@ -32,7 +32,6 @@ public static class YamlStreamExtensions
         }
         else
         {
-            var emitter = stream.Emitter;
             stream.SerializeContext.Serialize(ref stream, value, style);
         }
     }

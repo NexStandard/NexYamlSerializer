@@ -170,4 +170,18 @@ public class YamlSerializationWriter : IYamlStream
             throw new YamlSerializerException($"Cannot serialize a value: {value}");
         }
     }
+
+    public void Serialize(ref sbyte value)
+    {
+        var offset = 0;
+        var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(11)); // -2147483648
+
+        Emitter.BeginScalar(output, ref offset);
+        if (!Utf8Formatter.TryFormat(value, output[offset..], out var bytesWritten))
+        {
+            throw new YamlEmitterException($"Failed to emit : {value}");
+        }
+        offset += bytesWritten;
+        Emitter.EndScalar(output, ref offset);
+    }
 }

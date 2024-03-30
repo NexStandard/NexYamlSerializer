@@ -43,7 +43,6 @@ public class YamlSerializationContext : IDisposable
     {
         return (underlyingType = Nullable.GetUnderlyingType(value)) != null;
     }
-    static Type NullableFormatter = typeof(NullableFormatter<>);
     public void Serialize<T>(ref IYamlStream stream, T value, DataStyle style = DataStyle.Any)
     {
         var type = typeof(T);
