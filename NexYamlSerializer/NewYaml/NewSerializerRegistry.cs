@@ -131,6 +131,7 @@ public class SerializerRegistry
         [typeof(IList<>)] = typeof(InterfaceListFormatter<>),
         [typeof(IReadOnlyList<>)] = typeof(InterfaceReadOnlyListFormatter<>),
         [typeof(IReadOnlyCollection<>)] = typeof(InterfaceReadOnlyCollectionFormatter<>),
+        [typeof(Nullable<>)] = typeof(NullableFormatter<>),
         /*[typeof(IDictionary<,>)] = typeof(InterfaceDictionaryFormatter<,>),
         [typeof(IReadOnlyDictionary<,>)] = typeof(InterfaceReadOnlyDictionaryFormatter<,>),
         [typeof(Tuple<>)] = typeof(TupleFormatter<>),
