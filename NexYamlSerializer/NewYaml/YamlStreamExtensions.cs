@@ -19,8 +19,7 @@ public static class YamlStreamExtensions
         }
         else
         {
-            var emitter = stream.Emitter;
-            stream.SerializeContext.Serialize(ref emitter, value, style);
+            stream.SerializeContext.Serialize(ref stream, value, style);
         }
     }
     public static void Write<T>(this IYamlStream stream, string key, ref T? value, DataStyle style = DataStyle.Any)
@@ -34,7 +33,7 @@ public static class YamlStreamExtensions
         else
         {
             var emitter = stream.Emitter;
-            stream.SerializeContext.Serialize(ref emitter, value, style);
+            stream.SerializeContext.Serialize(ref stream, value, style);
         }
     }
     public static void Write<T>(this IYamlStream stream, string key, ref T[] value, DataStyle style = DataStyle.Any)
@@ -116,7 +115,7 @@ public static class YamlStreamExtensions
         {
             var emitter = stream.Emitter;
             var val = value.Value;
-            stream.SerializeContext.Serialize(ref emitter, val, style);
+            stream.SerializeContext.Serialize(ref stream, val, style);
         }
     }
     public static void WriteTag(this IYamlStream stream, string tag)
