@@ -6,7 +6,7 @@ using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
-public class CharFormatter : IYamlFormatter<char>
+public class CharFormatter : YamlSerializer<char>, IYamlFormatter<char>
 {
     public static readonly CharFormatter Instance = new();
 
@@ -15,10 +15,15 @@ public class CharFormatter : IYamlFormatter<char>
         emitter.WriteInt32(value);
     }
 
-    public char Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    public override char Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         var result = parser.GetScalarAsUInt32();
         parser.Read();
         return checked((char)result);
+    }
+
+    public override void Serialize(ref IYamlStream stream, char value, DataStyle style = DataStyle.Normal)
+    {
+        stream.Serialize(ref value);
     }
 }

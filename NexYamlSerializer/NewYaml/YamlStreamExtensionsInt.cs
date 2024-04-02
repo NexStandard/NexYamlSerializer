@@ -138,6 +138,81 @@ public static class YamlStreamExtensionsDouble
         }
     }
 }
+public static class YamlStreamExtensionsulong
+{
+    public static void Write(this IYamlStream stream, ulong value)
+    {
+        stream.Serialize(ref value);
+    }
+
+    public static void Write(this IYamlStream stream, ulong? value)
+    {
+        if (value is null)
+        {
+            stream.WriteNull();
+        }
+        else
+        {
+            var val = value.Value;
+            stream.Serialize(ref val);
+        }
+    }
+
+    public static void Write(this IYamlStream stream, ref ulong value)
+    {
+        stream.Serialize(ref value);
+    }
+
+    public static void Write(this IYamlStream stream, ref ulong? value)
+    {
+        if (value is null)
+        {
+            stream.WriteNull();
+        }
+        else
+        {
+            var val = value.Value;
+            stream.Serialize(ref val);
+        }
+    }
+
+    public static void Write(this IYamlStream stream, string key, ulong? value)
+    {
+        stream.Serialize(ref key);
+        if (value is null)
+            stream.WriteNull();
+        else
+        {
+            var x = value.Value;
+            stream.Serialize(ref x);
+        }
+    }
+
+    public static void Write(this IYamlStream stream, string key, ulong value)
+    {
+        stream.Write(key, ref value);
+    }
+
+    public static void Write(this IYamlStream stream, string key, ref ulong value)
+    {
+        stream.Serialize(ref key);
+        stream.Serialize(ref value);
+    }
+
+    public static void Write(this IYamlStream stream, string key, ref ulong? value)
+    {
+        stream.Serialize(ref key);
+        if (value is null)
+        {
+            stream.WriteNull();
+        }
+        else
+        {
+            var val = value.Value;
+            stream.Serialize(ref val);
+        }
+    }
+}
 public static class YamlStreamExtensionsFloat
 {
     public static void Write(this IYamlStream stream, float value)

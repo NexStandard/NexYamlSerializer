@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
+using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
-public class ArrayFormatter<T> : IYamlFormatter<T[]?>
+public class ArrayFormatter<T> : YamlSerializer<T[]?>,IYamlFormatter<T[]?>
 {
     public void Serialize(ref Utf8YamlEmitter emitter, T[]? value, YamlSerializationContext context, DataStyle style)
     {
@@ -28,7 +29,7 @@ public class ArrayFormatter<T> : IYamlFormatter<T[]?>
         emitter.EndSequence();
     }
 
-    public T[]? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    public override T[]? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())
         {
@@ -47,5 +48,10 @@ public class ArrayFormatter<T> : IYamlFormatter<T[]?>
 
         parser.ReadWithVerify(ParseEventType.SequenceEnd);
         return list.ToArray();
+    }
+
+    public override void Serialize(ref IYamlStream stream, T[]? value, DataStyle style = DataStyle.Normal)
+    {
+        stream.Write(ref value);
     }
 }

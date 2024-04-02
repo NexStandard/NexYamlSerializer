@@ -61,19 +61,19 @@ public class YamlSerializationContext : IDisposable
             }
             return;
         }
-        if (type.IsInterface || type.IsAbstract || type.IsGenericType)
+        if (type.IsInterface || type.IsAbstract || type.IsGenericType || type.IsArray)
         {
-            var valueType = value!.GetType();
-            var formatt = NewSerializerRegistry.Instance.GetFormatter(value!.GetType(), typeof(T));
-            if (valueType != type)
-                this.IsRedirected = true;
+                var valueType = value!.GetType();
+                var formatt = NewSerializerRegistry.Instance.GetFormatter(value!.GetType(), typeof(T));
+                if (valueType != type)
+                    this.IsRedirected = true;
 
-            // C# forgets the cast of T when invoking Deserialize,
-            // this way we can call the deserialize method with the "real type"
-            // that is in the object
-            formatt.Serialize(ref stream, value!, style);
-            // var method = formatt.GetType().GetMethod("Serialize");
-            //method.Invoke(formatt, new object[] { emitter, value, this });
+                // C# forgets the cast of T when invoking Deserialize,
+                // this way we can call the deserialize method with the "real type"
+                // that is in the object
+                formatt.Serialize(ref stream, value!, style);
+                // var method = formatt.GetType().GetMethod("Serialize");
+                //method.Invoke(formatt, new object[] { emitter, value, this });
         }
         else
         {

@@ -40,7 +40,7 @@ public class NewSerializerRegistry
 
     public void Register(IYamlFormatterHelper yamlFormatterHelper, Type target, Type interfaceType)
     {
-        Type tar = target.IsGenericType ? target.GetGenericTypeDefinition() : target;
+        var tar = target.IsGenericType ? target.GetGenericTypeDefinition() : target;
         Type inter = interfaceType.IsGenericType ? interfaceType.GetGenericTypeDefinition() : interfaceType;
         if (FormatterRegistry.FormatterFactories.TryGetValue(inter, out var factory))
         {
@@ -151,12 +151,12 @@ public class SerializerRegistry
             { typeof(long), Int64Formatter.Instance },
             { typeof(string), NullableStringFormatter.Instance },
             { typeof(byte), ByteFormatter.Instance },
+            { typeof(bool), BooleanFormatter.Instance },
            /*{ typeof(ushort), UInt16Formatter.Instance },
             { typeof(uint), UInt32Formatter.Instance },
             { typeof(ulong), UInt64Formatter.Instance },
             { typeof(float), Float32Formatter.Instance },
             { typeof(double), Float64Formatter.Instance },
-            { typeof(bool), BooleanFormatter.Instance },
             { typeof(sbyte), SByteFormatter.Instance },
             { typeof(DateTime), DateTimeFormatter.Instance },
             { typeof(char), CharFormatter.Instance },

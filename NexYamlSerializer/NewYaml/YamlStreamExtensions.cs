@@ -1,5 +1,6 @@
 ﻿using NexVYaml.Emitter;
 using NexVYaml.Internal;
+using NexVYaml.Serialization;
 using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
 using System;
@@ -19,7 +20,14 @@ public static class YamlStreamExtensions
         }
         else
         {
-            stream.SerializeContext.Serialize(ref stream, value, style);
+            if(value is Array)
+            {
+                new ArrayFormatter<T>().Serialize(ref stream,value,style);
+            }
+            else
+            {
+                stream.SerializeContext.Serialize(ref stream, value, style);
+            }
         }
     }
     public static void Write<T>(this IYamlStream stream, string key, ref T? value, DataStyle style = DataStyle.Any)
@@ -65,11 +73,20 @@ public static class YamlStreamExtensions
         }
         else
         {
-            stream.Emitter.BeginSequence(style);
-            foreach (var item in value)
+            if(typeof(T).IsValueType)
             {
-                var x = item;
-                stream.Write(ref x, style);
+
+            }
+            var contentStyle = DataStyle.Any;
+            if (style == DataStyle.Compact)
+            {
+                contentStyle = DataStyle.Compact;
+            }
+            stream.Emitter.BeginSequence(style);
+            foreach (var x in value)
+            {
+                var val = x;
+                stream.Write(ref val, contentStyle);
             }
             stream.Emitter.EndSequence();
         }
@@ -92,14 +109,17 @@ public static class YamlStreamExtensions
     public static void Write<T>(this IYamlStream stream, string key, T value, DataStyle style = DataStyle.Any)
     {
         stream.Serialize(ref key);
+        if(style == DataStyle.Any)
+        {
+            style = DataStyle.Normal;
+        }
         if (value == null)
         {
             stream.WriteNull();
         }
         else
         {
-            var emitter = stream.Emitter;
-            stream.SerializeContext.Serialize(ref emitter, value, style);
+            stream.Write(ref value);
         }
     }
     public static void Write<T>(this IYamlStream stream, string key, T? value, DataStyle style = DataStyle.Any)
@@ -112,7 +132,6 @@ public static class YamlStreamExtensions
         }
         else
         {
-            var emitter = stream.Emitter;
             var val = value.Value;
             stream.SerializeContext.Serialize(ref stream, val, style);
         }
@@ -138,8 +157,17 @@ public static class YamlStreamExtensions
         }
         else
         {
-            var emitter = stream.Emitter;
-            stream.SerializeContext.Serialize(ref stream, value, style);
+            if (value is Array)
+            {
+                var t = typeof(T).GetElementType();
+                var arrayFormatterType = typeof(ArrayFormatter<>).MakeGenericType(t);
+                YamlSerializer arrayFormatter = (YamlSerializer)Activator.CreateInstance(arrayFormatterType);
+                arrayFormatter.Serialize(ref stream, value, style);
+            }
+            else
+            {
+                stream.SerializeContext.Serialize(ref stream, value, style);
+            }
         }
     }
     public static void Write<T>(this IYamlStream stream, T? value, DataStyle style = DataStyle.Any)
