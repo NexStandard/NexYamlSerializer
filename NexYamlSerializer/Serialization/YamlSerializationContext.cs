@@ -55,7 +55,7 @@ public class YamlSerializationContext : IDisposable
                 var valueType = value!.GetType();
                 var formatt = NewSerializerRegistry.Instance.GetFormatter(value!.GetType(), typeof(T));
                 if (valueType != type)
-                    this.IsRedirected = true;
+                    IsRedirected = true;
 
                 // C# forgets the cast of T when invoking Deserialize,
                 // this way we can call the deserialize method with the "real type"
