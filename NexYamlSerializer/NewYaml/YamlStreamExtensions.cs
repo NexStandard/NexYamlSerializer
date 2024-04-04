@@ -119,7 +119,7 @@ public static class YamlStreamExtensions
         }
         else
         {
-            stream.Write(ref value);
+            stream.Write(ref value,style);
         }
     }
     public static void Write<T>(this IYamlStream stream, string key, T? value, DataStyle style = DataStyle.Any)
