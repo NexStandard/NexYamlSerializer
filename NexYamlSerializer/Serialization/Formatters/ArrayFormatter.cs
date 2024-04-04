@@ -9,26 +9,6 @@ namespace NexVYaml.Serialization;
 
 public class ArrayFormatter<T> : YamlSerializer<T[]?>,IYamlFormatter<T[]?>
 {
-    public void Serialize(ref Utf8YamlEmitter emitter, T[]? value, YamlSerializationContext context, DataStyle style)
-    {
-        if(style is DataStyle.Any)
-        {
-            style = DataStyle.Normal;
-        }
-        if (value is null)
-        {
-            emitter.WriteNull();
-            return;
-        }
-
-        emitter.BeginSequence(style);
-        foreach (var x in value)
-        {
-            context.Serialize(ref emitter, x);
-        }
-        emitter.EndSequence();
-    }
-
     public override T[]? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())
@@ -52,6 +32,6 @@ public class ArrayFormatter<T> : YamlSerializer<T[]?>,IYamlFormatter<T[]?>
 
     public override void Serialize(ref IYamlStream stream, T[]? value, DataStyle style = DataStyle.Normal)
     {
-        stream.Write(ref value);
+        stream.Write(ref value!);
     }
 }

@@ -69,49 +69,6 @@ public class YamlSerializationContext : IDisposable
             NewSerializerRegistry.Instance.GetFormatter<T>().Serialize(ref stream, value, style);
         }
     }
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Serialize<T>(ref Utf8YamlEmitter emitter, T value, DataStyle style = DataStyle.Any)
-    {
-        var type = typeof(T);
-        if (SecureMode)
-        {
-            if (type.IsGenericType)
-            {
-                var protectedGeneric = Resolver.GetGenericFormatter<T>();
-                protectedGeneric ??= new EmptyFormatter<T>();
-                protectedGeneric.Serialize(ref emitter, value!, this, style);
-            }
-            else
-            {
-                var protectedFormatter = Resolver.GetFormatter<T>();
-                protectedFormatter.Serialize(ref emitter, value!, this, style);
-
-        }
-            return;
-        }
-        if (type.IsInterface || type.IsAbstract || type.IsGenericType)
-        {
-            var valueType = value!.GetType();
-            var formatt = this.Resolver.GetFormatter(value!.GetType(), typeof(T));
-            if (valueType != type)
-                this.IsRedirected = true;
-
-            // C# forgets the cast of T when invoking Deserialize,
-            // this way we can call the deserialize method with the "real type"
-            // that is in the object
-            formatt.IndirectSerialize(ref emitter, value!, this, style);
-            // var method = formatt.GetType().GetMethod("Serialize");
-            //method.Invoke(formatt, new object[] { emitter, value, this });
-        }
-        else
-        {
-            Resolver.GetFormatter<T>().Serialize(ref emitter, value,this, style);
-        }
-    }
-    public void SerializeArray<T>(ref Utf8YamlEmitter emitter, T[] value,DataStyle style = DataStyle.Any)
-    {
-        new ArrayFormatter<T>().Serialize(ref emitter, value, this, style);
-    }
     public ArrayBufferWriter<byte> GetArrayBufferWriter()
     {
         return arrayBufferWriter ??= new ArrayBufferWriter<byte>(65536);

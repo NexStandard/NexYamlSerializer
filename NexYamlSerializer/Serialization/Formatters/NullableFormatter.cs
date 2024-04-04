@@ -13,18 +13,6 @@ public class NullableFormatter<T> : YamlSerializer<T?>, IYamlFormatter<T?> where
     public NullableFormatter(IYamlFormatter<T> formatter) { yamlFormatter = formatter; }
     public NullableFormatter() { }
 
-    public void Serialize(ref Utf8YamlEmitter emitter, T? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        if (value is null)
-        {
-            emitter.WriteNull();
-        }
-        else
-        {
-            yamlFormatter.Serialize(ref emitter, value.Value, context);
-        }
-    }
-
     public override T? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())
@@ -62,18 +50,6 @@ public sealed class StaticNullableFormatter<T> : YamlSerializer<T?>, IYamlFormat
         this.underlyingFormatter = underlyingFormatter;
     }
 
-    public void Serialize(ref Utf8YamlEmitter emitter, T? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        if (value.HasValue)
-        {
-            underlyingFormatter.Serialize(ref emitter, value.Value, context);
-        }
-        else
-        {
-            emitter.WriteNull();
-        }
-    }
-
     public override T? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())
@@ -88,7 +64,7 @@ public sealed class StaticNullableFormatter<T> : YamlSerializer<T?>, IYamlFormat
     {
         if (value.HasValue)
         {
-            stream.Write(value.Value);
+            underlyingSerializer.Serialize(ref stream,value.Value,style);
         }
         else
         {

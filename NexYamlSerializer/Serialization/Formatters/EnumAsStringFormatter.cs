@@ -6,12 +6,13 @@ using System.Runtime.Serialization;
 using NexVYaml.Emitter;
 using NexVYaml.Internal;
 using NexVYaml.Parser;
+using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
 using ScalarStyle = NexVYaml.Emitter.ScalarStyle;
 
 namespace NexVYaml.Serialization;
 
-public class EnumAsStringFormatter<T> : IYamlFormatter<T> where T : Enum
+public class EnumAsStringFormatter<T> : YamlSerializer<T>,IYamlFormatter<T> where T : Enum
 {
     static readonly Dictionary<string, T> NameValueMapping;
     static readonly Dictionary<T, string> ValueNameMapping;
@@ -61,7 +62,7 @@ public class EnumAsStringFormatter<T> : IYamlFormatter<T> where T : Enum
         }
     }
 
-    public T Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    public override T Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         var scalar = parser.ReadScalarAsString();
         if (scalar is null)
@@ -74,6 +75,18 @@ public class EnumAsStringFormatter<T> : IYamlFormatter<T> where T : Enum
             return value;
         }
         throw new YamlSerializerException($"Cannot detect a scalar value of {typeof(T)}");
+    }
+
+    public override void Serialize(ref IYamlStream stream, T value, DataStyle style = DataStyle.Normal)
+    {
+        if (ValueNameMapping.TryGetValue(value, out var name))
+        {
+            stream.Serialize(ref name);
+        }
+        else
+        {
+            throw new YamlSerializerException($"Cannot detect a value of enum: {typeof(T)}, {value}");
+        }
     }
 }
 

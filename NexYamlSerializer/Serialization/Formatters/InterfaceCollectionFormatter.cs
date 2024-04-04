@@ -10,26 +10,6 @@ namespace NexVYaml.Serialization;
 
 public class InterfaceCollectionFormatter<T> : YamlSerializer<ICollection<T>?>,IYamlFormatter<ICollection<T>?>
 {
-    public void Serialize(ref Utf8YamlEmitter emitter, ICollection<T>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        if (value is null)
-        {
-            emitter.WriteNull();
-            return;
-        }
-
-        emitter.BeginSequence();
-        if (value.Count > 0)
-        {
-            foreach (var x in value)
-            {
-                context.Serialize(ref emitter, x);
-            }
-        }
-        emitter.EndSequence();
-    }
-
-
     public override void Serialize(ref IYamlStream stream, ICollection<T>? value, DataStyle style = DataStyle.Normal)
     {
         stream.Emitter.BeginSequence();

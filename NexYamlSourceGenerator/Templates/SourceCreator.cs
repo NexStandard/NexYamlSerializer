@@ -54,35 +54,12 @@ file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSeria
 
     {package.CreateUTF8Members()}
 
-    public void IndirectSerialize(ref Utf8YamlEmitter emitter, object value, YamlSerializationContext context, DataStyle style = {info.DataStyle}) 
-    {{
-        Serialize(ref emitter,({info.NameDefinition})value,context, style);
-    }}
-
     public override void Serialize(ref IYamlStream stream, {info.NameDefinition} value, DataStyle style = DataStyle.Normal)
     {{
         stream.Emitter.{package.BeginMappingStyle()};
         stream.WriteTag(""{tag}"");
 {package.CreateNewSerializationEmit()}
         stream.Emitter.EndMapping();
-    }}
-
-    public void Serialize(ref Utf8YamlEmitter emitter, {info.NameDefinition} value, YamlSerializationContext context, DataStyle style = {info.DataStyle})
-    {{
-        if(style is DataStyle.Any)
-        {{
-            style = {info.DataStyle};
-        }}
-{package.NullCheck()}
-        emitter.{package.BeginMappingStyle()};
-        if(context.IsRedirected || context.IsFirst)
-        {{
-            emitter.Tag($""!{tag}"");
-            context.IsRedirected = false;
-            context.IsFirst = false;
-        }}
-{package.CreateSerializationEmit()}
-        emitter.EndMapping();
     }}
 
     public override {info.NameDefinition}{(info.TypeKind == TypeKind.Struct ? "" : "?")} Deserialize(ref YamlParser parser, YamlDeserializationContext context)

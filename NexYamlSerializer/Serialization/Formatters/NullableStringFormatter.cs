@@ -11,18 +11,6 @@ public class NullableStringFormatter : YamlSerializer<string?>,IYamlFormatter<st
 {
     public static readonly NullableStringFormatter Instance = new();
 
-    public void Serialize(ref Utf8YamlEmitter emitter, string? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        if (value == null)
-        {
-            emitter.WriteNull();
-        }
-        else
-        {
-            emitter.WriteString(value);
-        }
-    }
-
     public override string? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())

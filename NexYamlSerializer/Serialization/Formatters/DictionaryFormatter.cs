@@ -16,69 +16,6 @@ namespace NexVYaml.Serialization;
 public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey, TValue>?>,IYamlFormatter<Dictionary<TKey, TValue>?>
     where TKey : notnull
 {
-    public void IndirectSerialize(ref Utf8YamlEmitter emitter, object value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        Serialize(ref emitter, (Dictionary<TKey, TValue>?)value, context);
-    }
-    public void Serialize(ref Utf8YamlEmitter emitter, Dictionary<TKey, TValue>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        if (value == null)
-        {
-            emitter.WriteNull();
-        }
-        else
-        {
-            context.IsRedirected = false;
-
-            IYamlFormatter<TKey> keyFormatter = null;
-            IYamlFormatter<TValue> valueFormatter = null;
-            if (this.IsPrimitiveType(typeof(TKey)))
-            {
-                keyFormatter = context.Resolver.GetFormatter<TKey>();
-            }
-            if (this.IsPrimitiveType(typeof(TValue)))
-                valueFormatter = context.Resolver.GetFormatter<TValue>();
-
-            if(keyFormatter == null)
-            {
-                emitter.BeginSequence();
-                if (value.Count > 0)
-                {
-                    var elementFormatter = new KeyValuePairFormatter<TKey, TValue>();
-                    foreach (var x in value)
-                    {
-                        elementFormatter.Serialize(ref emitter, x, context);
-                    }
-                }
-                emitter.EndSequence();
-            }
-            else if(valueFormatter == null)
-            {
-                emitter.BeginMapping();
-                {
-                    foreach (var x in value)
-                    {
-                        keyFormatter.Serialize(ref emitter, x.Key, context);
-                        context.Serialize(ref emitter,x.Value);
-                    }
-                }
-                emitter.EndMapping();
-            }
-            else
-            {
-                emitter.BeginMapping();
-                {
-                    foreach (var x in value)
-                    {
-                        keyFormatter.Serialize(ref emitter, x.Key, context);
-                        valueFormatter.Serialize(ref emitter, x.Value, context);
-                    }
-                }
-                emitter.EndMapping();
-            }
-        }
-    }
-    
     public override Dictionary<TKey, TValue> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())

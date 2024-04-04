@@ -10,24 +10,6 @@ namespace NexVYaml.Serialization;
 
 public class InterfaceListFormatter<T> : YamlSerializer<IList<T>>,IYamlFormatter<IList<T>?>
 {
-    public void Serialize(ref Utf8YamlEmitter emitter, IList<T>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        if (value is null)
-        {
-            emitter.WriteNull();
-            return;
-        }
-        emitter.BeginSequence();
-        if (value.Count > 0)
-        {
-            foreach (var x in value)
-            {
-                context.Serialize(ref emitter, x);
-            }
-        }
-        emitter.EndSequence();
-    }
-
     public override IList<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())

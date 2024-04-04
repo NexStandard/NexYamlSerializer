@@ -13,35 +13,6 @@ namespace NexVYaml.Serialization;
 
 public class ListFormatter<T> : YamlSerializer<List<T>?>,IYamlFormatter<List<T>?>
 {
-    public void IndirectSerialize(ref Utf8YamlEmitter emitter, object value, YamlSerializationContext context,DataStyle style = DataStyle.Normal)
-    {
-        Serialize(ref emitter,(List<T>?)value, context, style);
-    }
-    public void Serialize(ref Utf8YamlEmitter emitter, List<T>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        if(style is DataStyle.Any)
-        {
-            style = DataStyle.Normal;
-        }
-        if (value is null)
-        {
-            emitter.WriteNull();
-        }
-        else
-        {
-            context.IsRedirected = false;
-            emitter.BeginSequence(style);
-            if (value.Count > 0)
-            {
-                foreach (var x in value)
-                {
-                    context.Serialize(ref emitter, x);
-                }
-            }
-            emitter.EndSequence();
-        }
-    }
-
     public override List<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())

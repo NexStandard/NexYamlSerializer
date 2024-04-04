@@ -13,19 +13,6 @@ public class DateTimeOffsetFormatter : YamlSerializer<DateTimeOffset>,IYamlForma
 {
     public static readonly DateTimeOffsetFormatter Instance = new();
 
-    public void Serialize(ref Utf8YamlEmitter emitter, DateTimeOffset value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        var buf = context.GetBuffer64();
-        if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten, new StandardFormat('O')))
-        {
-            emitter.WriteScalar(buf[..bytesWritten]);
-        }
-        else
-        {
-            throw new YamlSerializerException($"Cannot format {value}");
-        }
-    }
-
     public override DateTimeOffset Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.TryGetScalarAsSpan(out var span) &&

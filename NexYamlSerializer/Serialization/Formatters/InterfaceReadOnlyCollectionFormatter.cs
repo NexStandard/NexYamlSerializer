@@ -9,25 +9,6 @@ namespace NexVYaml.Serialization;
 
 public class InterfaceReadOnlyCollectionFormatter<T> : YamlSerializer<IReadOnlyCollection<T>?>,IYamlFormatter<IReadOnlyCollection<T>?>
 {
-    public void Serialize(ref Utf8YamlEmitter emitter, IReadOnlyCollection<T>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        if (value is null)
-        {
-            emitter.WriteNull();
-            return;
-        }
-
-        emitter.BeginSequence();
-        if (value.Count > 0)
-        {
-            foreach (var x in value)
-            {
-                context.Serialize(ref emitter, x);
-            }
-        }
-        emitter.EndSequence();
-    }
-
     public override IReadOnlyCollection<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())

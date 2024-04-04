@@ -12,20 +12,6 @@ public class GuidFormatter : YamlSerializer<Guid>, IYamlFormatter<Guid>
 {
     public static readonly GuidFormatter Instance = new();
 
-    public void Serialize(ref Utf8YamlEmitter emitter, Guid value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        // nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn
-        var buf = context.GetBuffer64();
-        if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten))
-        {
-            emitter.WriteScalar(buf[..bytesWritten]);
-        }
-        else
-        {
-            throw new YamlSerializerException($"Cannot serialize {value}");
-        }
-    }
-
     public override Guid Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.TryGetScalarAsSpan(out var span) &&

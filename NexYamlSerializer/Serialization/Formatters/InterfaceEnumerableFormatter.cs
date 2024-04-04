@@ -10,25 +10,6 @@ namespace NexVYaml.Serialization;
 
 public class InterfaceEnumerableFormatter<T> : YamlSerializer<IEnumerable<T>?>,IYamlFormatter<IEnumerable<T>?>
 {
-    public void Serialize(ref Utf8YamlEmitter emitter, IEnumerable<T>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        if (value is null)
-        {
-            emitter.WriteNull();
-            return;
-        }
-
-        emitter.BeginSequence();
-        if (value.Any())
-        {
-            foreach (var x in value)
-            {
-                context.Serialize(ref emitter, x);
-            }
-        }
-        emitter.EndSequence();
-    }
-
     public override IEnumerable<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())

@@ -10,11 +10,6 @@ public class UriFormatter : YamlSerializer<Uri>,IYamlFormatter<Uri>
 {
     public static readonly UriFormatter Instance = new();
 
-    public void Serialize(ref Utf8YamlEmitter emitter, Uri value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        emitter.WriteString(value.ToString());
-    }
-
     public override Uri Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.TryGetScalarAsString(out var scalar) && scalar != null)

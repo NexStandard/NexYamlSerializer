@@ -9,19 +9,6 @@ namespace NexVYaml.Serialization;
 
 public class TupleFormatter<T1> : YamlSerializer<Tuple<T1>?>,IYamlFormatter<Tuple<T1>?>
 {
-    public void Serialize(ref Utf8YamlEmitter emitter, Tuple<T1>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        if (value is null)
-        {
-            emitter.WriteNull();
-            return;
-        }
-
-        emitter.BeginSequence(DataStyle.Compact);
-        context.Serialize(ref emitter, value.Item1);
-        emitter.EndSequence();
-    }
-
     public override Tuple<T1>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())
@@ -45,20 +32,6 @@ public class TupleFormatter<T1> : YamlSerializer<Tuple<T1>?>,IYamlFormatter<Tupl
 
 public class TupleFormatter<T1, T2> : YamlSerializer<Tuple<T1, T2>?>,IYamlFormatter<Tuple<T1, T2>?>
 {
-    public void Serialize(ref Utf8YamlEmitter emitter, Tuple<T1, T2>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        if (value is null)
-        {
-            emitter.WriteNull();
-            return;
-        }
-
-        emitter.BeginSequence(DataStyle.Compact);
-        context.Serialize(ref emitter, value.Item1);
-        context.Serialize(ref emitter, value.Item2);
-        emitter.EndSequence();
-    }
-
     public override Tuple<T1, T2>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())
@@ -84,21 +57,6 @@ public class TupleFormatter<T1, T2> : YamlSerializer<Tuple<T1, T2>?>,IYamlFormat
 
 public class TupleFormatter<T1, T2, T3> : YamlSerializer<Tuple<T1, T2, T3>?>, IYamlFormatter<Tuple<T1, T2, T3>?>
 {
-    public void Serialize(ref Utf8YamlEmitter emitter, Tuple<T1, T2, T3>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        if (value is null)
-        {
-            emitter.WriteNull();
-            return;
-        }
-
-        emitter.BeginSequence(DataStyle.Compact);
-        context.Serialize(ref emitter, value.Item1);
-        context.Serialize(ref emitter, value.Item2);
-        context.Serialize(ref emitter, value.Item3);
-        emitter.EndSequence();
-    }
-
     public override Tuple<T1, T2, T3>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())
@@ -126,23 +84,6 @@ public class TupleFormatter<T1, T2, T3> : YamlSerializer<Tuple<T1, T2, T3>?>, IY
 
 public class TupleFormatter<T1, T2, T3, T4> : YamlSerializer<Tuple<T1, T2, T3, T4>?>,IYamlFormatter<Tuple<T1, T2, T3, T4>?>
 {
-    public void Serialize(ref Utf8YamlEmitter emitter, Tuple<T1, T2, T3, T4>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        if (value is null)
-        {
-            emitter.WriteNull();
-            return;
-        }
-
-        emitter.BeginSequence(DataStyle.Compact);
-        context.Serialize(ref emitter, value.Item1);
-        context.Serialize(ref emitter, value.Item2);
-        context.Serialize(ref emitter, value.Item3);
-        context.Serialize(ref emitter, value.Item4);
-        emitter.EndSequence();
-
-    }
-
     public override Tuple<T1, T2, T3, T4>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())
@@ -172,24 +113,6 @@ public class TupleFormatter<T1, T2, T3, T4> : YamlSerializer<Tuple<T1, T2, T3, T
 
 public class TupleFormatter<T1, T2, T3, T4, T5> : YamlSerializer<Tuple<T1, T2, T3, T4, T5>?>,IYamlFormatter<Tuple<T1, T2, T3, T4, T5>?>
 {
-    public void Serialize(ref Utf8YamlEmitter emitter, Tuple<T1, T2, T3, T4, T5>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        if (value is null)
-        {
-            emitter.WriteNull();
-            return;
-        }
-
-        emitter.BeginSequence(DataStyle.Compact);
-        context.Serialize(ref emitter, value.Item1);
-        context.Serialize(ref emitter, value.Item2);
-        context.Serialize(ref emitter, value.Item3);
-        context.Serialize(ref emitter, value.Item4);
-        context.Serialize(ref emitter, value.Item5);
-        emitter.EndSequence();
-
-    }
-
     public override Tuple<T1, T2, T3, T4, T5>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())
@@ -221,24 +144,6 @@ public class TupleFormatter<T1, T2, T3, T4, T5> : YamlSerializer<Tuple<T1, T2, T
 
 public class TupleFormatter<T1, T2, T3, T4, T5, T6> : YamlSerializer<Tuple<T1, T2, T3, T4, T5, T6>?> ,IYamlFormatter<Tuple<T1, T2, T3, T4, T5, T6>?>
 {
-    public void Serialize(ref Utf8YamlEmitter emitter, Tuple<T1, T2, T3, T4, T5, T6>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        if (value is null)
-        {
-            emitter.WriteNull();
-            return;
-        }
-
-        emitter.BeginSequence(DataStyle.Compact);
-        context.Serialize(ref emitter, value.Item1);
-        context.Serialize(ref emitter, value.Item2);
-        context.Serialize(ref emitter, value.Item3);
-        context.Serialize(ref emitter, value.Item4);
-        context.Serialize(ref emitter, value.Item5);
-        context.Serialize(ref emitter, value.Item6);
-        emitter.EndSequence();
-    }
-
     public override Tuple<T1, T2, T3, T4, T5, T6>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())
@@ -272,26 +177,6 @@ public class TupleFormatter<T1, T2, T3, T4, T5, T6> : YamlSerializer<Tuple<T1, T
 
 public class TupleFormatter<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<Tuple<T1, T2, T3, T4, T5, T6, T7>?>,IYamlFormatter<Tuple<T1, T2, T3, T4, T5, T6, T7>?>
 {
-    public void Serialize(ref Utf8YamlEmitter emitter, Tuple<T1, T2, T3, T4, T5, T6, T7>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        if (value is null)
-        {
-            emitter.WriteNull();
-            return;
-        }
-
-        emitter.BeginSequence(DataStyle.Compact);
-        context.Serialize(ref emitter, value.Item1);
-        context.Serialize(ref emitter, value.Item2);
-        context.Serialize(ref emitter, value.Item3);
-        context.Serialize(ref emitter, value.Item4);
-        context.Serialize(ref emitter, value.Item5);
-        context.Serialize(ref emitter, value.Item6);
-        context.Serialize(ref emitter, value.Item7);
-        emitter.EndSequence();
-
-    }
-
     public override Tuple<T1, T2, T3, T4, T5, T6, T7>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())
@@ -328,27 +213,6 @@ public class TupleFormatter<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<Tuple<T
 public class TupleFormatter<T1, T2, T3, T4, T5, T6, T7, T8> : YamlSerializer<Tuple<T1, T2, T3, T4, T5, T6, T7, T8>?>, IYamlFormatter<Tuple<T1, T2, T3, T4, T5, T6, T7, T8>?>
     where T8 : notnull
 {
-    public void Serialize(ref Utf8YamlEmitter emitter, Tuple<T1, T2, T3, T4, T5, T6, T7, T8>? value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        if (value is null)
-        {
-            emitter.WriteNull();
-            return;
-        }
-
-        emitter.BeginSequence(DataStyle.Compact);
-        context.Serialize(ref emitter, value.Item1);
-        context.Serialize(ref emitter, value.Item2);
-        context.Serialize(ref emitter, value.Item3);
-        context.Serialize(ref emitter, value.Item4);
-        context.Serialize(ref emitter, value.Item5);
-        context.Serialize(ref emitter, value.Item6);
-        context.Serialize(ref emitter, value.Item7);
-        context.Serialize(ref emitter, value.Rest);
-        emitter.EndSequence();
-
-    }
-
     public override Tuple<T1, T2, T3, T4, T5, T6, T7, T8>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())

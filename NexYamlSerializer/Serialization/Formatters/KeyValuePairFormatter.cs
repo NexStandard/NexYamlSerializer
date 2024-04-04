@@ -10,14 +10,6 @@ namespace NexVYaml.Serialization;
 
 public class KeyValuePairFormatter<TKey, TValue> : YamlSerializer<KeyValuePair<TKey,TValue>>,IYamlFormatter<KeyValuePair<TKey, TValue>>
 {
-    public void Serialize(ref Utf8YamlEmitter emitter, KeyValuePair<TKey, TValue> value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        emitter.BeginSequence();
-        context.Serialize(ref emitter, value.Key);
-        context.Serialize(ref emitter, value.Value);
-        emitter.EndSequence();
-    }
-
     public override KeyValuePair<TKey, TValue> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())

@@ -12,19 +12,6 @@ public class TimeSpanFormatter : YamlSerializer<TimeSpan>,IYamlFormatter<TimeSpa
 {
     public static readonly TimeSpanFormatter Instance = new();
 
-    public void Serialize(ref Utf8YamlEmitter emitter, TimeSpan value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        var buf = context.GetBuffer64();
-        if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten))
-        {
-            emitter.WriteScalar(buf[..bytesWritten]);
-        }
-        else
-        {
-            throw new YamlSerializerException($"Cannot serialize a value: {value}");
-        }
-    }
-
     public override TimeSpan Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.TryGetScalarAsSpan(out var span) &&
