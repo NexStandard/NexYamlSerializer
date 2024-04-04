@@ -84,23 +84,6 @@ public class YamlDeserializationContext
     {
         return new ArrayFormatter<T>().Deserialize(ref parser,this);
     }
-    T DeserializeWithAliasReflection<T>(IYamlFormatter<T> innerFormatter, ref YamlParser parser)
-    {
-        if (TryResolveCurrentAlias<T>(ref parser, out var aliasValue))
-        {
-            return aliasValue!;
-        }
-
-        var withAnchor = parser.TryGetCurrentAnchor(out var anchor);
-        var method = innerFormatter.GetType().GetMethod("Deserialize");
-        var result =  (T)method.Invoke(innerFormatter, new object[] { parser, this });
-
-        if (withAnchor)
-        {
-            RegisterAnchor(anchor, result);
-        }
-        return result;
-    }
     public T DeserializeWithAlias<T>(IYamlFormatter<T> innerFormatter, ref YamlParser parser)
     {
         if (TryResolveCurrentAlias<T>(ref parser, out var aliasValue))
