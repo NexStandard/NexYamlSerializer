@@ -2,9 +2,10 @@
 using NexVYaml;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
+using NexVYaml.Serialization;
 using Stride.Core;
 
-namespace NexVYaml.Serialization;
+namespace NexYamlSerializer.Serialization.PrimitiveSerializers;
 
 public class CharFormatter : YamlSerializer<char>, IYamlFormatter<char>
 {

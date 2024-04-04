@@ -108,16 +108,16 @@ public class InterfaceDictionaryFormatter<TKey, TValue> : YamlSerializer<IDictio
 
     public override void Serialize(ref IYamlStream stream, IDictionary<TKey, TValue>? value, DataStyle style = DataStyle.Normal)
     {
-        /*stream.SerializeContext.IsRedirected = false;
+        stream.SerializeContext.IsRedirected = false;
 
-        IYamlFormatter<TKey> keyFormatter = null;
-        IYamlFormatter<TValue> valueFormatter = null;
+        YamlSerializer<TKey> keyFormatter = null;
+        YamlSerializer<TValue> valueFormatter = null;
         if (this.IsPrimitiveType(typeof(TKey)))
         {
-            keyFormatter = stream.SerializeContext.Resolver.GetFormatter<TKey>();
+            keyFormatter = NewSerializerRegistry.Instance.GetFormatter<TKey>();
         }
         if (this.IsPrimitiveType(typeof(TValue)))
-            valueFormatter = stream.SerializeContext.Resolver.GetFormatter<TValue>();
+            valueFormatter = NewSerializerRegistry.Instance.GetFormatter<TValue>();
 
         if (keyFormatter == null)
         {
@@ -127,7 +127,7 @@ public class InterfaceDictionaryFormatter<TKey, TValue> : YamlSerializer<IDictio
                 var elementFormatter = new KeyValuePairFormatter<TKey, TValue>();
                 foreach (var x in value)
                 {
-                    elementFormatter.Serialize(ref stream, x, stream.SerializeContext);
+                    elementFormatter.Serialize(ref stream, x);
                 }
             }
             stream.Emitter.EndSequence();
@@ -138,7 +138,7 @@ public class InterfaceDictionaryFormatter<TKey, TValue> : YamlSerializer<IDictio
             {
                 foreach (var x in value)
                 {
-                    keyFormatter.Serialize(ref stream,x.Key, stream.SerializeContext);
+                    keyFormatter.Serialize(ref stream, x.Key, style);
                     stream.Write(x.Value);
                 }
             }
@@ -150,12 +150,12 @@ public class InterfaceDictionaryFormatter<TKey, TValue> : YamlSerializer<IDictio
             {
                 foreach (var x in value)
                 {
-                    keyFormatter.Serialize(ref stream, x.Key, stream.SerializeContext);
-                    valueFormatter.Serialize(ref stream, x.Value, stream.SerializeContext);
+                    keyFormatter.Serialize(ref stream, x.Key, style);
+                    valueFormatter.Serialize(ref stream, x.Value, style);
                 }
             }
             stream.Emitter.EndMapping();
-        }*/
+        }
     }
 }
 

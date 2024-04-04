@@ -5,12 +5,13 @@ using System.Text;
 using NexVYaml.Emitter;
 using NexVYaml.Internal;
 using NexVYaml.Parser;
+using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
 
-public class ListFormatter<T> : IYamlFormatter<List<T>?>
+public class ListFormatter<T> : YamlSerializer<List<T>?>,IYamlFormatter<List<T>?>
 {
     public void IndirectSerialize(ref Utf8YamlEmitter emitter, object value, YamlSerializationContext context,DataStyle style = DataStyle.Normal)
     {
@@ -41,7 +42,7 @@ public class ListFormatter<T> : IYamlFormatter<List<T>?>
         }
     }
 
-    public List<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    public override List<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())
         {
@@ -62,21 +63,41 @@ public class ListFormatter<T> : IYamlFormatter<List<T>?>
         return list;
     }
 
+    public override void Serialize(ref IYamlStream stream, List<T>? value, DataStyle style = DataStyle.Normal)
+    {
+        stream.SerializeContext.IsRedirected = false;
+        stream.Emitter.BeginSequence(style);
+        foreach (var x in value)
+        {
+            stream.Write(x, style);
+        }
+
+        stream.Emitter.EndSequence();
+    }
 }
 file class ListHelper : IYamlFormatterHelper
 {
     public void Register(IYamlFormatterResolver resolver)
     {
+        NewSerializerRegistry.Instance.Register(this, typeof(List<>), typeof(List<>));
         resolver.Register(this, typeof(List<>), typeof(List<>));
+        NewSerializerRegistry.Instance.RegisterFormatter(typeof(List<>));
         resolver.RegisterFormatter(typeof(List<>));
+        NewSerializerRegistry.Instance.RegisterGenericFormatter(typeof(List<>), typeof(ListFormatter<>));
         resolver.RegisterGenericFormatter(typeof(List<>), typeof(ListFormatter<>));
 
+        NewSerializerRegistry.Instance.Register(this, typeof(List<>), typeof(List<>));
         resolver.Register(this, typeof(List<>), typeof(List<>));
 
+        NewSerializerRegistry.Instance.Register(this, typeof(List<>), typeof(System.Collections.Generic.IList<>));
         resolver.Register(this, typeof(List<>), typeof(System.Collections.Generic.IList<>));
+        NewSerializerRegistry.Instance.Register(this, typeof(List<>), typeof(System.Collections.Generic.ICollection<>));
         resolver.Register(this, typeof(List<>), typeof(System.Collections.Generic.ICollection<>));
+        NewSerializerRegistry.Instance.Register(this, typeof(List<>), typeof(System.Collections.Generic.IReadOnlyList<>));
         resolver.Register(this, typeof(List<>), typeof(System.Collections.Generic.IReadOnlyList<>));
+        NewSerializerRegistry.Instance.Register(this, typeof(List<>), typeof(System.Collections.Generic.IReadOnlyCollection<>));
         resolver.Register(this, typeof(List<>), typeof(System.Collections.Generic.IReadOnlyCollection<>));
+        NewSerializerRegistry.Instance.Register(this, typeof(List<>), typeof(System.Collections.Generic.IEnumerable<>));
         resolver.Register(this, typeof(List<>), typeof(System.Collections.Generic.IEnumerable<>));
 
     }

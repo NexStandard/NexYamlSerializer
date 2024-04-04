@@ -168,12 +168,16 @@ file class DictionaryFormatterHelper : IYamlFormatterHelper
 {
     public void Register(IYamlFormatterResolver resolver)
     {
+        NewSerializerRegistry.Instance.Register(this, typeof(Dictionary<,>), typeof(Dictionary<,>));
         resolver.Register(this, typeof(Dictionary<,>), typeof(Dictionary<,>));
+        NewSerializerRegistry.Instance.RegisterGenericFormatter(typeof(Dictionary<,>), typeof(DictionaryFormatter<,>));
         resolver.RegisterGenericFormatter(typeof(Dictionary<,>), typeof(DictionaryFormatter<,>));
+        NewSerializerRegistry.Instance.RegisterFormatter(typeof(Dictionary<,>));
         resolver.RegisterFormatter(typeof(Dictionary<,>));
 
-
+        NewSerializerRegistry.Instance.Register(this, typeof(Dictionary<,>), typeof(System.Collections.Generic.IDictionary<,>));
         resolver.Register(this, typeof(Dictionary<,>), typeof(System.Collections.Generic.IDictionary<,>));
+        NewSerializerRegistry.Instance.Register(this, typeof(Dictionary<,>), typeof(System.Collections.Generic.IReadOnlyDictionary<,>));
         resolver.Register(this, typeof(Dictionary<,>), typeof(System.Collections.Generic.IReadOnlyDictionary<,>));
 
     }
@@ -204,9 +208,31 @@ file class DictionaryFormatterHelper : IYamlFormatterHelper
         return (IYamlFormatter)Activator.CreateInstance(fillGen);
     }
 
-    public YamlSerializer Instantiate(Type target)
+    public YamlSerializer Instantiate(Type type)
     {
-        throw new NotImplementedException();
+        if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IDictionary<,>))
+        {
+            var generatorType = typeof(DictionaryFormatter<,>);
+            var genericParams = type.GenericTypeArguments;
+            var param = new Type[] { genericParams[0], genericParams[1] };
+            var filledGeneratorType = generatorType.MakeGenericType(param);
+            return (YamlSerializer)Activator.CreateInstance(filledGeneratorType);
+        }
+
+        if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IReadOnlyDictionary<,>))
+        {
+            var generatorType = typeof(DictionaryFormatter<,>);
+            var genericParams = type.GenericTypeArguments;
+            var param = new Type[] { genericParams[0], genericParams[1] };
+            var filledGeneratorType = generatorType.MakeGenericType(param);
+            return (YamlSerializer)Activator.CreateInstance(filledGeneratorType);
+        }
+
+
+        var gen = typeof(DictionaryFormatter<,>);
+        var genParams = type.GenericTypeArguments;
+        var fillGen = gen.MakeGenericType(genParams);
+        return (YamlSerializer)Activator.CreateInstance(fillGen);
     }
 }
 

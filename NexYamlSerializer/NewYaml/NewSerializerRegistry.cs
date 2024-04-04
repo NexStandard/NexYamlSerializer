@@ -133,7 +133,7 @@ public class SerializerRegistry
         [typeof(IReadOnlyList<>)] = typeof(InterfaceReadOnlyListFormatter<>),
         [typeof(IReadOnlyCollection<>)] = typeof(InterfaceReadOnlyCollectionFormatter<>),
         [typeof(Nullable<>)] = typeof(NullableFormatter<>),
-        /*[typeof(IDictionary<,>)] = typeof(InterfaceDictionaryFormatter<,>),
+        [typeof(IDictionary<,>)] = typeof(InterfaceDictionaryFormatter<,>),
         [typeof(IReadOnlyDictionary<,>)] = typeof(InterfaceReadOnlyDictionaryFormatter<,>),
         [typeof(Tuple<>)] = typeof(TupleFormatter<>),
         [typeof(Tuple<,>)] = typeof(TupleFormatter<,>),
@@ -142,7 +142,7 @@ public class SerializerRegistry
         [typeof(Tuple<,,,,>)] = typeof(TupleFormatter<,,,,>),
         [typeof(Tuple<,,,,,>)] = typeof(TupleFormatter<,,,,,>),
         [typeof(Tuple<,,,,,,>)] = typeof(TupleFormatter<,,,,,,>),
-        [typeof(Tuple<,,,,,,,>)] = typeof(TupleFormatter<,,,,,,,>)*/
+        [typeof(Tuple<,,,,,,,>)] = typeof(TupleFormatter<,,,,,,,>)
     };
     internal Dictionary<string, Type> TypeMap { get; } = new();
     internal Dictionary<Type, YamlSerializer> DefinedFormatters { get; } = new Dictionary<Type, YamlSerializer>()

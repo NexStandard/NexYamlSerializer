@@ -1,13 +1,15 @@
 #nullable enable
 using System.Buffers.Text;
+using NexVYaml;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
+using NexVYaml.Serialization;
 using Stride.Core;
 
-namespace NexVYaml.Serialization;
+namespace NexYamlSerializer.Serialization.PrimitiveSerializers;
 
 public class DecimalFormatter : YamlSerializer<decimal>, IYamlFormatter<decimal>
-{ 
+{
     public static readonly DecimalFormatter Instance = new();
 
     public void Serialize(ref Utf8YamlEmitter emitter, decimal value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
