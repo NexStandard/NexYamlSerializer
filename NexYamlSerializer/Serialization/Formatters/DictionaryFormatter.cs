@@ -51,54 +51,7 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
 
     public override void Serialize(ref IYamlStream stream, Dictionary<TKey, TValue>? value, DataStyle style = DataStyle.Normal)
     {
-        stream.SerializeContext.IsRedirected = false;
-
-        YamlSerializer<TKey> keyFormatter = null;
-        YamlSerializer<TValue> valueFormatter = null;
-        if (this.IsPrimitiveType(typeof(TKey)))
-        {
-            keyFormatter = NewSerializerRegistry.Instance.GetFormatter<TKey>();
-        }
-        if (this.IsPrimitiveType(typeof(TValue)))
-            valueFormatter = NewSerializerRegistry.Instance.GetFormatter<TValue>();
-
-        if (keyFormatter == null)
-        {
-            stream.Emitter.BeginSequence();
-            if (value.Count > 0)
-            {
-                var elementFormatter = new KeyValuePairFormatter<TKey, TValue>();
-                foreach (var x in value)
-                {
-                    elementFormatter.Serialize(ref stream, x);
-                }
-            }
-            stream.Emitter.EndSequence();
-        }
-        else if (valueFormatter == null)
-        {
-            stream.Emitter.BeginMapping();
-            {
-                foreach (var x in value)
-                {
-                    keyFormatter.Serialize(ref stream, x.Key, style);
-                    stream.Write(x.Value);
-                }
-            }
-            stream.Emitter.EndMapping();
-        }
-        else
-        {
-            stream.Emitter.BeginMapping();
-            {
-                foreach (var x in value)
-                {
-                    keyFormatter.Serialize(ref stream, x.Key, style);
-                    valueFormatter.Serialize(ref stream, x.Value, style);
-                }
-            }
-            stream.Emitter.EndMapping();
-        }
+        stream.Write(value,style);
     }
 }
 file class DictionaryFormatterHelper : IYamlFormatterHelper
