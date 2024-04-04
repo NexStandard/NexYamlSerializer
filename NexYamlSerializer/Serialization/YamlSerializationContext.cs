@@ -12,14 +12,6 @@ using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
-public readonly struct SequenceStyleScope
-{
-}
-
-public readonly struct ScalarStyleScope
-{
-}
-
 public class YamlSerializationContext : IDisposable
 {
     public IYamlFormatterResolver Resolver { get; }

@@ -2,6 +2,7 @@
 using NexYamlSerializer.Serialization.Formatters;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 
@@ -24,8 +25,8 @@ public interface IYamlFormatterResolver
 
 public static class YamlFormatterResolverExtensions
 {
-    public static bool IsNullable(Type value, out Type underlyingType)
+    public static bool IsNullable(Type value, [NotNullWhen(true)] out Type underlyingType)
     {
-        return (underlyingType = Nullable.GetUnderlyingType(value)) != null;
+        return (underlyingType = Nullable.GetUnderlyingType(value)!) != null;
     }
 }
