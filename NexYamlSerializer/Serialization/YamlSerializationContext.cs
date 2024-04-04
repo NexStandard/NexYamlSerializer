@@ -85,7 +85,4 @@ public class YamlSerializationContext : IDisposable
     }
 
     public byte[] GetBuffer64() => primitiveValueBuffer;
-
-    // readonly Stack<SequenceStyle> sequenceStyleStack = new();
-    // readonly Stack<ScalarStyle> sequenceStyleStack = new();
 }
