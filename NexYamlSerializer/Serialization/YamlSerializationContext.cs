@@ -31,10 +31,7 @@ public class YamlSerializationContext : IDisposable
         Resolver = options.Resolver;
         EmitOptions = options.EmitOptions;
     }
-    public static bool IsNullable(Type value, out Type underlyingType)
-    {
-        return (underlyingType = Nullable.GetUnderlyingType(value)) != null;
-    }
+
     public void Serialize<T>(ref IYamlStream stream, T value, DataStyle style = DataStyle.Any)
     {
         var type = typeof(T);
