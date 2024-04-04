@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Stride.Core;
+using System;
+using System.Collections.Generic;
 
 namespace NexVYaml;
 
@@ -464,5 +466,34 @@ public static class YamlStreamExtensionsUri
         stream.Serialize(ref key);
         var s = value.ToString();
         stream.Serialize(ref s);
+    }
+}
+
+public static class YamlStreamExtensionsKeyValuePair
+{
+    public static void Write<T, K>(this IYamlStream stream, KeyValuePair<T, K> value, DataStyle style = DataStyle.Any)
+    {
+        stream.Write(ref value);
+    }
+
+    public static void Write<T, K>(this IYamlStream stream, ref KeyValuePair<T, K> value, DataStyle style = DataStyle.Any)
+    {
+        if (style == DataStyle.Any)
+            style = DataStyle.Normal;
+        stream.Emitter.BeginSequence();
+        stream.Write(value.Key, style);
+        stream.Write(value.Value, style);
+        stream.Emitter.EndSequence();
+    }
+
+    public static void Write<T, K>(this IYamlStream stream, string key, KeyValuePair<T, K> value, DataStyle style = DataStyle.Any)
+    {
+        stream.Write(key, ref value,style);
+    }
+
+    public static void Write<T, K>(this IYamlStream stream, string key, ref KeyValuePair<T, K> value, DataStyle style = DataStyle.Any)
+    {
+        stream.Serialize(ref key);
+        stream.Write(ref value, style);
     }
 }
