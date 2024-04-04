@@ -2,11 +2,12 @@
 using NexVYaml;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
+using NexVYaml.Serialization;
 using Stride.Core;
 
-namespace NexVYaml.Serialization;
+namespace NexYamlSerializer.Serialization.PrimitiveSerializers;
 
-public class SByteFormatter : IYamlFormatter<sbyte>
+public class SByteFormatter : YamlSerializer<sbyte>, IYamlFormatter<sbyte>
 {
     public static readonly SByteFormatter Instance = new();
 
@@ -15,10 +16,15 @@ public class SByteFormatter : IYamlFormatter<sbyte>
         emitter.WriteInt32(value);
     }
 
-    public sbyte Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    public override sbyte Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         var result = parser.GetScalarAsInt32();
         parser.Read();
         return checked((sbyte)result);
+    }
+
+    public override void Serialize(ref IYamlStream stream, sbyte value, DataStyle style = DataStyle.Normal)
+    {
+        stream.Serialize(ref value);
     }
 }

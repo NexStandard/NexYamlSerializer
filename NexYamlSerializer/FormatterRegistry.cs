@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NexVYaml.Serialization;
+using NexYamlSerializer.Serialization.PrimitiveSerializers;
 
 namespace NexVYaml;
 class FormatterRegistry
@@ -45,13 +46,13 @@ class FormatterRegistry
             // StandardClassLibraryFormatter
             { typeof(string), NullableStringFormatter.Instance },
             { typeof(decimal), DecimalFormatter.Instance },
-            { typeof(decimal?), new StaticNullableFormatter<decimal>(DecimalFormatter.Instance) },
+            { typeof(decimal?), new StaticNullableFormatter<decimal>((YamlSerializer<decimal>)DecimalFormatter.Instance) },
             { typeof(TimeSpan), TimeSpanFormatter.Instance },
-            { typeof(TimeSpan?), new StaticNullableFormatter<TimeSpan>(TimeSpanFormatter.Instance) },
+            { typeof(TimeSpan?), new StaticNullableFormatter<TimeSpan>((YamlSerializer<TimeSpan>)TimeSpanFormatter.Instance) },
             { typeof(DateTimeOffset), DateTimeOffsetFormatter.Instance },
-            { typeof(DateTimeOffset?), new StaticNullableFormatter<DateTimeOffset>(DateTimeOffsetFormatter.Instance) },
+            { typeof(DateTimeOffset?), new StaticNullableFormatter<DateTimeOffset>((YamlSerializer<DateTimeOffset>)DateTimeOffsetFormatter.Instance) },
             { typeof(Guid), GuidFormatter.Instance },
-            { typeof(Guid?), new StaticNullableFormatter<Guid>(GuidFormatter.Instance) },
+            { typeof(Guid?), new StaticNullableFormatter<Guid>((YamlSerializer<Guid>)GuidFormatter.Instance) },
             { typeof(Uri), UriFormatter.Instance },
         };
 }

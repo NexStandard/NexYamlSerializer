@@ -24,6 +24,6 @@ public class Int64Formatter : YamlSerializer<long>, IYamlFormatter<long>
 
     public override void Serialize(ref IYamlStream stream, long value, DataStyle style = DataStyle.Normal)
     {
-        stream.Write(ref value);
+        stream.Serialize(ref value);
     }
 }

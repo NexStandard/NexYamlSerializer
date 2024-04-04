@@ -97,7 +97,7 @@ public class YamlSerializationContext : IDisposable
                 var protectedFormatter = Resolver.GetFormatter<T>();
                 protectedFormatter.Serialize(ref emitter, value!, this, style);
 
-            }
+        }
             return;
         }
         if (type.IsInterface || type.IsAbstract || type.IsGenericType)

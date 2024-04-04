@@ -6,8 +6,8 @@ using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
-public class DecimalFormatter : IYamlFormatter<decimal>
-{
+public class DecimalFormatter : YamlSerializer<decimal>, IYamlFormatter<decimal>
+{ 
     public static readonly DecimalFormatter Instance = new();
 
     public void Serialize(ref Utf8YamlEmitter emitter, decimal value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
@@ -23,7 +23,7 @@ public class DecimalFormatter : IYamlFormatter<decimal>
         }
     }
 
-    public decimal Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    public override decimal Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.TryGetScalarAsSpan(out var span) &&
             Utf8Parser.TryParse(span, out decimal value, out var bytesConsumed) &&
@@ -33,5 +33,10 @@ public class DecimalFormatter : IYamlFormatter<decimal>
             return value;
         }
         throw new YamlSerializerException($"Cannot detect a scalar value of decimal : {parser.CurrentEventType} {parser.GetScalarAsString()}");
+    }
+
+    public override void Serialize(ref IYamlStream stream, decimal value, DataStyle style = DataStyle.Normal)
+    {
+        stream.Serialize(ref value);
     }
 }

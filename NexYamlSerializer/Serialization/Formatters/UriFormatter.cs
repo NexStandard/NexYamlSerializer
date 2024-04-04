@@ -6,7 +6,7 @@ using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
-public class UriFormatter : IYamlFormatter<Uri>
+public class UriFormatter : YamlSerializer<Uri>,IYamlFormatter<Uri>
 {
     public static readonly UriFormatter Instance = new();
 
@@ -15,7 +15,7 @@ public class UriFormatter : IYamlFormatter<Uri>
         emitter.WriteString(value.ToString());
     }
 
-    public Uri Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    public override Uri Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.TryGetScalarAsString(out var scalar) && scalar != null)
         {
@@ -24,5 +24,10 @@ public class UriFormatter : IYamlFormatter<Uri>
             return uri;
         }
         throw new YamlSerializerException($"Cannot detect a scalar value of Uri : {parser.CurrentEventType} {parser.GetScalarAsString()}");
+    }
+
+    public override void Serialize(ref IYamlStream stream, Uri value, DataStyle style = DataStyle.Normal)
+    {
+        stream.Write(value.ToString());
     }
 }

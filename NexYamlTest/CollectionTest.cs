@@ -96,6 +96,7 @@ public class CollectionTest
         };
 
         NexYamlSerializerRegistry.Init();
+        NewSerializerRegistry.Init();
         var s = YamlSerializer.SerializeToString(data1);
         var d = YamlSerializer.Deserialize<CollectionInterfaces>(s);
         Assert.Equal(data1.Collection.Count, d.Collection.Count);

@@ -8,11 +8,12 @@ using System.Text.Unicode;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using NexYamlSerializer;
+using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
-public class DictionaryFormatter<TKey, TValue> : IYamlFormatter<Dictionary<TKey, TValue>?>
+public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey, TValue>?>,IYamlFormatter<Dictionary<TKey, TValue>?>
     where TKey : notnull
 {
     public void IndirectSerialize(ref Utf8YamlEmitter emitter, object value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
@@ -78,7 +79,7 @@ public class DictionaryFormatter<TKey, TValue> : IYamlFormatter<Dictionary<TKey,
         }
     }
     
-    public Dictionary<TKey, TValue> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    public override Dictionary<TKey, TValue> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())
         {
@@ -110,12 +111,63 @@ public class DictionaryFormatter<TKey, TValue> : IYamlFormatter<Dictionary<TKey,
             return keyValuePairs?.ToDictionary() ?? [];
         }
     }
+
+    public override void Serialize(ref IYamlStream stream, Dictionary<TKey, TValue>? value, DataStyle style = DataStyle.Normal)
+    {
+        stream.SerializeContext.IsRedirected = false;
+
+        YamlSerializer<TKey> keyFormatter = null;
+        YamlSerializer<TValue> valueFormatter = null;
+        if (this.IsPrimitiveType(typeof(TKey)))
+        {
+            keyFormatter = NewSerializerRegistry.Instance.GetFormatter<TKey>();
+        }
+        if (this.IsPrimitiveType(typeof(TValue)))
+            valueFormatter = NewSerializerRegistry.Instance.GetFormatter<TValue>();
+
+        if (keyFormatter == null)
+        {
+            stream.Emitter.BeginSequence();
+            if (value.Count > 0)
+            {
+                var elementFormatter = new KeyValuePairFormatter<TKey, TValue>();
+                foreach (var x in value)
+                {
+                    elementFormatter.Serialize(ref stream, x);
+                }
+            }
+            stream.Emitter.EndSequence();
+        }
+        else if (valueFormatter == null)
+        {
+            stream.Emitter.BeginMapping();
+            {
+                foreach (var x in value)
+                {
+                    keyFormatter.Serialize(ref stream, x.Key, style);
+                    stream.Write(x.Value);
+                }
+            }
+            stream.Emitter.EndMapping();
+        }
+        else
+        {
+            stream.Emitter.BeginMapping();
+            {
+                foreach (var x in value)
+                {
+                    keyFormatter.Serialize(ref stream, x.Key, style);
+                    valueFormatter.Serialize(ref stream, x.Value, style);
+                }
+            }
+            stream.Emitter.EndMapping();
+        }
+    }
 }
 file class DictionaryFormatterHelper : IYamlFormatterHelper
 {
     public void Register(IYamlFormatterResolver resolver)
     {
-        resolver.RegisterTag($"Dictionary,NexYamlTest", typeof(Dictionary<,>));
         resolver.Register(this, typeof(Dictionary<,>), typeof(Dictionary<,>));
         resolver.RegisterGenericFormatter(typeof(Dictionary<,>), typeof(DictionaryFormatter<,>));
         resolver.RegisterFormatter(typeof(Dictionary<,>));

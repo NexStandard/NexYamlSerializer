@@ -3,11 +3,12 @@ using System;
 using System.Collections.Generic;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
+using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
-public class KeyValuePairFormatter<TKey, TValue> : IYamlFormatter<KeyValuePair<TKey, TValue>>
+public class KeyValuePairFormatter<TKey, TValue> : YamlSerializer<KeyValuePair<TKey,TValue>>,IYamlFormatter<KeyValuePair<TKey, TValue>>
 {
     public void Serialize(ref Utf8YamlEmitter emitter, KeyValuePair<TKey, TValue> value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
     {
@@ -17,7 +18,7 @@ public class KeyValuePairFormatter<TKey, TValue> : IYamlFormatter<KeyValuePair<T
         emitter.EndSequence();
     }
 
-    public KeyValuePair<TKey, TValue> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    public override KeyValuePair<TKey, TValue> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())
         {
@@ -29,6 +30,14 @@ public class KeyValuePairFormatter<TKey, TValue> : IYamlFormatter<KeyValuePair<T
         var value = context.DeserializeWithAlias<TValue>(ref parser);
         parser.ReadWithVerify(ParseEventType.SequenceEnd);
         return new KeyValuePair<TKey, TValue>(key, value);
+    }
+
+    public override void Serialize(ref IYamlStream stream, KeyValuePair<TKey, TValue> value, DataStyle style = DataStyle.Normal)
+    {
+        stream.Emitter.BeginSequence();
+        stream.Write(value.Key);
+        stream.Write(value.Value);
+        stream.Emitter.EndSequence();
     }
 }
 file class NexSourceGenerated_NexYamlTest_ComplexCasesTempListHelper : IYamlFormatterHelper
