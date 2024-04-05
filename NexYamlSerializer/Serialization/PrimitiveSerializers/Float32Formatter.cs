@@ -10,11 +10,6 @@ public class Float32Formatter : YamlSerializer<float>,IYamlFormatter<float>
 {
     public static readonly Float32Formatter Instance = new();
 
-    public void Serialize(ref Utf8YamlEmitter emitter, float value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        emitter.WriteFloat(value);
-    }
-
     public override float Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         var result = parser.GetScalarAsFloat();

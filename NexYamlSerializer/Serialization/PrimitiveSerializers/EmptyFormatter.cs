@@ -20,11 +20,6 @@ public class EmptyFormatter<T> : YamlSerializer<T>,IYamlFormatter<T>
         return default!;
     }
 
-    public void Serialize(ref Utf8YamlEmitter emitter, T value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        emitter.WriteNull();
-    }
-
     public override void Serialize(ref IYamlStream stream, T value, DataStyle style = DataStyle.Normal)
     {
         stream.WriteNull();

@@ -11,11 +11,6 @@ public class UInt16Formatter : YamlSerializer<ushort>, IYamlFormatter<ushort>
 {
     public static readonly UInt16Formatter Instance = new();
 
-    public void Serialize(ref Utf8YamlEmitter emitter, ushort value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        emitter.WriteUInt32(value);
-    }
-
     public override ushort Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         var result = parser.GetScalarAsUInt32();

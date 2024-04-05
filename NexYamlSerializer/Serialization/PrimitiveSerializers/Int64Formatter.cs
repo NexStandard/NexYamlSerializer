@@ -10,11 +10,6 @@ public class Int64Formatter : YamlSerializer<long>, IYamlFormatter<long>
 {
     public static readonly Int64Formatter Instance = new();
 
-    public void Serialize(ref Utf8YamlEmitter emitter, long value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        emitter.WriteInt64(value);
-    }
-
     public override long Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         var result = parser.GetScalarAsInt64();

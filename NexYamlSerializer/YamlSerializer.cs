@@ -214,7 +214,7 @@ public abstract class YamlSerializer
     /// <returns>An object of type <typeparamref name="T"/> representing the deserialized YAML content.</returns>
     public static T Deserialize<T>(string yaml, YamlSerializerOptions? options = null)
     {
-        return Deserialize<T>(Encoding.UTF8.GetBytes(yaml), options);
+        return Deserialize<T>(StringEncoding.Utf8.GetBytes(yaml), options);
     }
 
     /// <summary>

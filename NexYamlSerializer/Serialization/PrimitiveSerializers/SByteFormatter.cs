@@ -11,11 +11,6 @@ public class SByteFormatter : YamlSerializer<sbyte>, IYamlFormatter<sbyte>
 {
     public static readonly SByteFormatter Instance = new();
 
-    public void Serialize(ref Utf8YamlEmitter emitter, sbyte value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        emitter.WriteInt32(value);
-    }
-
     public override sbyte Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         var result = parser.GetScalarAsInt32();

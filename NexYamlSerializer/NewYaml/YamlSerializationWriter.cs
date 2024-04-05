@@ -4,7 +4,7 @@ using NexVYaml.Serialization;
 using NexYamlSerializer.Emitter.Serializers;
 using System;
 using System.Buffers.Text;
-using ScalarStyle = NexVYaml.Emitter.ScalarStyle;
+using System.Text;
 
 namespace NexVYaml;
 public class YamlSerializationWriter : IYamlStream

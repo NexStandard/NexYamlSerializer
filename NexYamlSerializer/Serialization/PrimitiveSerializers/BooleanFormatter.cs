@@ -10,11 +10,6 @@ public class BooleanFormatter : YamlSerializer<bool>, IYamlFormatter<bool>
 {
     public static readonly BooleanFormatter Instance = new();
 
-    public void Serialize(ref Utf8YamlEmitter emitter, bool value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        emitter.WriteBool(value);
-    }
-
     public override bool Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         var result = parser.GetScalarAsBool();

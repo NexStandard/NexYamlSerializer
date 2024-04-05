@@ -3,6 +3,7 @@ using System;
 using System.Buffers;
 using System.Buffers.Text;
 using System.Runtime.CompilerServices;
+using System.Text;
 using NexVYaml.Internal;
 
 namespace NexVYaml.Parser;
@@ -112,7 +113,7 @@ class Scalar : ITokenContent, IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteUnicodeCodepoint(int codepoint)
     {
-        Span<char> chars = stackalloc char[] { (char)codepoint };
+        Span<char> chars = [(char)codepoint];
         var utf8ByteCount = StringEncoding.Utf8.GetByteCount(chars);
         Span<byte> utf8Bytes = stackalloc byte[utf8ByteCount];
         StringEncoding.Utf8.GetBytes(chars, utf8Bytes);

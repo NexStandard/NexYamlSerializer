@@ -1,6 +1,7 @@
 ﻿using NexVYaml.Emitter;
 using NexVYaml.Internal;
 using System;
+using System.Text;
 
 namespace NexVYaml;
 

@@ -1,6 +1,6 @@
 namespace NexVYaml.Internal;
 
-enum LineBreakState
+public enum LineBreakState
 {
     None,
     Lf,

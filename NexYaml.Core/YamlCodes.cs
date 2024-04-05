@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace NexVYaml.Internal;
 
-static class YamlCodes
+public static class YamlCodes
 {
     public static readonly byte[] YamlDirectiveName = { (byte)'Y', (byte)'A', (byte)'M', (byte)'L' };
     public static readonly byte[] TagDirectiveName = { (byte)'T', (byte)'A', (byte)'G' };

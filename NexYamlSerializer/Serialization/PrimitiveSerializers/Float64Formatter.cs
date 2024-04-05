@@ -10,11 +10,6 @@ public class Float64Formatter : YamlSerializer<double>,IYamlFormatter<double>
 {
     public static readonly Float64Formatter Instance = new();
 
-    public void Serialize(ref Utf8YamlEmitter emitter, double value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        emitter.WriteDouble(value);
-    }
-
     public override double Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         var result = parser.GetScalarAsDouble();

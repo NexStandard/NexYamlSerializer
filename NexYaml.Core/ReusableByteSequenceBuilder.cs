@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace NexVYaml.Internal;
 
-static class ReusableByteSequenceBuilderPool
+public static class ReusableByteSequenceBuilderPool
 {
     static readonly ConcurrentQueue<ReusableByteSequenceBuilder> queue = new();
 
@@ -63,7 +63,7 @@ class ReusableByteSequenceSegment : ReadOnlySequenceSegment<byte>
     }
 }
 
-class ReusableByteSequenceBuilder
+public class ReusableByteSequenceBuilder
 {
     readonly Stack<ReusableByteSequenceSegment> segmentPool = new();
     readonly List<ReusableByteSequenceSegment> segments = new();

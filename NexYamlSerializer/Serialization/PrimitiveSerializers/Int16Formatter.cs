@@ -10,11 +10,6 @@ public class Int16Formatter : YamlSerializer<short>,IYamlFormatter<short>
 {
     public static readonly Int16Formatter Instance = new();
 
-    public void Serialize(ref Utf8YamlEmitter emitter, short value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        emitter.WriteInt32(value);
-    }
-
     public override short Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         var result = parser.GetScalarAsInt32();

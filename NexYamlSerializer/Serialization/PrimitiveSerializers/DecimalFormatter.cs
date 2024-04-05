@@ -12,19 +12,6 @@ public class DecimalFormatter : YamlSerializer<decimal>, IYamlFormatter<decimal>
 {
     public static readonly DecimalFormatter Instance = new();
 
-    public void Serialize(ref Utf8YamlEmitter emitter, decimal value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        var buf = context.GetBuffer64();
-        if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten))
-        {
-            emitter.WriteScalar(buf[..bytesWritten]);
-        }
-        else
-        {
-            throw new YamlSerializerException($"Cannot serialize a value: {value}");
-        }
-    }
-
     public override decimal Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.TryGetScalarAsSpan(out var span) &&

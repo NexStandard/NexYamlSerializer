@@ -10,11 +10,6 @@ public class Int32Formatter : YamlSerializer<int>, IYamlFormatter<int>
 {
     public static readonly Int32Formatter Instance = new();
 
-    public void Serialize(ref Utf8YamlEmitter emitter, int value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        emitter.WriteInt32(value);
-    }
-
     public override int Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         var result = parser.GetScalarAsInt32();

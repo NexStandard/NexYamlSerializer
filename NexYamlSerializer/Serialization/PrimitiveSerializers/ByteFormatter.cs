@@ -10,11 +10,6 @@ public class ByteFormatter : YamlSerializer<byte>, IYamlFormatter<byte>
 {
     public static readonly ByteFormatter Instance = new();
 
-    public void Serialize(ref Utf8YamlEmitter emitter, byte value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
-    {
-        emitter.WriteInt32(value);
-    }
-
     public override byte Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         var result = parser.GetScalarAsUInt32();

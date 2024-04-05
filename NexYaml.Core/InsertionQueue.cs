@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace NexVYaml.Internal;
 
-struct InsertionQueue<T>
+public class InsertionQueue<T>
 {
     const int MinimumGrow = 4;
     const int GrowFactor = 200;

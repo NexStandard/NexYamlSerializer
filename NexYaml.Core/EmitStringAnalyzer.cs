@@ -1,13 +1,10 @@
-#nullable enable
-using System;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-using NexVYaml.Emitter;
+using Stride.Core;
 
 namespace NexVYaml.Internal;
 
-readonly struct EmitStringInfo
+public readonly struct EmitStringInfo
 {
     public readonly int Lines;
     public readonly bool NeedsQuotes;
@@ -30,7 +27,7 @@ readonly struct EmitStringInfo
     }
 }
 
-static class EmitStringAnalyzer
+public static class EmitStringAnalyzer
 {
     [ThreadStatic]
     static StringBuilder? stringBuilderThreadStatic;
@@ -90,7 +87,7 @@ static class EmitStringAnalyzer
         return new EmitStringInfo(lines, needsQuotes, isReservedWord);
     }
 
-    internal static StringBuilder BuildLiteralScalar(ReadOnlySpan<char> originalValue, int indentCharCount)
+    public static StringBuilder BuildLiteralScalar(ReadOnlySpan<char> originalValue, int indentCharCount)
     {
         var chompHint = '\0';
         if (originalValue.Length > 0 && originalValue[^1] == '\n')
@@ -132,7 +129,7 @@ static class EmitStringAnalyzer
         return stringBuilder;
     }
 
-    internal static StringBuilder BuildQuotedScalar(ReadOnlySpan<char> originalValue, bool doubleQuote = true)
+    public static StringBuilder BuildQuotedScalar(ReadOnlySpan<char> originalValue, bool doubleQuote = true)
     {
         var stringBuilder = GetStringBuilder();
 

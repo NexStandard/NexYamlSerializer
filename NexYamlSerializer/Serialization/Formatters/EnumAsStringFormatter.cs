@@ -3,12 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using NexVYaml.Emitter;
 using NexVYaml.Internal;
 using NexVYaml.Parser;
-using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
-using ScalarStyle = NexVYaml.Emitter.ScalarStyle;
 
 namespace NexVYaml.Serialization;
 
@@ -36,7 +33,7 @@ public class EnumAsStringFormatter<T> : YamlSerializer<T>,IYamlFormatter<T> wher
             else
             {
                 var name = Enum.GetName(type, value);
-                names.Add(KeyNameHelper.ToCamelCase(name));
+                names.Add(ToCamelCase(name));
             }
         }
 
@@ -50,18 +47,20 @@ public class EnumAsStringFormatter<T> : YamlSerializer<T>,IYamlFormatter<T> wher
         }
     }
 
-    public void Serialize(ref Utf8YamlEmitter emitter, T value, YamlSerializationContext context, DataStyle style = DataStyle.Normal)
+    private static string ToCamelCase(string s)
     {
-        if (ValueNameMapping.TryGetValue(value, out var name))
+        var span = s.AsSpan();
+        if (span.Length <= 0 ||
+            (span.Length <= 1 && char.IsLower(span[0])))
         {
-            emitter.WriteString(name, ScalarStyle.Plain);
+            return s;
         }
-        else
-        {
-            throw new YamlSerializerException($"Cannot detect a value of enum: {typeof(T)}, {value}");
-        }
-    }
 
+        Span<char> buf = stackalloc char[span.Length];
+        buf[0] = char.ToLowerInvariant(span[0]);
+        span[1..].CopyTo(buf[1..]);
+        return buf.ToString();
+    }
     public override T Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         var scalar = parser.ReadScalarAsString();

@@ -1,16 +1,6 @@
 #nullable enable
 namespace NexVYaml.Emitter;
 
-public enum ScalarStyle
-{
-    Any,
-    Plain,
-    SingleQuoted,
-    DoubleQuoted,
-    Literal,
-    Folded,
-}
-
 public enum SequenceStyle
 {
     Block,

@@ -1,11 +1,8 @@
 ﻿using NexVYaml.Emitter;
 using NexVYaml.Internal;
 using NexVYaml.Serialization;
-using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
 using System;
-using System.Runtime.CompilerServices;
-using ScalarStyle = NexVYaml.Emitter.ScalarStyle;
 
 namespace NexVYaml;
 

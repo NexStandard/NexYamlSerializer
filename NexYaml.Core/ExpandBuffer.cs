@@ -1,13 +1,8 @@
-#nullable enable
-using NexVYaml.Emitter;
-using System;
 using System.Buffers;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.CompilerServices;
 
 namespace NexVYaml.Internal;
 
-internal class ExpandBuffer<T>
+public class ExpandBuffer<T>
 {
     const int MinimumGrow = 4;
     const int GrowFactor = 200;
@@ -23,7 +18,6 @@ internal class ExpandBuffer<T>
 
     public ref T this[int index]
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => ref buffer[index];
     }
     /// <summary>
@@ -48,10 +42,8 @@ internal class ExpandBuffer<T>
         Length = -1;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Span<T> AsSpan() => buffer.AsSpan(0, Length);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Span<T> AsSpan(int length)
     {
         if (length > buffer.Length)
@@ -61,16 +53,13 @@ internal class ExpandBuffer<T>
         return buffer.AsSpan(0, length);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Clear()
     {
         Length = 0;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ref T Peek() => ref buffer[Length - 1];
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ref T Pop()
     {
         if (Length == 0)
@@ -78,7 +67,6 @@ internal class ExpandBuffer<T>
         return ref buffer[--Length];
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool TryPop(out T value)
     {
         if (Length == 0)
@@ -90,7 +78,6 @@ internal class ExpandBuffer<T>
         return true;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Add(T item)
     {
         if (Length >= buffer.Length)
@@ -101,7 +88,6 @@ internal class ExpandBuffer<T>
         buffer[Length++] = item;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void SetCapacity(int newCapacity)
     {
         if (buffer.Length >= newCapacity) return;
@@ -113,7 +99,6 @@ internal class ExpandBuffer<T>
         buffer = newBuffer;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void Grow()
     {
         var newCapacity = buffer.Length * GrowFactor / 100;

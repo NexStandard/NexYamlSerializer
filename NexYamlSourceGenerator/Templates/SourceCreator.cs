@@ -32,7 +32,6 @@ using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using NexVYaml.Serialization;
 using Stride.Core;
-using ScalarStyle = NexVYaml.Emitter.ScalarStyle;
 
 using NexYamlSerializer.Serialization.Formatters;
 {ns}
