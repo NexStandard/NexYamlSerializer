@@ -1,4 +1,4 @@
-namespace NexVYaml.Internal;
+namespace NexYaml.Core;
 
 public enum LineBreakState
 {

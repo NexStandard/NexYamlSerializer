@@ -5,7 +5,7 @@ using System.Buffers.Text;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using NexVYaml.Emitter;
-using NexVYaml.Internal;
+using NexYaml.Core;
 using NexYamlSerializer.Emitter;
 using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;

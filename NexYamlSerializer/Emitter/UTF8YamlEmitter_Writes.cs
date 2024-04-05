@@ -1,4 +1,4 @@
-﻿using NexVYaml.Internal;
+﻿using NexYaml.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;

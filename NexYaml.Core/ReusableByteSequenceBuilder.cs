@@ -1,11 +1,9 @@
 #nullable enable
-using System;
 using System.Buffers;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace NexVYaml.Internal;
+namespace NexYaml.Core;
 
 public static class ReusableByteSequenceBuilderPool
 {
@@ -14,9 +12,7 @@ public static class ReusableByteSequenceBuilderPool
     public static ReusableByteSequenceBuilder Rent()
     {
         if (queue.TryDequeue(out var builder))
-        {
             return builder;
-        }
         return new ReusableByteSequenceBuilder();
     }
 
@@ -47,9 +43,7 @@ class ReusableByteSequenceSegment : ReadOnlySequenceSegment<byte>
         if (returnToPool)
         {
             if (MemoryMarshal.TryGetArray(Memory, out var segment) && segment.Array != null)
-            {
                 ArrayPool<byte>.Shared.Return(segment.Array);
-            }
         }
         Memory = default;
         RunningIndex = 0;
@@ -71,9 +65,7 @@ public class ReusableByteSequenceBuilder
     public void Add(ReadOnlyMemory<byte> buffer, bool returnToPool)
     {
         if (!segmentPool.TryPop(out var segment))
-        {
             segment = new ReusableByteSequenceSegment();
-        }
 
         segment.SetBuffer(buffer, returnToPool);
         segments.Add(segment);
@@ -93,14 +85,10 @@ public class ReusableByteSequenceBuilder
     public ReadOnlySequence<byte> Build()
     {
         if (segments.Count == 0)
-        {
             return ReadOnlySequence<byte>.Empty;
-        }
 
         if (segments.Count == 1)
-        {
             return new ReadOnlySequence<byte>(segments[0].Memory);
-        }
 
         long running = 0;
 

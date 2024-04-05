@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Stride.Core;
 
-namespace NexVYaml.Internal;
+namespace NexYaml.Core;
 
 public readonly struct EmitStringInfo
 {
@@ -20,9 +20,7 @@ public readonly struct EmitStringInfo
     public ScalarStyle SuggestScalarStyle()
     {
         if (Lines <= 1)
-        {
             return NeedsQuotes ? ScalarStyle.DoubleQuoted : ScalarStyle.Plain;
-        }
         return ScalarStyle.Literal;
     }
 }
@@ -44,9 +42,7 @@ public static class EmitStringAnalyzer
     {
         var chars = value.AsSpan();
         if (chars.Length <= 0)
-        {
             return new EmitStringInfo(0, true, false);
-        }
 
         var isReservedWord = IsReservedWord(value);
 
@@ -81,9 +77,7 @@ public static class EmitStringAnalyzer
         }
 
         if (last == '\n')
-        {
             lines--;
-        }
         return new EmitStringInfo(lines, needsQuotes, isReservedWord);
     }
 
@@ -93,7 +87,7 @@ public static class EmitStringAnalyzer
         if (originalValue.Length > 0 && originalValue[^1] == '\n')
         {
             if (originalValue[^2] == '\n' ||
-                (originalValue[^2] == '\r' && originalValue[^3] == '\n'))
+                originalValue[^2] == '\r' && originalValue[^3] == '\n')
             {
                 chompHint = '+';
             }
@@ -106,9 +100,7 @@ public static class EmitStringAnalyzer
         var stringBuilder = (stringBuilderThreadStatic ??= new StringBuilder(1024)).Clear();
         stringBuilder.Append('|');
         if (chompHint > 0)
-        {
             stringBuilder.Append(chompHint);
-        }
         stringBuilder.Append('\n');
         AppendWhiteSpace(stringBuilder, indentCharCount);
 
@@ -117,15 +109,11 @@ public static class EmitStringAnalyzer
             var ch = originalValue[i];
             stringBuilder.Append(ch);
             if (ch == '\n' && i < originalValue.Length - 1)
-            {
                 AppendWhiteSpace(stringBuilder, indentCharCount);
-            }
         }
 
         if (chompHint == '-')
-        {
             stringBuilder.Append('\n');
-        }
         return stringBuilder;
     }
 
@@ -277,21 +265,15 @@ public static class EmitStringAnalyzer
         {
             case 1:
                 if (value == "~")
-                {
                     return true;
-                }
                 break;
             case 4:
                 if (value is "null" or "Null" or "NULL" or "true" or "True" or "TRUE")
-                {
                     return true;
-                }
                 break;
             case 5:
                 if (value is "false" or "False" or "FALSE")
-                {
                     return true;
-                }
                 break;
         }
         return false;
@@ -305,9 +287,7 @@ public static class EmitStringAnalyzer
     static void AppendWhiteSpace(StringBuilder stringBuilder, int length)
     {
         if (length > whiteSpaces.Length)
-        {
             whiteSpaces = Enumerable.Repeat(' ', length * 2).ToArray();
-        }
         stringBuilder.Append(whiteSpaces.AsSpan(0, length));
     }
 }

@@ -9,13 +9,12 @@ namespace NexYamlSerializer.Emitter;
 internal class IndentationManager
 {
     public int CurrentIndentLevel { get; private set; }
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
     public void IncreaseIndent()
     {
         CurrentIndentLevel++;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void DecreaseIndent()
     {
         if (CurrentIndentLevel > 0)

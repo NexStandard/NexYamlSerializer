@@ -1,8 +1,7 @@
 #nullable enable
-using System;
 using System.Runtime.CompilerServices;
 
-namespace NexVYaml.Internal;
+namespace NexYaml.Core;
 
 public static class YamlCodes
 {

@@ -1,5 +1,5 @@
 ﻿using NexVYaml.Emitter;
-using NexVYaml.Internal;
+using NexYaml.Core;
 using System;
 using System.Text;
 

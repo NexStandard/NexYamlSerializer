@@ -1,6 +1,6 @@
 using System.Buffers;
 
-namespace NexVYaml.Internal;
+namespace NexYaml.Core;
 
 public class ExpandBuffer<T>
 {
@@ -47,9 +47,7 @@ public class ExpandBuffer<T>
     public Span<T> AsSpan(int length)
     {
         if (length > buffer.Length)
-        {
             SetCapacity(buffer.Length * 2);
-        }
         return buffer.AsSpan(0, length);
     }
 
@@ -81,9 +79,7 @@ public class ExpandBuffer<T>
     public void Add(T item)
     {
         if (Length >= buffer.Length)
-        {
             Grow();
-        }
 
         buffer[Length++] = item;
     }
@@ -103,9 +99,7 @@ public class ExpandBuffer<T>
     {
         var newCapacity = buffer.Length * GrowFactor / 100;
         if (newCapacity < buffer.Length + MinimumGrow)
-        {
             newCapacity = buffer.Length + MinimumGrow;
-        }
         SetCapacity(newCapacity);
     }
 }

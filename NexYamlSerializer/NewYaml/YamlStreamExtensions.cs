@@ -1,6 +1,6 @@
 ﻿using NexVYaml.Emitter;
-using NexVYaml.Internal;
 using NexVYaml.Serialization;
+using NexYaml.Core;
 using Stride.Core;
 using System;
 

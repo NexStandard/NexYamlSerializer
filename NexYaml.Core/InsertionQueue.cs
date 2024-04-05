@@ -1,8 +1,7 @@
-#nullable enable
-using System;
+
 using System.Runtime.CompilerServices;
 
-namespace NexVYaml.Internal;
+namespace NexYaml.Core;
 
 public class InsertionQueue<T>
 {
@@ -37,9 +36,7 @@ public class InsertionQueue<T>
     public void Enqueue(T item)
     {
         if (Count == array.Length)
-        {
             Grow();
-        }
 
         array[tailIndex] = item;
         MoveNext(ref tailIndex);
@@ -60,9 +57,7 @@ public class InsertionQueue<T>
     public void Insert(int posTo, T item)
     {
         if (Count == array.Length)
-        {
             Grow();
-        }
 
         MoveNext(ref tailIndex);
         Count++;
@@ -80,9 +75,7 @@ public class InsertionQueue<T>
     {
         var newCapacity = (int)((long)array.Length * GrowFactor / 100);
         if (newCapacity < array.Length + MinimumGrow)
-        {
             newCapacity = array.Length + MinimumGrow;
-        }
         SetCapacity(newCapacity);
     }
 
@@ -92,9 +85,7 @@ public class InsertionQueue<T>
         if (Count > 0)
         {
             if (headIndex < tailIndex)
-            {
                 Array.Copy(array, headIndex, newArray, 0, Count);
-            }
             else
             {
                 Array.Copy(array, headIndex, newArray, 0, array.Length - headIndex);

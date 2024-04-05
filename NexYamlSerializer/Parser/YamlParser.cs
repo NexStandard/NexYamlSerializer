@@ -3,7 +3,7 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using NexVYaml.Internal;
+using NexYaml.Core;
 
 namespace NexVYaml.Parser;
 

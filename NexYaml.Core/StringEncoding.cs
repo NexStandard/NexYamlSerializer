@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace NexVYaml.Internal;
+namespace NexYaml.Core;
 
 public static class StringEncoding
 {
