@@ -34,7 +34,7 @@ public class ListFormatter<T> : YamlSerializer<List<T>?>,IYamlFormatter<List<T>?
         return list;
     }
 
-    public override void Serialize(ref IYamlStream stream, List<T>? value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, List<T>? value, DataStyle style = DataStyle.Normal)
     {
         stream.SerializeContext.IsRedirected = false;
         stream.Emitter.BeginSequence(style);

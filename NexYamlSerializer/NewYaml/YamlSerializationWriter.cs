@@ -2,15 +2,36 @@
 using NexVYaml.Serialization;
 using NexYaml.Core;
 using NexYamlSerializer.Emitter.Serializers;
+using Stride.Core;
 using System;
 using System.Buffers.Text;
 using System.Text;
 
 namespace NexVYaml;
-public class YamlSerializationWriter : IYamlStream
+public class YamlSerializationWriter : ISerializationWriter
 {
     public Utf8YamlEmitter Emitter { get; set; }
     public YamlSerializationContext SerializeContext { get; init; }
+
+    public void BeginMapping(DataStyle style)
+    {
+        Emitter.BeginMapping(style);
+    }
+
+    public void BeginSequence(DataStyle style)
+    {
+        Emitter.BeginSequence(style);
+    }
+
+    public void EndMapping()
+    {
+        Emitter.EndMapping();
+    }
+
+    public void EndSequence()
+    {
+        Emitter.EndSequence();
+    }
 
     public void Serialize(ref int value)
     {

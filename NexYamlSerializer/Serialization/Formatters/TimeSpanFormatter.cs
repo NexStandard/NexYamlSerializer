@@ -24,7 +24,7 @@ public class TimeSpanFormatter : YamlSerializer<TimeSpan>,IYamlFormatter<TimeSpa
         throw new YamlSerializerException($"Cannot detect a scalar value of TimeSpan : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 
-    public override void Serialize(ref IYamlStream stream, TimeSpan value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, TimeSpan value, DataStyle style = DataStyle.Normal)
     {
         var buf = stream.SerializeContext.GetBuffer64();
         if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten))

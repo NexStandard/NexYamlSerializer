@@ -24,7 +24,7 @@ public class NullableFormatter<T> : YamlSerializer<T?>, IYamlFormatter<T?> where
         return new T?(yamlFormatter.Deserialize(ref parser,context));
     }
 
-    public override void Serialize(ref IYamlStream stream, T? value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, T? value, DataStyle style = DataStyle.Normal)
     {
         if (value is null)
         {
@@ -60,7 +60,7 @@ public sealed class StaticNullableFormatter<T> : YamlSerializer<T?>, IYamlFormat
         return underlyingFormatter.Deserialize(ref parser, context);
     }
 
-    public override void Serialize(ref IYamlStream stream, T? value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, T? value, DataStyle style = DataStyle.Normal)
     {
         if (value.HasValue)
         {

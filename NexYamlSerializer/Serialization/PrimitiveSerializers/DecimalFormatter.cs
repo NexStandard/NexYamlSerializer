@@ -24,7 +24,7 @@ public class DecimalFormatter : YamlSerializer<decimal>, IYamlFormatter<decimal>
         throw new YamlSerializerException($"Cannot detect a scalar value of decimal : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 
-    public override void Serialize(ref IYamlStream stream, decimal value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, decimal value, DataStyle style = DataStyle.Normal)
     {
         stream.Serialize(ref value);
     }

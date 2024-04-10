@@ -30,7 +30,7 @@ public class ArrayFormatter<T> : YamlSerializer<T[]?>,IYamlFormatter<T[]?>
         return list.ToArray();
     }
 
-    public override void Serialize(ref IYamlStream stream, T[]? value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, T[]? value, DataStyle style = DataStyle.Normal)
     {
         stream.Write(ref value!);
     }

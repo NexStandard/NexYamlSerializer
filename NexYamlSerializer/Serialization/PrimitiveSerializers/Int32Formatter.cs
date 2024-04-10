@@ -17,7 +17,7 @@ public class Int32Formatter : YamlSerializer<int>, IYamlFormatter<int>
         return result;
     }
 
-    public override void Serialize(ref IYamlStream stream, int value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, int value, DataStyle style = DataStyle.Normal)
     {
         stream.Serialize(ref value);
     }

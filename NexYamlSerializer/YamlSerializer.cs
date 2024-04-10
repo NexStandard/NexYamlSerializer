@@ -139,7 +139,7 @@ public abstract class YamlSerializer
         {
             options ??= DefaultOptions;
             var contextLocal = new YamlSerializationContext(options);
-            IYamlStream stream = new YamlSerializationWriter()
+            ISerializationWriter stream = new YamlSerializationWriter()
             {
                 Emitter = emitter,
                 SerializeContext = contextLocal,
@@ -166,7 +166,7 @@ public abstract class YamlSerializer
         {
             options ??= DefaultOptions;
             var contextLocal = new YamlSerializationContext(options);
-            IYamlStream stream = new YamlSerializationWriter()
+            ISerializationWriter stream = new YamlSerializationWriter()
             {
                 Emitter = emitter,
                 SerializeContext = contextLocal,
@@ -275,16 +275,16 @@ public abstract class YamlSerializer
             parser.Dispose();
         }
     }
-    public abstract void Serialize(ref IYamlStream emitter, object value, DataStyle style = DataStyle.Normal);
+    public abstract void Serialize(ref ISerializationWriter emitter, object value, DataStyle style = DataStyle.Normal);
     public abstract object? IndirectDeserialize(ref YamlParser parser, YamlDeserializationContext context);
 }
 public abstract class YamlSerializer<T> : YamlSerializer
 {
-    public override void Serialize(ref IYamlStream stream, object value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, object value, DataStyle style = DataStyle.Normal)
     {
         Serialize(ref stream, (T)value, style);
     }
-    public abstract void Serialize(ref IYamlStream stream, T value, DataStyle style = DataStyle.Normal);
+    public abstract void Serialize(ref ISerializationWriter stream, T value, DataStyle style = DataStyle.Normal);
 
     public override object? IndirectDeserialize(ref YamlParser parser, YamlDeserializationContext context)
     {

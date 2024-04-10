@@ -76,7 +76,7 @@ public class EnumAsStringFormatter<T> : YamlSerializer<T>,IYamlFormatter<T> wher
         throw new YamlSerializerException($"Cannot detect a scalar value of {typeof(T)}");
     }
 
-    public override void Serialize(ref IYamlStream stream, T value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, T value, DataStyle style = DataStyle.Normal)
     {
         if (ValueNameMapping.TryGetValue(value, out var name))
         {

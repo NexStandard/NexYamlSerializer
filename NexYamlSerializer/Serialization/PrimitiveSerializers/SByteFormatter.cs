@@ -18,7 +18,7 @@ public class SByteFormatter : YamlSerializer<sbyte>, IYamlFormatter<sbyte>
         return checked((sbyte)result);
     }
 
-    public override void Serialize(ref IYamlStream stream, sbyte value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, sbyte value, DataStyle style = DataStyle.Normal)
     {
         stream.Serialize(ref value);
     }

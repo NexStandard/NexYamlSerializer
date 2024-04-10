@@ -1,16 +1,12 @@
-﻿using NexVYaml.Emitter;
-using NexVYaml.Serialization;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NexVYaml;
-public interface IYamlStream
+namespace NexYamlSerializer.NewYaml;
+public interface ISerializationStream
 {
-    public YamlSerializationContext SerializeContext { get; init; }
-    public Utf8YamlEmitter Emitter { get; }
     void Serialize(ref byte value);
     void Serialize(ref sbyte value);
     void Serialize(ref int value);
@@ -26,5 +22,4 @@ public interface IYamlStream
     void Serialize(ref bool value);
     void Serialize(ref string value);
     void Serialize(ref decimal value);
-    void Serialize(ReadOnlySpan<byte> value);
 }

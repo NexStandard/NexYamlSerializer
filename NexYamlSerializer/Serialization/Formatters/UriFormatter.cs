@@ -21,7 +21,7 @@ public class UriFormatter : YamlSerializer<Uri>,IYamlFormatter<Uri>
         throw new YamlSerializerException($"Cannot detect a scalar value of Uri : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 
-    public override void Serialize(ref IYamlStream stream, Uri value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, Uri value, DataStyle style = DataStyle.Normal)
     {
         stream.Write(value.ToString());
     }

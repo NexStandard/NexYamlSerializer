@@ -24,7 +24,7 @@ public class KeyValuePairFormatter<TKey, TValue> : YamlSerializer<KeyValuePair<T
         return new KeyValuePair<TKey, TValue>(key, value);
     }
 
-    public override void Serialize(ref IYamlStream stream, KeyValuePair<TKey, TValue> value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, KeyValuePair<TKey, TValue> value, DataStyle style = DataStyle.Normal)
     {
         stream.Emitter.BeginSequence();
         stream.Write(value.Key);

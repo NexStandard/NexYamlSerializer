@@ -8,7 +8,7 @@ namespace NexVYaml;
 
 public static class YamlStreamExtensions
 {
-    public static void Write<T>(this IYamlStream stream, string key, ref T value, DataStyle style = DataStyle.Any)
+    public static void Write<T>(this ISerializationWriter stream, string key, ref T value, DataStyle style = DataStyle.Any)
     {
         stream.Serialize(ref key);
         if(value == null)
@@ -27,7 +27,7 @@ public static class YamlStreamExtensions
             }
         }
     }
-    public static void Write<T>(this IYamlStream stream, string key, ref T? value, DataStyle style = DataStyle.Any)
+    public static void Write<T>(this ISerializationWriter stream, string key, ref T? value, DataStyle style = DataStyle.Any)
         where T : struct
     {
         stream.Serialize(ref key);
@@ -40,7 +40,7 @@ public static class YamlStreamExtensions
             stream.SerializeContext.Serialize(ref stream, value, style);
         }
     }
-    public static void Write<T>(this IYamlStream stream, string key, ref T[] value, DataStyle style = DataStyle.Any)
+    public static void Write<T>(this ISerializationWriter stream, string key, ref T[] value, DataStyle style = DataStyle.Any)
     {
         if (style is DataStyle.Any)
         {
@@ -62,7 +62,7 @@ public static class YamlStreamExtensions
             stream.Emitter.EndSequence();
         }
     }
-    public static void Write<T>(this IYamlStream stream, ref T[] value, DataStyle style = DataStyle.Any)
+    public static void Write<T>(this ISerializationWriter stream, ref T[] value, DataStyle style = DataStyle.Any)
     {
         if (value == null)
         {
@@ -88,22 +88,22 @@ public static class YamlStreamExtensions
             stream.Emitter.EndSequence();
         }
     }
-    public static void Write<T>(this IYamlStream stream, T[] value, DataStyle style = DataStyle.Any)
+    public static void Write<T>(this ISerializationWriter stream, T[] value, DataStyle style = DataStyle.Any)
     {
         stream.Write(ref value, style);
     }
-    public static void Write<T>(this IYamlStream stream, T?[] value, DataStyle style = DataStyle.Any)
+    public static void Write<T>(this ISerializationWriter stream, T?[] value, DataStyle style = DataStyle.Any)
         where T : struct
     {
         stream.Write(ref value, style);
     }
 
-    public static void Write<T>(this IYamlStream stream, string key, T[] value, DataStyle style = DataStyle.Any)
+    public static void Write<T>(this ISerializationWriter stream, string key, T[] value, DataStyle style = DataStyle.Any)
     {
         stream.Write(key, ref value, style);
     }
 
-    public static void Write<T>(this IYamlStream stream, string key, T value, DataStyle style = DataStyle.Any)
+    public static void Write<T>(this ISerializationWriter stream, string key, T value, DataStyle style = DataStyle.Any)
     {
         stream.Serialize(ref key);
         if(style == DataStyle.Any)
@@ -119,7 +119,7 @@ public static class YamlStreamExtensions
             stream.Write(ref value,style);
         }
     }
-    public static void Write<T>(this IYamlStream stream, string key, T? value, DataStyle style = DataStyle.Any)
+    public static void Write<T>(this ISerializationWriter stream, string key, T? value, DataStyle style = DataStyle.Any)
         where T : struct
     {
         stream.Serialize(ref key);
@@ -133,7 +133,7 @@ public static class YamlStreamExtensions
             stream.SerializeContext.Serialize(ref stream, val, style);
         }
     }
-    public static void WriteTag(this IYamlStream stream, string tag)
+    public static void WriteTag(this ISerializationWriter stream, string tag)
     {
         if (stream.SerializeContext.IsRedirected || stream.SerializeContext.IsFirst)
         {
@@ -142,7 +142,7 @@ public static class YamlStreamExtensions
             stream.SerializeContext.IsFirst = false;
         }
     }
-    public static void Write<T>(this IYamlStream stream, ref T? value, DataStyle style = DataStyle.Any)
+    public static void Write<T>(this ISerializationWriter stream, ref T? value, DataStyle style = DataStyle.Any)
     {
         if (style is DataStyle.Any)
         {
@@ -167,7 +167,7 @@ public static class YamlStreamExtensions
             }
         }
     }
-    public static void Write<T>(this IYamlStream stream, T? value, DataStyle style = DataStyle.Any)
+    public static void Write<T>(this ISerializationWriter stream, T? value, DataStyle style = DataStyle.Any)
     {
         if (value == null)
             stream.WriteNull();
@@ -175,7 +175,7 @@ public static class YamlStreamExtensions
             stream.Write(ref value,style);
     }
 
-    public static void Write(this IYamlStream stream, ref string? value)
+    public static void Write(this ISerializationWriter stream, ref string? value)
     {
         if(value == null)
             stream.WriteNull();
@@ -183,30 +183,30 @@ public static class YamlStreamExtensions
             stream.Serialize(ref value);
     }
 
-    public static void WriteNull(this IYamlStream stream)
+    public static void WriteNull(this ISerializationWriter stream)
     {
         stream.Serialize(YamlCodes.Null0);
     }
 
-    public static void Write(this IYamlStream stream, string? value, ScalarStyle style = ScalarStyle.Any)
+    public static void Write(this ISerializationWriter stream, string? value, ScalarStyle style = ScalarStyle.Any)
     {
         if(value == null)
             stream.WriteNull();
         else
             stream.Serialize(ref value);
     }
-    public static void Write(this IYamlStream stream, ref string value, ScalarStyle style = ScalarStyle.Any)
+    public static void Write(this ISerializationWriter stream, ref string value, ScalarStyle style = ScalarStyle.Any)
     {
         if (value == null)
             stream.WriteNull();
         else
             stream.Serialize(ref value);
     }
-    public static void Write(this IYamlStream stream, string key, string? value, ScalarStyle style = ScalarStyle.Any)
+    public static void Write(this ISerializationWriter stream, string key, string? value, ScalarStyle style = ScalarStyle.Any)
     {
         stream.Write(key, ref value, style);
     }
-    public static void Write(this IYamlStream stream, string Key, ref string? value, ScalarStyle style = ScalarStyle.Any)
+    public static void Write(this ISerializationWriter stream, string Key, ref string? value, ScalarStyle style = ScalarStyle.Any)
     {
         stream.Serialize(ref Key);
         if(value == null)

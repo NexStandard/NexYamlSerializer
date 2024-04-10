@@ -20,7 +20,7 @@ public class EmptyFormatter<T> : YamlSerializer<T>,IYamlFormatter<T>
         return default!;
     }
 
-    public override void Serialize(ref IYamlStream stream, T value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, T value, DataStyle style = DataStyle.Normal)
     {
         stream.WriteNull();
     }

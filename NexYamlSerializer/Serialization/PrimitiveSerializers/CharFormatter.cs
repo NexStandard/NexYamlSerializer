@@ -18,7 +18,7 @@ public class CharFormatter : YamlSerializer<char>, IYamlFormatter<char>
         return checked((char)result);
     }
 
-    public override void Serialize(ref IYamlStream stream, char value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, char value, DataStyle style = DataStyle.Normal)
     {
         stream.Serialize(ref value);
     }

@@ -18,7 +18,7 @@ public class UInt16Formatter : YamlSerializer<ushort>, IYamlFormatter<ushort>
         return checked((ushort)result);
     }
 
-    public override void Serialize(ref IYamlStream stream, ushort value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, ushort value, DataStyle style = DataStyle.Normal)
     {
         stream.Serialize(ref value);
     }

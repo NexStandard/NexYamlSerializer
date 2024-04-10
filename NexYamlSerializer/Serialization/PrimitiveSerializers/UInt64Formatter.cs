@@ -18,7 +18,7 @@ public class UInt64Formatter : YamlSerializer<ulong>, IYamlFormatter<ulong>
         return result;
     }
 
-    public override void Serialize(ref IYamlStream stream, ulong value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, ulong value, DataStyle style = DataStyle.Normal)
     {
         stream.Serialize(ref value);
     }

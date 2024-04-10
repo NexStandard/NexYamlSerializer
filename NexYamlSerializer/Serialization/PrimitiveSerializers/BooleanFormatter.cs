@@ -17,7 +17,7 @@ public class BooleanFormatter : YamlSerializer<bool>, IYamlFormatter<bool>
         return result;
     }
 
-    public override void Serialize(ref IYamlStream stream, bool value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, bool value, DataStyle style = DataStyle.Normal)
     {
         stream.Write(ref value, style);
     }

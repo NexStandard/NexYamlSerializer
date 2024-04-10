@@ -26,7 +26,7 @@ public class DateTimeOffsetFormatter : YamlSerializer<DateTimeOffset>,IYamlForma
         throw new YamlSerializerException($"Cannot detect a scalar value of DateTimeOffset : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 
-    public override void Serialize(ref IYamlStream stream, DateTimeOffset value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, DateTimeOffset value, DataStyle style = DataStyle.Normal)
     {
         var buf = stream.SerializeContext.GetBuffer64();
         if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten, new StandardFormat('O')))

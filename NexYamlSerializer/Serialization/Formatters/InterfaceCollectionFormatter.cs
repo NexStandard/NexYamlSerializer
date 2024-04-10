@@ -10,7 +10,7 @@ namespace NexVYaml.Serialization;
 
 public class InterfaceCollectionFormatter<T> : YamlSerializer<ICollection<T>?>,IYamlFormatter<ICollection<T>?>
 {
-    public override void Serialize(ref IYamlStream stream, ICollection<T>? value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, ICollection<T>? value, DataStyle style = DataStyle.Normal)
     {
         stream.Emitter.BeginSequence();
         if (value.Count > 0)
