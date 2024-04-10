@@ -19,4 +19,87 @@ public interface ISerializationWriter : ISerializationStream
     void EndMapping();
     void BeginSequence(DataStyle style);
     void EndSequence();
+    public void Serialize(string key, sbyte value)
+    {
+        Serialize(ref key);
+        Serialize(ref value);
+    }
+
+    public void Serialize(string key, int value)
+    {
+        Serialize(ref key);
+        Serialize(ref value);
+    }
+
+    public void Serialize(string key, uint value)
+    {
+        Serialize(ref key);
+        Serialize(ref value);
+    }
+
+    public void Serialize(string key, long value)
+    {
+        Serialize(ref key);
+        Serialize(ref value);
+    }
+
+    public void Serialize(string key, ulong value)
+    {
+        Serialize(ref key);
+        Serialize(ref value);
+    }
+
+    public void Serialize(string key, float value)
+    {
+        Serialize(ref key);
+        Serialize(ref value);
+    }
+
+    public void Serialize(string key, double value)
+    {
+        Serialize(ref key);
+        Serialize(ref value);
+    }
+
+    public void Serialize(string key, short value)
+    {
+        Serialize(ref key);
+        Serialize(ref value);
+    }
+
+    public void Serialize(string key, ushort value)
+    {
+        Serialize(ref key);
+        Serialize(ref value);
+    }
+
+    public void Serialize(string key, char value)
+    {
+        Serialize(ref key);
+        Serialize(ref value);
+    }
+
+    public void Serialize(string key, bool value)
+    {
+        Serialize(ref key);
+        Serialize(ref value);
+    }
+
+    public void Serialize(string key, string value)
+    {
+        Serialize(ref key);
+        Serialize(ref value);
+    }
+
+    public void Serialize(string key, decimal value)
+    {
+        Serialize(ref key);
+        Serialize(ref value);
+    }
+
+    public void Serialize(string key, byte value)
+    {
+        Serialize(ref key);
+        Serialize(ref value);
+    }
 }
