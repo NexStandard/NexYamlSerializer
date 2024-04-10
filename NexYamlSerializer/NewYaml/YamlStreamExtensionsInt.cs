@@ -508,7 +508,6 @@ public static class YamlStreamExtensionsList
             stream.WriteNull();
             return;
         }
-        stream.SerializeContext.IsRedirected = false;
         stream.Emitter.BeginSequence(style);
         foreach (var x in value)
         {
@@ -533,7 +532,6 @@ public static class YamlStreamExtensionsDictionary
             stream.WriteNull();
             return;
         }
-        stream.SerializeContext.IsRedirected = false;
 
         YamlSerializer<TKey> keyFormatter = null;
         YamlSerializer<TValue> valueFormatter = null;

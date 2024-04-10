@@ -135,12 +135,7 @@ public static class YamlStreamExtensions
     }
     public static void WriteTag(this ISerializationWriter stream, string tag)
     {
-        if (stream.SerializeContext.IsRedirected || stream.SerializeContext.IsFirst)
-        {
-            stream.Emitter.Tag($"!{tag}");
-            stream.SerializeContext.IsRedirected = false;
-            stream.SerializeContext.IsFirst = false;
-        }
+        stream.SerializeTag(ref tag);
     }
     public static void Write<T>(this ISerializationWriter stream, ref T? value, DataStyle style = DataStyle.Any)
     {

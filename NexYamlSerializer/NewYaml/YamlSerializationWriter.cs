@@ -5,6 +5,7 @@ using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
 using System;
 using System.Buffers.Text;
+using System.IO;
 using System.Text;
 
 namespace NexVYaml;
@@ -204,5 +205,16 @@ public class YamlSerializationWriter : ISerializationWriter
         }
         offset += bytesWritten;
         Emitter.EndScalar(output, ref offset);
+    }
+
+    public void SerializeTag(ref string tag)
+    {
+        if (SerializeContext.IsRedirected || SerializeContext.IsFirst)
+        {
+            var fulTag = $"!{tag}";
+            Emitter.Tag(ref fulTag);
+            SerializeContext.IsRedirected = false;
+            SerializeContext.IsFirst = false;
+        }
     }
 }

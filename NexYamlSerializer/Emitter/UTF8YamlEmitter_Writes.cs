@@ -150,7 +150,7 @@ public partial class Utf8YamlEmitter
         StateStack.Pop();
         currentElementCount = elementCountStack.Length > 0 ? elementCountStack.Pop() : 0;
     }
-    public void Tag(string value)
+    public void Tag(ref string value)
     {
         tagStack.Add(value);
     }

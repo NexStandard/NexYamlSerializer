@@ -46,7 +46,6 @@ public class InterfaceReadOnlyDictionaryFormatter<TKey, TValue> :YamlSerializer<
 
     public override void Serialize(ref ISerializationWriter stream, IReadOnlyDictionary<TKey, TValue> value, DataStyle style = DataStyle.Normal)
     {
-        stream.SerializeContext.IsRedirected = false;
 
         YamlSerializer<TKey> keyFormatter = null;
         YamlSerializer<TValue> valueFormatter = null;
