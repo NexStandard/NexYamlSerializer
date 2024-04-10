@@ -28,7 +28,7 @@ public class DateTimeOffsetFormatter : YamlSerializer<DateTimeOffset>,IYamlForma
 
     public override void Serialize(ref ISerializationWriter stream, DateTimeOffset value, DataStyle style = DataStyle.Normal)
     {
-        var buf = stream.SerializeContext.GetBuffer64();
+        Span<byte> buf = stackalloc byte[64];
         if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten, new StandardFormat('O')))
         {
             stream.Emitter.WriteScalar(buf[..bytesWritten]);

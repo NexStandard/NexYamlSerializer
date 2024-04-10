@@ -37,7 +37,7 @@ public class DateTimeFormatter : YamlSerializer<DateTime>,IYamlFormatter<DateTim
     {
         // 2017-06-12T12:30:45.1234578+00:00
         // Span<byte> buf = stackalloc byte[29];
-        var buf = stream.SerializeContext.GetBuffer64();
+        Span<byte> buf = stackalloc byte[64];
         if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten, new StandardFormat('O')))
         {
             stream.Emitter.WriteScalar(buf[..bytesWritten]);

@@ -12,7 +12,7 @@ using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
-public class YamlSerializationContext : IDisposable
+public class YamlSerializationContext
 {
     public IYamlFormatterResolver Resolver { get; }
     public YamlEmitOptions EmitOptions { get; }
@@ -22,12 +22,10 @@ public class YamlSerializationContext : IDisposable
     public bool IsRedirected { get; set; } = false;
     public bool IsFirst { get; set; } = true;
     public bool SecureMode { get; set; } = false;
-    readonly byte[] primitiveValueBuffer;
     ArrayBufferWriter<byte>? arrayBufferWriter;
 
     public YamlSerializationContext(YamlSerializerOptions options)
     {
-        primitiveValueBuffer = ArrayPool<byte>.Shared.Rent(64);
         Resolver = options.Resolver;
         EmitOptions = options.EmitOptions;
     }
@@ -79,10 +77,4 @@ public class YamlSerializationContext : IDisposable
         arrayBufferWriter?.Clear();
     }
 
-    public void Dispose()
-    {
-        ArrayPool<byte>.Shared.Return(primitiveValueBuffer);
-    }
-
-    public byte[] GetBuffer64() => primitiveValueBuffer;
 }

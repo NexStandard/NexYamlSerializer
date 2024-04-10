@@ -26,7 +26,7 @@ public class TimeSpanFormatter : YamlSerializer<TimeSpan>,IYamlFormatter<TimeSpa
 
     public override void Serialize(ref ISerializationWriter stream, TimeSpan value, DataStyle style = DataStyle.Normal)
     {
-        var buf = stream.SerializeContext.GetBuffer64();
+        Span<byte> buf = stackalloc byte[64];
         if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten))
         {
             stream.Emitter.WriteScalar(buf[..bytesWritten]);

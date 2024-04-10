@@ -27,7 +27,7 @@ public class GuidFormatter : YamlSerializer<Guid>, IYamlFormatter<Guid>
     public override void Serialize(ref ISerializationWriter stream, Guid value, DataStyle style = DataStyle.Normal)
     {
         // nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn
-        var buf = stream.SerializeContext.GetBuffer64();
+        Span<byte> buf = stackalloc byte[64];
         if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten))
         {
             stream.Emitter.WriteScalar(buf[..bytesWritten]);

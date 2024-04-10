@@ -181,7 +181,7 @@ public class YamlSerializationWriter : ISerializationWriter
 
     public void Serialize(ref decimal value)
     {
-        var buf = SerializeContext.GetBuffer64();
+        Span<byte> buf = stackalloc byte[64];
         if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten))
         {
             Emitter.WriteScalar(buf[..bytesWritten]);
