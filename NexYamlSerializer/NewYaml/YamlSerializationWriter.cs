@@ -5,14 +5,15 @@ using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
 using System;
 using System.Buffers.Text;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
 namespace NexVYaml;
 public class YamlSerializationWriter : ISerializationWriter
 {
-    public Utf8YamlEmitter Emitter { get; set; }
-    public YamlSerializationContext SerializeContext { get; init; }
+    public required Utf8YamlEmitter Emitter { get; set; }
+    public required YamlSerializationContext SerializeContext { get; init; }
 
     public void BeginMapping(DataStyle style)
     {
@@ -38,9 +39,9 @@ public class YamlSerializationWriter : ISerializationWriter
     {
         var offset = 0;
         var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(11)); // -2147483648
-
+        
         Emitter.BeginScalar(output, ref offset);
-        if (!Utf8Formatter.TryFormat(value, output[offset..], out var bytesWritten))
+        if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
         {
             throw new YamlEmitterException($"Failed to emit : {value}");
         }
@@ -54,7 +55,7 @@ public class YamlSerializationWriter : ISerializationWriter
         var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(10)); // 4294967295
 
         Emitter.BeginScalar(output, ref offset);
-        if (!Utf8Formatter.TryFormat(value, output[offset..], out var bytesWritten))
+        if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
         {
             throw new YamlEmitterException($"Failed to emit : {value}");
         }
@@ -68,7 +69,7 @@ public class YamlSerializationWriter : ISerializationWriter
         var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(20)); // -9223372036854775808
 
         Emitter.BeginScalar(output, ref offset);
-        if (!Utf8Formatter.TryFormat(value, output[offset..], out var bytesWritten))
+        if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
         {
             throw new YamlEmitterException($"Failed to emit : {value}");
         }
@@ -82,7 +83,7 @@ public class YamlSerializationWriter : ISerializationWriter
         var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(20)); // 18446744073709551615
 
         Emitter.BeginScalar(output, ref offset);
-        if (!Utf8Formatter.TryFormat(value, output[offset..], out var bytesWritten))
+        if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
         {
             throw new YamlEmitterException($"Failed to emit : {value}");
         }
@@ -96,7 +97,7 @@ public class YamlSerializationWriter : ISerializationWriter
         var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(17));
 
         Emitter.BeginScalar(output, ref offset);
-        if (!Utf8Formatter.TryFormat(value, output[offset..], out var bytesWritten))
+        if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
         {
             throw new YamlEmitterException($"Failed to emit : {value}");
         }
@@ -110,7 +111,7 @@ public class YamlSerializationWriter : ISerializationWriter
         var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(12));
 
         Emitter.BeginScalar(output, ref offset);
-        if (!Utf8Formatter.TryFormat(value, output[offset..], out var bytesWritten))
+        if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
         {
             throw new YamlEmitterException($"Failed to emit : {value}");
         }
@@ -124,7 +125,7 @@ public class YamlSerializationWriter : ISerializationWriter
         var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(11)); // -2147483648
 
         Emitter.BeginScalar(output, ref offset);
-        if (!Utf8Formatter.TryFormat(value, output[offset..], out var bytesWritten))
+        if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
         {
             throw new YamlEmitterException($"Failed to emit : {value}");
         }
@@ -183,7 +184,8 @@ public class YamlSerializationWriter : ISerializationWriter
     public void Serialize(ref decimal value)
     {
         Span<byte> buf = stackalloc byte[64];
-        if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten))
+        
+        if (value.TryFormat(buf, out var bytesWritten, default, CultureInfo.InvariantCulture))
         {
             Emitter.WriteScalar(buf[..bytesWritten]);
         }
@@ -199,7 +201,7 @@ public class YamlSerializationWriter : ISerializationWriter
         var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(11)); // -2147483648
 
         Emitter.BeginScalar(output, ref offset);
-        if (!Utf8Formatter.TryFormat(value, output[offset..], out var bytesWritten))
+        if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
         {
             throw new YamlEmitterException($"Failed to emit : {value}");
         }

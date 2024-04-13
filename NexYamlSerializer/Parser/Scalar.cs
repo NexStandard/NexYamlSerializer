@@ -2,6 +2,7 @@
 using System;
 using System.Buffers;
 using System.Buffers.Text;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 using NexYaml.Core;
@@ -191,20 +192,19 @@ class Scalar : ITokenContent, IDisposable
     {
         var span = AsSpan();
 
-        if (Utf8Parser.TryParse(span, out value, out var bytesConsumed) &&
-            bytesConsumed == span.Length)
+        if (int.TryParse(span, CultureInfo.InvariantCulture, out value))
         {
             return true;
         }
 
         if (TryDetectHex(span, out var hexNumber))
         {
-            return Utf8Parser.TryParse(hexNumber, out value, out bytesConsumed, 'x') &&
-                   bytesConsumed == hexNumber.Length;
+            return Utf8Parser.TryParse(hexNumber, out value, out var bytesConsumed1, 'x') &&
+                   bytesConsumed1 == hexNumber.Length;
         }
 
         if (TryDetectHexNegative(span, out hexNumber) &&
-            Utf8Parser.TryParse(hexNumber, out value, out bytesConsumed, 'x') &&
+            Utf8Parser.TryParse(hexNumber, out value, out var bytesConsumed, 'x') &&
             bytesConsumed == hexNumber.Length)
         {
             value *= -1;
@@ -216,8 +216,8 @@ class Scalar : ITokenContent, IDisposable
     public bool TryGetInt64(out long value)
     {
         var span = AsSpan();
-        if (Utf8Parser.TryParse(span, out value, out var bytesConsumed) &&
-            bytesConsumed == span.Length)
+        
+        if (long.TryParse(span, CultureInfo.InvariantCulture, out value))
         {
             return true;
         }
@@ -244,15 +244,14 @@ class Scalar : ITokenContent, IDisposable
     {
         var span = AsSpan();
 
-        if (Utf8Parser.TryParse(span, out value, out var bytesConsumed) &&
-            bytesConsumed == span.Length)
+        if (uint.TryParse(span, CultureInfo.InvariantCulture, out value))
         {
             return true;
         }
 
         if (TryDetectHex(span, out var hexNumber))
         {
-            return Utf8Parser.TryParse(hexNumber, out value, out bytesConsumed, 'x') &&
+            return Utf8Parser.TryParse(hexNumber, out value, out var bytesConsumed, 'x') &&
                    bytesConsumed == hexNumber.Length;
         }
         return false;
@@ -262,15 +261,14 @@ class Scalar : ITokenContent, IDisposable
     {
         var span = AsSpan();
 
-        if (Utf8Parser.TryParse(span, out value, out var bytesConsumed) &&
-            bytesConsumed == span.Length)
+        if (ulong.TryParse(span, CultureInfo.InvariantCulture, out value))
         {
             return true;
         }
 
         if (TryDetectHex(span, out var hexNumber))
         {
-            return Utf8Parser.TryParse(hexNumber, out value, out bytesConsumed, 'x') &&
+            return Utf8Parser.TryParse(hexNumber, out value, out var bytesConsumed, 'x') &&
                    bytesConsumed == hexNumber.Length;
         }
         return false;
@@ -279,8 +277,7 @@ class Scalar : ITokenContent, IDisposable
     public bool TryGetFloat(out float value)
     {
         var span = AsSpan();
-        if (Utf8Parser.TryParse(span, out value, out var bytesConsumed) &&
-            bytesConsumed == span.Length)
+        if (float.TryParse(span, CultureInfo.InvariantCulture, out value))
         {
             return true;
         }
@@ -327,8 +324,7 @@ class Scalar : ITokenContent, IDisposable
     public bool TryGetDouble(out double value)
     {
         var span = AsSpan();
-        if (Utf8Parser.TryParse(span, out value, out var bytesConsumed) &&
-            bytesConsumed == span.Length)
+        if (double.TryParse(span, CultureInfo.InvariantCulture, out value))
         {
             return true;
         }
