@@ -67,7 +67,7 @@ public abstract class YamlSerializer
         };
         try
         {
-            stream.Write(ref value);
+            stream.Serialize(value);
             return writer.WrittenMemory;
         }
         finally
@@ -144,7 +144,7 @@ public abstract class YamlSerializer
                 Emitter = emitter,
                 SerializeContext = contextLocal,
             };
-            stream.Write(ref value);
+            stream.Serialize(value);
         }
         finally
         {
@@ -171,7 +171,7 @@ public abstract class YamlSerializer
                 Emitter = emitter,
                 SerializeContext = contextLocal,
             };
-            stream.Write(ref value);
+            stream.Serialize(value);
         }
         finally
         {
@@ -276,6 +276,10 @@ public abstract class YamlSerializer
         }
     }
     public abstract void Serialize(ref ISerializationWriter emitter, object value, DataStyle style = DataStyle.Normal);
+    public void Serialize(ISerializationWriter emitter, object value, DataStyle style = DataStyle.Normal)
+    {
+        Serialize(ref emitter, value, style);
+    }
     public abstract object? IndirectDeserialize(ref YamlParser parser, YamlDeserializationContext context);
 }
 public abstract class YamlSerializer<T> : YamlSerializer

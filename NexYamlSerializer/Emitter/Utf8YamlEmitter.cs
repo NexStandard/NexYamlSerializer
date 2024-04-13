@@ -116,7 +116,7 @@ public sealed partial class Utf8YamlEmitter
         else if (style is DataStyle.Compact)
             flowMapKeySerializer.Begin();
         else
-            throw new ArgumentOutOfRangeException(nameof(style), style, null);
+           blockMapKeySerializer.Begin();
     }
     public void EndMapping()
     {

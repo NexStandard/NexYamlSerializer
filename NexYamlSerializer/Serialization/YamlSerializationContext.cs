@@ -30,7 +30,7 @@ public class YamlSerializationContext
         EmitOptions = options.EmitOptions;
     }
 
-    public void Serialize<T>(ref ISerializationWriter stream, T value, DataStyle style = DataStyle.Any)
+    public void Serialize<T>(ISerializationWriter stream, T value, DataStyle style = DataStyle.Any)
     {
         var type = typeof(T);
         if (SecureMode)

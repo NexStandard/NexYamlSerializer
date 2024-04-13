@@ -1,5 +1,6 @@
 ﻿using NexVYaml.Emitter;
 using NexVYaml.Serialization;
+using NexYaml.Core;
 using NexYamlSerializer.NewYaml;
 using Stride.Core;
 using System;
@@ -24,7 +25,11 @@ public interface ISerializationWriter : ISerializationStream
         Serialize(ref key);
         Serialize(ref value);
     }
-
+    public void Serialize<T>(string key, T value, DataStyle style = DataStyle.Any)
+    {
+        Serialize(ref key);
+        Serialize(value, style);
+    }
     public void Serialize(string key, int value)
     {
         Serialize(ref key);
@@ -88,7 +93,14 @@ public interface ISerializationWriter : ISerializationStream
     public void Serialize(string key, string value)
     {
         Serialize(ref key);
-        Serialize(ref value);
+        if(value is null)
+        {
+            Serialize(YamlCodes.Null0);
+        }
+        else
+        {
+            Serialize(ref value);
+        }
     }
 
     public void Serialize(string key, decimal value)

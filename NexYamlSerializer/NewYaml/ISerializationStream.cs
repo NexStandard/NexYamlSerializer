@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Stride.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,4 +23,6 @@ public interface ISerializationStream
     void Serialize(ref bool value);
     void Serialize(ref string value);
     void Serialize(ref decimal value);
+    void Serialize<T>(T value, DataStyle style = DataStyle.Any);
+    void Serialize<T>(T? value, DataStyle style = DataStyle.Any) where T : struct;
 }
