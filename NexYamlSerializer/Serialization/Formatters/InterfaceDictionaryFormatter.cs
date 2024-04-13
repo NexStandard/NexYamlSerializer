@@ -62,7 +62,7 @@ public class InterfaceDictionaryFormatter<TKey, TValue> : YamlSerializer<IDictio
             stream.Emitter.BeginSequence();
             foreach (var x in value)
             {
-                stream.Write(x, style);
+                stream.Serialize(x, style);
             }
             stream.Emitter.EndSequence();
         }
@@ -73,7 +73,7 @@ public class InterfaceDictionaryFormatter<TKey, TValue> : YamlSerializer<IDictio
                 foreach (var x in value)
                 {
                     keyFormatter.Serialize(ref stream, x.Key, style);
-                    stream.Write(x.Value, style);
+                    stream.Serialize(x.Value, style);
                 }
             }
             stream.Emitter.EndMapping();

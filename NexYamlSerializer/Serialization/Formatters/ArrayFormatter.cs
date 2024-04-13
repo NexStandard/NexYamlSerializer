@@ -32,54 +32,36 @@ public class ArrayFormatter<T> : YamlSerializer<T[]?>,IYamlFormatter<T[]?>
 
     public override void Serialize(ref ISerializationWriter stream, T[]? value, DataStyle style = DataStyle.Normal)
     {
-        if (value == null)
+        var contentStyle = DataStyle.Any;
+        if (style == DataStyle.Compact)
         {
-            stream.WriteNull();
+            contentStyle = DataStyle.Compact;
         }
-        else
+        stream.Emitter.BeginSequence(style);
+        foreach (var x in value)
         {
-            if (typeof(T).IsValueType)
-            {
+            var val = x;
+            stream.Serialize(val, contentStyle);
+        }
+        stream.Emitter.EndSequence();
 
-            }
-            var contentStyle = DataStyle.Any;
-            if (style == DataStyle.Compact)
-            {
-                contentStyle = DataStyle.Compact;
-            }
-            stream.Emitter.BeginSequence(style);
-            foreach (var x in value)
-            {
-                var val = x;
-                stream.Serialize(val, contentStyle);
-            }
-            stream.Emitter.EndSequence();
-        }
     } 
     public void Serialize(ISerializationWriter stream, T[]? value, DataStyle style = DataStyle.Normal)
     {
-        if (value == null)
+        if (typeof(T).IsValueType)
         {
-            stream.WriteNull();
-        }
-        else
-        {
-            if (typeof(T).IsValueType)
-            {
 
-            }
-            var contentStyle = DataStyle.Any;
-            if (style == DataStyle.Compact)
-            {
-                contentStyle = DataStyle.Compact;
-            }
-            stream.Emitter.BeginSequence(style);
-            foreach (var x in value)
-            {
-                var val = x;
-                stream.Write(ref val, contentStyle);
-            }
-            stream.Emitter.EndSequence();
         }
+        var contentStyle = DataStyle.Any;
+        if (style == DataStyle.Compact)
+        {
+            contentStyle = DataStyle.Compact;
+        }
+        stream.Emitter.BeginSequence(style);
+        foreach (var item in value)
+        {
+            stream.Serialize(item, contentStyle);
+        }
+        stream.Emitter.EndSequence();
     }
 }

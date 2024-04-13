@@ -38,7 +38,7 @@ public class InterfaceListFormatter<T> : YamlSerializer<IList<T>>,IYamlFormatter
         {
             foreach (var x in value)
             {
-                stream.Write(x);
+                stream.Serialize(x);
             }
         }
         stream.Emitter.EndSequence();

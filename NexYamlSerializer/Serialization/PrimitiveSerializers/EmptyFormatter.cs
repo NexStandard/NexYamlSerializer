@@ -7,6 +7,7 @@ using NexVYaml;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using NexVYaml.Serialization;
+using NexYaml.Core;
 using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
 
@@ -22,6 +23,6 @@ public class EmptyFormatter<T> : YamlSerializer<T>,IYamlFormatter<T>
 
     public override void Serialize(ref ISerializationWriter stream, T value, DataStyle style = DataStyle.Normal)
     {
-        stream.WriteNull();
+        stream.Serialize(YamlCodes.Null0);
     }
 }

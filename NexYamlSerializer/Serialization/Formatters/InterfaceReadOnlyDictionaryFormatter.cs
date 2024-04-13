@@ -76,7 +76,7 @@ public class InterfaceReadOnlyDictionaryFormatter<TKey, TValue> :YamlSerializer<
                 foreach (var x in value)
                 {
                     keyFormatter.Serialize(ref stream, x.Key, style);
-                    stream.Write(x.Value);
+                    stream.Serialize(x.Value);
                 }
             }
             stream.Emitter.EndMapping();

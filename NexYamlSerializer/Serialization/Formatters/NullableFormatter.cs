@@ -2,6 +2,7 @@
 using NexVYaml;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
+using NexYaml.Core;
 using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
 
@@ -32,7 +33,7 @@ public class NullableFormatter<T> : YamlSerializer<T?>, IYamlFormatter<T?> where
         }
         else
         {
-            stream.Write(value.Value);
+            stream.Serialize(value.Value);
         }
     }
 }
@@ -68,7 +69,7 @@ public sealed class StaticNullableFormatter<T> : YamlSerializer<T?>, IYamlFormat
         }
         else
         {
-            stream.WriteNull();
+            stream.Serialize(YamlCodes.Null0);
         }
     }
 }

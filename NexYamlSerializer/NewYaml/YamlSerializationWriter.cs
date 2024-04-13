@@ -230,18 +230,6 @@ public class YamlSerializationWriter : ISerializationWriter
         }
     }
 
-    public void Serialize<T>(T? value, DataStyle style = DataStyle.Any) where T : struct
-    {
-        if(!value.HasValue)
-        {
-            Serialize(YamlCodes.Null0);
-        }
-        else
-        {
-            Serialize(value.Value);
-        }
-    }
-
     public void SerializeTag(ref string tag)
     {
         if (SerializeContext.IsRedirected || SerializeContext.IsFirst)

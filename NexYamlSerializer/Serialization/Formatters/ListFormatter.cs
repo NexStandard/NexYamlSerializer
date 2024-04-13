@@ -39,7 +39,7 @@ public class ListFormatter<T> : YamlSerializer<List<T>?>,IYamlFormatter<List<T>?
         stream.Emitter.BeginSequence(style);
         foreach (var x in value)
         {
-            stream.Write(x, style);
+            stream.Serialize(x, style);
         }
 
         stream.Emitter.EndSequence();

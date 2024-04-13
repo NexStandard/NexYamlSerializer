@@ -25,7 +25,7 @@ public class TupleFormatter<T1> : YamlSerializer<Tuple<T1>?>,IYamlFormatter<Tupl
     public override void Serialize(ref ISerializationWriter stream, Tuple<T1>? value, DataStyle style = DataStyle.Normal)
     {
         stream.Emitter.BeginSequence(DataStyle.Compact);
-        stream.Write(value.Item1, style);
+        stream.Serialize(value.Item1, style);
         stream.Emitter.EndSequence();
     }
 }
@@ -49,8 +49,8 @@ public class TupleFormatter<T1, T2> : YamlSerializer<Tuple<T1, T2>?>,IYamlFormat
     public override void Serialize(ref ISerializationWriter stream, Tuple<T1, T2>? value, DataStyle style = DataStyle.Normal)
     {
         stream.Emitter.BeginSequence(DataStyle.Compact);
-        stream.Write(value.Item1, style);
-        stream.Write(value.Item2, style);
+        stream.Serialize(value.Item1, style);
+        stream.Serialize(value.Item2, style);
         stream.Emitter.EndSequence();
     }
 }
@@ -75,9 +75,9 @@ public class TupleFormatter<T1, T2, T3> : YamlSerializer<Tuple<T1, T2, T3>?>, IY
     public override void Serialize(ref ISerializationWriter stream, Tuple<T1, T2, T3>? value, DataStyle style = DataStyle.Normal)
     {
         stream.Emitter.BeginSequence(DataStyle.Compact);
-        stream.Write(value.Item1, style);
-        stream.Write(value.Item2, style);
-        stream.Write(value.Item3, style);
+        stream.Serialize(value.Item1, style);
+        stream.Serialize(value.Item2, style);
+        stream.Serialize(value.Item3, style);
         stream.Emitter.EndSequence();
     }
 }
@@ -103,10 +103,10 @@ public class TupleFormatter<T1, T2, T3, T4> : YamlSerializer<Tuple<T1, T2, T3, T
     public override void Serialize(ref ISerializationWriter stream, Tuple<T1, T2, T3, T4>? value, DataStyle style = DataStyle.Normal)
     {
         stream.Emitter.BeginSequence(DataStyle.Compact);
-        stream.Write(value.Item1, style);
-        stream.Write(value.Item2, style);
-        stream.Write(value.Item3, style);
-        stream.Write(value.Item4, style);
+        stream.Serialize(value.Item1, style);
+        stream.Serialize(value.Item2, style);
+        stream.Serialize(value.Item3, style);
+        stream.Serialize(value.Item4, style);
         stream.Emitter.EndSequence();
     }
 }
@@ -133,11 +133,11 @@ public class TupleFormatter<T1, T2, T3, T4, T5> : YamlSerializer<Tuple<T1, T2, T
     public override void Serialize(ref ISerializationWriter stream, Tuple<T1, T2, T3, T4, T5>? value, DataStyle style = DataStyle.Normal)
     {
         stream.Emitter.BeginSequence(DataStyle.Compact);
-        stream.Write(value.Item1, style);
-        stream.Write(value.Item2, style);
-        stream.Write(value.Item3, style);
-        stream.Write(value.Item4, style);
-        stream.Write(value.Item5, style);
+        stream.Serialize(value.Item1, style);
+        stream.Serialize(value.Item2, style);
+        stream.Serialize(value.Item3, style);
+        stream.Serialize(value.Item4, style);
+        stream.Serialize(value.Item5, style);
         stream.Emitter.EndSequence();
     }
 }
@@ -165,12 +165,12 @@ public class TupleFormatter<T1, T2, T3, T4, T5, T6> : YamlSerializer<Tuple<T1, T
     public override void Serialize(ref ISerializationWriter stream, Tuple<T1, T2, T3, T4, T5, T6>? value, DataStyle style = DataStyle.Normal)
     {
         stream.Emitter.BeginSequence(DataStyle.Compact);
-        stream.Write(value.Item1, style);
-        stream.Write(value.Item2, style);
-        stream.Write(value.Item3, style);
-        stream.Write(value.Item4, style);
-        stream.Write(value.Item5, style);
-        stream.Write(value.Item6, style);
+        stream.Serialize(value.Item1, style);
+        stream.Serialize(value.Item2, style);
+        stream.Serialize(value.Item3, style);
+        stream.Serialize(value.Item4, style);
+        stream.Serialize(value.Item5, style);
+        stream.Serialize(value.Item6, style);
         stream.Emitter.EndSequence();
     }
 }
@@ -199,13 +199,13 @@ public class TupleFormatter<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<Tuple<T
     public override void Serialize(ref ISerializationWriter stream, Tuple<T1, T2, T3, T4, T5, T6, T7>? value, DataStyle style = DataStyle.Normal)
     {
         stream.Emitter.BeginSequence(DataStyle.Compact);
-        stream.Write(value.Item1, style);
-        stream.Write(value.Item2, style);
-        stream.Write(value.Item3, style);
-        stream.Write(value.Item4, style);
-        stream.Write(value.Item5, style);
-        stream.Write(value.Item6, style);
-        stream.Write(value.Item7, style);
+        stream.Serialize(value.Item1, style);
+        stream.Serialize(value.Item2, style);
+        stream.Serialize(value.Item3, style);
+        stream.Serialize(value.Item4, style);
+        stream.Serialize(value.Item5, style);
+        stream.Serialize(value.Item6, style);
+        stream.Serialize(value.Item7, style);
         stream.Emitter.EndSequence();
     }
 }
@@ -236,14 +236,14 @@ public class TupleFormatter<T1, T2, T3, T4, T5, T6, T7, T8> : YamlSerializer<Tup
     public override void Serialize(ref ISerializationWriter stream, Tuple<T1, T2, T3, T4, T5, T6, T7, T8>? value, DataStyle style = DataStyle.Normal)
     {
         stream.Emitter.BeginSequence(DataStyle.Compact);
-        stream.Write(value.Item1, style);
-        stream.Write(value.Item2, style);
-        stream.Write(value.Item3, style);
-        stream.Write(value.Item4, style);
-        stream.Write(value.Item5, style);
-        stream.Write(value.Item6, style);
-        stream.Write(value.Item7, style);
-        stream.Write(value.Rest, style);
+        stream.Serialize(value.Item1, style);
+        stream.Serialize(value.Item2, style);
+        stream.Serialize(value.Item3, style);
+        stream.Serialize(value.Item4, style);
+        stream.Serialize(value.Item5, style);
+        stream.Serialize(value.Item6, style);
+        stream.Serialize(value.Item7, style);
+        stream.Serialize(value.Rest, style);
         stream.Emitter.EndSequence();
     }
 }

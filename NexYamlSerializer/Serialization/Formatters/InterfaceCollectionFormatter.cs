@@ -13,13 +13,12 @@ public class InterfaceCollectionFormatter<T> : YamlSerializer<ICollection<T>?>,I
     public override void Serialize(ref ISerializationWriter stream, ICollection<T>? value, DataStyle style = DataStyle.Normal)
     {
         stream.Emitter.BeginSequence();
-        if (value.Count > 0)
+
+        foreach (var x in value)
         {
-            foreach (var x in value)
-            {
-                stream.Write(x);
-            }
+            stream.Serialize(x);
         }
+
         stream.Emitter.EndSequence();
     }
 

@@ -24,5 +24,4 @@ public interface ISerializationStream
     void Serialize(ref string value);
     void Serialize(ref decimal value);
     void Serialize<T>(T value, DataStyle style = DataStyle.Any);
-    void Serialize<T>(T? value, DataStyle style = DataStyle.Any) where T : struct;
 }
