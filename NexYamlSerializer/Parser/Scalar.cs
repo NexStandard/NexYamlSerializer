@@ -64,10 +64,8 @@ class Scalar : ITokenContent, IDisposable
         Write(content);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Span<byte> AsSpan() => buffer.AsSpan(0, Length);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Span<byte> AsSpan(int start, int length) => buffer.AsSpan(start, length);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
