@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NexVYaml.Emitter;
-public partial class Utf8YamlEmitter
+internal partial class Utf8YamlEmitter
 {
     static byte[] whiteSpaces =
     {

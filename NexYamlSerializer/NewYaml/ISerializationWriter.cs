@@ -13,7 +13,6 @@ namespace NexVYaml;
 public interface ISerializationWriter : ISerializationStream
 {
     public YamlSerializationContext SerializeContext { get; init; }
-    protected Utf8YamlEmitter Emitter { get; }
     void Serialize(ReadOnlySpan<byte> value);
     void SerializeTag(ref string tag);
     void BeginMapping(DataStyle style);

@@ -12,7 +12,7 @@ using System.Text;
 namespace NexVYaml;
 public class YamlSerializationWriter : ISerializationWriter
 {
-    public required Utf8YamlEmitter Emitter { get; set; }
+    internal Utf8YamlEmitter Emitter { get; set; }
     public required YamlSerializationContext SerializeContext { get; init; }
 
     public void BeginMapping(DataStyle style)

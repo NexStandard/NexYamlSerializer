@@ -133,34 +133,7 @@ public abstract class YamlSerializer
     /// <param name="emitter">The Utf8YamlEmitter used for serializing the YAML content.</param>
     /// <param name="value">The object to be serialized.</param>
     /// <param name="options">Optional settings for customizing the YAML serialization process.</param>
-    public static void Serialize<T>(ref Utf8YamlEmitter emitter, T value, YamlSerializerOptions? options = null)
-    {
-        try
-        {
-            options ??= DefaultOptions;
-            var contextLocal = new YamlSerializationContext(options);
-            ISerializationWriter stream = new YamlSerializationWriter()
-            {
-                Emitter = emitter,
-                SerializeContext = contextLocal,
-            };
-            stream.Serialize(value);
-        }
-        finally
-        {
-            emitter.Dispose();
-        }
-    }
-    /// <summary>
-    /// Serializes the specified object of type <typeparamref name="T"/> or any derived class/interface of type <typeparamref name="T"/> to YAML format 
-    /// using the provided <paramref name="emitter"/> and <paramref name="options"/> and disposes the emitter afterward.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to be serialized, or any type derived from <typeparamref name="T"/>.</typeparam>
-    /// <param name="emitter">The Utf8YamlEmitter used for serializing the YAML content.</param>
-    /// <param name="value">The object to be serialized.</param>
-    /// <param name="options">Optional settings for customizing the YAML serialization process.</param>
-    public static void Serialize<T>(ref Utf8YamlEmitter emitter, T? value, YamlSerializerOptions? options = null)
-        where T : struct
+    internal static void Serialize<T>(ref Utf8YamlEmitter emitter, T value, YamlSerializerOptions? options = null)
     {
         try
         {
