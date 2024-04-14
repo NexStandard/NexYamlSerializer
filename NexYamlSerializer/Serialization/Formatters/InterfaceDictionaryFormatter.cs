@@ -59,16 +59,16 @@ public class InterfaceDictionaryFormatter<TKey, TValue> : YamlSerializer<IDictio
 
         if (keyFormatter == null)
         {
-            stream.Emitter.BeginSequence();
+            stream.BeginSequence(style);
             foreach (var x in value)
             {
                 stream.Serialize(x, style);
             }
-            stream.Emitter.EndSequence();
+            stream.EndSequence();
         }
         else if (valueFormatter == null)
         {
-            stream.Emitter.BeginMapping();
+            stream.BeginMapping(style);
             {
                 foreach (var x in value)
                 {
@@ -76,11 +76,11 @@ public class InterfaceDictionaryFormatter<TKey, TValue> : YamlSerializer<IDictio
                     stream.Serialize(x.Value, style);
                 }
             }
-            stream.Emitter.EndMapping();
+            stream.EndMapping();
         }
         else
         {
-            stream.Emitter.BeginMapping();
+            stream.BeginMapping(style);
             {
                 foreach (var x in value)
                 {
@@ -88,7 +88,7 @@ public class InterfaceDictionaryFormatter<TKey, TValue> : YamlSerializer<IDictio
                     valueFormatter.Serialize(ref stream, x.Value, style);
                 }
             }
-            stream.Emitter.EndMapping();
+            stream.EndMapping();
         }
     }
 }

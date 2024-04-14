@@ -40,7 +40,7 @@ public class DateTimeFormatter : YamlSerializer<DateTime>,IYamlFormatter<DateTim
         Span<byte> buf = stackalloc byte[64];
         if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten, new StandardFormat('O')))
         {
-            stream.Emitter.WriteScalar(buf[..bytesWritten]);
+            stream.Serialize(buf[..bytesWritten]);
         }
         else
         {

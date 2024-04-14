@@ -26,7 +26,7 @@ public enum EmitState
     FlowMappingKey,
     FlowMappingValue,
 }
-public sealed partial class Utf8YamlEmitter
+sealed partial class Utf8YamlEmitter
 {
     public int CurrentIndentLevel => IndentationManager.CurrentIndentLevel;
     internal ExpandBuffer<EmitState> StateStack { get; }

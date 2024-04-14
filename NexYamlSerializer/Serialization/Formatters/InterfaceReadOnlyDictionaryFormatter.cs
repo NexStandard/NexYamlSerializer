@@ -58,7 +58,7 @@ public class InterfaceReadOnlyDictionaryFormatter<TKey, TValue> :YamlSerializer<
 
         if (keyFormatter == null)
         {
-            stream.Emitter.BeginSequence();
+            stream.BeginSequence(style);
             if (value.Count > 0)
             {
                 var elementFormatter = new KeyValuePairFormatter<TKey, TValue>();
@@ -67,11 +67,11 @@ public class InterfaceReadOnlyDictionaryFormatter<TKey, TValue> :YamlSerializer<
                     elementFormatter.Serialize(ref stream, x);
                 }
             }
-            stream.Emitter.EndSequence();
+            stream.EndSequence();
         }
         else if (valueFormatter == null)
         {
-            stream.Emitter.BeginMapping();
+            stream.BeginMapping(style);
             {
                 foreach (var x in value)
                 {
@@ -79,11 +79,11 @@ public class InterfaceReadOnlyDictionaryFormatter<TKey, TValue> :YamlSerializer<
                     stream.Serialize(x.Value);
                 }
             }
-            stream.Emitter.EndMapping();
+            stream.EndMapping();
         }
         else
         {
-            stream.Emitter.BeginMapping();
+            stream.BeginMapping(style);
             {
                 foreach (var x in value)
                 {
@@ -91,7 +91,7 @@ public class InterfaceReadOnlyDictionaryFormatter<TKey, TValue> :YamlSerializer<
                     valueFormatter.Serialize(ref stream, x.Value, style);
                 }
             }
-            stream.Emitter.EndMapping();
+            stream.EndMapping();
         }
     }
 }

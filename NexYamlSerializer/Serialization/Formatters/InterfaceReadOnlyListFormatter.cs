@@ -33,14 +33,13 @@ public class InterfaceReadOnlyListFormatter<T> : YamlSerializer<IReadOnlyList<T>
 
     public override void Serialize(ref ISerializationWriter stream, IReadOnlyList<T>? value, DataStyle style = DataStyle.Normal)
     {
-        stream.Emitter.BeginSequence();
-        if (value.Count > 0)
+        stream.BeginSequence(style);
+
+        foreach (var x in value)
         {
-            foreach (var x in value)
-            {
-                stream.Serialize(x);
-            }
+            stream.Serialize(x);
         }
-        stream.Emitter.EndSequence();
+
+        stream.EndSequence();
     }
 }

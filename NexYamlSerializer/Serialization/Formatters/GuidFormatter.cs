@@ -30,7 +30,7 @@ public class GuidFormatter : YamlSerializer<Guid>, IYamlFormatter<Guid>
         Span<byte> buf = stackalloc byte[64];
         if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten))
         {
-            stream.Emitter.WriteScalar(buf[..bytesWritten]);
+            stream.Serialize(buf[..bytesWritten]);
         }
         else
         {

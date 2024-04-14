@@ -37,13 +37,13 @@ public class ArrayFormatter<T> : YamlSerializer<T[]?>,IYamlFormatter<T[]?>
         {
             contentStyle = DataStyle.Compact;
         }
-        stream.Emitter.BeginSequence(style);
+        stream.BeginSequence(style);
         foreach (var x in value)
         {
             var val = x;
             stream.Serialize(val, contentStyle);
         }
-        stream.Emitter.EndSequence();
+        stream.EndSequence();
 
     } 
     public void Serialize(ISerializationWriter stream, T[]? value, DataStyle style = DataStyle.Normal)
@@ -57,11 +57,11 @@ public class ArrayFormatter<T> : YamlSerializer<T[]?>,IYamlFormatter<T[]?>
         {
             contentStyle = DataStyle.Compact;
         }
-        stream.Emitter.BeginSequence(style);
+        stream.BeginSequence(style);
         foreach (var item in value)
         {
             stream.Serialize(item, contentStyle);
         }
-        stream.Emitter.EndSequence();
+        stream.EndSequence();
     }
 }

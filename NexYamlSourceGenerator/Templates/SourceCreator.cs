@@ -55,10 +55,10 @@ file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSeria
 
     public override void Serialize(ref ISerializationWriter stream, {info.NameDefinition} value, DataStyle style = DataStyle.Normal)
     {{
-        stream.Emitter.{package.BeginMappingStyle()};
+        stream.{package.BeginMappingStyle()};
         stream.WriteTag(""{tag}"");
 {package.CreateNewSerializationEmit()}
-        stream.Emitter.EndMapping();
+        stream.EndMapping();
     }}
 
     public override {info.NameDefinition}{(info.TypeKind == TypeKind.Struct ? "" : "?")} Deserialize(ref YamlParser parser, YamlDeserializationContext context)

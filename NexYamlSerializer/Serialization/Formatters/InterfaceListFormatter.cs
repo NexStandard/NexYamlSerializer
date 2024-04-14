@@ -33,7 +33,7 @@ public class InterfaceListFormatter<T> : YamlSerializer<IList<T>>,IYamlFormatter
 
     public override void Serialize(ref ISerializationWriter stream, IList<T> value, DataStyle style = DataStyle.Normal)
     {
-        stream.Emitter.BeginSequence();
+        stream.BeginSequence(style);
         if (value.Count > 0)
         {
             foreach (var x in value)
@@ -41,6 +41,6 @@ public class InterfaceListFormatter<T> : YamlSerializer<IList<T>>,IYamlFormatter
                 stream.Serialize(x);
             }
         }
-        stream.Emitter.EndSequence();
+        stream.EndSequence();
     }
 }

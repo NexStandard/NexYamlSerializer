@@ -30,7 +30,7 @@ public class InterfaceEnumerableFormatter<T> : YamlSerializer<IEnumerable<T>?>,I
 
     public override void Serialize(ref ISerializationWriter stream, IEnumerable<T>? value, DataStyle style = DataStyle.Normal)
     {
-        stream.Emitter.BeginSequence();
+        stream.BeginSequence(style);
         if (value.Any())
         {
             foreach (var x in value)
@@ -38,6 +38,6 @@ public class InterfaceEnumerableFormatter<T> : YamlSerializer<IEnumerable<T>?>,I
                 stream.Serialize(x, style);
             }
         }
-        stream.Emitter.EndSequence();
+        stream.EndSequence();
     }
 }

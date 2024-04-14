@@ -32,14 +32,13 @@ public class InterfaceReadOnlyCollectionFormatter<T> : YamlSerializer<IReadOnlyC
 
     public override void Serialize(ref ISerializationWriter stream, IReadOnlyCollection<T>? value, DataStyle style = DataStyle.Normal)
     {
-        stream.Emitter.BeginSequence();
-        if (value.Count > 0)
+        stream.BeginSequence(style);
+
+        foreach (var x in value)
         {
-            foreach (var x in value)
-            {
-                stream.Serialize(x);
-            }
+            stream.Serialize(x);
         }
-        stream.Emitter.EndSequence();
+
+        stream.EndSequence();
     }
 }

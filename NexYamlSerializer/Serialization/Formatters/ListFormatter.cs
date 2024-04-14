@@ -36,13 +36,13 @@ public class ListFormatter<T> : YamlSerializer<List<T>?>,IYamlFormatter<List<T>?
 
     public override void Serialize(ref ISerializationWriter stream, List<T>? value, DataStyle style = DataStyle.Normal)
     {
-        stream.Emitter.BeginSequence(style);
+        stream.BeginSequence(style);
         foreach (var x in value)
         {
             stream.Serialize(x, style);
         }
 
-        stream.Emitter.EndSequence();
+        stream.EndSequence();
     }
 }
 file class ListHelper : IYamlFormatterHelper

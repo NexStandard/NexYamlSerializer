@@ -63,7 +63,7 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
 
         if (keyFormatter == null)
         {
-            stream.Emitter.BeginSequence();
+            stream.BeginSequence(style);
             if (value.Count > 0)
             {
                 foreach (var x in value)
@@ -71,11 +71,11 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
                     stream.Serialize(x, style);
                 }
             }
-            stream.Emitter.EndSequence();
+            stream.EndSequence();
         }
         else if (valueFormatter == null)
         {
-            stream.Emitter.BeginMapping();
+            stream.BeginMapping(style);
             {
                 foreach (var x in value)
                 {
@@ -83,11 +83,11 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
                     stream.Serialize(x.Value);
                 }
             }
-            stream.Emitter.EndMapping();
+            stream.EndMapping();
         }
         else
         {
-            stream.Emitter.BeginMapping();
+            stream.BeginMapping(style);
             {
                 foreach (var x in value)
                 {
@@ -95,7 +95,7 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
                     valueFormatter.Serialize(ref stream, x.Value, style);
                 }
             }
-            stream.Emitter.EndMapping();
+            stream.EndMapping();
         }
     }
 }

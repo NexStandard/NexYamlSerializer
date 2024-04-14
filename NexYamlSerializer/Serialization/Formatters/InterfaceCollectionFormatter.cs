@@ -12,14 +12,14 @@ public class InterfaceCollectionFormatter<T> : YamlSerializer<ICollection<T>?>,I
 {
     public override void Serialize(ref ISerializationWriter stream, ICollection<T>? value, DataStyle style = DataStyle.Normal)
     {
-        stream.Emitter.BeginSequence();
+        stream.BeginSequence(style);
 
         foreach (var x in value)
         {
             stream.Serialize(x);
         }
 
-        stream.Emitter.EndSequence();
+        stream.EndSequence();
     }
 
     public override ICollection<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
