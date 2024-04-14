@@ -27,7 +27,7 @@ public partial class Utf8YamlEmitter
         offset += value.Length;
         EndScalar(output, ref offset);
     }
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
     internal void WriteIndent(Span<byte> output, ref int offset, int forceWidth = -1)
     {
         int length;
@@ -53,7 +53,6 @@ public partial class Utf8YamlEmitter
         offset += length;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal void WriteRaw(byte value)
     {
         var output = Writer.GetSpan(1);
@@ -61,7 +60,6 @@ public partial class Utf8YamlEmitter
         Writer.Advance(1);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal void WriteRaw(ReadOnlySpan<byte> value, bool indent, bool lineBreak)
     {
         var length = value.Length +
@@ -81,7 +79,7 @@ public partial class Utf8YamlEmitter
         }
         Writer.Advance(length);
     }
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
     internal void WriteRaw(ReadOnlySpan<byte> value1, ReadOnlySpan<byte> value2, bool indent, bool lineBreak)
     {
         var length = value1.Length + value2.Length +
@@ -105,8 +103,6 @@ public partial class Utf8YamlEmitter
         Writer.Advance(length);
     }
 
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal void WriteBlockSequenceEntryHeader()
     {
         if (IsFirstElement)
@@ -125,7 +121,6 @@ public partial class Utf8YamlEmitter
         WriteRaw(EmitCodes.BlockSequenceEntryHeader, true, false);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int CalculateMaxScalarBufferLength(int length)
     {
         var around = (CurrentIndentLevel + 1) * Options.IndentWidth + 3;
@@ -136,7 +131,6 @@ public partial class Utf8YamlEmitter
         return length;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal void PushState(EmitState state)
     {
         StateStack.Add(state);
@@ -144,7 +138,6 @@ public partial class Utf8YamlEmitter
         currentElementCount = 0;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal void PopState()
     {
         StateStack.Pop();
