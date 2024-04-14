@@ -64,13 +64,12 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
         if (keyFormatter == null)
         {
             stream.BeginSequence(style);
-            if (value.Count > 0)
+
+            foreach (var x in value)
             {
-                foreach (var x in value)
-                {
-                    stream.Serialize(x, style);
-                }
+                stream.Serialize(x, style);
             }
+
             stream.EndSequence();
         }
         else if (valueFormatter == null)
