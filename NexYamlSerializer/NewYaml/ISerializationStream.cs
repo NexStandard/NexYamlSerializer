@@ -23,5 +23,4 @@ public interface ISerializationStream
     void Serialize(ref bool value);
     void Serialize(ref string value);
     void Serialize(ref decimal value);
-    void Serialize<T>(T value, DataStyle style = DataStyle.Any);
 }

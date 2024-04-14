@@ -209,28 +209,7 @@ public class YamlSerializationWriter : ISerializationWriter
         Emitter.EndScalar(output, ref offset);
     }
 
-    public void Serialize<T>(T value, DataStyle style = DataStyle.Any)
-    {
-        if(value == null)
-        {
-            ReadOnlySpan<byte> buf = YamlCodes.Null0;
-            Serialize(buf);
-        }
-        else
-        {
-            if (value is Array)
-            {
-                var t = typeof(T).GetElementType();
-                var arrayFormatterType = typeof(ArrayFormatter<>).MakeGenericType(t);
-                var arrayFormatter = (YamlSerializer)Activator.CreateInstance(arrayFormatterType);
-                arrayFormatter.Serialize(this, value, style);
-            }
-            else
-            {
-                SerializeContext.Serialize(this, value, style);
-            }
-        }
-    }
+
 
     public void SerializeTag(ref string tag)
     {

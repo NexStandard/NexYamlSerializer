@@ -8,6 +8,7 @@ using System.Text.Unicode;
 using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using NexYamlSerializer;
+using NexVYaml;
 using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
 
@@ -65,10 +66,9 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
             stream.Emitter.BeginSequence();
             if (value.Count > 0)
             {
-                var elementFormatter = new KeyValuePairFormatter<TKey, TValue>();
                 foreach (var x in value)
                 {
-                    elementFormatter.Serialize(ref stream, x);
+                    stream.Serialize(x, style);
                 }
             }
             stream.Emitter.EndSequence();

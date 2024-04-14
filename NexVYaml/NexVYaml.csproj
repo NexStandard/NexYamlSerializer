@@ -20,7 +20,11 @@
     <Reference Include="NexYamlSourceGenerator">
       <HintPath>..\NexYamlSourceGenerator\bin\$(Configuration)\netstandard2.0\NexYamlSourceGenerator.dll</HintPath>
     </Reference>
+	<Reference Include="NexYamlSourceGenerator">
+      <HintPath>..\NexYaml.Core\bin\$(Configuration)\net8.0\NexYaml.Core.dll</HintPath>
+    </Reference>
 	  <None Include="$(OutputPath)\NexYamlSerializer.dll" Pack="true" PackagePath="lib\net8.0" Visible="true" />
+	  <None Include="$(OutputPath)\NexYaml.Core.dll" Pack="true" PackagePath="lib\net8.0" Visible="true" />
 	<None Include="$(OutputPath)\NexYamlSourceGenerator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
 

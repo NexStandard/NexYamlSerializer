@@ -25,11 +25,7 @@ public interface ISerializationWriter : ISerializationStream
         Serialize(ref key);
         Serialize(ref value);
     }
-    public void Serialize<T>(string key, T value, DataStyle style = DataStyle.Any)
-    {
-        Serialize(ref key);
-        Serialize(value, style);
-    }
+
     public void Serialize(string key, int value)
     {
         Serialize(ref key);
