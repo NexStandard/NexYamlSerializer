@@ -27,7 +27,7 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
         var map = new Dictionary<TKey, TValue>();
         if (this.IsPrimitiveType(typeof(TKey)))
         {
-            var keyFormatter = context.Resolver.GetFormatter<TKey>();
+            var keyFormatter = NewSerializerRegistry.Instance.GetFormatter<TKey>();
             parser.ReadWithVerify(ParseEventType.MappingStart);
 
 

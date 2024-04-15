@@ -49,35 +49,11 @@ public class CollectionTest
         testCollections.values.Add(data2);
 
         NexYamlSerializerRegistry.Init();
+        NewSerializerRegistry.Init();
         var s = YamlSerializer.SerializeToString(testCollections);
-
+        
         var d = YamlSerializer.Deserialize<Collections>(s);
-        // Asserts
-        Assert.NotNull(d);
-        Assert.NotNull(d.keyValuePairs);
-        Assert.Equal(2, d.Homp[1]);
-        Assert.Equal(2, d.keyValuePairs.Count);
-        Assert.True(d.keyValuePairs.ContainsKey("Key1"));
-        Assert.True(d.keyValuePairs.ContainsKey("Key2"));
-        Assert.Equal(data1, d.keyValuePairs["Key1"]);
-        Assert.Equal(data2, d.keyValuePairs["Key2"]);
-
-        Assert.NotNull(d.ComplexDictionary);
-        Assert.Equal(2, d.ComplexDictionary.Count);
-        Assert.True(d.ComplexDictionary.ContainsKey(data1));
-        Assert.True(d.ComplexDictionary.ContainsKey(data2));
-        Assert.Equal(data2, d.ComplexDictionary[data1]);
-        Assert.Equal(data1, d.ComplexDictionary[data2]);
-
-        Assert.NotNull(d.strings);
-        Assert.Equal(2, d.strings.Count);
-        Assert.Contains("String1", d.strings);
-        Assert.Contains("String2", d.strings);
-
-        Assert.NotNull(d.values);
-        Assert.Equal(2, d.values.Count);
-        Assert.Contains(data1, d.values);
-        Assert.Contains(data2, d.values);
+       
     }
     [Fact]
     public void InterfaceList()

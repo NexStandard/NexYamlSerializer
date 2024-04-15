@@ -173,7 +173,7 @@ public abstract class YamlSerializer
     /// <param name="memory">The ReadOnlyMemory containing the YAML content to be deserialized.</param>
     /// <param name="options">Optional settings for customizing the YAML deserialization process.</param>
     /// <returns>An object of type <typeparamref name="T"/> representing the deserialized YAML content.</returns>
-    public static T Deserialize<T>(ReadOnlyMemory<byte> memory, YamlSerializerOptions? options = null)
+    public static T? Deserialize<T>(ReadOnlyMemory<byte> memory, YamlSerializerOptions? options = null)
     {
         var parser = YamlParser.FromSequence(new ReadOnlySequence<byte>(memory));
         return Deserialize<T>(ref parser, options);
