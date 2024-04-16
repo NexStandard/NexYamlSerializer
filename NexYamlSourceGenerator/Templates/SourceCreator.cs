@@ -52,7 +52,7 @@ file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSeria
 
     {package.CreateUTF8Members()}
 
-    public override void Serialize(ref ISerializationWriter stream, {info.NameDefinition} value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, {info.NameDefinition} value, DataStyle style = DataStyle.Normal)
     {{
         stream.{package.BeginMappingStyle()};
         stream.WriteTag(""{tag}"");

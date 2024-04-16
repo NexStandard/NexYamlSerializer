@@ -258,7 +258,18 @@ public abstract class YamlSerializer<T> : YamlSerializer
     {
         Serialize(ref stream, (T)value, style);
     }
-    public abstract void Serialize(ref ISerializationWriter stream, T value, DataStyle style = DataStyle.Normal);
+    public void Serialize(ref ISerializationWriter stream, T value, DataStyle style = DataStyle.Normal)
+    {
+        if (value is null)
+        {
+            stream.WriteNull();
+        }
+        else
+        {
+            Serialize(stream, value, style);
+        }
+    }
+    public abstract void Serialize(ISerializationWriter stream, T value, DataStyle style = DataStyle.Normal);
 
     public override object? IndirectDeserialize(ref YamlParser parser, YamlDeserializationContext context)
     {

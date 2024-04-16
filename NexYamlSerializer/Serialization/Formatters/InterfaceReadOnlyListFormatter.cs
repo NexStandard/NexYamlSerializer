@@ -28,7 +28,7 @@ public class InterfaceReadOnlyListFormatter<T> : YamlSerializer<IReadOnlyList<T>
         return list;
     }
 
-    public override void Serialize(ref ISerializationWriter stream, IReadOnlyList<T>? value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, IReadOnlyList<T>? value, DataStyle style = DataStyle.Normal)
     {
         stream.BeginSequence(style);
 

@@ -26,7 +26,7 @@ public class InterfaceEnumerableFormatter<T> : YamlSerializer<IEnumerable<T>?>
         return list;
     }
 
-    public override void Serialize(ref ISerializationWriter stream, IEnumerable<T> value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, IEnumerable<T> value, DataStyle style = DataStyle.Normal)
     {
         stream.BeginSequence(style);
         if (value.Any())

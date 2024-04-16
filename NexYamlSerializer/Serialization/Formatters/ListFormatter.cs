@@ -29,7 +29,7 @@ public class ListFormatter<T> : YamlSerializer<List<T>?>
         return list;
     }
 
-    public override void Serialize(ref ISerializationWriter stream, List<T> value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, List<T> value, DataStyle style = DataStyle.Normal)
     {
         stream.BeginSequence(style);
         foreach (var x in value)

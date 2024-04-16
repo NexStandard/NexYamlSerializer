@@ -20,7 +20,7 @@ public class ValueTupleFormatter<T1> : YamlSerializer<ValueTuple<T1>>
         return new ValueTuple<T1>(item1);
     }
 
-    public override void Serialize(ref ISerializationWriter stream, ValueTuple<T1> value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, ValueTuple<T1> value, DataStyle style = DataStyle.Normal)
     {
         stream.BeginSequence(DataStyle.Compact);
         stream.Serialize(value.Item1, style);
@@ -44,7 +44,7 @@ public class ValueTupleFormatter<T1, T2> : YamlSerializer<ValueTuple<T1, T2>>
         return new ValueTuple<T1, T2>(item1, item2);
     }
 
-    public override void Serialize(ref ISerializationWriter stream, (T1, T2) value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, (T1, T2) value, DataStyle style = DataStyle.Normal)
     {
         stream.BeginSequence(DataStyle.Compact);
         stream.Serialize(value.Item1, style);
@@ -70,7 +70,7 @@ public class ValueTupleFormatter<T1, T2, T3> : YamlSerializer<ValueTuple<T1, T2,
         return new ValueTuple<T1, T2, T3>(item1, item2, item3);
     }
 
-    public override void Serialize(ref ISerializationWriter stream, (T1, T2, T3) value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, (T1, T2, T3) value, DataStyle style = DataStyle.Normal)
     {
         stream.BeginSequence(DataStyle.Compact);
         stream.Serialize(value.Item1, style);
@@ -98,7 +98,7 @@ public class ValueTupleFormatter<T1, T2, T3, T4> : YamlSerializer<ValueTuple<T1,
         return new ValueTuple<T1, T2, T3, T4>(item1, item2, item3, item4);
     }
 
-    public override void Serialize(ref ISerializationWriter stream, (T1, T2, T3, T4) value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, (T1, T2, T3, T4) value, DataStyle style = DataStyle.Normal)
     {
         stream.BeginSequence(DataStyle.Compact);
         stream.Serialize(value.Item1, style);
@@ -128,7 +128,7 @@ public class ValueTupleFormatter<T1, T2, T3, T4, T5> : YamlSerializer<ValueTuple
         return new ValueTuple<T1, T2, T3, T4, T5>(item1, item2, item3, item4, item5);
     }
 
-    public override void Serialize(ref ISerializationWriter stream, (T1, T2, T3, T4, T5) value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, (T1, T2, T3, T4, T5) value, DataStyle style = DataStyle.Normal)
     {
         stream.BeginSequence(DataStyle.Compact);
         stream.Serialize(value.Item1, style);
@@ -160,7 +160,7 @@ public class ValueTupleFormatter<T1, T2, T3, T4, T5, T6> : YamlSerializer<ValueT
         return new ValueTuple<T1, T2, T3, T4, T5, T6>(item1, item2, item3, item4, item5, item6);
     }
 
-    public override void Serialize(ref ISerializationWriter stream, (T1, T2, T3, T4, T5, T6) value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, (T1, T2, T3, T4, T5, T6) value, DataStyle style = DataStyle.Normal)
     {
         stream.BeginSequence(DataStyle.Compact);
         stream.Serialize(value.Item1, style);
@@ -194,7 +194,7 @@ public class ValueTupleFormatter<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<Va
         return new ValueTuple<T1, T2, T3, T4, T5, T6, T7>(item1, item2, item3, item4, item5, item6, item7);
     }
 
-    public override void Serialize(ref ISerializationWriter stream, (T1, T2, T3, T4, T5, T6, T7) value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, (T1, T2, T3, T4, T5, T6, T7) value, DataStyle style = DataStyle.Normal)
     {
         stream.BeginSequence(DataStyle.Compact);
         stream.Serialize(value.Item1, style);
@@ -231,7 +231,7 @@ public class ValueTupleFormatter<T1, T2, T3, T4, T5, T6, T7, TRest> : YamlSerial
         return new ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest>(item1, item2, item3, item4, item5, item6, item7, item8);
     }
 
-    public override void Serialize(ref ISerializationWriter stream, ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest> value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest> value, DataStyle style = DataStyle.Normal)
     {
         stream.BeginSequence(DataStyle.Compact);
         stream.Serialize(value.Item1, style);

@@ -15,7 +15,7 @@ public class Int64Formatter : YamlSerializer<long>
         return result;
     }
 
-    public override void Serialize(ref ISerializationWriter stream, long value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, long value, DataStyle style = DataStyle.Normal)
     {
         stream.Serialize(ref value);
     }

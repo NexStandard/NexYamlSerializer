@@ -15,7 +15,7 @@ public class Float64Formatter : YamlSerializer<double>
         return result;
     }
 
-    public override void Serialize(ref ISerializationWriter stream, double value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, double value, DataStyle style = DataStyle.Normal)
     {
         stream.Serialize(ref value);
     }

@@ -42,7 +42,7 @@ public class InterfaceReadOnlyDictionaryFormatter<TKey, TValue> : YamlSerializer
         }
     }
 
-    public override void Serialize(ref ISerializationWriter stream, IReadOnlyDictionary<TKey, TValue> value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, IReadOnlyDictionary<TKey, TValue> value, DataStyle style = DataStyle.Normal)
     {
 
         YamlSerializer<TKey>? keyFormatter = null;

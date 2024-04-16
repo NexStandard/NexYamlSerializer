@@ -28,7 +28,7 @@ public class ArrayFormatter<T> : YamlSerializer<T[]?>
         return list.ToArray();
     }
 
-    public override void Serialize(ref ISerializationWriter stream, T[] value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, T[] value, DataStyle style = DataStyle.Normal)
     {
         var contentStyle = DataStyle.Any;
         if (style == DataStyle.Compact)
@@ -43,19 +43,5 @@ public class ArrayFormatter<T> : YamlSerializer<T[]?>
         }
         stream.EndSequence();
 
-    }
-    public void Serialize(ISerializationWriter stream, T[]? value, DataStyle style = DataStyle.Normal)
-    {
-        var contentStyle = DataStyle.Any;
-        if (style == DataStyle.Compact)
-        {
-            contentStyle = DataStyle.Compact;
-        }
-        stream.BeginSequence(style);
-        foreach (var item in value)
-        {
-            stream.Serialize(item, contentStyle);
-        }
-        stream.EndSequence();
     }
 }

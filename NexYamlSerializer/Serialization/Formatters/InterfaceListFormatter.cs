@@ -28,7 +28,7 @@ public class InterfaceListFormatter<T> : YamlSerializer<IList<T>>
         return list!;
     }
 
-    public override void Serialize(ref ISerializationWriter stream, IList<T> value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, IList<T> value, DataStyle style = DataStyle.Normal)
     {
         stream.BeginSequence(style);
         if (value.Count > 0)

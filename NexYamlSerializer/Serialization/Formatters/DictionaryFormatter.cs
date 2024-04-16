@@ -43,7 +43,7 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
         }
     }
 
-    public override void Serialize(ref ISerializationWriter stream, Dictionary<TKey, TValue> value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, Dictionary<TKey, TValue> value, DataStyle style = DataStyle.Normal)
     {
         YamlSerializer<TKey> keyFormatter = null!;
         YamlSerializer<TValue> valueFormatter = null!;
