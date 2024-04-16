@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace NexVYaml.Serialization;
 
-public class InterfaceCollectionFormatter<T> : YamlSerializer<ICollection<T>?>, IYamlFormatter<ICollection<T>?>
+public class InterfaceCollectionFormatter<T> : YamlSerializer<ICollection<T>?>
 {
     public override void Serialize(ref ISerializationWriter stream, ICollection<T>? value, DataStyle style = DataStyle.Normal)
     {

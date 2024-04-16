@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace NexVYaml.Serialization;
 
-public class InterfaceReadOnlyCollectionFormatter<T> : YamlSerializer<IReadOnlyCollection<T>?>, IYamlFormatter<IReadOnlyCollection<T>?>
+public class InterfaceReadOnlyCollectionFormatter<T> : YamlSerializer<IReadOnlyCollection<T>?>
 {
     public override IReadOnlyCollection<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {

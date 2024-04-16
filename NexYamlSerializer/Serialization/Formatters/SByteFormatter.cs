@@ -6,7 +6,7 @@ using Stride.Core;
 
 namespace NexYamlSerializer.Serialization.PrimitiveSerializers;
 
-public class SByteFormatter : YamlSerializer<sbyte>, IYamlFormatter<sbyte>
+public class SByteFormatter : YamlSerializer<sbyte>
 {
     public static readonly SByteFormatter Instance = new();
 

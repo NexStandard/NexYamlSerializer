@@ -4,7 +4,7 @@ using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
-public class NullableStringFormatter : YamlSerializer<string?>, IYamlFormatter<string?>
+public class NullableStringFormatter : YamlSerializer<string?>
 {
     public static readonly NullableStringFormatter Instance = new();
 

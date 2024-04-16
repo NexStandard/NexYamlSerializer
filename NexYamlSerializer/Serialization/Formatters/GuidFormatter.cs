@@ -6,7 +6,7 @@ using System.Buffers.Text;
 
 namespace NexVYaml.Serialization;
 
-public class GuidFormatter : YamlSerializer<Guid>, IYamlFormatter<Guid>
+public class GuidFormatter : YamlSerializer<Guid>
 {
     public static readonly GuidFormatter Instance = new();
 

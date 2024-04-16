@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 
 namespace NexVYaml.Serialization;
 
-public class EnumAsStringFormatter<T> : YamlSerializer<T>, IYamlFormatter<T> where T : Enum
+public class EnumAsStringFormatter<T> : YamlSerializer<T>
 {
     static readonly Dictionary<string, T> NameValueMapping;
     static readonly Dictionary<T, string> ValueNameMapping;

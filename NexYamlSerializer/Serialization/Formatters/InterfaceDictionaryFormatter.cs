@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace NexVYaml.Serialization;
 
-public class InterfaceDictionaryFormatter<TKey, TValue> : YamlSerializer<IDictionary<TKey, TValue>?>, IYamlFormatter<IDictionary<TKey, TValue>?>
+public class InterfaceDictionaryFormatter<TKey, TValue> : YamlSerializer<IDictionary<TKey, TValue>?>
 {
     public override IDictionary<TKey, TValue>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
@@ -17,7 +17,7 @@ public class InterfaceDictionaryFormatter<TKey, TValue> : YamlSerializer<IDictio
             return default;
         }
         var map = new Dictionary<TKey, TValue>();
-        if (this.IsPrimitiveType(typeof(TKey)))
+        if (FormatterExtensions.IsPrimitive(typeof(TKey)))
         {
             var keyFormatter = context.Resolver.GetFormatter<TKey>();
             parser.ReadWithVerify(ParseEventType.MappingStart);
@@ -41,16 +41,16 @@ public class InterfaceDictionaryFormatter<TKey, TValue> : YamlSerializer<IDictio
         }
     }
 
-    public override void Serialize(ref ISerializationWriter stream, IDictionary<TKey, TValue>? value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, IDictionary<TKey, TValue> value, DataStyle style = DataStyle.Normal)
     {
 
-        YamlSerializer<TKey> keyFormatter = null;
-        YamlSerializer<TValue> valueFormatter = null;
-        if (this.IsPrimitiveType(typeof(TKey)))
+        YamlSerializer<TKey>? keyFormatter = null;
+        YamlSerializer<TValue>? valueFormatter = null;
+        if (FormatterExtensions.IsPrimitive(typeof(TKey)))
         {
             keyFormatter = stream.SerializeContext.Resolver.GetFormatter<TKey>();
         }
-        if (this.IsPrimitiveType(typeof(TValue)))
+        if (FormatterExtensions.IsPrimitive(typeof(TValue)))
             valueFormatter = stream.SerializeContext.Resolver.GetFormatter<TValue>();
 
         if (keyFormatter == null)

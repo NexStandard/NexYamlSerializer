@@ -7,10 +7,6 @@ namespace NexVYaml.Serialization;
 
 public class NullableFormatter<T> : YamlSerializer<T?>, IYamlFormatter<T?> where T : struct
 {
-    IYamlFormatter<T> yamlFormatter;
-    public NullableFormatter(IYamlFormatter<T> formatter) { yamlFormatter = formatter; }
-    public NullableFormatter() { }
-
     public override T? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())
@@ -19,7 +15,7 @@ public class NullableFormatter<T> : YamlSerializer<T?>, IYamlFormatter<T?> where
             return null;
         }
 
-        return new T?(yamlFormatter.Deserialize(ref parser, context));
+        return new T?(context.DeserializeWithAlias<T>(ref parser));
     }
 
     public override void Serialize(ref ISerializationWriter stream, T? value, DataStyle style = DataStyle.Normal)
@@ -36,16 +32,11 @@ public class NullableFormatter<T> : YamlSerializer<T?>, IYamlFormatter<T?> where
 }
 public sealed class StaticNullableFormatter<T> : YamlSerializer<T?>, IYamlFormatter<T?> where T : struct
 {
-    readonly IYamlFormatter<T> underlyingFormatter;
     readonly YamlSerializer<T> underlyingSerializer;
 
     public StaticNullableFormatter(YamlSerializer<T> underlyingFormatter)
     {
         underlyingSerializer = underlyingFormatter;
-    }
-    public StaticNullableFormatter(IYamlFormatter<T> underlyingFormatter)
-    {
-        this.underlyingFormatter = underlyingFormatter;
     }
 
     public override T? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
@@ -55,7 +46,7 @@ public sealed class StaticNullableFormatter<T> : YamlSerializer<T?>, IYamlFormat
             parser.Read();
             return null;
         }
-        return underlyingFormatter.Deserialize(ref parser, context);
+        return context.DeserializeWithAlias<T>(ref parser);
     }
 
     public override void Serialize(ref ISerializationWriter stream, T? value, DataStyle style = DataStyle.Normal)

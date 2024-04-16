@@ -8,7 +8,7 @@ using System.Globalization;
 
 namespace NexVYaml.Serialization;
 
-public class DateTimeFormatter : YamlSerializer<DateTime>, IYamlFormatter<DateTime>
+public class DateTimeFormatter : YamlSerializer<DateTime>
 {
     public static readonly DateTimeFormatter Instance = new();
 

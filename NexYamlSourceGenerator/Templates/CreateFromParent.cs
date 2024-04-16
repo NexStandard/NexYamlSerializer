@@ -44,44 +44,6 @@ internal static class CreateFromParent
 
         return s;
     }
-    public static string CreateMethodTyped(this ClassPackage package)
-    {
-        StringBuilder w = new();
-        foreach (var inter in package.ClassInfo.AllInterfaces)
-        {
-            w.Append(CreateIfs(package, inter, "IYamlFormatter"));
-        }
-        foreach (var inter in package.ClassInfo.AllAbstracts)
-        {
-            w.Append(CreateIfs(package, inter, "IYamlFormatter"));
-        }
-        string s;
-        if (package.ClassInfo.IsGeneric)
-        {
-             s = $$"""
-    public IYamlFormatter Create(Type type)
-    {
-{{w}}
-        var gen = typeof({{package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}});
-        var genParams = type.GenericTypeArguments;
-        var fillGen = gen.MakeGenericType(genParams);
-        return (IYamlFormatter)Activator.CreateInstance(fillGen)!;
-    }
-""";
-        }
-        else
-        {
-            s = $$"""
-            public IYamlFormatter Create(Type type)
-            {
-        {{w}}
-                return new {{package.ClassInfo.GeneratorName}}();
-            }
-        """;
-        }
-
-        return s;
-    }
 
     private static StringBuilder CreateIfs(ClassPackage package, DataPackage inter, string cast)
     {

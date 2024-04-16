@@ -7,9 +7,8 @@ using System;
 using System.Linq;
 
 namespace NexYamlSerializer.Serialization.Formatters;
-public class EmptyFormatter<T> : YamlSerializer<T>, IYamlFormatter<T>
+public class EmptyFormatter<T> : YamlSerializer<T>
 {
-    public static IYamlFormatter<T> Empty() => new EmptyFormatter<T>();
     public static YamlSerializer<T> EmptyS() => new EmptyFormatter<T>();
     public override T? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {

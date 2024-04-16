@@ -7,7 +7,7 @@ using System.Buffers.Text;
 
 namespace NexVYaml.Serialization;
 
-public class DateTimeOffsetFormatter : YamlSerializer<DateTimeOffset>, IYamlFormatter<DateTimeOffset>
+public class DateTimeOffsetFormatter : YamlSerializer<DateTimeOffset>
 {
     public static readonly DateTimeOffsetFormatter Instance = new();
 

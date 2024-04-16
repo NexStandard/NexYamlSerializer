@@ -3,6 +3,7 @@ using NexVYaml.Parser;
 using NexYamlSerializer.Serialization.Formatters;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NexVYaml.Serialization;
 
@@ -23,7 +24,7 @@ public class YamlDeserializationContext
         aliases.Clear();
     }
     static Type NullableFormatter = typeof(NullableFormatter<>);
-    public static bool IsNullable(Type value, out Type underlyingType)
+    public static bool IsNullable(Type value, [MaybeNullWhen(false)] out Type underlyingType)
     {
         return (underlyingType = Nullable.GetUnderlyingType(value)) != null;
     }
@@ -33,8 +34,9 @@ public class YamlDeserializationContext
         if (IsNullable(type, out var underlyingType))
         {
             var genericFilledFormatter = NullableFormatter.MakeGenericType(underlyingType);
-
-            return ((YamlSerializer<T>)Activator.CreateInstance(genericFilledFormatter, args: Resolver.GetFormatter(underlyingType))).Deserialize(ref parser, this);
+            // TODO : Nullable makes sense?
+            var f = (YamlSerializer<T?>?)Activator.CreateInstance(genericFilledFormatter)!;
+            return (f).Deserialize(ref parser, this);
         }
         else
         if (type.IsInterface || type.IsAbstract || type.IsGenericType)

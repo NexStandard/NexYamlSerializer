@@ -8,10 +8,10 @@ using System.Linq;
 
 namespace NexVYaml.Serialization;
 
-public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey, TValue>?>, IYamlFormatter<Dictionary<TKey, TValue>?>
+public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey, TValue>?>
     where TKey : notnull
 {
-    public override Dictionary<TKey, TValue> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    public override Dictionary<TKey, TValue>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())
         {
@@ -19,7 +19,7 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
             return default;
         }
         var map = new Dictionary<TKey, TValue>();
-        if (this.IsPrimitiveType(typeof(TKey)))
+        if (FormatterExtensions.IsPrimitive(typeof(TKey)))
         {
             var keyFormatter = context.Resolver.GetFormatter<TKey>();
             parser.ReadWithVerify(ParseEventType.MappingStart);
@@ -43,15 +43,15 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
         }
     }
 
-    public override void Serialize(ref ISerializationWriter stream, Dictionary<TKey, TValue>? value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, Dictionary<TKey, TValue> value, DataStyle style = DataStyle.Normal)
     {
         YamlSerializer<TKey> keyFormatter = null!;
         YamlSerializer<TValue> valueFormatter = null!;
-        if (FormatterExtensions.IsPrimtiveType(typeof(TKey)))
+        if (FormatterExtensions.IsPrimitive(typeof(TKey)))
         {
             keyFormatter = stream.SerializeContext.Resolver.GetFormatter<TKey>();
         }
-        if (FormatterExtensions.IsPrimtiveType(typeof(TValue)))
+        if (FormatterExtensions.IsPrimitive(typeof(TValue)))
         {
             valueFormatter = stream.SerializeContext.Resolver.GetFormatter<TValue>();
         }
@@ -105,31 +105,6 @@ file class DictionaryFormatterHelper : IYamlFormatterHelper
         resolver.Register(this, typeof(Dictionary<,>), typeof(System.Collections.Generic.IReadOnlyDictionary<,>));
 
     }
-    public IYamlFormatter Create(Type type)
-    {
-        if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IDictionary<,>))
-        {
-            var generatorType = typeof(DictionaryFormatter<,>);
-            var genericParams = type.GenericTypeArguments;
-            var param = new Type[] { genericParams[0], genericParams[1] };
-            var filledGeneratorType = generatorType.MakeGenericType(param);
-            return (IYamlFormatter)Activator.CreateInstance(filledGeneratorType);
-        }
-
-        if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IReadOnlyDictionary<,>))
-        {
-            var generatorType = typeof(DictionaryFormatter<,>);
-            var genericParams = type.GenericTypeArguments;
-            var param = new Type[] { genericParams[0], genericParams[1] };
-            var filledGeneratorType = generatorType.MakeGenericType(param);
-            return (IYamlFormatter)Activator.CreateInstance(filledGeneratorType);
-        }
-
-        var gen = typeof(DictionaryFormatter<,>);
-        var genParams = type.GenericTypeArguments;
-        var fillGen = gen.MakeGenericType(genParams);
-        return (IYamlFormatter)Activator.CreateInstance(fillGen);
-    }
 
     public YamlSerializer Instantiate(Type type)
     {
@@ -139,7 +114,7 @@ file class DictionaryFormatterHelper : IYamlFormatterHelper
             var genericParams = type.GenericTypeArguments;
             var param = new Type[] { genericParams[0], genericParams[1] };
             var filledGeneratorType = generatorType.MakeGenericType(param);
-            return (YamlSerializer)Activator.CreateInstance(filledGeneratorType);
+            return (YamlSerializer)Activator.CreateInstance(filledGeneratorType)!;
         }
 
         if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IReadOnlyDictionary<,>))
@@ -148,13 +123,13 @@ file class DictionaryFormatterHelper : IYamlFormatterHelper
             var genericParams = type.GenericTypeArguments;
             var param = new Type[] { genericParams[0], genericParams[1] };
             var filledGeneratorType = generatorType.MakeGenericType(param);
-            return (YamlSerializer)Activator.CreateInstance(filledGeneratorType);
+            return (YamlSerializer)Activator.CreateInstance(filledGeneratorType)!;
         }
 
         var gen = typeof(DictionaryFormatter<,>);
         var genParams = type.GenericTypeArguments;
         var fillGen = gen.MakeGenericType(genParams);
-        return (YamlSerializer)Activator.CreateInstance(fillGen);
+        return (YamlSerializer)Activator.CreateInstance(fillGen)!;
     }
 }
 

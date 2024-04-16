@@ -67,11 +67,9 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
             return t.Instantiate(origin);
         }
         var genericFormatter = typeof(EmptyFormatter<>);
-
         var genericType = genericFormatter.MakeGenericType(origin);
         var emptyFormatter = (YamlSerializer?)Activator.CreateInstance(genericType);
         return emptyFormatter!;
-
     }
     /// <summary>
     /// Registers all available Serializers.

@@ -6,7 +6,7 @@ using Stride.Core;
 
 namespace NexYamlSerializer.Serialization.PrimitiveSerializers;
 
-public class CharFormatter : YamlSerializer<char>, IYamlFormatter<char>
+public class CharFormatter : YamlSerializer<char>
 {
     public static readonly CharFormatter Instance = new();
 

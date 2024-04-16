@@ -5,7 +5,7 @@ using System;
 
 namespace NexVYaml.Serialization;
 
-public class UriFormatter : YamlSerializer<Uri>, IYamlFormatter<Uri>
+public class UriFormatter : YamlSerializer<Uri>
 {
     public static readonly UriFormatter Instance = new();
 

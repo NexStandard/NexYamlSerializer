@@ -4,7 +4,7 @@ using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
-public class BooleanFormatter : YamlSerializer<bool>, IYamlFormatter<bool>
+public class BooleanFormatter : YamlSerializer<bool>
 {
     public static readonly BooleanFormatter Instance = new();
 

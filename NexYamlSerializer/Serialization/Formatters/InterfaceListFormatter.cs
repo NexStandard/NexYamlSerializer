@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace NexVYaml.Serialization;
 
-public class InterfaceListFormatter<T> : YamlSerializer<IList<T>>, IYamlFormatter<IList<T>?>
+public class InterfaceListFormatter<T> : YamlSerializer<IList<T>>
 {
     public override IList<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {

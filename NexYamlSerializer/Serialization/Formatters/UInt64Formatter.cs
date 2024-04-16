@@ -6,7 +6,7 @@ using Stride.Core;
 
 namespace NexYamlSerializer.Serialization.PrimitiveSerializers;
 
-public class UInt64Formatter : YamlSerializer<ulong>, IYamlFormatter<ulong>
+public class UInt64Formatter : YamlSerializer<ulong>
 {
     public static readonly UInt64Formatter Instance = new();
 

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace NexVYaml.Serialization;
 
-public class ArrayFormatter<T> : YamlSerializer<T[]?>, IYamlFormatter<T[]?>
+public class ArrayFormatter<T> : YamlSerializer<T[]?>
 {
     public override T[]? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
@@ -28,7 +28,7 @@ public class ArrayFormatter<T> : YamlSerializer<T[]?>, IYamlFormatter<T[]?>
         return list.ToArray();
     }
 
-    public override void Serialize(ref ISerializationWriter stream, T[]? value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, T[] value, DataStyle style = DataStyle.Normal)
     {
         var contentStyle = DataStyle.Any;
         if (style == DataStyle.Compact)
@@ -46,10 +46,6 @@ public class ArrayFormatter<T> : YamlSerializer<T[]?>, IYamlFormatter<T[]?>
     }
     public void Serialize(ISerializationWriter stream, T[]? value, DataStyle style = DataStyle.Normal)
     {
-        if (typeof(T).IsValueType)
-        {
-
-        }
         var contentStyle = DataStyle.Any;
         if (style == DataStyle.Compact)
         {

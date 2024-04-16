@@ -173,7 +173,7 @@ public abstract class YamlSerializer
     public static T? Deserialize<T>(ReadOnlyMemory<byte> memory, YamlSerializerOptions? options = null)
     {
         var parser = YamlParser.FromSequence(new ReadOnlySequence<byte>(memory));
-        return Deserialize<T>(ref parser, options);
+        return Deserialize<T?>(ref parser, options);
     }
 
     /// <summary>
@@ -183,9 +183,9 @@ public abstract class YamlSerializer
     /// <param name="yaml">The string containing the YAML content to be deserialized.</param>
     /// <param name="options">Optional settings for customizing the YAML deserialization process.</param>
     /// <returns>An object of type <typeparamref name="T"/> representing the deserialized YAML content.</returns>
-    public static T Deserialize<T>(string yaml, YamlSerializerOptions? options = null)
+    public static T? Deserialize<T>(string yaml, YamlSerializerOptions? options = null)
     {
-        return Deserialize<T>(StringEncoding.Utf8.GetBytes(yaml), options);
+        return Deserialize<T?>(StringEncoding.Utf8.GetBytes(yaml), options);
     }
 
     /// <summary>
@@ -195,10 +195,10 @@ public abstract class YamlSerializer
     /// <param name="sequence">The ReadOnlySequence containing the YAML content to be deserialized.</param>
     /// <param name="options">Optional settings for customizing the YAML deserialization process.</param>
     /// <returns>An object of type <typeparamref name="T"/> representing the deserialized YAML content.</returns>
-    public static T Deserialize<T>(in ReadOnlySequence<byte> sequence, YamlSerializerOptions? options = null)
+    public static T? Deserialize<T>(in ReadOnlySequence<byte> sequence, YamlSerializerOptions? options = null)
     {
         var parser = YamlParser.FromSequence(sequence);
-        return Deserialize<T>(ref parser, options);
+        return Deserialize<T?>(ref parser, options);
     }
 
     /// <summary>
@@ -208,13 +208,13 @@ public abstract class YamlSerializer
     /// <param name="stream">The Stream containing the YAML content to be deserialized.</param>
     /// <param name="options">Optional settings for customizing the YAML deserialization process.</param>
     /// <returns>A ValueTask representing the asynchronous operation, with the result being an object of type <typeparamref name="T"/> representing the deserialized YAML content.</returns>
-    public static async ValueTask<T> DeserializeAsync<T>(Stream stream, YamlSerializerOptions? options = null)
+    public static async ValueTask<T?> DeserializeAsync<T>(Stream stream, YamlSerializerOptions? options = null)
     {
         var byteSequenceBuilder = await StreamHelper.ReadAsSequenceAsync(stream);
         try
         {
             var sequence = byteSequenceBuilder.Build();
-            return Deserialize<T>(in sequence, options);
+            return Deserialize<T?>(in sequence, options);
         }
         finally
         {
@@ -238,7 +238,7 @@ public abstract class YamlSerializer
 
             parser.SkipAfter(ParseEventType.DocumentStart);
 
-            return contextLocal.DeserializeWithAlias<T>(ref parser);
+            return contextLocal.DeserializeWithAlias<T?>(ref parser);
         }
         finally
         {

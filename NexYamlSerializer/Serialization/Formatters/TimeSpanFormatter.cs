@@ -6,7 +6,7 @@ using System.Buffers.Text;
 
 namespace NexVYaml.Serialization;
 
-public class TimeSpanFormatter : YamlSerializer<TimeSpan>, IYamlFormatter<TimeSpan>
+public class TimeSpanFormatter : YamlSerializer<TimeSpan>
 {
     public static readonly TimeSpanFormatter Instance = new();
 

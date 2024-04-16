@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace NexVYaml.Serialization;
 
-public class KeyValuePairFormatter<TKey, TValue> : YamlSerializer<KeyValuePair<TKey, TValue>>, IYamlFormatter<KeyValuePair<TKey, TValue>>
+public class KeyValuePairFormatter<TKey, TValue> : YamlSerializer<KeyValuePair<TKey, TValue>>
 {
     public override KeyValuePair<TKey, TValue> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
@@ -38,21 +38,13 @@ file class NexSourceGenerated_NexYamlTest_ComplexCasesTempListHelper : IYamlForm
         resolver.RegisterGenericFormatter(typeof(KeyValuePair<,>), typeof(KeyValuePairFormatter<,>));
         resolver.RegisterFormatter(typeof(KeyValuePairFormatter<,>));
     }
-    public IYamlFormatter Create(Type type)
-    {
-
-        var gen = typeof(KeyValuePairFormatter<,>);
-        var genParams = type.GenericTypeArguments;
-        var fillGen = gen.MakeGenericType(genParams);
-        return (IYamlFormatter)Activator.CreateInstance(fillGen);
-    }
 
     public YamlSerializer Instantiate(Type type)
     {
         var gen = typeof(KeyValuePairFormatter<,>);
         var genParams = type.GenericTypeArguments;
         var fillGen = gen.MakeGenericType(genParams);
-        return (YamlSerializer)Activator.CreateInstance(fillGen);
+        return (YamlSerializer)Activator.CreateInstance(fillGen)!;
     }
 }
 

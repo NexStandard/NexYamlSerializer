@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace NexVYaml.Serialization;
 
-public class InterfaceEnumerableFormatter<T> : YamlSerializer<IEnumerable<T>?>, IYamlFormatter<IEnumerable<T>?>
+public class InterfaceEnumerableFormatter<T> : YamlSerializer<IEnumerable<T>?>
 {
     public override IEnumerable<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
@@ -26,7 +26,7 @@ public class InterfaceEnumerableFormatter<T> : YamlSerializer<IEnumerable<T>?>, 
         return list;
     }
 
-    public override void Serialize(ref ISerializationWriter stream, IEnumerable<T>? value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, IEnumerable<T> value, DataStyle style = DataStyle.Normal)
     {
         stream.BeginSequence(style);
         if (value.Any())

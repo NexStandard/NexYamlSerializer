@@ -7,7 +7,7 @@ using System.Buffers.Text;
 
 namespace NexYamlSerializer.Serialization.PrimitiveSerializers;
 
-public class DecimalFormatter : YamlSerializer<decimal>, IYamlFormatter<decimal>
+public class DecimalFormatter : YamlSerializer<decimal>
 {
     public static readonly DecimalFormatter Instance = new();
 
