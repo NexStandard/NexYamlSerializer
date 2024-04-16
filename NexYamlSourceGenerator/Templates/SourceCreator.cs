@@ -47,7 +47,7 @@ file sealed class {info.GeneratorName + "Helper" } : IYamlFormatterHelper
 {package.CreateInstantiateMethodTyped()}
 }}
 [System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]
-file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSerializer<{info.NameDefinition}>
+file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSerializer<{info.NameDefinition}> {info.TypeParameterRestrictions}
 {{
 
     {package.CreateUTF8Members()}
