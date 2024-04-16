@@ -1,9 +1,6 @@
 #nullable enable
-using NexVYaml;
-using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using NexYaml.Core;
-using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
 
 namespace NexVYaml.Serialization;
@@ -22,7 +19,7 @@ public class NullableFormatter<T> : YamlSerializer<T?>, IYamlFormatter<T?> where
             return null;
         }
 
-        return new T?(yamlFormatter.Deserialize(ref parser,context));
+        return new T?(yamlFormatter.Deserialize(ref parser, context));
     }
 
     public override void Serialize(ref ISerializationWriter stream, T? value, DataStyle style = DataStyle.Normal)
@@ -65,7 +62,7 @@ public sealed class StaticNullableFormatter<T> : YamlSerializer<T?>, IYamlFormat
     {
         if (value.HasValue)
         {
-            underlyingSerializer.Serialize(ref stream,value.Value,style);
+            underlyingSerializer.Serialize(ref stream, value.Value, style);
         }
         else
         {

@@ -1,12 +1,10 @@
 #nullable enable
-using NexVYaml;
-using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
-public class Float64Formatter : YamlSerializer<double>,IYamlFormatter<double>
+public class Float64Formatter : YamlSerializer<double>, IYamlFormatter<double>
 {
     public static readonly Float64Formatter Instance = new();
 

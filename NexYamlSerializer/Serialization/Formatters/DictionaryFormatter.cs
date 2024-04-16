@@ -1,20 +1,14 @@
 #nullable enable
-using System;
-using System.Buffers.Text;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Unicode;
-using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using NexYamlSerializer;
-using NexVYaml;
-using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace NexVYaml.Serialization;
 
-public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey, TValue>?>,IYamlFormatter<Dictionary<TKey, TValue>?>
+public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey, TValue>?>, IYamlFormatter<Dictionary<TKey, TValue>?>
     where TKey : notnull
 {
     public override Dictionary<TKey, TValue> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
@@ -27,7 +21,7 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
         var map = new Dictionary<TKey, TValue>();
         if (this.IsPrimitiveType(typeof(TKey)))
         {
-            var keyFormatter = NewSerializerRegistry.Instance.GetFormatter<TKey>();
+            var keyFormatter = context.Resolver.GetFormatter<TKey>();
             parser.ReadWithVerify(ParseEventType.MappingStart);
 
 
@@ -45,7 +39,7 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
         {
             var listFormatter = new ListFormatter<KeyValuePair<TKey, TValue>>();
             var keyValuePairs = context.DeserializeWithAlias(listFormatter, ref parser);
-            
+
             return keyValuePairs?.ToDictionary() ?? [];
         }
     }
@@ -56,10 +50,10 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
         YamlSerializer<TValue> valueFormatter = null;
         if (FormatterExtensions.IsPrimtiveType(typeof(TKey)))
         {
-            keyFormatter = NewSerializerRegistry.Instance.GetFormatter<TKey>();
+            keyFormatter = stream.SerializeContext.Resolver.GetFormatter<TKey>();
         }
         if (FormatterExtensions.IsPrimtiveType(typeof(TValue)))
-            valueFormatter = NewSerializerRegistry.Instance.GetFormatter<TValue>();
+            valueFormatter = stream.SerializeContext.Resolver.GetFormatter<TValue>();
 
         if (keyFormatter == null)
         {
@@ -102,16 +96,11 @@ file class DictionaryFormatterHelper : IYamlFormatterHelper
 {
     public void Register(IYamlFormatterResolver resolver)
     {
-        NewSerializerRegistry.Instance.Register(this, typeof(Dictionary<,>), typeof(Dictionary<,>));
         resolver.Register(this, typeof(Dictionary<,>), typeof(Dictionary<,>));
-        NewSerializerRegistry.Instance.RegisterGenericFormatter(typeof(Dictionary<,>), typeof(DictionaryFormatter<,>));
         resolver.RegisterGenericFormatter(typeof(Dictionary<,>), typeof(DictionaryFormatter<,>));
-        NewSerializerRegistry.Instance.RegisterFormatter(typeof(Dictionary<,>));
         resolver.RegisterFormatter(typeof(Dictionary<,>));
 
-        NewSerializerRegistry.Instance.Register(this, typeof(Dictionary<,>), typeof(System.Collections.Generic.IDictionary<,>));
         resolver.Register(this, typeof(Dictionary<,>), typeof(System.Collections.Generic.IDictionary<,>));
-        NewSerializerRegistry.Instance.Register(this, typeof(Dictionary<,>), typeof(System.Collections.Generic.IReadOnlyDictionary<,>));
         resolver.Register(this, typeof(Dictionary<,>), typeof(System.Collections.Generic.IReadOnlyDictionary<,>));
 
     }

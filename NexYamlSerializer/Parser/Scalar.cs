@@ -1,11 +1,10 @@
 #nullable enable
+using NexYaml.Core;
 using System;
 using System.Buffers;
 using System.Buffers.Text;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using System.Text;
-using NexYaml.Core;
 
 namespace NexVYaml.Parser;
 
@@ -214,7 +213,7 @@ class Scalar : ITokenContent, IDisposable
     public bool TryGetInt64(out long value)
     {
         var span = AsSpan();
-        
+
         if (long.TryParse(span, CultureInfo.InvariantCulture, out value))
         {
             return true;

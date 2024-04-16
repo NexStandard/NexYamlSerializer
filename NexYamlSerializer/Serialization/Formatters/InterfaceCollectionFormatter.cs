@@ -1,14 +1,11 @@
 #nullable enable
-using System.Collections.Generic;
-using NexVYaml.Emitter;
 using NexVYaml.Parser;
-using NexYamlSerializer;
-using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
+using System.Collections.Generic;
 
 namespace NexVYaml.Serialization;
 
-public class InterfaceCollectionFormatter<T> : YamlSerializer<ICollection<T>?>,IYamlFormatter<ICollection<T>?>
+public class InterfaceCollectionFormatter<T> : YamlSerializer<ICollection<T>?>, IYamlFormatter<ICollection<T>?>
 {
     public override void Serialize(ref ISerializationWriter stream, ICollection<T>? value, DataStyle style = DataStyle.Normal)
     {

@@ -1,14 +1,12 @@
 #nullable enable
+using NexVYaml.Parser;
+using Stride.Core;
 using System.Collections.Generic;
 using System.Linq;
-using NexVYaml.Emitter;
-using NexVYaml.Parser;
-using NexYamlSerializer.Emitter.Serializers;
-using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
-public class InterfaceEnumerableFormatter<T> : YamlSerializer<IEnumerable<T>?>,IYamlFormatter<IEnumerable<T>?>
+public class InterfaceEnumerableFormatter<T> : YamlSerializer<IEnumerable<T>?>, IYamlFormatter<IEnumerable<T>?>
 {
     public override IEnumerable<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {

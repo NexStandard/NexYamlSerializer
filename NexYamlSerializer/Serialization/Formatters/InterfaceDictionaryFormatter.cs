@@ -1,16 +1,13 @@
 #nullable enable
-using System.Collections.Generic;
-using System.Linq;
-using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using NexYamlSerializer;
-using NexYamlSerializer.Emitter.Serializers;
-using Stride.Audio;
 using Stride.Core;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace NexVYaml.Serialization;
 
-public class InterfaceDictionaryFormatter<TKey, TValue> : YamlSerializer<IDictionary<TKey, TValue>?>,IYamlFormatter<IDictionary<TKey, TValue>?>
+public class InterfaceDictionaryFormatter<TKey, TValue> : YamlSerializer<IDictionary<TKey, TValue>?>, IYamlFormatter<IDictionary<TKey, TValue>?>
 {
     public override IDictionary<TKey, TValue>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
@@ -22,7 +19,7 @@ public class InterfaceDictionaryFormatter<TKey, TValue> : YamlSerializer<IDictio
         var map = new Dictionary<TKey, TValue>();
         if (this.IsPrimitiveType(typeof(TKey)))
         {
-            var keyFormatter = NewSerializerRegistry.Instance.GetFormatter<TKey>();
+            var keyFormatter = context.Resolver.GetFormatter<TKey>();
             parser.ReadWithVerify(ParseEventType.MappingStart);
 
 
@@ -52,10 +49,10 @@ public class InterfaceDictionaryFormatter<TKey, TValue> : YamlSerializer<IDictio
         YamlSerializer<TValue> valueFormatter = null;
         if (this.IsPrimitiveType(typeof(TKey)))
         {
-            keyFormatter = NewSerializerRegistry.Instance.GetFormatter<TKey>();
+            keyFormatter = stream.SerializeContext.Resolver.GetFormatter<TKey>();
         }
         if (this.IsPrimitiveType(typeof(TValue)))
-            valueFormatter = NewSerializerRegistry.Instance.GetFormatter<TValue>();
+            valueFormatter = stream.SerializeContext.Resolver.GetFormatter<TValue>();
 
         if (keyFormatter == null)
         {

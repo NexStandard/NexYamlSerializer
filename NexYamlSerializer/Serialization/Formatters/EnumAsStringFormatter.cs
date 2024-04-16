@@ -1,15 +1,14 @@
 #nullable enable
+using NexVYaml.Parser;
+using Stride.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using NexVYaml.Internal;
-using NexVYaml.Parser;
-using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
-public class EnumAsStringFormatter<T> : YamlSerializer<T>,IYamlFormatter<T> where T : Enum
+public class EnumAsStringFormatter<T> : YamlSerializer<T>, IYamlFormatter<T> where T : Enum
 {
     static readonly Dictionary<string, T> NameValueMapping;
     static readonly Dictionary<T, string> ValueNameMapping;

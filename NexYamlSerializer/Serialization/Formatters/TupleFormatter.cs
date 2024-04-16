@@ -1,13 +1,11 @@
 #nullable enable
-using System;
-using NexVYaml.Emitter;
 using NexVYaml.Parser;
-using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
+using System;
 
 namespace NexVYaml.Serialization;
 
-public class TupleFormatter<T1> : YamlSerializer<Tuple<T1>?>,IYamlFormatter<Tuple<T1>?>
+public class TupleFormatter<T1> : YamlSerializer<Tuple<T1>?>, IYamlFormatter<Tuple<T1>?>
 {
     public override Tuple<T1>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
@@ -30,7 +28,7 @@ public class TupleFormatter<T1> : YamlSerializer<Tuple<T1>?>,IYamlFormatter<Tupl
     }
 }
 
-public class TupleFormatter<T1, T2> : YamlSerializer<Tuple<T1, T2>?>,IYamlFormatter<Tuple<T1, T2>?>
+public class TupleFormatter<T1, T2> : YamlSerializer<Tuple<T1, T2>?>, IYamlFormatter<Tuple<T1, T2>?>
 {
     public override Tuple<T1, T2>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
@@ -82,7 +80,7 @@ public class TupleFormatter<T1, T2, T3> : YamlSerializer<Tuple<T1, T2, T3>?>, IY
     }
 }
 
-public class TupleFormatter<T1, T2, T3, T4> : YamlSerializer<Tuple<T1, T2, T3, T4>?>,IYamlFormatter<Tuple<T1, T2, T3, T4>?>
+public class TupleFormatter<T1, T2, T3, T4> : YamlSerializer<Tuple<T1, T2, T3, T4>?>, IYamlFormatter<Tuple<T1, T2, T3, T4>?>
 {
     public override Tuple<T1, T2, T3, T4>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
@@ -111,7 +109,7 @@ public class TupleFormatter<T1, T2, T3, T4> : YamlSerializer<Tuple<T1, T2, T3, T
     }
 }
 
-public class TupleFormatter<T1, T2, T3, T4, T5> : YamlSerializer<Tuple<T1, T2, T3, T4, T5>?>,IYamlFormatter<Tuple<T1, T2, T3, T4, T5>?>
+public class TupleFormatter<T1, T2, T3, T4, T5> : YamlSerializer<Tuple<T1, T2, T3, T4, T5>?>, IYamlFormatter<Tuple<T1, T2, T3, T4, T5>?>
 {
     public override Tuple<T1, T2, T3, T4, T5>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
@@ -142,7 +140,7 @@ public class TupleFormatter<T1, T2, T3, T4, T5> : YamlSerializer<Tuple<T1, T2, T
     }
 }
 
-public class TupleFormatter<T1, T2, T3, T4, T5, T6> : YamlSerializer<Tuple<T1, T2, T3, T4, T5, T6>?> ,IYamlFormatter<Tuple<T1, T2, T3, T4, T5, T6>?>
+public class TupleFormatter<T1, T2, T3, T4, T5, T6> : YamlSerializer<Tuple<T1, T2, T3, T4, T5, T6>?>, IYamlFormatter<Tuple<T1, T2, T3, T4, T5, T6>?>
 {
     public override Tuple<T1, T2, T3, T4, T5, T6>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
@@ -175,7 +173,7 @@ public class TupleFormatter<T1, T2, T3, T4, T5, T6> : YamlSerializer<Tuple<T1, T
     }
 }
 
-public class TupleFormatter<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<Tuple<T1, T2, T3, T4, T5, T6, T7>?>,IYamlFormatter<Tuple<T1, T2, T3, T4, T5, T6, T7>?>
+public class TupleFormatter<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<Tuple<T1, T2, T3, T4, T5, T6, T7>?>, IYamlFormatter<Tuple<T1, T2, T3, T4, T5, T6, T7>?>
 {
     public override Tuple<T1, T2, T3, T4, T5, T6, T7>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {

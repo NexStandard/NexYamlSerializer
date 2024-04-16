@@ -1,13 +1,10 @@
 #nullable enable
-using NexVYaml;
-using NexVYaml.Emitter;
 using NexVYaml.Parser;
-using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
-public class NullableStringFormatter : YamlSerializer<string?>,IYamlFormatter<string?>
+public class NullableStringFormatter : YamlSerializer<string?>, IYamlFormatter<string?>
 {
     public static readonly NullableStringFormatter Instance = new();
 

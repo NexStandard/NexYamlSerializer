@@ -1,9 +1,8 @@
 #nullable enable
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
 using NexVYaml.Parser;
 using NexYamlSerializer.Serialization.Formatters;
+using System;
+using System.Collections.Generic;
 
 namespace NexVYaml.Serialization;
 
@@ -35,35 +34,35 @@ public class YamlDeserializationContext
         {
             var genericFilledFormatter = NullableFormatter.MakeGenericType(underlyingType);
 
-            return ((YamlSerializer<T>)Activator.CreateInstance(genericFilledFormatter, args: NewSerializerRegistry.Instance.GetFormatter(underlyingType))).Deserialize(ref parser, this);
+            return ((YamlSerializer<T>)Activator.CreateInstance(genericFilledFormatter, args: Resolver.GetFormatter(underlyingType))).Deserialize(ref parser, this);
         }
         else
         if (type.IsInterface || type.IsAbstract || type.IsGenericType)
         {
             if (SecureMode)
             {
-                return DeserializeWithAlias(NewSerializerRegistry.Instance.GetFormatter<T>(),ref parser);
+                return DeserializeWithAlias(Resolver.GetFormatter<T>(), ref parser);
             }
 
             parser.TryGetCurrentTag(out var tag);
             YamlSerializer formatter;
             if (tag == null)
             {
-                YamlSerializer<T> formatt = NewSerializerRegistry.Instance.GetGenericFormatter<T>();
+                YamlSerializer<T> formatt = Resolver.GetGenericFormatter<T>();
                 if (formatt == null)
                     return new EmptyFormatter<T>().Deserialize(ref parser, this);
                 else
-                    return DeserializeWithAlias(formatt,ref parser);
+                    return DeserializeWithAlias(formatt, ref parser);
             }
             else
             {
                 Type alias;
                 // enable aliasing on redirection
-                alias = NewSerializerRegistry.Instance.GetAliasType(tag.Handle);
-                formatter = NewSerializerRegistry.Instance.GetFormatter(alias);
+                alias = Resolver.GetAliasType(tag.Handle);
+                formatter = Resolver.GetFormatter(alias);
                 if (formatter == null)
                 {
-                    formatter = NewSerializerRegistry.Instance.GetFormatter(alias, type);
+                    formatter = Resolver.GetFormatter(alias, type);
                 }
             }
             if (formatter == null)
@@ -77,12 +76,12 @@ public class YamlDeserializationContext
         }
         else
         {
-            return NewSerializerRegistry.Instance.GetFormatter<T>().Deserialize(ref parser,this);
+            return Resolver.GetFormatter<T>().Deserialize(ref parser, this);
         }
     }
     public T[]? DeserializeArray<T>(ref YamlParser parser)
     {
-        return new ArrayFormatter<T>().Deserialize(ref parser,this);
+        return new ArrayFormatter<T>().Deserialize(ref parser, this);
     }
     public T DeserializeWithAlias<T>(YamlSerializer<T> innerFormatter, ref YamlParser parser)
     {

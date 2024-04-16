@@ -1,16 +1,14 @@
 #nullable enable
+using NexVYaml.Parser;
+using Stride.Core;
 using System;
 using System.Buffers;
 using System.Buffers.Text;
 using System.Globalization;
-using NexVYaml.Emitter;
-using NexVYaml.Parser;
-using NexYamlSerializer.Emitter.Serializers;
-using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
-public class DateTimeFormatter : YamlSerializer<DateTime>,IYamlFormatter<DateTime>
+public class DateTimeFormatter : YamlSerializer<DateTime>, IYamlFormatter<DateTime>
 {
     public static readonly DateTimeFormatter Instance = new();
 

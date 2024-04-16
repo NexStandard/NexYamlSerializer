@@ -3,8 +3,6 @@ using NexYaml.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NexYamlSerializer.Emitter.Serializers;
 internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
@@ -28,7 +26,7 @@ internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
             emitter.Writer.Advance(offset);
             emitter.WriteBlockSequenceEntryHeader();
         }
-        else if(current is EmitState.FlowSequenceEntry)
+        else if (current is EmitState.FlowSequenceEntry)
         {
             var output = emitter.Writer.GetSpan(EmitCodes.FlowSequenceSeparator.Length + EmitCodes.FlowMappingStart.Length);
             var offset = 0;
@@ -39,7 +37,7 @@ internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
             }
             emitter.Writer.Advance(offset);
         }
-        else if (current is EmitState.BlockMappingKey )
+        else if (current is EmitState.BlockMappingKey)
         {
             throw new InvalidOperationException($"To start flow-mapping in the {current} is not supported");
         }
@@ -92,7 +90,7 @@ internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
                 emitter.currentElementCount++;
                 break;
             case EmitState.FlowMappingValue:
-                emitter.StateStack.Current  = EmitState.FlowMappingKey;
+                emitter.StateStack.Current = EmitState.FlowMappingKey;
                 emitter.currentElementCount++;
                 break;
         }

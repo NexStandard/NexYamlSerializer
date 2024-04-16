@@ -13,7 +13,6 @@ public class GenericArrayTest
     private void Setup()
     {
         NexYamlSerializerRegistry.Init();
-        NewSerializerRegistry.Init();
     }
     [Fact]
     public void GenericArray()
@@ -25,6 +24,6 @@ public class GenericArrayTest
         };
         var s = YamlSerializer.SerializeToString(array);
         // TODO: activate
-        //  Generics<int[]> d = YamlSerializer.Deserialize<Generics<int[]>>(s);
+        // Generics<int[]> d = YamlSerializer.Deserialize<Generics<int[]>>(s);
     }
 }

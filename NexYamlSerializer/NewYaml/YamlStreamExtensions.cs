@@ -1,9 +1,6 @@
-﻿using NexVYaml.Emitter;
-using NexVYaml.Serialization;
+﻿using NexVYaml.Serialization;
 using NexYaml.Core;
-using NexYamlSerializer;
 using Stride.Core;
-using Stride.Core.Serialization;
 using System;
 using System.Collections.Generic;
 
@@ -20,7 +17,7 @@ public static class YamlStreamExtensions
         stream.Serialize(YamlCodes.Null0);
     }
 
-    public static void Serialize<T>(this ISerializationWriter stream,T value, DataStyle style = DataStyle.Any)
+    public static void Serialize<T>(this ISerializationWriter stream, T value, DataStyle style = DataStyle.Any)
     {
         if (value == null)
         {
@@ -43,13 +40,13 @@ public static class YamlStreamExtensions
         }
     }
 
-    public static void Serialize<T,K>(this ISerializationWriter stream, KeyValuePair<T,K> value, DataStyle style = DataStyle.Any)
+    public static void Serialize<T, K>(this ISerializationWriter stream, KeyValuePair<T, K> value, DataStyle style = DataStyle.Any)
     {
         stream.BeginSequence(style);
         stream.Serialize(value.Key);
         stream.Serialize(value.Value);
         stream.EndSequence();
-    }    
+    }
 
     public static void Serialize<T>(this ISerializationWriter stream, string key, T value, DataStyle style = DataStyle.Any)
     {

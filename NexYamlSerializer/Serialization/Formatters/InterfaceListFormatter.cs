@@ -1,14 +1,11 @@
 #nullable enable
-using System.Collections.Generic;
-using NexVYaml.Emitter;
 using NexVYaml.Parser;
-using NexYamlSerializer.Emitter.Serializers;
-using Stride.Audio;
 using Stride.Core;
+using System.Collections.Generic;
 
 namespace NexVYaml.Serialization;
 
-public class InterfaceListFormatter<T> : YamlSerializer<IList<T>>,IYamlFormatter<IList<T>?>
+public class InterfaceListFormatter<T> : YamlSerializer<IList<T>>, IYamlFormatter<IList<T>?>
 {
     public override IList<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {

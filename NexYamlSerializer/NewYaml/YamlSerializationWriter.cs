@@ -1,13 +1,10 @@
 ﻿using NexVYaml.Emitter;
 using NexVYaml.Serialization;
 using NexYaml.Core;
-using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
 using System;
 using System.Buffers.Text;
 using System.Globalization;
-using System.IO;
-using System.Text;
 
 namespace NexVYaml;
 public class YamlSerializationWriter : ISerializationWriter
@@ -39,7 +36,7 @@ public class YamlSerializationWriter : ISerializationWriter
     {
         var offset = 0;
         var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(11)); // -2147483648
-        
+
         Emitter.BeginScalar(output, ref offset);
         if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
         {
@@ -142,7 +139,7 @@ public class YamlSerializationWriter : ISerializationWriter
     public void Serialize(ref byte value)
     {
         var b = (int)value;
-        Serialize (ref b);
+        Serialize(ref b);
     }
 
     public void Serialize(ref char value)
@@ -184,7 +181,7 @@ public class YamlSerializationWriter : ISerializationWriter
     public void Serialize(ref decimal value)
     {
         Span<byte> buf = stackalloc byte[64];
-        
+
         if (value.TryFormat(buf, out var bytesWritten, default, CultureInfo.InvariantCulture))
         {
             Emitter.WriteScalar(buf[..bytesWritten]);

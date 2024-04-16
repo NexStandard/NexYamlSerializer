@@ -1,15 +1,12 @@
 #nullable enable
-using System;
-using System.Buffers;
-using System.Buffers.Text;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using NexVYaml.Emitter;
 using NexYaml.Core;
 using NexYamlSerializer.Emitter;
 using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
-using Stride.Engine;
+using System;
+using System.Buffers;
+using System.Linq;
+using System.Runtime.CompilerServices;
 namespace NexVYaml.Emitter;
 
 public class YamlEmitterException(string message) : Exception(message)
@@ -116,7 +113,7 @@ sealed partial class Utf8YamlEmitter
         else if (style is DataStyle.Compact)
             flowMapKeySerializer.Begin();
         else
-           blockMapKeySerializer.Begin();
+            blockMapKeySerializer.Begin();
     }
     public void EndMapping()
     {
@@ -126,7 +123,7 @@ sealed partial class Utf8YamlEmitter
         }
         if (StateStack.Current is EmitState.BlockMappingKey)
             blockMapKeySerializer.End();
-        else if(StateStack.Current is EmitState.FlowMappingKey)
+        else if (StateStack.Current is EmitState.FlowMappingKey)
             flowMapKeySerializer.End();
     }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -1,17 +1,14 @@
 #nullable enable
-using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using NexVYaml.Emitter;
 using NexVYaml.Internal;
 using NexVYaml.Parser;
 using NexVYaml.Serialization;
 using NexYaml.Core;
 using Stride.Core;
+using System;
+using System.Buffers;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace NexVYaml;
 
@@ -80,7 +77,7 @@ public abstract class YamlSerializer
     {
         if (value == null)
             return new ReadOnlyMemory<byte>();
-        else 
+        else
             return Serialize(value.Value, options);
     }
 
@@ -241,7 +238,7 @@ public abstract class YamlSerializer
 
             parser.SkipAfter(ParseEventType.DocumentStart);
 
-            return contextLocal.DeserializeWithAlias<T>( ref parser);
+            return contextLocal.DeserializeWithAlias<T>(ref parser);
         }
         finally
         {

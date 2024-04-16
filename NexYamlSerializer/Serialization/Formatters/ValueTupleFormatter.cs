@@ -1,9 +1,7 @@
 #nullable enable
-using System;
-using NexVYaml.Emitter;
 using NexVYaml.Parser;
-using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
+using System;
 
 namespace NexVYaml.Serialization;
 
@@ -111,7 +109,7 @@ public class ValueTupleFormatter<T1, T2, T3, T4> : YamlSerializer<ValueTuple<T1,
     }
 }
 
-public class ValueTupleFormatter<T1, T2, T3, T4, T5> : YamlSerializer<ValueTuple<T1, T2, T3, T4, T5>>,IYamlFormatter<ValueTuple<T1, T2, T3, T4, T5>>
+public class ValueTupleFormatter<T1, T2, T3, T4, T5> : YamlSerializer<ValueTuple<T1, T2, T3, T4, T5>>, IYamlFormatter<ValueTuple<T1, T2, T3, T4, T5>>
 {
     public override ValueTuple<T1, T2, T3, T4, T5> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
@@ -142,7 +140,7 @@ public class ValueTupleFormatter<T1, T2, T3, T4, T5> : YamlSerializer<ValueTuple
     }
 }
 
-public class ValueTupleFormatter<T1, T2, T3, T4, T5, T6> : YamlSerializer<ValueTuple<T1, T2, T3, T4, T5, T6>>,IYamlFormatter<ValueTuple<T1, T2, T3, T4, T5, T6>>
+public class ValueTupleFormatter<T1, T2, T3, T4, T5, T6> : YamlSerializer<ValueTuple<T1, T2, T3, T4, T5, T6>>, IYamlFormatter<ValueTuple<T1, T2, T3, T4, T5, T6>>
 {
     public override ValueTuple<T1, T2, T3, T4, T5, T6> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
@@ -210,10 +208,10 @@ public class ValueTupleFormatter<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<Va
     }
 }
 
-public class ValueTupleFormatter<T1, T2, T3, T4, T5, T6, T7, TRest> : YamlSerializer<ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest>>,IYamlFormatter<ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest>>
+public class ValueTupleFormatter<T1, T2, T3, T4, T5, T6, T7, TRest> : YamlSerializer<ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest>>, IYamlFormatter<ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest>>
     where TRest : struct
 {
-    public override ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest>  Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    public override ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())
         {

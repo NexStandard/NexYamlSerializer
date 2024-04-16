@@ -1,14 +1,12 @@
 #nullable enable
-using System.Collections.Generic;
-using NexVYaml.Emitter;
 using NexVYaml.Parser;
-using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
+using System.Collections.Generic;
 
 namespace NexVYaml.Serialization;
 
 
-public class InterfaceReadOnlyListFormatter<T> : YamlSerializer<IReadOnlyList<T>?>,IYamlFormatter<IReadOnlyList<T>?>
+public class InterfaceReadOnlyListFormatter<T> : YamlSerializer<IReadOnlyList<T>?>, IYamlFormatter<IReadOnlyList<T>?>
 {
     public override IReadOnlyList<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {

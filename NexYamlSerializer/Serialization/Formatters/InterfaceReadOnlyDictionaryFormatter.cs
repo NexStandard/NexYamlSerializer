@@ -1,14 +1,13 @@
 #nullable enable
-using System.Collections.Generic;
-using System.Linq;
-using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using NexYamlSerializer;
 using Stride.Core;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace NexVYaml.Serialization;
 
-public class InterfaceReadOnlyDictionaryFormatter<TKey, TValue> :YamlSerializer<IReadOnlyDictionary<TKey,TValue>>, IYamlFormatter<IReadOnlyDictionary<TKey, TValue>?>
+public class InterfaceReadOnlyDictionaryFormatter<TKey, TValue> : YamlSerializer<IReadOnlyDictionary<TKey, TValue>>, IYamlFormatter<IReadOnlyDictionary<TKey, TValue>?>
     where TKey : notnull
 {
     public override IReadOnlyDictionary<TKey, TValue>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
@@ -21,7 +20,7 @@ public class InterfaceReadOnlyDictionaryFormatter<TKey, TValue> :YamlSerializer<
         var map = new Dictionary<TKey, TValue>();
         if (this.IsPrimitiveType(typeof(TKey)))
         {
-            var keyFormatter = NewSerializerRegistry.Instance.GetFormatter<TKey>();
+            var keyFormatter = NexYamlSerializerRegistry.Instance.GetFormatter<TKey>();
             parser.ReadWithVerify(ParseEventType.MappingStart);
 
 
@@ -51,10 +50,10 @@ public class InterfaceReadOnlyDictionaryFormatter<TKey, TValue> :YamlSerializer<
         YamlSerializer<TValue> valueFormatter = null;
         if (this.IsPrimitiveType(typeof(TKey)))
         {
-            keyFormatter = NewSerializerRegistry.Instance.GetFormatter<TKey>();
+            keyFormatter = NexYamlSerializerRegistry.Instance.GetFormatter<TKey>();
         }
         if (this.IsPrimitiveType(typeof(TValue)))
-            valueFormatter = NewSerializerRegistry.Instance.GetFormatter<TValue>();
+            valueFormatter = NexYamlSerializerRegistry.Instance.GetFormatter<TValue>();
 
         if (keyFormatter == null)
         {

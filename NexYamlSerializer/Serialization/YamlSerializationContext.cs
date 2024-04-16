@@ -1,14 +1,9 @@
 #nullable enable
-using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using NexVYaml.Emitter;
-using NexVYaml.Internal;
-using NexYamlSerializer.Emitter.Serializers;
 using NexYamlSerializer.Serialization.Formatters;
 using Stride.Core;
+using System;
+using System.Buffers;
 
 namespace NexVYaml.Serialization;
 
@@ -37,34 +32,34 @@ public class YamlSerializationContext
         {
             if (type.IsGenericType)
             {
-                var protectedGeneric = NewSerializerRegistry.Instance.GetGenericFormatter<T>();
+                var protectedGeneric = Resolver.GetGenericFormatter<T>();
                 protectedGeneric ??= new EmptyFormatter<T>();
                 protectedGeneric.Serialize(ref stream, value!, style);
             }
             else
             {
-                var protectedFormatter = NewSerializerRegistry.Instance.GetFormatter<T>();
+                var protectedFormatter = Resolver.GetFormatter<T>();
                 protectedFormatter.Serialize(ref stream, value!, style);
             }
             return;
         }
         if (type.IsInterface || type.IsAbstract || type.IsGenericType || type.IsArray)
         {
-                var valueType = value!.GetType();
-                var formatt = NewSerializerRegistry.Instance.GetFormatter(value!.GetType(), typeof(T));
-                if (valueType != type)
-                    IsRedirected = true;
+            var valueType = value!.GetType();
+            var formatt = Resolver.GetFormatter(value!.GetType(), typeof(T));
+            if (valueType != type)
+                IsRedirected = true;
 
-                // C# forgets the cast of T when invoking Deserialize,
-                // this way we can call the deserialize method with the "real type"
-                // that is in the object
-                formatt.Serialize(ref stream, value!, style);
-                // var method = formatt.GetType().GetMethod("Serialize");
-                //method.Invoke(formatt, new object[] { emitter, value, this });
+            // C# forgets the cast of T when invoking Deserialize,
+            // this way we can call the deserialize method with the "real type"
+            // that is in the object
+            formatt.Serialize(ref stream, value!, style);
+            // var method = formatt.GetType().GetMethod("Serialize");
+            //method.Invoke(formatt, new object[] { emitter, value, this });
         }
         else
         {
-            NewSerializerRegistry.Instance.GetFormatter<T>().Serialize(ref stream, value, style);
+            Resolver.GetFormatter<T>().Serialize(ref stream, value, style);
         }
     }
     public ArrayBufferWriter<byte> GetArrayBufferWriter()

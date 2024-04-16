@@ -1,12 +1,11 @@
 #nullable enable
-using System;
-using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using Stride.Core;
+using System;
 
 namespace NexVYaml.Serialization;
 
-public class UriFormatter : YamlSerializer<Uri>,IYamlFormatter<Uri>
+public class UriFormatter : YamlSerializer<Uri>, IYamlFormatter<Uri>
 {
     public static readonly UriFormatter Instance = new();
 

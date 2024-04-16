@@ -1,10 +1,6 @@
 ﻿using NexVYaml;
-using NexVYaml.Serialization;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NexYamlSerializer;
 internal static class FormatterExtensions
@@ -29,7 +25,7 @@ internal static class FormatterExtensions
                type == typeof(DateTime) ||
                type == typeof(TimeSpan);
     }
-    internal static bool IsPrimitiveType(this IYamlFormatter formatter,Type type)
+    internal static bool IsPrimitiveType(this IYamlFormatter formatter, Type type)
     {
         return type.IsPrimitive ||
                type == typeof(bool) ||

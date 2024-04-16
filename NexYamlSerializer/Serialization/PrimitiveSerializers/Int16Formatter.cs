@@ -1,12 +1,10 @@
 #nullable enable
-using NexVYaml;
-using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
-public class Int16Formatter : YamlSerializer<short>,IYamlFormatter<short>
+public class Int16Formatter : YamlSerializer<short>, IYamlFormatter<short>
 {
     public static readonly Int16Formatter Instance = new();
 

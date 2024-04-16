@@ -1,6 +1,5 @@
 #nullable enable
 using NexVYaml;
-using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using NexVYaml.Serialization;
 using Stride.Core;

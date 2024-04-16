@@ -1,17 +1,13 @@
 #nullable enable
+using NexVYaml.Parser;
+using Stride.Core;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using NexVYaml.Emitter;
-using NexVYaml.Internal;
-using NexVYaml.Parser;
-using NexYamlSerializer.Emitter.Serializers;
-using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
 
-public class ListFormatter<T> : YamlSerializer<List<T>?>,IYamlFormatter<List<T>?>
+public class ListFormatter<T> : YamlSerializer<List<T>?>, IYamlFormatter<List<T>?>
 {
     public override List<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
@@ -49,27 +45,17 @@ file class ListHelper : IYamlFormatterHelper
 {
     public void Register(IYamlFormatterResolver resolver)
     {
-        NewSerializerRegistry.Instance.Register(this, typeof(List<>), typeof(List<>));
         resolver.Register(this, typeof(List<>), typeof(List<>));
-        NewSerializerRegistry.Instance.RegisterFormatter(typeof(List<>));
         resolver.RegisterFormatter(typeof(List<>));
-        NewSerializerRegistry.Instance.RegisterGenericFormatter(typeof(List<>), typeof(ListFormatter<>));
         resolver.RegisterGenericFormatter(typeof(List<>), typeof(ListFormatter<>));
 
-        NewSerializerRegistry.Instance.Register(this, typeof(List<>), typeof(List<>));
         resolver.Register(this, typeof(List<>), typeof(List<>));
 
-        NewSerializerRegistry.Instance.Register(this, typeof(List<>), typeof(System.Collections.Generic.IList<>));
         resolver.Register(this, typeof(List<>), typeof(System.Collections.Generic.IList<>));
-        NewSerializerRegistry.Instance.Register(this, typeof(List<>), typeof(System.Collections.Generic.ICollection<>));
         resolver.Register(this, typeof(List<>), typeof(System.Collections.Generic.ICollection<>));
-        NewSerializerRegistry.Instance.Register(this, typeof(List<>), typeof(System.Collections.Generic.IReadOnlyList<>));
         resolver.Register(this, typeof(List<>), typeof(System.Collections.Generic.IReadOnlyList<>));
-        NewSerializerRegistry.Instance.Register(this, typeof(List<>), typeof(System.Collections.Generic.IReadOnlyCollection<>));
         resolver.Register(this, typeof(List<>), typeof(System.Collections.Generic.IReadOnlyCollection<>));
-        NewSerializerRegistry.Instance.Register(this, typeof(List<>), typeof(System.Collections.Generic.IEnumerable<>));
         resolver.Register(this, typeof(List<>), typeof(System.Collections.Generic.IEnumerable<>));
-
     }
     public IYamlFormatter Create(Type type)
     {

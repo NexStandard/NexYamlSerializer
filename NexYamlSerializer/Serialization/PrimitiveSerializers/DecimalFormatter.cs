@@ -1,10 +1,9 @@
 #nullable enable
-using System.Buffers.Text;
 using NexVYaml;
-using NexVYaml.Emitter;
 using NexVYaml.Parser;
 using NexVYaml.Serialization;
 using Stride.Core;
+using System.Buffers.Text;
 
 namespace NexYamlSerializer.Serialization.PrimitiveSerializers;
 

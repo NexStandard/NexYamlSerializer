@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using NexVYaml.Serialization;
+﻿using NexVYaml.Serialization;
 using NexYamlSerializer.Serialization.PrimitiveSerializers;
+using System;
+using System.Collections.Generic;
 
 namespace NexVYaml;
 class FormatterRegistry

@@ -1,9 +1,9 @@
 #nullable enable
+using NexYaml.Core;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using NexYaml.Core;
 
 namespace NexVYaml.Parser;
 
@@ -276,39 +276,39 @@ public partial class YamlParser
                 break;
 
             case ParseEventType.SequenceStart:
-            {
-                var depth = 1;
-                while (Read())
                 {
-                    switch (CurrentEventType)
+                    var depth = 1;
+                    while (Read())
                     {
-                        case ParseEventType.SequenceStart:
-                            ++depth;
-                            break;
-                        case ParseEventType.SequenceEnd when --depth <= 0:
-                            Read();
-                            return;
+                        switch (CurrentEventType)
+                        {
+                            case ParseEventType.SequenceStart:
+                                ++depth;
+                                break;
+                            case ParseEventType.SequenceEnd when --depth <= 0:
+                                Read();
+                                return;
+                        }
                     }
+                    break;
                 }
-                break;
-            }
             case ParseEventType.MappingStart:
-            {
-                var depth = 1;
-                while (Read())
                 {
-                    switch (CurrentEventType)
+                    var depth = 1;
+                    while (Read())
                     {
-                        case ParseEventType.MappingStart:
-                            ++depth;
-                            break;
-                        case ParseEventType.MappingEnd when --depth <= 0:
-                            Read();
-                            return;
+                        switch (CurrentEventType)
+                        {
+                            case ParseEventType.MappingStart:
+                                ++depth;
+                                break;
+                            case ParseEventType.MappingEnd when --depth <= 0:
+                                Read();
+                                return;
+                        }
                     }
+                    break;
                 }
-                break;
-            }
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -430,31 +430,31 @@ public partial class YamlParser
                 throw new YamlParserException(CurrentMark, "While parsing node, found unknown anchor");
 
             case TokenType.Anchor:
-            {
-                var anchorName = tokenizer.TakeCurrentTokenContent<Scalar>().ToString(); // TODO: Avoid `ToString`
-                var anchorId = RegisterAnchor(anchorName);
-                currentAnchor = new Anchor(anchorName, anchorId);
-                tokenizer.Read();
-                if (CurrentTokenType == TokenType.Tag)
                 {
-                    currentTag = tokenizer.TakeCurrentTokenContent<Tag>();
-                    tokenizer.Read();
-                }
-                break;
-            }
-            case TokenType.Tag:
-            {
-                currentTag = tokenizer.TakeCurrentTokenContent<Tag>();
-                tokenizer.Read();
-                if (CurrentTokenType == TokenType.Anchor)
-                {
-                    var anchorName = tokenizer.TakeCurrentTokenContent<Scalar>().ToString();
+                    var anchorName = tokenizer.TakeCurrentTokenContent<Scalar>().ToString(); // TODO: Avoid `ToString`
                     var anchorId = RegisterAnchor(anchorName);
                     currentAnchor = new Anchor(anchorName, anchorId);
                     tokenizer.Read();
+                    if (CurrentTokenType == TokenType.Tag)
+                    {
+                        currentTag = tokenizer.TakeCurrentTokenContent<Tag>();
+                        tokenizer.Read();
+                    }
+                    break;
                 }
-                break;
-            }
+            case TokenType.Tag:
+                {
+                    currentTag = tokenizer.TakeCurrentTokenContent<Tag>();
+                    tokenizer.Read();
+                    if (CurrentTokenType == TokenType.Anchor)
+                    {
+                        var anchorName = tokenizer.TakeCurrentTokenContent<Scalar>().ToString();
+                        var anchorId = RegisterAnchor(anchorName);
+                        currentAnchor = new Anchor(anchorName, anchorId);
+                        tokenizer.Read();
+                    }
+                    break;
+                }
         }
 
         switch (CurrentTokenType)
@@ -508,10 +508,10 @@ public partial class YamlParser
                 break;
 
             default:
-            {
-                throw new YamlTokenizerException(tokenizer.CurrentMark,
-                    "while parsing a node, did not find expected node content");
-            }
+                {
+                    throw new YamlTokenizerException(tokenizer.CurrentMark,
+                        "while parsing a node, did not find expected node content");
+                }
         }
     }
 
@@ -633,7 +633,7 @@ public partial class YamlParser
             case TokenType.FlowSequenceEnd:
                 PopState();
                 tokenizer.Read();
-                CurrentEventType =  ParseEventType.SequenceEnd;
+                CurrentEventType = ParseEventType.SequenceEnd;
                 return;
 
             case TokenType.FlowEntryStart when !first:

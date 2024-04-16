@@ -1,14 +1,12 @@
 #nullable enable
+using NexVYaml.Parser;
+using Stride.Core;
 using System;
 using System.Collections.Generic;
-using NexVYaml.Emitter;
-using NexVYaml.Parser;
-using NexYamlSerializer.Emitter.Serializers;
-using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
-public class KeyValuePairFormatter<TKey, TValue> : YamlSerializer<KeyValuePair<TKey,TValue>>,IYamlFormatter<KeyValuePair<TKey, TValue>>
+public class KeyValuePairFormatter<TKey, TValue> : YamlSerializer<KeyValuePair<TKey, TValue>>, IYamlFormatter<KeyValuePair<TKey, TValue>>
 {
     public override KeyValuePair<TKey, TValue> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
