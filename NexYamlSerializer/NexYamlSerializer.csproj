@@ -13,7 +13,4 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\NexYaml.Core\NexYaml.Core.csproj" />
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Serialization\PrimitiveSerializers\" />
-	</ItemGroup>
 </Project>
