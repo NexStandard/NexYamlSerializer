@@ -104,7 +104,7 @@ internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
             }
             else
             {
-                emitter.WriteRaw(EmitCodes.FlowMappingEmpty, false, false);
+                emitter.WriteRaw(EmitCodes.FlowMappingEmpty, false, lineBreak);
             }
         }
 
