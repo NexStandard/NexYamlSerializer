@@ -59,7 +59,12 @@ public class YamlDeserializationContext
             else
             {
                 Type alias;
-                // enable aliasing on redirection
+                // TODO: Problem is that !!null etc gets consumed as Tag instead of a scalar value
+                if(parser.IsNullScalar())
+                {
+                    parser.Read();
+                    return default;
+                }
                 alias = Resolver.GetAliasType(tag.Handle);
                 formatter = Resolver.GetFormatter(alias);
                 if (formatter == null)

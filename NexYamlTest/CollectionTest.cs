@@ -1,18 +1,30 @@
 ﻿using NexVYaml;
-using NexVYaml.Parser;
 using NexVYaml.Serialization;
 using NexYamlTest.SimpleClasses;
 using Stride.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace NexYamlTest;
 public class CollectionTest
 {
+    [DataContract]
+    public class NullDictionary
+    {
+        public Dictionary<int, int> dict;
+    }
+    
+    [Fact]
+    public void NullCollections()
+    {
+        var collection = new NullDictionary();
+        NexYamlSerializerRegistry.Init();
+        var s = YamlSerializer.SerializeToString(collection);
+        var d = YamlSerializer.Deserialize<NullDictionary>(s);
+        Assert.Null(d!.dict);
+    }
     [Fact]
     public void Collection()
     {
@@ -50,9 +62,9 @@ public class CollectionTest
 
         NexYamlSerializerRegistry.Init();
         var s = YamlSerializer.SerializeToString(testCollections);
-        
+
         var d = YamlSerializer.Deserialize<Collections>(s);
-       
+
     }
     [Fact]
     public void InterfaceList()
@@ -60,7 +72,7 @@ public class CollectionTest
         // Creating test data
         var data1 = new CollectionInterfaces()
         {
-            Collection = new List<IDInterface>() {  },
+            Collection = new List<IDInterface>() { },
             ReadonlyList = new List<IDInterface>() { new Data1() { Id = 1 }, new Data2() { Id = 2 } },
             Dictionary = new Dictionary<int, IDInterface>() { [1] = new Data1() },
             Enumerable = new List<IDInterface>()
@@ -78,7 +90,7 @@ public class CollectionTest
         {
             SecureMode = true,
         };
-        var secure = YamlSerializer.SerializeToString(data1,option);
+        var secure = YamlSerializer.SerializeToString(data1, option);
         Assert.Throws<YamlSerializerException>(() => YamlSerializer.Deserialize<CollectionInterfaces>(secure, option));
     }
 }
@@ -90,7 +102,7 @@ internal class CollectionInterfaces
     public IReadOnlyList<IDInterface> ReadonlyList = new List<IDInterface>();
     public IList<IDInterface> List = new List<IDInterface>();
     public IEnumerable<IDInterface> Enumerable = new List<IDInterface>();
-    public IDictionary<int,IDInterface> Dictionary = new Dictionary<int,IDInterface>();
+    public IDictionary<int, IDInterface> Dictionary = new Dictionary<int, IDInterface>();
     public IReadOnlyDictionary<IDInterface, IDInterface> ReadonlyDictioanry = new Dictionary<IDInterface, IDInterface>();
 }
 [DataContract]
