@@ -48,7 +48,7 @@ public class YamlDeserializationContext
             YamlSerializer formatter;
             if (tag == null)
             {
-                YamlSerializer<T> formatt = Resolver.GetGenericFormatter<T>();
+                var formatt = Resolver.GetGenericFormatter<T>();
                 if (formatt == null)
                     return new EmptyFormatter<T>().Deserialize(ref parser, this);
                 else

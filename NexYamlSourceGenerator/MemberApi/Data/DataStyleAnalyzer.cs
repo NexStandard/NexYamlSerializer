@@ -9,7 +9,7 @@ internal class DataStyleAnalyzer(ISymbol namedType, ReferencePackage package)
 {
     public string Analyze(bool defaultValue = false)
     {
-        string dataStyle = "DataStyle.Normal";
+        var dataStyle = "DataStyle.Normal";
         if (!defaultValue)
         {
             dataStyle = "";

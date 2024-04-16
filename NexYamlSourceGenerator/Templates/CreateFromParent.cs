@@ -85,7 +85,7 @@ internal static class CreateFromParent
 
     private static StringBuilder CreateIfs(ClassPackage package, DataPackage inter, string cast)
     {
-        StringBuilder stringBuilder = new StringBuilder();
+        var stringBuilder = new StringBuilder();
         if (package.ClassInfo.IsGeneric)
         {
             var t = package.ClassInfo.TypeParameters;
@@ -118,9 +118,9 @@ internal static class CreateFromParent
 
     public static string CreateIndexArray(string[] classTypeParameters, string[] parentTypeParameters)
     {
-        int[] indexArray = new int[classTypeParameters.Length];
+        var indexArray = new int[classTypeParameters.Length];
 
-        for (int i = 0; i < classTypeParameters.Length; i++)
+        for (var i = 0; i < classTypeParameters.Length; i++)
         {
             // Find the index of the matching type parameter in parentTypeParameters
             indexArray[i] = Array.IndexOf(parentTypeParameters, classTypeParameters[i]);

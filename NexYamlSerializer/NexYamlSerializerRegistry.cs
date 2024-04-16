@@ -43,7 +43,7 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
     public void Register(IYamlFormatterHelper yamlFormatterHelper, Type target, Type interfaceType)
     {
         var tar = target.IsGenericType ? target.GetGenericTypeDefinition() : target;
-        Type inter = interfaceType.IsGenericType ? interfaceType.GetGenericTypeDefinition() : interfaceType;
+        var inter = interfaceType.IsGenericType ? interfaceType.GetGenericTypeDefinition() : interfaceType;
         if (FormatterRegistry.FormatterFactories.TryGetValue(inter, out var factory))
         {
             factory.TryAdd(tar, yamlFormatterHelper);

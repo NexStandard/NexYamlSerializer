@@ -17,19 +17,19 @@ public class CollectionTest
     public void Collection()
     {
         // Creating test data
-        TempData data1 = new TempData()
+        var data1 = new TempData()
         {
             name = "John",
             id = 1,
         };
-        TempData data2 = new TempData()
+        var data2 = new TempData()
         {
             name = "Alice",
             id = 2,
         };
 
         // Creating an object of the Collections class
-        Collections testCollections = new Collections();
+        var testCollections = new Collections();
 
         testCollections.Homp.Add(1, 2);
         // Filling the keyValuePairs dictionary
@@ -58,7 +58,7 @@ public class CollectionTest
     public void InterfaceList()
     {
         // Creating test data
-        CollectionInterfaces data1 = new CollectionInterfaces()
+        var data1 = new CollectionInterfaces()
         {
             Collection = new List<IDInterface>() {  },
             ReadonlyList = new List<IDInterface>() { new Data1() { Id = 1 }, new Data2() { Id = 2 } },

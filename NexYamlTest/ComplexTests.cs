@@ -191,7 +191,7 @@ public class ComplexTests
     public void GenericNullableTest()
     {
         Setup();
-        GenericAbstractImplementation<int?, int?> H = new GenericAbstractImplementation<int?, int?>
+        var H = new GenericAbstractImplementation<int?, int?>
         {
             Test = 1,
             TI = 2,

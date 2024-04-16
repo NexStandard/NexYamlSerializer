@@ -18,7 +18,7 @@ public class GenericArrayTest
     public void GenericArray()
     {
         Setup();
-        Generics<int[]> array = new Generics<int[]>()
+        var array = new Generics<int[]>()
         {
             Value = new int[] { 1, 2 }
         };
