@@ -46,8 +46,37 @@ public static class YamlStreamExtensions
         stream.Serialize(value.Key);
         stream.Serialize(value.Value);
         stream.EndSequence();
+    }    
+    public static void Serialize<T, K>(this ISerializationWriter stream, string key, KeyValuePair<T, K> value, DataStyle style = DataStyle.Any)
+    {
+        stream.Serialize(ref key);
+        
+        stream.Serialize(value);
     }
-
+    public static void Serialize<T, K>(this ISerializationWriter stream, Dictionary<T, K> value, DataStyle style = DataStyle.Any)
+    {
+        if (value is null)
+            stream.WriteNull();
+        else
+            DictionaryFormatterHelper.Serialize(stream, value, style);
+    }
+    public static void Serialize<T, K>(this ISerializationWriter stream, string key, Dictionary<T, K> value, DataStyle style = DataStyle.Any)
+    {
+        stream.Serialize(ref key);
+        stream.Serialize(value);
+    }
+    public static void Serialize<T>(this ISerializationWriter stream, List<T> value, DataStyle style = DataStyle.Any)
+    {
+        if (value is null)
+            stream.WriteNull();
+        else
+            ListFormatterHelper.Serialize(stream, value, style);
+    }
+    public static void Serialize<T>(this ISerializationWriter stream, string key, List<T> value, DataStyle style = DataStyle.Any)
+    {
+        stream.Serialize(ref key);
+        stream.Serialize(value);
+    }
     public static void Serialize<T>(this ISerializationWriter stream, string key, T value, DataStyle style = DataStyle.Any)
     {
         stream.Serialize(key);

@@ -1,5 +1,6 @@
 #nullable enable
 using NexVYaml.Parser;
+using NexYamlSerializer;
 using Stride.Core;
 using System.Collections.Generic;
 
@@ -31,10 +32,22 @@ public class InterfaceReadOnlyListFormatter<T> : YamlSerializer<IReadOnlyList<T>
     public override void Serialize(ISerializationWriter stream, IReadOnlyList<T>? value, DataStyle style = DataStyle.Normal)
     {
         stream.BeginSequence(style);
-
-        foreach (var x in value)
+        YamlSerializer<T>? y = null;
+        if (typeof(T).IsValueType || typeof(T) == typeof(string))
+            y = stream.SerializeContext.Resolver.GetFormatter<T>();
+        if(y is not null)
         {
-            stream.Serialize(x);
+            foreach (var x in value)
+            {
+                y.Serialize(stream, x,style);
+            }
+        }
+        else
+        {
+            foreach (var x in value)
+            {
+                stream.Serialize(x, style);
+            }
         }
 
         stream.EndSequence();

@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using NexYamlSourceGenerator.MemberApi.Data;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace NexYamlSourceGenerator.Templates;
@@ -34,9 +35,28 @@ using NexVYaml.Serialization;
 using Stride.Core;
 
 using NexYamlSerializer.Serialization.Formatters;
-{ns}
+
+namespace NexVYaml;
+public static class {info.GeneratorName + "Extensions"}
+{{
+
+     {info.Accessibility.ToString().ToLower()} static void Serialize{info.TypeParameterArguments}(this ISerializationWriter stream, {info.NameDefinition} value, DataStyle style = DataStyle.Any) {info.TypeParameterRestrictions}
+    {{
+        stream.{package.BeginMappingStyle()};
+        stream.WriteTag(""{tag}"");
+{package.CreateNewSerializationEmit()}
+        stream.EndMapping();
+    }}
+    
+    {info.Accessibility.ToString().ToLower()} static void Serialize{info.TypeParameterArguments}(this ISerializationWriter stream, string key, {info.NameDefinition} value, DataStyle style = DataStyle.Any) {info.TypeParameterRestrictions}
+    {{
+        stream.Serialize(key);
+        stream.Serialize(value, style);
+    }}
+}}
+
 [System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]
-file sealed class {info.GeneratorName + "Helper" } : IYamlFormatterHelper
+public sealed class {info.GeneratorName + "Helper" } : IYamlFormatterHelper
 {{
     public void Register(IYamlFormatterResolver resolver)
     {{

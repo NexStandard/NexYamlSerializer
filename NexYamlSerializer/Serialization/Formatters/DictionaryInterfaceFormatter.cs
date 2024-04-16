@@ -7,10 +7,9 @@ using System.Linq;
 
 namespace NexVYaml.Serialization;
 
-public class InterfaceReadOnlyDictionaryFormatter<TKey, TValue> : YamlSerializer<IReadOnlyDictionary<TKey, TValue>>
-    where TKey : notnull
+public class DictionaryInterfaceFormatter<TKey, TValue> : YamlSerializer<IDictionary<TKey, TValue>?>
 {
-    public override IReadOnlyDictionary<TKey, TValue>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    public override IDictionary<TKey, TValue>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.IsNullScalar())
         {
@@ -20,7 +19,7 @@ public class InterfaceReadOnlyDictionaryFormatter<TKey, TValue> : YamlSerializer
         var map = new Dictionary<TKey, TValue>();
         if (FormatterExtensions.IsPrimitive(typeof(TKey)))
         {
-            var keyFormatter = NexYamlSerializerRegistry.Instance.GetFormatter<TKey>();
+            var keyFormatter = context.Resolver.GetFormatter<TKey>();
             parser.ReadWithVerify(ParseEventType.MappingStart);
 
             while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
@@ -42,28 +41,24 @@ public class InterfaceReadOnlyDictionaryFormatter<TKey, TValue> : YamlSerializer
         }
     }
 
-    public override void Serialize(ISerializationWriter stream, IReadOnlyDictionary<TKey, TValue> value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, IDictionary<TKey, TValue> value, DataStyle style = DataStyle.Normal)
     {
 
         YamlSerializer<TKey>? keyFormatter = null;
         YamlSerializer<TValue>? valueFormatter = null;
         if (FormatterExtensions.IsPrimitive(typeof(TKey)))
         {
-            keyFormatter = NexYamlSerializerRegistry.Instance.GetFormatter<TKey>();
+            keyFormatter = stream.SerializeContext.Resolver.GetFormatter<TKey>();
         }
         if (FormatterExtensions.IsPrimitive(typeof(TValue)))
-            valueFormatter = NexYamlSerializerRegistry.Instance.GetFormatter<TValue>();
+            valueFormatter = stream.SerializeContext.Resolver.GetFormatter<TValue>();
 
         if (keyFormatter == null)
         {
             stream.BeginSequence(style);
-            if (value.Count > 0)
+            foreach (var x in value)
             {
-                var elementFormatter = new KeyValuePairFormatter<TKey, TValue>();
-                foreach (var x in value)
-                {
-                    elementFormatter.Serialize(ref stream, x);
-                }
+                stream.Serialize(x, style);
             }
             stream.EndSequence();
         }
@@ -74,7 +69,7 @@ public class InterfaceReadOnlyDictionaryFormatter<TKey, TValue> : YamlSerializer
                 foreach (var x in value)
                 {
                     keyFormatter.Serialize(ref stream, x.Key, style);
-                    stream.Serialize(x.Value);
+                    stream.Serialize(x.Value, style);
                 }
             }
             stream.EndMapping();

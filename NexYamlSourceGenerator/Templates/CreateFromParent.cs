@@ -23,6 +23,7 @@ internal static class CreateFromParent
             s = $$"""
     public YamlSerializer Instantiate(Type type)
     {
+        var genericTypeDefinition = type.GetGenericTypeDefinition();
 {{w}}
         var gen = typeof({{package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}});
         var genParams = type.GenericTypeArguments;
@@ -45,19 +46,19 @@ internal static class CreateFromParent
         return s;
     }
 
-    private static StringBuilder CreateIfs(ClassPackage package, DataPackage inter, string cast)
+    private static StringBuilder CreateIfs(ClassPackage package, DataPackage data, string cast)
     {
         var stringBuilder = new StringBuilder();
         if (package.ClassInfo.IsGeneric)
         {
             var t = package.ClassInfo.TypeParameters;
-            var ins = inter.TypeParameters;
+            var ins = data.TypeParameters;
             var indexArray = CreateIndexArray(t, ins);
             if(indexArray != null)
             {
-                var compare = inter.IsGeneric ? "type.GetGenericTypeDefinition()" : "type";
+                var compare = data.IsGeneric ? "genericTypeDefinition" : "type";
                 stringBuilder.AppendLine($$"""
-                        if({{compare}} == typeof({{inter.ShortDisplayString}})) 
+                        if({{compare}} == typeof({{data.ShortDisplayString}})) 
                         {
                             var generatorType = typeof({{package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}});
                             var genericParams = type.GenericTypeArguments;
@@ -71,7 +72,7 @@ internal static class CreateFromParent
         }
         else
         {
-            stringBuilder.AppendLine($"\t\tif(type == typeof({inter.ShortDisplayString})) {{ return new {package.ClassInfo.GeneratorName}(); }}");
+            stringBuilder.AppendLine($"\t\tif(type == typeof({data.ShortDisplayString})) {{ return new {package.ClassInfo.GeneratorName}(); }}");
         }
 
         return stringBuilder;

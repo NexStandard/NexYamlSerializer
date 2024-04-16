@@ -38,7 +38,7 @@ internal static class Registration
             sb.AppendLine($"{Constants.SerializerRegistry}.RegisterFormatter(typeof({package.ClassInfo.ShortDefinition}));");
             return sb.ToString();
         }
-        sb.Append("\t\tvar formatter = new ").Append(package.ClassInfo.NameSpace).Append('.').Append(package.ClassInfo.GeneratorName).AppendLine("();");
+        sb.Append("\t\tvar formatter = new ").Append(package.ClassInfo.GeneratorName).AppendLine("();");
         return sb.Append(Constants.SerializerRegistry).AppendLine(string.Format(Constants.RegisterFormatter, "formatter")).ToString();
     }
     public static string CreateRegisterInterfaces(this ClassPackage package)

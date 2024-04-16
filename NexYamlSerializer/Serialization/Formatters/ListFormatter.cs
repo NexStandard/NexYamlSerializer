@@ -31,17 +31,32 @@ public class ListFormatter<T> : YamlSerializer<List<T>?>
 
     public override void Serialize(ISerializationWriter stream, List<T> value, DataStyle style = DataStyle.Normal)
     {
+        ListFormatterHelper.Serialize(stream, value, style);
+    }
+}
+internal class ListFormatterHelper : IYamlFormatterHelper
+{
+    public static void Serialize<T>(ISerializationWriter stream, List<T> value, DataStyle style = DataStyle.Normal)
+    {
         stream.BeginSequence(style);
-        foreach (var x in value)
+        if (typeof(T).IsValueType || typeof(T) == typeof(string))
         {
-            stream.Serialize(x, style);
+            var y = stream.SerializeContext.Resolver.GetFormatter<T>();
+            foreach (var x in value)
+            {
+                y.Serialize(stream, x, style);
+            }
+        }
+        else
+        {
+            foreach (var x in value)
+            {
+                stream.Serialize(x, style);
+            }
         }
 
         stream.EndSequence();
     }
-}
-file class ListHelper : IYamlFormatterHelper
-{
     public void Register(IYamlFormatterResolver resolver)
     {
         resolver.Register(this, typeof(List<>), typeof(List<>));

@@ -43,15 +43,22 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
         }
     }
 
-    public override void Serialize(ISerializationWriter stream, Dictionary<TKey, TValue> value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, Dictionary<TKey, TValue>? value, DataStyle style = DataStyle.Normal)
+    {
+        DictionaryFormatterHelper.Serialize(stream, value!, style);
+    }
+}
+internal class DictionaryFormatterHelper : IYamlFormatterHelper
+{
+    public static void Serialize<TKey,TValue>(ISerializationWriter stream, Dictionary<TKey, TValue> value, DataStyle style = DataStyle.Normal)
     {
         YamlSerializer<TKey> keyFormatter = null!;
         YamlSerializer<TValue> valueFormatter = null!;
-        if (FormatterExtensions.IsPrimitive(typeof(TKey)))
+        if (typeof(TKey).IsValueType || typeof(TKey) == typeof(string))
         {
             keyFormatter = stream.SerializeContext.Resolver.GetFormatter<TKey>();
         }
-        if (FormatterExtensions.IsPrimitive(typeof(TValue)))
+        if (typeof(TValue).IsValueType || typeof(TValue) == typeof(string))
         {
             valueFormatter = stream.SerializeContext.Resolver.GetFormatter<TValue>();
         }
@@ -59,10 +66,22 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
         if (keyFormatter is null)
         {
             stream.BeginSequence(style);
-
-            foreach (var x in value)
+            if (valueFormatter is null)
             {
-                stream.Serialize(x, style);
+                foreach (var x in value)
+                {
+                    stream.Serialize(x, style);
+                }
+            }
+            else
+            {
+                foreach (var x in value)
+                {
+                    stream.BeginSequence(style);
+                    stream.Serialize(x.Key);
+                    stream.Serialize(x.Value);
+                    stream.EndSequence();
+                }
             }
 
             stream.EndSequence();
@@ -92,9 +111,6 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
             stream.EndMapping();
         }
     }
-}
-file class DictionaryFormatterHelper : IYamlFormatterHelper
-{
     public void Register(IYamlFormatterResolver resolver)
     {
         resolver.Register(this, typeof(Dictionary<,>), typeof(Dictionary<,>));

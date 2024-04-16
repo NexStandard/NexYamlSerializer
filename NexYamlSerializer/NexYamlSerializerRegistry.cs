@@ -127,13 +127,13 @@ public class SerializerRegistry
     internal Dictionary<Type, Dictionary<Type, IYamlFormatterHelper>> FormatterFactories { get; } = new(new GenericEqualityComparer());
     internal Dictionary<Type, Type> GenericFormatterBuffer { get; } = new Dictionary<Type, Type>(new GenericEqualityComparer())
     {
-        [typeof(ICollection<>)] = typeof(InterfaceCollectionFormatter<>),
+        [typeof(ICollection<>)] = typeof(CollectionInterfaceFormatter<>),
         [typeof(IEnumerable<>)] = typeof(InterfaceEnumerableFormatter<>),
         [typeof(IList<>)] = typeof(InterfaceListFormatter<>),
         [typeof(IReadOnlyList<>)] = typeof(InterfaceReadOnlyListFormatter<>),
         [typeof(IReadOnlyCollection<>)] = typeof(InterfaceReadOnlyCollectionFormatter<>),
-        [typeof(IDictionary<,>)] = typeof(InterfaceDictionaryFormatter<,>),
-        [typeof(IReadOnlyDictionary<,>)] = typeof(InterfaceReadOnlyDictionaryFormatter<,>),
+        [typeof(IDictionary<,>)] = typeof(DictionaryInterfaceFormatter<,>),
+        [typeof(IReadOnlyDictionary<,>)] = typeof(DictionaryReadonlyInterfaceFormatter<,>),
         [typeof(KeyValuePair<,>)] = typeof(KeyValuePairFormatter<,>),
         [typeof(Tuple<>)] = typeof(TupleFormatter<>),
         [typeof(Tuple<,>)] = typeof(TupleFormatter<,>),

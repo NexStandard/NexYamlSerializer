@@ -34,6 +34,7 @@ internal record ClassInfo
     internal string[] TypeParameters { get; private set; }
     internal string TypeParameterRestrictions { get; private set; }
     internal string TypeParameterArgumentsShort { get; private set; }
+    internal Accessibility Accessibility { get; private set; }
     internal ClassInfo() { }
     internal bool IsGeneric { get; private set; }
     internal TypeKind TypeKind { get; private set; }
@@ -88,6 +89,7 @@ internal record ClassInfo
             IsGeneric = isGeneric,
             DataStyle = dataStyle,
             ShortDefinition = shortDefinition,
+            Accessibility = namedType.DeclaredAccessibility,
             TypeParameterArguments = genericTypeArguments,
             TypeParameters = typeParameters.ToArray(),
             TypeParameterRestrictions = restrictions,
