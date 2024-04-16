@@ -22,7 +22,6 @@ public class InterfaceDictionaryFormatter<TKey, TValue> : YamlSerializer<IDictio
             var keyFormatter = context.Resolver.GetFormatter<TKey>();
             parser.ReadWithVerify(ParseEventType.MappingStart);
 
-
             while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
             {
                 var key = context.DeserializeWithAlias(keyFormatter, ref parser);

@@ -206,8 +206,6 @@ public class YamlSerializationWriter : ISerializationWriter
         Emitter.EndScalar(output, ref offset);
     }
 
-
-
     public void SerializeTag(ref string tag)
     {
         if (SerializeContext.IsRedirected || SerializeContext.IsFirst)

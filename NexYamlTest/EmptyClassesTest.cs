@@ -4,7 +4,6 @@ using Xunit;
 
 namespace NexYamlTest;
 
-
 public class EmptyClassesTest
 {
     private void Setup()

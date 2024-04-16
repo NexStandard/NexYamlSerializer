@@ -18,6 +18,4 @@ public interface IUTF8Emitter
     void BeginScalar(Span<byte> output, ref int offset);
     void EndScalar(Span<byte> output, ref int offset);
     void WriteScalar(ReadOnlySpan<byte> value);
-
-
 }

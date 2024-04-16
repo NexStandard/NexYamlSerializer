@@ -1,6 +1,4 @@
-﻿
-
-using Stride.Core;
+﻿using Stride.Core;
 
 namespace NexYamlTest.SimpleClasses;
 internal partial class SimplePartial

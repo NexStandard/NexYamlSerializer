@@ -24,7 +24,6 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
             var keyFormatter = context.Resolver.GetFormatter<TKey>();
             parser.ReadWithVerify(ParseEventType.MappingStart);
 
-
             while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
             {
                 var key = context.DeserializeWithAlias(keyFormatter, ref parser);
@@ -124,7 +123,6 @@ file class DictionaryFormatterHelper : IYamlFormatterHelper
             return (IYamlFormatter)Activator.CreateInstance(filledGeneratorType);
         }
 
-
         var gen = typeof(DictionaryFormatter<,>);
         var genParams = type.GenericTypeArguments;
         var fillGen = gen.MakeGenericType(genParams);
@@ -150,7 +148,6 @@ file class DictionaryFormatterHelper : IYamlFormatterHelper
             var filledGeneratorType = generatorType.MakeGenericType(param);
             return (YamlSerializer)Activator.CreateInstance(filledGeneratorType);
         }
-
 
         var gen = typeof(DictionaryFormatter<,>);
         var genParams = type.GenericTypeArguments;

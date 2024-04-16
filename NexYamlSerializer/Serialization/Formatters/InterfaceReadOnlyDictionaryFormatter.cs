@@ -23,7 +23,6 @@ public class InterfaceReadOnlyDictionaryFormatter<TKey, TValue> : YamlSerializer
             var keyFormatter = NexYamlSerializerRegistry.Instance.GetFormatter<TKey>();
             parser.ReadWithVerify(ParseEventType.MappingStart);
 
-
             while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
             {
                 var key = context.DeserializeWithAlias(keyFormatter, ref parser);
