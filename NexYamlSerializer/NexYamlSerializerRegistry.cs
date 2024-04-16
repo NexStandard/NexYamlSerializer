@@ -37,7 +37,7 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
         if (genericFormatter is null)
             return null;
         var genericType = genericFormatter.MakeGenericType(type.GenericTypeArguments);
-        return (YamlSerializer<T>)Activator.CreateInstance(genericType);
+        return (YamlSerializer<T>?)Activator.CreateInstance(genericType);
     }
 
     public void Register(IYamlFormatterHelper yamlFormatterHelper, Type target, Type interfaceType)
@@ -69,7 +69,8 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
         var genericFormatter = typeof(EmptyFormatter<>);
 
         var genericType = genericFormatter.MakeGenericType(origin);
-        return (YamlSerializer)Activator.CreateInstance(genericType);
+        var emptyFormatter = (YamlSerializer?)Activator.CreateInstance(genericType);
+        return emptyFormatter!;
 
     }
     /// <summary>
@@ -83,7 +84,7 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
         // Get all loaded assemblies
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-        // Find types implementing IYamlForamtterHelper and invoke Register method
+        // Find types implementing IYamlFormatterHelper and invoke Register method
         foreach (var assembly in assemblies)
         {
             var formatterHelperTypes = assembly.GetTypes()
@@ -91,7 +92,7 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
 
             foreach (var formatterHelperType in formatterHelperTypes)
             {
-                var instance = (IYamlFormatterHelper)Activator.CreateInstance(formatterHelperType);
+                var instance = (IYamlFormatterHelper)Activator.CreateInstance(formatterHelperType)!;
                 instance.Register(NexYamlSerializerRegistry.Instance);
             }
         }

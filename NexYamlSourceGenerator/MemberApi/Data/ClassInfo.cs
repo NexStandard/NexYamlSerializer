@@ -1,10 +1,6 @@
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NexYamlSourceGenerator.Core;
-using NexYamlSourceGenerator.NexIncremental;
 using System.Collections.Immutable;
-using System.Text;
-using System.Xml.Linq;
 
 namespace NexYamlSourceGenerator.MemberApi.Data;
 
@@ -71,7 +67,7 @@ internal record ClassInfo
         var genericTypeArguments = "";
         var genericTypeArgumentsShort = "";
         var typeParameters = new List<string>();
-        var isGeneric = TryAddGenericsToName(namedType, ref shortDefinition, ref genericTypeArguments, ref genericTypeArgumentsShort,typeParameters);
+        var isGeneric = TryAddGenericsToName(namedType, ref shortDefinition, ref genericTypeArguments, ref genericTypeArgumentsShort, typeParameters);
         var restrictions = "";
         var aliasTag = "";
         if (datacontract is { AttributeConstructor.Parameters: [{ Name: "aliasName" }, ..], ConstructorArguments: [{ Value: string alias }, ..] })
@@ -103,17 +99,10 @@ internal record ClassInfo
             GeneratorName = CreateGeneratorName(namedType)
         };
     }
-    private static string GetDataStyle(int style) => style switch
-    {
-        // DataStyle.Any
-        0 => "DataStyle.Normal",
-        1 => "DataStyle.Normal",
-        2 => "DataStyle.Compact"
-    };
     private static ImmutableList<DataPackage> GetDataPackages(ImmutableArray<INamedTypeSymbol> types)
     {
         List<DataPackage> result = new();
-        
+
         foreach (var type in types)
         {
             var display = type.ToDisplayString();
@@ -182,5 +171,4 @@ internal record ClassInfo
 
         return fullNamespace.TrimEnd(separator);
     }
-
 }

@@ -27,7 +27,7 @@ internal static class CreateFromParent
         var gen = typeof({{package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}});
         var genParams = type.GenericTypeArguments;
         var fillGen = gen.MakeGenericType(genParams);
-        return (YamlSerializer)Activator.CreateInstance(fillGen);
+        return (YamlSerializer)Activator.CreateInstance(fillGen)!;
     }
 """;
         }
@@ -65,7 +65,7 @@ internal static class CreateFromParent
         var gen = typeof({{package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}});
         var genParams = type.GenericTypeArguments;
         var fillGen = gen.MakeGenericType(genParams);
-        return (IYamlFormatter)Activator.CreateInstance(fillGen);
+        return (IYamlFormatter)Activator.CreateInstance(fillGen)!;
     }
 """;
         }
@@ -101,12 +101,11 @@ internal static class CreateFromParent
                             var genericParams = type.GenericTypeArguments;
                             var param = {{indexArray}};
                             var filledGeneratorType = generatorType.MakeGenericType(param);
-                            return ({{cast}})Activator.CreateInstance(filledGeneratorType);
+                            return ({{cast}})Activator.CreateInstance(filledGeneratorType)!;
                         }
                     
                     """);
             }
-
         }
         else
         {

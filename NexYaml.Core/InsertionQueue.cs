@@ -85,7 +85,9 @@ public class InsertionQueue<T>
         if (Count > 0)
         {
             if (headIndex < tailIndex)
+            {
                 Array.Copy(array, headIndex, newArray, 0, Count);
+            }
             else
             {
                 Array.Copy(array, headIndex, newArray, 0, array.Length - headIndex);

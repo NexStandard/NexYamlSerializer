@@ -21,5 +21,4 @@ public class UInt64Formatter : YamlSerializer<ulong>, IYamlFormatter<ulong>
     {
         stream.Serialize(ref value);
     }
-
 }

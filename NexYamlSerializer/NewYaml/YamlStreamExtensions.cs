@@ -30,7 +30,7 @@ public static class YamlStreamExtensions
             {
                 var t = typeof(T).GetElementType();
                 var arrayFormatterType = typeof(ArrayFormatter<>).MakeGenericType(t);
-                var arrayFormatter = (YamlSerializer)Activator.CreateInstance(arrayFormatterType);
+                var arrayFormatter = (YamlSerializer)Activator.CreateInstance(arrayFormatterType)!;
                 arrayFormatter.Serialize(stream, value, style);
             }
             else

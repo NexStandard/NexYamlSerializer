@@ -45,16 +45,18 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
 
     public override void Serialize(ref ISerializationWriter stream, Dictionary<TKey, TValue>? value, DataStyle style = DataStyle.Normal)
     {
-        YamlSerializer<TKey> keyFormatter = null;
-        YamlSerializer<TValue> valueFormatter = null;
+        YamlSerializer<TKey> keyFormatter = null!;
+        YamlSerializer<TValue> valueFormatter = null!;
         if (FormatterExtensions.IsPrimtiveType(typeof(TKey)))
         {
             keyFormatter = stream.SerializeContext.Resolver.GetFormatter<TKey>();
         }
         if (FormatterExtensions.IsPrimtiveType(typeof(TValue)))
+        {
             valueFormatter = stream.SerializeContext.Resolver.GetFormatter<TValue>();
+        }
 
-        if (keyFormatter == null)
+        if (keyFormatter is null)
         {
             stream.BeginSequence(style);
 
