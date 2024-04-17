@@ -24,7 +24,8 @@ public class DictionaryInterfaceFormatter<TKey, TValue> : YamlSerializer<IDictio
 
             while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
             {
-                var key = context.DeserializeWithAlias(keyFormatter, ref parser);
+                var key = default(TKey);
+                context.DeserializeWithAlias(keyFormatter, ref parser, ref key);
                 var value = default(TValue);
                 context.DeserializeWithAlias(ref parser, ref value);
                 map.Add(key, value!);
@@ -36,7 +37,8 @@ public class DictionaryInterfaceFormatter<TKey, TValue> : YamlSerializer<IDictio
         else
         {
             var listFormatter = new ListFormatter<KeyValuePair<TKey, TValue>>();
-            var keyValuePairs = context.DeserializeWithAlias(listFormatter, ref parser);
+            var keyValuePairs = default(List<KeyValuePair<TKey, TValue>>);
+            context.DeserializeWithAlias(listFormatter, ref parser, ref keyValuePairs);
 
             return keyValuePairs?.ToDictionary() ?? [];
         }
