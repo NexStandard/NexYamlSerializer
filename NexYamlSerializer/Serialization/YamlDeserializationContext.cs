@@ -28,7 +28,7 @@ public class YamlDeserializationContext
     {
         return (underlyingType = Nullable.GetUnderlyingType(value)) != null;
     }
-    public T? DeserializeWithAlias<T>(ref YamlParser parser)
+    public void DeserializeWithAlias<T>(ref YamlParser parser, ref T? value)
     {
         var type = typeof(T);
         if (IsNullable(type, out var underlyingType))
@@ -36,14 +36,15 @@ public class YamlDeserializationContext
             var genericFilledFormatter = NullableFormatter.MakeGenericType(underlyingType);
             // TODO : Nullable makes sense?
             var f = (YamlSerializer<T?>?)Activator.CreateInstance(genericFilledFormatter)!;
-            return (f).Deserialize(ref parser, this);
+            value = (f).Deserialize(ref parser, this);
+            return;
         }
         else
         if (type.IsInterface || type.IsAbstract || type.IsGenericType)
         {
             if (SecureMode)
             {
-                return DeserializeWithAlias(Resolver.GetFormatter<T>(), ref parser);
+                value = DeserializeWithAlias(Resolver.GetFormatter<T>(), ref parser);
             }
 
             parser.TryGetCurrentTag(out var tag);
@@ -52,9 +53,16 @@ public class YamlDeserializationContext
             {
                 var formatt = Resolver.GetGenericFormatter<T>();
                 if (formatt == null)
-                    return new EmptyFormatter<T>().Deserialize(ref parser, this);
+                {
+                    value = default;
+                    return;
+                }
+
                 else
-                    return DeserializeWithAlias(formatt, ref parser);
+                {
+                    value = DeserializeWithAlias(formatt, ref parser);
+                    return;
+                }
             }
             else
             {
@@ -63,7 +71,8 @@ public class YamlDeserializationContext
                 if(parser.IsNullScalar())
                 {
                     parser.Read();
-                    return default;
+                    value = default;
+                    return;
                 }
                 alias = Resolver.GetAliasType(tag.Handle);
                 formatter = Resolver.GetFormatter(alias);
@@ -73,8 +82,11 @@ public class YamlDeserializationContext
                 }
             }
             if (formatter == null)
-                return new EmptyFormatter<T>().Deserialize(ref parser, this);
-            return (T?)formatter.IndirectDeserialize(ref parser, this);
+            {
+                value = default;
+                return;
+            }
+            value = (T?)formatter.IndirectDeserialize(ref parser, this);
             // C# forgets the cast of T when invoking Deserialize,
             // this way we can call the deserialize method with the "real type"
             // that is in the object
@@ -83,7 +95,7 @@ public class YamlDeserializationContext
         }
         else
         {
-            return Resolver.GetFormatter<T>().Deserialize(ref parser, this);
+            value = Resolver.GetFormatter<T>().Deserialize(ref parser, this);
         }
     }
     public T[]? DeserializeArray<T>(ref YamlParser parser)
@@ -143,5 +155,17 @@ public class YamlDeserializationContext
 
         aliasValue = default;
         return false;
+    }
+}
+public static class DeserializeExtensions
+{
+
+    public static int DeserializeWithAlias(this YamlDeserializationContext context, ref YamlParser parser, ref int value)
+    {
+        throw new Exception();
+    }
+    public static Dictionary<TKey, TValue>? DeserializeWithAlias<TKey, TValue>(this YamlDeserializationContext context, ref YamlParser parser)
+    {
+        return DictionaryFormatterHelper.Deserialize<TKey, TValue>(ref parser, context);
     }
 }

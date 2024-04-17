@@ -20,14 +20,15 @@ public class DictionaryReadonlyInterfaceFormatter<TKey, TValue> : YamlSerializer
         var map = new Dictionary<TKey, TValue>();
         if (FormatterExtensions.IsPrimitive(typeof(TKey)))
         {
-            var keyFormatter = NexYamlSerializerRegistry.Instance.GetFormatter<TKey>();
+            var keyFormatter = context.Resolver.GetFormatter<TKey>();
             parser.ReadWithVerify(ParseEventType.MappingStart);
 
             while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
             {
                 var key = context.DeserializeWithAlias(keyFormatter, ref parser);
-                var value = context.DeserializeWithAlias<TValue>(ref parser);
-                map.Add(key, value);
+                var value = default(TValue);
+                context.DeserializeWithAlias(ref parser, ref value);
+                map.Add(key, value!);
             }
 
             parser.ReadWithVerify(ParseEventType.MappingEnd);

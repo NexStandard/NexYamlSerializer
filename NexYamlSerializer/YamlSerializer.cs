@@ -237,8 +237,9 @@ public abstract class YamlSerializer
             var contextLocal = new YamlDeserializationContext(options);
 
             parser.SkipAfter(ParseEventType.DocumentStart);
-
-            return contextLocal.DeserializeWithAlias<T?>(ref parser);
+            var value = default(T);
+            contextLocal.DeserializeWithAlias<T?>(ref parser, ref value);
+            return value;
         }
         finally
         {

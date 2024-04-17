@@ -25,8 +25,9 @@ public class DictionaryInterfaceFormatter<TKey, TValue> : YamlSerializer<IDictio
             while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
             {
                 var key = context.DeserializeWithAlias(keyFormatter, ref parser);
-                var value = context.DeserializeWithAlias<TValue>(ref parser);
-                map.Add(key, value);
+                var value = default(TValue);
+                context.DeserializeWithAlias(ref parser, ref value);
+                map.Add(key, value!);
             }
 
             parser.ReadWithVerify(ParseEventType.MappingEnd);

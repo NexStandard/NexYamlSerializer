@@ -20,8 +20,9 @@ public class ArrayFormatter<T> : YamlSerializer<T[]?>
         var list = new List<T>();
         while (!parser.End && parser.CurrentEventType != ParseEventType.SequenceEnd)
         {
-            var value = context.DeserializeWithAlias<T>(ref parser);
-            list.Add(value);
+            var value = default(T);
+            context.DeserializeWithAlias<T>(ref parser, ref value);
+            list.Add(value!);
         }
 
         parser.ReadWithVerify(ParseEventType.SequenceEnd);

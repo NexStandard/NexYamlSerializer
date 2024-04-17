@@ -32,7 +32,8 @@ public class CollectionInterfaceFormatter<T> : YamlSerializer<ICollection<T>?>
         var list = new List<T?>();
         while (!parser.End && parser.CurrentEventType != ParseEventType.SequenceEnd)
         {
-            var value = context.DeserializeWithAlias<T>(ref parser);
+            var value = default(T);
+            context.DeserializeWithAlias(ref parser, ref value);
             list.Add(value);
         }
 

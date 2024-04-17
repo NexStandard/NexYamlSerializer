@@ -64,11 +64,6 @@ public class YamlSerializationContext
     }
     public ArrayBufferWriter<byte> GetArrayBufferWriter()
     {
-        return arrayBufferWriter ??= new ArrayBufferWriter<byte>(256);
-    }
-
-    public void Reset()
-    {
-        arrayBufferWriter?.Clear();
+        return arrayBufferWriter ??= new ArrayBufferWriter<byte>(512);
     }
 }

@@ -20,12 +20,13 @@ public class InterfaceReadOnlyCollectionFormatter<T> : YamlSerializer<IReadOnlyC
         var list = new List<T>();
         while (!parser.End && parser.CurrentEventType != ParseEventType.SequenceEnd)
         {
-            var value = context.DeserializeWithAlias<T>(ref parser);
+            var value = default(T);
+            context.DeserializeWithAlias(ref parser, ref value);
             list.Add(value!);
         }
 
         parser.ReadWithVerify(ParseEventType.SequenceEnd);
-        return list;
+        return list!;
     }
 
     public override void Serialize(ISerializationWriter stream, IReadOnlyCollection<T>? value, DataStyle style = DataStyle.Normal)

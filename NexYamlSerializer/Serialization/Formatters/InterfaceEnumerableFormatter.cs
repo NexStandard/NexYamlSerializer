@@ -20,7 +20,9 @@ public class InterfaceEnumerableFormatter<T> : YamlSerializer<IEnumerable<T>?>
 
         while (!parser.End && parser.CurrentEventType != ParseEventType.SequenceEnd)
         {
-            list.Add(context.DeserializeWithAlias<T>(ref parser)!);
+            T? value = default;
+            context.DeserializeWithAlias<T>(ref parser, ref value);
+            list.Add(value!);
         }
         parser.ReadWithVerify(ParseEventType.SequenceEnd);
         return list;

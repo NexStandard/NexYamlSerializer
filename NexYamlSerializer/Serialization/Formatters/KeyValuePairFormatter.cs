@@ -16,8 +16,10 @@ public class KeyValuePairFormatter<TKey, TValue> : YamlSerializer<KeyValuePair<T
         }
 
         parser.ReadWithVerify(ParseEventType.SequenceStart);
-        var key = context.DeserializeWithAlias<TKey>(ref parser);
-        var value = context.DeserializeWithAlias<TValue>(ref parser);
+        var key = default(TKey);
+        var value = default(TValue);
+        context.DeserializeWithAlias(ref parser, ref key);
+        context.DeserializeWithAlias(ref parser, ref value);
         parser.ReadWithVerify(ParseEventType.SequenceEnd);
         return new KeyValuePair<TKey, TValue>(key, value);
     }

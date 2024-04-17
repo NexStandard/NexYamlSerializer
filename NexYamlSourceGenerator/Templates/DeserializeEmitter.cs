@@ -92,7 +92,7 @@ internal class DeserializeEmitter
                     {{start}} (key.SequenceEqual({{"UTF8" + symbol.Name}}))
                     {
                         parser.Read();
-                        __TEMP__{{symbol.Name}} = context.DeserializeWithAlias<{{symbol.Type}}>(ref parser);
+                        context.DeserializeWithAlias<{{symbol.Type}}>(ref parser, ref __TEMP__{{symbol.Name}});
                     }
         """);
     }

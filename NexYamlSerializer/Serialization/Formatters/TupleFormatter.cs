@@ -15,7 +15,8 @@ public class TupleFormatter<T1> : YamlSerializer<Tuple<T1>?>
         }
 
         parser.ReadWithVerify(ParseEventType.SequenceStart);
-        var item1 = context.DeserializeWithAlias<T1>(ref parser);
+        var item1 = default(T1);
+        context.DeserializeWithAlias(ref parser, ref item1);
         parser.ReadWithVerify(ParseEventType.SequenceEnd);
         return new Tuple<T1>(item1);
     }
@@ -38,8 +39,10 @@ public class TupleFormatter<T1, T2> : YamlSerializer<Tuple<T1, T2>?>
         }
 
         parser.ReadWithVerify(ParseEventType.SequenceStart);
-        var item1 = context.DeserializeWithAlias<T1>(ref parser);
-        var item2 = context.DeserializeWithAlias<T2>(ref parser);
+        var item1 = default(T1);
+        context.DeserializeWithAlias(ref parser, ref item1);
+        var item2 = default(T2);
+        context.DeserializeWithAlias(ref parser, ref item2);
         parser.ReadWithVerify(ParseEventType.SequenceEnd);
         return new Tuple<T1, T2>(item1, item2);
     }
@@ -63,9 +66,12 @@ public class TupleFormatter<T1, T2, T3> : YamlSerializer<Tuple<T1, T2, T3>?>
         }
 
         parser.ReadWithVerify(ParseEventType.SequenceStart);
-        var item1 = context.DeserializeWithAlias<T1>(ref parser);
-        var item2 = context.DeserializeWithAlias<T2>(ref parser);
-        var item3 = context.DeserializeWithAlias<T3>(ref parser);
+        var item1 = default(T1);
+        context.DeserializeWithAlias(ref parser,ref item1);
+        var item2 = default(T2);
+        context.DeserializeWithAlias(ref parser, ref item2);
+        var item3 = default(T3);
+        context.DeserializeWithAlias(ref parser, ref item3);
         parser.ReadWithVerify(ParseEventType.SequenceEnd);
         return new Tuple<T1, T2, T3>(item1, item2, item3);
     }
@@ -90,10 +96,14 @@ public class TupleFormatter<T1, T2, T3, T4> : YamlSerializer<Tuple<T1, T2, T3, T
         }
 
         parser.ReadWithVerify(ParseEventType.SequenceStart);
-        var item1 = context.DeserializeWithAlias<T1>(ref parser);
-        var item2 = context.DeserializeWithAlias<T2>(ref parser);
-        var item3 = context.DeserializeWithAlias<T3>(ref parser);
-        var item4 = context.DeserializeWithAlias<T4>(ref parser);
+        var item1 = default(T1);
+        context.DeserializeWithAlias(ref parser, ref item1);
+        var item2 = default(T2);
+        context.DeserializeWithAlias(ref parser, ref item2);
+        var item3 = default(T3);
+        context.DeserializeWithAlias(ref parser, ref item3);
+        var item4 = default(T4);
+        context.DeserializeWithAlias(ref parser, ref item4);
         parser.ReadWithVerify(ParseEventType.SequenceEnd);
         return new Tuple<T1, T2, T3, T4>(item1, item2, item3, item4);
     }
@@ -119,11 +129,17 @@ public class TupleFormatter<T1, T2, T3, T4, T5> : YamlSerializer<Tuple<T1, T2, T
         }
 
         parser.ReadWithVerify(ParseEventType.SequenceStart);
-        var item1 = context.DeserializeWithAlias<T1>(ref parser);
-        var item2 = context.DeserializeWithAlias<T2>(ref parser);
-        var item3 = context.DeserializeWithAlias<T3>(ref parser);
-        var item4 = context.DeserializeWithAlias<T4>(ref parser);
-        var item5 = context.DeserializeWithAlias<T5>(ref parser);
+        parser.ReadWithVerify(ParseEventType.SequenceStart);
+        var item1 = default(T1);
+        context.DeserializeWithAlias(ref parser, ref item1);
+        var item2 = default(T2);
+        context.DeserializeWithAlias(ref parser, ref item2);
+        var item3 = default(T3);
+        context.DeserializeWithAlias(ref parser, ref item3);
+        var item4 = default(T4);
+        context.DeserializeWithAlias(ref parser, ref item4);
+        var item5 = default(T5);
+        context.DeserializeWithAlias(ref parser, ref item5);
         parser.ReadWithVerify(ParseEventType.SequenceEnd);
         return new Tuple<T1, T2, T3, T4, T5>(item1, item2, item3, item4, item5);
     }
@@ -150,12 +166,18 @@ public class TupleFormatter<T1, T2, T3, T4, T5, T6> : YamlSerializer<Tuple<T1, T
         }
 
         parser.ReadWithVerify(ParseEventType.SequenceStart);
-        var item1 = context.DeserializeWithAlias<T1>(ref parser);
-        var item2 = context.DeserializeWithAlias<T2>(ref parser);
-        var item3 = context.DeserializeWithAlias<T3>(ref parser);
-        var item4 = context.DeserializeWithAlias<T4>(ref parser);
-        var item5 = context.DeserializeWithAlias<T5>(ref parser);
-        var item6 = context.DeserializeWithAlias<T6>(ref parser);
+        var item1 = default(T1);
+        context.DeserializeWithAlias(ref parser, ref item1);
+        var item2 = default(T2);
+        context.DeserializeWithAlias(ref parser, ref item2);
+        var item3 = default(T3);
+        context.DeserializeWithAlias(ref parser, ref item3);
+        var item4 = default(T4);
+        context.DeserializeWithAlias(ref parser, ref item4);
+        var item5 = default(T5);
+        context.DeserializeWithAlias(ref parser, ref item5);
+        var item6 = default(T6);
+        context.DeserializeWithAlias(ref parser, ref item6);
         parser.ReadWithVerify(ParseEventType.SequenceEnd);
         return new Tuple<T1, T2, T3, T4, T5, T6>(item1, item2, item3, item4, item5, item6);
     }
@@ -183,13 +205,20 @@ public class TupleFormatter<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<Tuple<T
         }
 
         parser.ReadWithVerify(ParseEventType.SequenceStart);
-        var item1 = context.DeserializeWithAlias<T1>(ref parser);
-        var item2 = context.DeserializeWithAlias<T2>(ref parser);
-        var item3 = context.DeserializeWithAlias<T3>(ref parser);
-        var item4 = context.DeserializeWithAlias<T4>(ref parser);
-        var item5 = context.DeserializeWithAlias<T5>(ref parser);
-        var item6 = context.DeserializeWithAlias<T6>(ref parser);
-        var item7 = context.DeserializeWithAlias<T7>(ref parser);
+        var item1 = default(T1);
+        context.DeserializeWithAlias(ref parser, ref item1);
+        var item2 = default(T2);
+        context.DeserializeWithAlias(ref parser, ref item2);
+        var item3 = default(T3);
+        context.DeserializeWithAlias(ref parser, ref item3);
+        var item4 = default(T4);
+        context.DeserializeWithAlias(ref parser, ref item4);
+        var item5 = default(T5);
+        context.DeserializeWithAlias(ref parser, ref item5);
+        var item6 = default(T6);
+        context.DeserializeWithAlias(ref parser, ref item6);
+        var item7 = default(T7);
+        context.DeserializeWithAlias(ref parser, ref item7);
         parser.ReadWithVerify(ParseEventType.SequenceEnd);
         return new Tuple<T1, T2, T3, T4, T5, T6, T7>(item1, item2, item3, item4, item5, item6, item7);
     }
@@ -219,14 +248,22 @@ public class TupleFormatter<T1, T2, T3, T4, T5, T6, T7, T8> : YamlSerializer<Tup
         }
 
         parser.ReadWithVerify(ParseEventType.SequenceStart);
-        var item1 = context.DeserializeWithAlias<T1>(ref parser);
-        var item2 = context.DeserializeWithAlias<T2>(ref parser);
-        var item3 = context.DeserializeWithAlias<T3>(ref parser);
-        var item4 = context.DeserializeWithAlias<T4>(ref parser);
-        var item5 = context.DeserializeWithAlias<T5>(ref parser);
-        var item6 = context.DeserializeWithAlias<T6>(ref parser);
-        var item7 = context.DeserializeWithAlias<T7>(ref parser);
-        var item8 = context.DeserializeWithAlias<T8>(ref parser);
+        var item1 = default(T1);
+        context.DeserializeWithAlias(ref parser, ref item1);
+        var item2 = default(T2);
+        context.DeserializeWithAlias(ref parser, ref item2);
+        var item3 = default(T3);
+        context.DeserializeWithAlias(ref parser, ref item3);
+        var item4 = default(T4);
+        context.DeserializeWithAlias(ref parser, ref item4);
+        var item5 = default(T5);
+        context.DeserializeWithAlias(ref parser, ref item5);
+        var item6 = default(T6);
+        context.DeserializeWithAlias(ref parser, ref item6);
+        var item7 = default(T7);
+        context.DeserializeWithAlias(ref parser, ref item7);
+        var item8 = default(T8);
+        context.DeserializeWithAlias(ref parser, ref item8);
         parser.ReadWithVerify(ParseEventType.SequenceEnd);
         return new Tuple<T1, T2, T3, T4, T5, T6, T7, T8>(item1, item2, item3, item4, item5, item6, item7, item8);
     }
