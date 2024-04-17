@@ -9,11 +9,11 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 namespace NexVYaml.Emitter;
 
-public class YamlEmitterException(string message) : Exception(message)
+class YamlEmitterException(string message) : Exception(message)
 {
 }
 
-public enum EmitState
+enum EmitState
 {
     None,
     BlockSequenceEntry,
