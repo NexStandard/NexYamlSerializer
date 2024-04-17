@@ -279,11 +279,9 @@ public static class EmitStringAnalyzer
         return false;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static StringBuilder GetStringBuilder() =>
-        (stringBuilderThreadStatic ??= new StringBuilder(1024)).Clear();
+        (stringBuilderThreadStatic ??= new StringBuilder(128)).Clear();
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static void AppendWhiteSpace(StringBuilder stringBuilder, int length)
     {
         if (length > whiteSpaces.Length)

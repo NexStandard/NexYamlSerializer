@@ -13,7 +13,7 @@ class YamlEmitterException(string message) : Exception(message)
 {
 }
 
-enum EmitState
+ enum EmitState
 {
     None,
     BlockSequenceEntry,
@@ -182,6 +182,7 @@ sealed partial class Utf8YamlEmitter
                 flowSequenceEntrySerializer.EndScalar(output, ref offset);
                 break;
             case EmitState.None:
+                emptySerializer.EndScalar(output, ref offset);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(StateStack.Current.ToString());
