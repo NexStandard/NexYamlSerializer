@@ -50,16 +50,30 @@ public class YamlSerializationContext
             if (valueType != type)
                 IsRedirected = true;
 
-            // C# forgets the cast of T when invoking Deserialize,
-            // this way we can call the deserialize method with the "real type"
+            // C# forgets the cast of T when invoking Serialize,
+            // this way we can call the serialize method with the "real type"
             // that is in the object
-            formatt.Serialize(ref stream, value!, style);
+            if(style is DataStyle.Any)
+            {
+                formatt.Serialize(ref stream, value!);
+            }
+            else
+            {
+                formatt.Serialize(ref stream, value!, style);
+            }
             // var method = formatt.GetType().GetMethod("Serialize");
             //method.Invoke(formatt, new object[] { emitter, value, this });
         }
         else
         {
-            Resolver.GetFormatter<T>().Serialize(ref stream, value, style);
+            if(style is DataStyle.Any)
+            {
+                Resolver.GetFormatter<T>().Serialize(ref stream, value!);
+            }
+            else
+            {
+                Resolver.GetFormatter<T>().Serialize(ref stream, value, style);
+            }
         }
     }
     public ArrayBufferWriter<byte> GetArrayBufferWriter()

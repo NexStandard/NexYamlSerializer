@@ -106,7 +106,7 @@ sealed partial class Utf8YamlEmitter
                 throw new YamlEmitterException($"Current state is not sequence: {StateStack.Current}");
         }
     }
-    public void BeginMapping(DataStyle style = DataStyle.Normal)
+    public void BeginMapping(DataStyle style = DataStyle.Any)
     {
         if (style is DataStyle.Normal)
             blockMapKeySerializer.Begin();

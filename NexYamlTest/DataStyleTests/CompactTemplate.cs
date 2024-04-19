@@ -30,7 +30,11 @@ internal record class CompactRecord
     public int Y { get; set; }
     public string W { get; set; }
 }
-
+[DataContract]
+internal record class CompactRecordWithCompactMember
+{
+    public IEquatable<CompactRecord> CompactMember { get; set; } = new CompactRecord();
+}
 [DataContract]
 internal record class CompactMembers
 {

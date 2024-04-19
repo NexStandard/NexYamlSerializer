@@ -29,7 +29,7 @@ public class ArrayFormatter<T> : YamlSerializer<T[]?>
         return list.ToArray();
     }
 
-    public override void Serialize(ISerializationWriter stream, T[] value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, T[] value, DataStyle style = DataStyle.Any)
     {
         var contentStyle = DataStyle.Any;
         if (style == DataStyle.Compact)

@@ -1,4 +1,5 @@
-﻿using NexVYaml;
+﻿using Newtonsoft.Json.Linq;
+using NexVYaml;
 using NexYamlTest.Helper;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,19 @@ public class CompactTest
         };
         YamlHelper.Run(compact);
     }
+
+    [Fact]
+    public void Compact_RecordWithMember()
+    {
+        var compact = new CompactRecordWithCompactMember()
+        {
+        };
+        NexYamlSerializerRegistry.Init();
+        var s = YamlSerializer.SerializeToString(compact);
+        Assert.Equal("!NexYamlTest.DataStyleTests.CompactRecordWithCompactMember,NexYamlTest\nCompactMember: !NexYamlTest.DataStyleTests.CompactRecord,NexYamlTest { X: 0, Y: 0, W: !!null }\n",s);
+        YamlHelper.Run(compact);
+    }
+
     [Fact]
     public void Compact_Struct()
     {

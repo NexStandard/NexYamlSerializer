@@ -37,24 +37,6 @@ using Stride.Core;
 using NexYamlSerializer.Serialization.Formatters;
 
 namespace NexVYaml;
-public static class {info.GeneratorName + "Extensions"}
-{{
-
-     {info.Accessibility.ToString().ToLower()} static void Serialize{info.TypeParameterArguments}(this ISerializationWriter stream, {info.NameDefinition} value, DataStyle style = DataStyle.Any) {info.TypeParameterRestrictions}
-    {{
-        stream.{package.BeginMappingStyle()};
-        stream.WriteTag(""{tag}"");
-{package.CreateNewSerializationEmit()}
-        stream.EndMapping();
-    }}
-    
-    {info.Accessibility.ToString().ToLower()} static void Serialize{info.TypeParameterArguments}(this ISerializationWriter stream, string key, {info.NameDefinition} value, DataStyle style = DataStyle.Any) {info.TypeParameterRestrictions}
-    {{
-        stream.Serialize(key);
-        stream.Serialize(value, style);
-    }}
-}}
-
 [System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]
 public sealed class {info.GeneratorName + "Helper" } : IYamlFormatterHelper
 {{
@@ -72,7 +54,7 @@ file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSeria
 
     {package.CreateUTF8Members()}
 
-    public override void Serialize(ISerializationWriter stream, {info.NameDefinition} value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, {info.NameDefinition} value, DataStyle style = {info.DataStyle})
     {{
         stream.{package.BeginMappingStyle()};
         stream.WriteTag(""{tag}"");
