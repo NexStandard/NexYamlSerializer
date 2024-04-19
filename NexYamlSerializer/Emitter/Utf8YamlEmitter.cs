@@ -69,7 +69,7 @@ sealed partial class Utf8YamlEmitter
         tagStack.Dispose();
     }
 
-    public void BeginSequence(DataStyle style = DataStyle.Normal)
+    public void BeginSequence(DataStyle style = DataStyle.Any)
     {
         switch (style)
         {

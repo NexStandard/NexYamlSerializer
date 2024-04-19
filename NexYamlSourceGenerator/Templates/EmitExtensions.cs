@@ -33,7 +33,7 @@ internal static class EmitExtensions
             //    serializeString = ".SerializeArray";
             var dataStyle = member.DataStyle == "" ? "" : $", {member.DataStyle}";
             sb.AppendLine($$"""
-                        stream.Serialize("{{member.Name}}", value.{{member.Name}}{{dataStyle}});
+                        stream.Serialize("{{member.Name}}", value.{{member.Name}}, style);
                 """);
 
         }

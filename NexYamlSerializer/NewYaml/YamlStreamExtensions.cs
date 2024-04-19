@@ -35,7 +35,14 @@ public static class YamlStreamExtensions
             }
             else
             {
-                stream.SerializeContext.Serialize(stream, value, style);
+                if(style is DataStyle.Any)
+                {
+                    stream.SerializeContext.Serialize(stream, value);
+                }
+                else
+                {
+                    stream.SerializeContext.Serialize(stream, value, style);
+                }
             }
         }
     }

@@ -51,7 +51,7 @@ public sealed class {info.GeneratorName + "Helper" } : IYamlFormatterHelper
 [System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]
 file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSerializer<{info.NameDefinition}> {info.TypeParameterRestrictions}
 {{
-
+    { (info.DataStyle != "DataStyle.Any" ? $"protected override DataStyle Style {{ get; }} = {info.DataStyle};" : "")}
     {package.CreateUTF8Members()}
 
     public override void Serialize(ISerializationWriter stream, {info.NameDefinition} value, DataStyle style = {info.DataStyle})

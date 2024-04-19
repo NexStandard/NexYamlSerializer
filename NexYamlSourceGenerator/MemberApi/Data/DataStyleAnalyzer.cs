@@ -9,10 +9,10 @@ internal class DataStyleAnalyzer(ISymbol namedType, ReferencePackage package)
 {
     public string Analyze(bool defaultValue = false)
     {
-        var dataStyle = "DataStyle.Normal";
+        var dataStyle = "DataStyle.Any";
         if (!defaultValue)
         {
-            dataStyle = "";
+            dataStyle = "DataStyle.Any";
         }
         if (namedType.TryGetAttribute(package.DataStyleAttribute, out var dataStyleData))
         {
@@ -26,7 +26,7 @@ internal class DataStyleAnalyzer(ISymbol namedType, ReferencePackage package)
     private static string GetDataStyle(int style) => style switch
     {
         // DataStyle.Any
-        0 => "DataStyle.Normal",
+        0 => "DataStyle.Any",
         1 => "DataStyle.Normal",
         2 => "DataStyle.Compact"
     };

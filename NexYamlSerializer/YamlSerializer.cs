@@ -246,8 +246,13 @@ public abstract class YamlSerializer
             parser.Dispose();
         }
     }
-    public abstract void Serialize(ref ISerializationWriter emitter, object value, DataStyle style = DataStyle.Normal);
-    public void Serialize(ISerializationWriter emitter, object value, DataStyle style = DataStyle.Normal)
+    protected virtual DataStyle Style { get; } = DataStyle.Any;
+    public abstract void Serialize(ref ISerializationWriter emitter, object value, DataStyle style);
+    public void Serialize(ref ISerializationWriter emitter, object value)
+    {
+        Serialize(ref emitter, value, Style);
+    }
+    public void Serialize(ISerializationWriter emitter, object value, DataStyle style)
     {
         Serialize(ref emitter, value, style);
     }
@@ -255,11 +260,11 @@ public abstract class YamlSerializer
 }
 public abstract class YamlSerializer<T> : YamlSerializer
 {
-    public override void Serialize(ref ISerializationWriter stream, object value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ref ISerializationWriter stream, object value, DataStyle style) // TODO: readd when serializer is independent from style  = DataStyle.Any
     {
         Serialize(ref stream, (T)value, style);
     }
-    public void Serialize(ref ISerializationWriter stream, T value, DataStyle style = DataStyle.Normal)
+    public void Serialize(ref ISerializationWriter stream, T value, DataStyle style) // TODO: readd when serializer is independent from style  = DataStyle.Any
     {
         if (value is null)
         {
@@ -270,7 +275,7 @@ public abstract class YamlSerializer<T> : YamlSerializer
             Serialize(stream, value, style);
         }
     }
-    public abstract void Serialize(ISerializationWriter stream, T value, DataStyle style = DataStyle.Normal);
+    public abstract void Serialize(ISerializationWriter stream, T value, DataStyle style); // TODO: readd when serializer is independent from style  = DataStyle.Any
 
     public override object? IndirectDeserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
