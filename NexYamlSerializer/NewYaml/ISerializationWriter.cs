@@ -15,73 +15,73 @@ public interface ISerializationWriter : ISerializationStream
     void EndMapping();
     void BeginSequence(DataStyle style);
     void EndSequence();
-    public void Serialize(string key, sbyte value)
+    public void Serialize(string key, sbyte value, DataStyle style = DataStyle.Any)
     {
         Serialize(ref key);
         Serialize(ref value);
     }
 
-    public void Serialize(string key, int value)
+    public void Serialize(string key, int value, DataStyle style = DataStyle.Any)
     {
         Serialize(ref key);
         Serialize(ref value);
     }
 
-    public void Serialize(string key, uint value)
+    public void Serialize(string key, uint value, DataStyle style = DataStyle.Any)
     {
         Serialize(ref key);
         Serialize(ref value);
     }
 
-    public void Serialize(string key, long value)
+    public void Serialize(string key, long value, DataStyle style = DataStyle.Any)
     {
         Serialize(ref key);
         Serialize(ref value);
     }
 
-    public void Serialize(string key, ulong value)
+    public void Serialize(string key, ulong value, DataStyle style = DataStyle.Any)
     {
         Serialize(ref key);
         Serialize(ref value);
     }
 
-    public void Serialize(string key, float value)
+    public void Serialize(string key, float value, DataStyle style = DataStyle.Any)
     {
         Serialize(ref key);
         Serialize(ref value);
     }
 
-    public void Serialize(string key, double value)
+    public void Serialize(string key, double value, DataStyle style = DataStyle.Any)
     {
         Serialize(ref key);
         Serialize(ref value);
     }
 
-    public void Serialize(string key, short value)
+    public void Serialize(string key, short value, DataStyle style = DataStyle.Any)
     {
         Serialize(ref key);
         Serialize(ref value);
     }
 
-    public void Serialize(string key, ushort value)
+    public void Serialize(string key, ushort value, DataStyle style = DataStyle.Any)
     {
         Serialize(ref key);
         Serialize(ref value);
     }
 
-    public void Serialize(string key, char value)
+    public void Serialize(string key, char value, DataStyle style = DataStyle.Any)
     {
         Serialize(ref key);
         Serialize(ref value);
     }
 
-    public void Serialize(string key, bool value)
+    public void Serialize(string key, bool value, DataStyle style = DataStyle.Any)
     {
         Serialize(ref key);
         Serialize(ref value);
     }
 
-    public void Serialize(string key, string value)
+    public void Serialize(string key, string value, DataStyle style = DataStyle.Any)
     {
         Serialize(ref key);
         if (value is null)
@@ -94,13 +94,13 @@ public interface ISerializationWriter : ISerializationStream
         }
     }
 
-    public void Serialize(string key, decimal value)
+    public void Serialize(string key, decimal value, DataStyle style = DataStyle.Any)
     {
         Serialize(ref key);
         Serialize(ref value);
     }
 
-    public void Serialize(string key, byte value)
+    public void Serialize(string key, byte value, DataStyle style = DataStyle.Any)
     {
         Serialize(ref key);
         Serialize(ref value);

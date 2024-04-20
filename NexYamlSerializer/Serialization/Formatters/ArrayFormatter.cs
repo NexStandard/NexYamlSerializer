@@ -40,7 +40,7 @@ public class ArrayFormatter<T> : YamlSerializer<T[]?>
         foreach (var x in value)
         {
             var val = x;
-            stream.Serialize(val, contentStyle);
+            stream.Write(val, contentStyle);
         }
         stream.EndSequence();
 

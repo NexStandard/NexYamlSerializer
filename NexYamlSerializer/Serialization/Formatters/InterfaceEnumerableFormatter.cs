@@ -35,7 +35,7 @@ public class InterfaceEnumerableFormatter<T> : YamlSerializer<IEnumerable<T>?>
         {
             foreach (var x in value)
             {
-                stream.Serialize(x, style);
+                stream.Write(x, style);
             }
         }
         stream.EndSequence();

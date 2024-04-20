@@ -52,7 +52,7 @@ internal class ListFormatterHelper : IYamlFormatterHelper
         {
             foreach (var x in value)
             {
-                stream.Serialize(x, style);
+                stream.Write(x, style);
             }
         }
 

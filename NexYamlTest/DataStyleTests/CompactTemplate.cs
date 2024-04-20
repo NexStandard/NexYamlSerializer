@@ -31,6 +31,13 @@ internal record class CompactRecord
     public string W { get; set; }
 }
 [DataContract]
+internal record class CompactCompactRecord
+{
+    [DataStyle(DataStyle.Compact)]
+    public IEquatable<CompactRecordWithCompactMember> CompactMember = new CompactRecordWithCompactMember();
+}
+[DataContract]
+[DataStyle(DataStyle.Compact)]
 internal record class CompactRecordWithCompactMember
 {
     public IEquatable<CompactRecord> CompactMember { get; set; } = new CompactRecord();

@@ -35,7 +35,7 @@ public class InterfaceReadOnlyCollectionFormatter<T> : YamlSerializer<IReadOnlyC
 
         foreach (var x in value)
         {
-            stream.Serialize(x);
+            stream.Write(x);
         }
 
         stream.EndSequence();

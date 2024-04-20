@@ -13,7 +13,7 @@ public class CollectionInterfaceFormatter<T> : YamlSerializer<ICollection<T>?>
 
         foreach (var x in value)
         {
-            stream.Serialize(x);
+            stream.Write(x);
         }
 
         stream.EndSequence();

@@ -84,8 +84,8 @@ internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
 
     public void EndScalar(Span<byte> output, ref int offset)
     {
-        EmitCodes.MappingKeyFooter.CopyTo(output[offset..]);
-        offset += EmitCodes.MappingKeyFooter.Length;
+         EmitCodes.MappingKeyFooter.CopyTo(output[offset..]);
+         offset += EmitCodes.MappingKeyFooter.Length;
         emitter.StateStack.Current = EmitState.BlockMappingValue;
     }
 

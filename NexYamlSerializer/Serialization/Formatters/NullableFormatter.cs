@@ -28,7 +28,7 @@ public class NullableFormatter<T> : YamlSerializer<T?>, IYamlFormatter<T?> where
         }
         else
         {
-            stream.Serialize(value.Value);
+            stream.Write(value.Value);
         }
     }
 }
@@ -49,7 +49,7 @@ public sealed class StaticNullableFormatter<T> : YamlSerializer<T?>, IYamlFormat
             return null;
         }
         var value = default(T);
-        context.DeserializeWithAlias<T>(ref parser,ref value);
+        context.DeserializeWithAlias(ref parser,ref value);
         return value;
     }
 
@@ -61,7 +61,7 @@ public sealed class StaticNullableFormatter<T> : YamlSerializer<T?>, IYamlFormat
         }
         else
         {
-            stream.Serialize(YamlCodes.Null0);
+            stream.Write(YamlCodes.Null0);
         }
     }
 }

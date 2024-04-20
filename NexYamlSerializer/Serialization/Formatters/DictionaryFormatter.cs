@@ -43,7 +43,7 @@ internal class DictionaryFormatterHelper : IYamlFormatterHelper
             {
                 foreach (var x in value)
                 {
-                    stream.Serialize(x, style);
+                    stream.Write(x, style);
                 }
             }
             else
@@ -51,8 +51,8 @@ internal class DictionaryFormatterHelper : IYamlFormatterHelper
                 foreach (var x in value)
                 {
                     stream.BeginSequence(style);
-                    stream.Serialize(x.Key);
-                    stream.Serialize(x.Value);
+                    stream.Write(x.Key);
+                    stream.Write(x.Value);
                     stream.EndSequence();
                 }
             }
@@ -66,7 +66,7 @@ internal class DictionaryFormatterHelper : IYamlFormatterHelper
                 foreach (var x in value)
                 {
                     keyFormatter.Serialize(ref stream, x.Key, style);
-                    stream.Serialize(x.Value);
+                    stream.Write(x.Value);
                 }
             }
             stream.EndMapping();

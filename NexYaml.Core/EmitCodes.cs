@@ -11,4 +11,6 @@ public static class EmitCodes
     public static readonly byte[] FlowMappingEmpty = [(byte)'{', (byte)'}'];
     public static readonly byte[] FlowMappingStart = [(byte)'{', (byte)' '];
     public static readonly byte[] FlowMappingEnd = [(byte)' ', (byte)'}'];
+    public static readonly byte MappingDoubleColon = (byte)':';
+    public static readonly byte Space = (byte)' ';
 }

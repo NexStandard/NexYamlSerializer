@@ -22,6 +22,6 @@ public class UriFormatter : YamlSerializer<Uri>
 
     public override void Serialize(ISerializationWriter stream, Uri value, DataStyle style = DataStyle.Normal)
     {
-        stream.Serialize(value.ToString());
+        stream.Write(value.ToString());
     }
 }

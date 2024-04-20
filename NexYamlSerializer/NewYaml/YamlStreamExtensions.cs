@@ -17,7 +17,7 @@ public static class YamlStreamExtensions
         stream.Serialize(YamlCodes.Null0);
     }
 
-    public static void Serialize<T>(this ISerializationWriter stream, T value, DataStyle style = DataStyle.Any)
+    public static void Write<T>(this ISerializationWriter stream, T value, DataStyle style = DataStyle.Any)
     {
         if (value == null)
         {
@@ -47,18 +47,18 @@ public static class YamlStreamExtensions
         }
     }
 
-    public static void Serialize<T, K>(this ISerializationWriter stream, KeyValuePair<T, K> value, DataStyle style = DataStyle.Any)
+    public static void Write<T, K>(this ISerializationWriter stream, KeyValuePair<T, K> value, DataStyle style = DataStyle.Any)
     {
         stream.BeginSequence(style);
-        stream.Serialize(value.Key);
-        stream.Serialize(value.Value);
+        stream.Write(value.Key);
+        stream.Write(value.Value);
         stream.EndSequence();
     }    
-    public static void Serialize<T, K>(this ISerializationWriter stream, string key, KeyValuePair<T, K> value, DataStyle style = DataStyle.Any)
+    public static void Write<T, K>(this ISerializationWriter stream, string key, KeyValuePair<T, K> value, DataStyle style = DataStyle.Any)
     {
         stream.Serialize(ref key);
         
-        stream.Serialize(value);
+        stream.Write(value);
     }
     public static void Serialize<T, K>(this ISerializationWriter stream, Dictionary<T, K> value, DataStyle style = DataStyle.Any)
     {
@@ -67,27 +67,27 @@ public static class YamlStreamExtensions
         else
             DictionaryFormatterHelper.Serialize(stream, value, style);
     }
-    public static void Serialize<T, K>(this ISerializationWriter stream, string key, Dictionary<T, K> value, DataStyle style = DataStyle.Any)
+    public static void Write<T, K>(this ISerializationWriter stream, string key, Dictionary<T, K> value, DataStyle style = DataStyle.Any)
     {
         stream.Serialize(ref key);
         stream.Serialize(value);
     }
-    public static void Serialize<T>(this ISerializationWriter stream, List<T> value, DataStyle style = DataStyle.Any)
+    public static void Write<T>(this ISerializationWriter stream, List<T> value, DataStyle style = DataStyle.Any)
     {
         if (value is null)
             stream.WriteNull();
         else
             ListFormatterHelper.Serialize(stream, value, style);
     }
-    public static void Serialize<T>(this ISerializationWriter stream, string key, List<T> value, DataStyle style = DataStyle.Any)
+    public static void Write<T>(this ISerializationWriter stream, string key, List<T> value, DataStyle style = DataStyle.Any)
     {
         stream.Serialize(ref key);
-        stream.Serialize(value);
+        stream.Write(value);
     }
-    public static void Serialize<T>(this ISerializationWriter stream, string key, T value, DataStyle style = DataStyle.Any)
+    public static void Write<T>(this ISerializationWriter stream, string key, T value, DataStyle style = DataStyle.Any)
     {
-        stream.Serialize(key);
-        stream.Serialize(value, style);
+        stream.Serialize(ref key);
+        stream.Write(value, style);
     }
 }
 

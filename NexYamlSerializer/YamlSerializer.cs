@@ -64,7 +64,7 @@ public abstract class YamlSerializer
         };
         try
         {
-            stream.Serialize(value);
+            stream.Write(value);
             return writer.WrittenMemory;
         }
         finally
@@ -141,7 +141,7 @@ public abstract class YamlSerializer
                 Emitter = emitter,
                 SerializeContext = contextLocal,
             };
-            stream.Serialize(value);
+            stream.Write(value);
         }
         finally
         {

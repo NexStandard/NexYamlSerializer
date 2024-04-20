@@ -22,7 +22,7 @@ struct ScalarPool
     {
         return queue.TryPop(out var scalar)
             ? scalar
-            : new Scalar(256);
+            : new Scalar(32);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

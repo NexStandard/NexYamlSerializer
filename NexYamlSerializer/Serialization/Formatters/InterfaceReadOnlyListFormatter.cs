@@ -47,7 +47,7 @@ public class InterfaceReadOnlyListFormatter<T> : YamlSerializer<IReadOnlyList<T>
         {
             foreach (var x in value)
             {
-                stream.Serialize(x, style);
+                stream.Write(x, style);
             }
         }
 

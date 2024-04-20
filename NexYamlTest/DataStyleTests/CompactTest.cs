@@ -31,7 +31,20 @@ public class CompactTest
         };
         NexYamlSerializerRegistry.Init();
         var s = YamlSerializer.SerializeToString(compact);
+        throw new Exception(s);
         Assert.Equal("!NexYamlTest.DataStyleTests.CompactRecordWithCompactMember,NexYamlTest\nCompactMember: !NexYamlTest.DataStyleTests.CompactRecord,NexYamlTest { X: 0, Y: 0, W: !!null }\n",s);
+        YamlHelper.Run(compact);
+    }    
+    [Fact]
+    public void Double_Compact_RecordWithMember()
+    {
+        var compact = new CompactCompactRecord()
+        {
+        };
+        NexYamlSerializerRegistry.Init();
+        var s = YamlSerializer.SerializeToString(compact);
+
+        // Assert.Equal("!NexYamlTest.DataStyleTests.CompactRecordWithCompactMember,NexYamlTest\nCompactMember: !NexYamlTest.DataStyleTests.CompactRecord,NexYamlTest { X: 0, Y: 0, W: !!null }\n",s);
         YamlHelper.Run(compact);
     }
 

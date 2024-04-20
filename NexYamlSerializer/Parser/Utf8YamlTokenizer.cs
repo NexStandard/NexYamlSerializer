@@ -65,7 +65,7 @@ public class Utf8YamlTokenizer
         tokens = new InsertionQueue<Token>(16);
         simpleKeyCandidates = new ExpandBuffer<SimpleKeyState>(16);
         indents = new ExpandBuffer<int>(16);
-        lineBreaksBuffer = new ExpandBuffer<byte>(64);
+        lineBreaksBuffer = new ExpandBuffer<byte>(16);
         scalarPool = new ScalarPool(32);
 
         indent = -1;

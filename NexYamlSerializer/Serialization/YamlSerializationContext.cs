@@ -7,6 +7,33 @@ using System.Buffers;
 
 namespace NexVYaml.Serialization;
 
+/// <summary>
+/// Enforces <see cref="DataStyle.Compact"/> 
+/// 
+/// </summary>
+class StyleEnforcer
+{
+    int count;
+    void Begin(ref DataStyle style)
+    {
+        if(style is DataStyle.Compact || count > 0)
+        {
+            style = DataStyle.Compact;
+            count++;
+        }
+    }
+    void End()
+    {
+        if( count == 0 )
+        {
+            return;
+        }
+        else
+        {
+            count--;
+        }
+    }
+}
 public class YamlSerializationContext
 {
     public IYamlFormatterResolver Resolver { get; }
