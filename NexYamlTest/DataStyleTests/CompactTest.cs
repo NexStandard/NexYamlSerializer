@@ -31,9 +31,20 @@ public class CompactTest
         };
         NexYamlSerializerRegistry.Init();
         var s = YamlSerializer.SerializeToString(compact);
-        throw new Exception(s);
-        Assert.Equal("!NexYamlTest.DataStyleTests.CompactRecordWithCompactMember,NexYamlTest\nCompactMember: !NexYamlTest.DataStyleTests.CompactRecord,NexYamlTest { X: 0, Y: 0, W: !!null }\n",s);
-        YamlHelper.Run(compact);
+
+        Assert.Equal("!NexYamlTest.DataStyleTests.CompactRecordWithCompactMember,NexYamlTest { CompactMember: !NexYamlTest.DataStyleTests.CompactRecord,NexYamlTest { X: 0, Y: 0, W: !!null } }",s);
+    }    
+    [Fact]
+    public void Compact_List()
+    {
+        var compact = new CompactList()
+        {
+        };
+        NexYamlSerializerRegistry.Init();
+        var s = YamlSerializer.SerializeToString(compact);
+        var d = YamlSerializer.Deserialize<CompactList>(s);
+        Assert.True(d.Lists[0] is NonCompactClass);
+        Assert.True(d.Lists[1] is NonCompactClass);
     }    
     [Fact]
     public void Double_Compact_RecordWithMember()
@@ -44,8 +55,7 @@ public class CompactTest
         NexYamlSerializerRegistry.Init();
         var s = YamlSerializer.SerializeToString(compact);
 
-        // Assert.Equal("!NexYamlTest.DataStyleTests.CompactRecordWithCompactMember,NexYamlTest\nCompactMember: !NexYamlTest.DataStyleTests.CompactRecord,NexYamlTest { X: 0, Y: 0, W: !!null }\n",s);
-        YamlHelper.Run(compact);
+        Assert.Equal("!NexYamlTest.DataStyleTests.CompactCompactRecord,NexYamlTest\nCompactMember: !NexYamlTest.DataStyleTests.CompactRecordWithCompactMember,NexYamlTest { CompactMember: !NexYamlTest.DataStyleTests.CompactRecord,NexYamlTest { X: 0, Y: 0, W: !!null } }\n", s);
     }
 
     [Fact]

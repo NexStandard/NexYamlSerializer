@@ -50,6 +50,17 @@ internal record class CompactMembers
     public required NonCompactClass NonCompactClass { get; set; }
 }
 [DataContract]
+internal record class CompactList
+{
+    [DataStyle(DataStyle.Compact)]
+    public List<NonCompactClass> Lists { get; set; } = new()
+    {
+        new NonCompactClass(),
+        new NonCompactClass()
+    };
+    public int Count { get; set; }
+}
+[DataContract]
 internal record class NonCompactClass
 {
     public int Y { get; set; }

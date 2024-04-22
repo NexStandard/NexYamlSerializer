@@ -67,24 +67,24 @@ public static class YamlStreamExtensions
         else
             DictionaryFormatterHelper.Serialize(stream, value, style);
     }
-    public static void Write<T, K>(this ISerializationWriter stream, string key, Dictionary<T, K> value, DataStyle style = DataStyle.Any)
+    public static void Write<T, K>(this ISerializationWriter stream, string key, Dictionary<T, K> value, DataStyle style)
     {
         stream.Serialize(ref key);
-        stream.Serialize(value);
+        stream.Serialize(value, style);
     }
-    public static void Write<T>(this ISerializationWriter stream, List<T> value, DataStyle style = DataStyle.Any)
+    public static void Write<T>(this ISerializationWriter stream, List<T> value, DataStyle style)
     {
         if (value is null)
             stream.WriteNull();
         else
             ListFormatterHelper.Serialize(stream, value, style);
     }
-    public static void Write<T>(this ISerializationWriter stream, string key, List<T> value, DataStyle style = DataStyle.Any)
+    public static void Write<T>(this ISerializationWriter stream, string key, List<T> value, DataStyle style)
     {
         stream.Serialize(ref key);
-        stream.Write(value);
+        stream.Write(value, style);
     }
-    public static void Write<T>(this ISerializationWriter stream, string key, T value, DataStyle style = DataStyle.Any)
+    public static void Write<T>(this ISerializationWriter stream, string key, T value, DataStyle style)
     {
         stream.Serialize(ref key);
         stream.Write(value, style);

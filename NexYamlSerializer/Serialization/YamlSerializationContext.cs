@@ -14,7 +14,7 @@ namespace NexVYaml.Serialization;
 class StyleEnforcer
 {
     int count;
-    void Begin(ref DataStyle style)
+    public void Begin(ref DataStyle style)
     {
         if(style is DataStyle.Compact || count > 0)
         {
@@ -22,7 +22,7 @@ class StyleEnforcer
             count++;
         }
     }
-    void End()
+    public void End()
     {
         if( count == 0 )
         {
@@ -54,6 +54,7 @@ public class YamlSerializationContext
 
     public void Serialize<T>(ISerializationWriter stream, T value, DataStyle style = DataStyle.Any)
     {
+
         var type = typeof(T);
         if (SecureMode)
         {

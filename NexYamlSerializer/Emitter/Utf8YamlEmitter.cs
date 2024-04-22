@@ -1,4 +1,5 @@
 #nullable enable
+using NexVYaml.Serialization;
 using NexYaml.Core;
 using NexYamlSerializer.Emitter;
 using NexYamlSerializer.Emitter.Serializers;
@@ -34,6 +35,7 @@ sealed partial class Utf8YamlEmitter
     private IEmitter blockSequenceEntrySerializer;
     private IEmitter flowSequenceEntrySerializer;
     private IEmitter emptySerializer;
+    StyleEnforcer enforcer = new();
     internal bool IsFirstElement
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -69,8 +71,9 @@ sealed partial class Utf8YamlEmitter
         tagStack.Dispose();
     }
 
-    public void BeginSequence(DataStyle style = DataStyle.Any)
+    public void BeginSequence(DataStyle style)
     {
+        enforcer.Begin(ref style);
         switch (style)
         {
             case DataStyle.Normal or DataStyle.Any:
@@ -89,6 +92,7 @@ sealed partial class Utf8YamlEmitter
     }
     public void EndSequence()
     {
+        enforcer.End();
         switch (StateStack.Current)
         {
             case EmitState.BlockSequenceEntry:
@@ -105,9 +109,11 @@ sealed partial class Utf8YamlEmitter
             default:
                 throw new YamlEmitterException($"Current state is not sequence: {StateStack.Current}");
         }
+
     }
-    public void BeginMapping(DataStyle style = DataStyle.Any)
+    public void BeginMapping(DataStyle style)
     {
+        enforcer.Begin(ref style);
         if (style is DataStyle.Normal)
             blockMapKeySerializer.Begin();
         else if (style is DataStyle.Compact)
@@ -117,6 +123,7 @@ sealed partial class Utf8YamlEmitter
     }
     public void EndMapping()
     {
+        enforcer.End();
         if (StateStack.Current is not EmitState.BlockMappingKey and not EmitState.FlowMappingKey)
         {
             throw new Exception($"Invalid block mapping end: {StateStack.Current}");

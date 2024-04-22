@@ -45,7 +45,8 @@ internal class ListFormatterHelper : IYamlFormatterHelper
             var y = stream.SerializeContext.Resolver.GetFormatter<T>();
             foreach (var x in value)
             {
-                y.Serialize(stream, x, style);
+                stream.Write(x, style);
+                // y.Serialize(stream, x, style);
             }
         }
         else
