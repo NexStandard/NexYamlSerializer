@@ -10,7 +10,7 @@ public interface ISerializationWriter : ISerializationStream
 {
     public YamlSerializationContext SerializeContext { get; init; }
     void Serialize(ReadOnlySpan<byte> value);
-    void SerializeTag(ref string tag);
+    void WriteTag(string tag);
     void BeginMapping(DataStyle style);
     void EndMapping();
     void BeginSequence(DataStyle style);
