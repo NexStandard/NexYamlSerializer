@@ -1,27 +1,8 @@
 ﻿using NexVYaml;
-using NexVYaml.Emitter;
-using NexVYaml.Parser;
 using NexVYaml.Serialization;
 using NexYamlTest.ComplexCases;
 using NexYamlTest.SimpleClasses;
-using Stride.Core;
-using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using NexVYaml;
-using NexVYaml.Emitter;
-using NexVYaml.Parser;
-using NexVYaml.Serialization;
-using NexYamlSerializer.Serialization.Formatters;
-using Silk.NET.OpenXR;
-using Irony.Parsing;
 namespace NexYamlTest;
 public class ComplexTests
 {

@@ -108,8 +108,8 @@ sealed partial class Utf8YamlEmitter
             default:
                 throw new YamlEmitterException($"Current state is not sequence: {StateStack.Current}");
         }
-
     }
+
     public void BeginMapping(DataStyle style)
     {
         enforcer.Begin(ref style);
@@ -120,6 +120,7 @@ sealed partial class Utf8YamlEmitter
         else
             blockMapKeySerializer.Begin();
     }
+
     public void EndMapping()
     {
         enforcer.End();

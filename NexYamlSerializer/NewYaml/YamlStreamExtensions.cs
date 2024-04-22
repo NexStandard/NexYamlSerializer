@@ -25,7 +25,7 @@ public static class YamlStreamExtensions
             if (value is Array)
             {
                 var t = typeof(T).GetElementType();
-                var arrayFormatterType = typeof(ArrayFormatter<>).MakeGenericType(t);
+                var arrayFormatterType = typeof(ArrayFormatter<>).MakeGenericType(t!);
                 var arrayFormatter = (YamlSerializer)Activator.CreateInstance(arrayFormatterType)!;
                 arrayFormatter.Serialize(stream, value, style);
             }
@@ -53,8 +53,7 @@ public static class YamlStreamExtensions
     public static void Write<T, K>(this ISerializationWriter stream, string key, KeyValuePair<T, K> value, DataStyle style = DataStyle.Any)
     {
         stream.Serialize(ref key);
-        
-        stream.Write(value);
+        stream.Write(value, style);
     }
     public static void Serialize<T, K>(this ISerializationWriter stream, Dictionary<T, K> value, DataStyle style = DataStyle.Any)
     {
