@@ -7,12 +7,8 @@ using System.Runtime.CompilerServices;
 
 namespace NexVYaml.Parser;
 
-public class YamlParserException : Exception
+public class YamlParserException(in Marker marker, string message) : Exception($"{message} at {marker}")
 {
-    public YamlParserException(in Marker marker, string message)
-        : base($"{message} at {marker}")
-    {
-    }
 }
 
 public enum ParseEventType : byte

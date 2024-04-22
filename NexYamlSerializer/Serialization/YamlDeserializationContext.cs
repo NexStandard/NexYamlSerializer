@@ -9,17 +9,11 @@ using System.Linq;
 
 namespace NexVYaml.Serialization;
 
-public class YamlDeserializationContext
+public class YamlDeserializationContext(YamlSerializerOptions options)
 {
-    public IYamlFormatterResolver Resolver { get; }
-    public bool SecureMode { get; set; } = false;
+    public IYamlFormatterResolver Resolver { get; } = options.Resolver;
+    public bool SecureMode { get; set; } = options.SecureMode;
     readonly Dictionary<Anchor, object?> aliases = new();
-
-    public YamlDeserializationContext(YamlSerializerOptions options)
-    {
-        Resolver = options.Resolver;
-        SecureMode = options.SecureMode;
-    }
 
     public void Reset()
     {
@@ -115,7 +109,7 @@ public static class DeserializeExtensions
             }
 
             parser.TryGetCurrentTag(out var tag);
-            YamlSerializer formatter;
+            YamlSerializer? formatter;
             if (tag == null)
             {
                 var formatt = context.Resolver.GetGenericFormatter<T>();
@@ -143,7 +137,7 @@ public static class DeserializeExtensions
                 }
                 alias = context.Resolver.GetAliasType(tag.Handle);
                 formatter = context.Resolver.GetFormatter(alias);
-                if (formatter == null)
+                if (formatter is null)
                 {
                     formatter = context.Resolver.GetFormatter(alias, type);
                 }

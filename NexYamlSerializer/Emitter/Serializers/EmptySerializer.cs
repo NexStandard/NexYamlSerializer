@@ -3,25 +3,25 @@ using System;
 using System.Linq;
 
 namespace NexYamlSerializer.Emitter.Serializers;
-internal class EmptySerializer : IEmitter
+internal class EmptySerializer : EmitterSerializer
 {
     public static readonly EmptySerializer Instance = new();
     private EmptySerializer() { }
-    public EmitState State { get; } = EmitState.None;
+    public override EmitState State { get; } = EmitState.None;
 
-    public void Begin()
+    public override void Begin()
     {
     }
 
-    public void BeginScalar(Span<byte> output, ref int offset)
+    public override void BeginScalar(Span<byte> output, ref int offset)
     {
     }
 
-    public void End()
+    public override void End()
     {
     }
 
-    public void EndScalar(Span<byte> output, ref int offset)
+    public override void EndScalar(Span<byte> output, ref int offset)
     {
     }
 }

@@ -1,18 +1,11 @@
 namespace NexVYaml.Parser;
 
-public struct Marker
+public struct Marker(int position, int line, int col)
 {
-    public int Position;
-    public int Line;
-    public int Col;
+    public int Position = position;
+    public int Line = line;
+    public int Col = col;
 
-    public Marker(int position, int line, int col)
-    {
-        Position = position;
-        Line = line;
-        Col = col;
-    }
-
-    public override string ToString() => $"Line: {Line}, Col: {Col}, Idx: {Position}";
+    public readonly override string ToString() => $"Line: {Line}, Col: {Col}, Idx: {Position}";
 }
 

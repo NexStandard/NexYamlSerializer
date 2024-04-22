@@ -56,6 +56,7 @@ public static class YamlStreamExtensions
         stream.Write(value, style);
     }
     public static void Serialize<T, K>(this ISerializationWriter stream, Dictionary<T, K> value, DataStyle style = DataStyle.Any)
+        where T : notnull
     {
         if (value is null)
             stream.WriteNull();
@@ -63,6 +64,7 @@ public static class YamlStreamExtensions
             DictionaryFormatterHelper.Serialize(stream, value, style);
     }
     public static void Write<T, K>(this ISerializationWriter stream, string key, Dictionary<T, K> value, DataStyle style)
+        where T : notnull
     {
         stream.Serialize(ref key);
         stream.Serialize(value, style);

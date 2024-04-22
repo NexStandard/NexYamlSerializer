@@ -28,6 +28,7 @@ internal class DataStyleAnalyzer(ISymbol namedType, ReferencePackage package)
         // DataStyle.Any
         0 => "DataStyle.Any",
         1 => "DataStyle.Normal",
-        2 => "DataStyle.Compact"
+        2 => "DataStyle.Compact",
+        _ => "DataStyle.Any"
     };
 }

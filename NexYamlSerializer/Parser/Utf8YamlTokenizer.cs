@@ -6,12 +6,8 @@ using System.Runtime.CompilerServices;
 
 namespace NexVYaml.Parser;
 
-class YamlTokenizerException : Exception
+class YamlTokenizerException(in Marker marker, string message) : Exception($"{message} at {marker}")
 {
-    public YamlTokenizerException(in Marker marker, string message)
-        : base($"{message} at {marker}")
-    {
-    }
 }
 
 struct SimpleKeyState
@@ -405,7 +401,7 @@ public class Utf8YamlTokenizer
             }
 
             length++;
-            value = value * 10 + YamlCodes.AsHex(currentCode);
+            value = (value * 10) + YamlCodes.AsHex(currentCode);
             Advance(1, ref reader);
         }
 

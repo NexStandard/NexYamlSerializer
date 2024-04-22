@@ -5,7 +5,7 @@ using Xunit;
 namespace NexYamlTest;
 public class ByteArrayTest
 {
-    private void Setup()
+    private static void Setup()
     {
         NexYamlSerializerRegistry.Init();
     }

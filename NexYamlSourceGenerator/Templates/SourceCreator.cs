@@ -11,7 +11,6 @@ internal static class SourceCreator
     internal static string ConvertToSourceCode(this ClassPackage package)
     {
         var info = package.ClassInfo;
-        var ns = info.NameSpace != null ? "namespace " + info.NameSpace + ";" : "";
         var tempVariables = new StringBuilder();
         foreach (var member in package.MemberSymbols)
         {

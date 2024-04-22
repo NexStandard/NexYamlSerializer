@@ -7,26 +7,26 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NexYamlSerializer.Emitter.Serializers;
-internal class BlockMapValueSerializer(Utf8YamlEmitter emitter) : IEmitter
+internal class BlockMapValueSerializer(Utf8YamlEmitter emitter) : EmitterSerializer
 {
-    public EmitState State { get; }
+    public override EmitState State { get; } = EmitState.BlockMappingValue;
 
-    public void Begin()
+    public override void Begin()
     {
         throw new NotImplementedException();
     }
 
-    public void BeginScalar(Span<byte> output, ref int offset)
+    public override void BeginScalar(Span<byte> output, ref int offset)
     {
         // Do nothing
     }
 
-    public void End()
+    public override void End()
     {
         // Do nothing
     }
 
-    public void EndScalar(Span<byte> output, ref int offset)
+    public override void EndScalar(Span<byte> output, ref int offset)
     {
         output[offset++] = YamlCodes.Lf;
         emitter.StateStack.Current = EmitState.BlockMappingKey;

@@ -1,16 +1,10 @@
 #nullable enable
 namespace NexVYaml.Parser;
 
-readonly struct Token
+readonly struct Token(TokenType type, ITokenContent? content = null)
 {
-    public readonly TokenType Type;
-    public readonly ITokenContent? Content;
-
-    public Token(TokenType type, ITokenContent? content = null)
-    {
-        Type = type;
-        Content = content;
-    }
+    public readonly TokenType Type = type;
+    public readonly ITokenContent? Content = content;
 
     public override string ToString() => $"{Type} \"{Content}\"";
 }

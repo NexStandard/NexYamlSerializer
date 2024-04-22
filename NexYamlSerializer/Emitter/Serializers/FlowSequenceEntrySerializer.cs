@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace NexYamlSerializer.Emitter.Serializers;
-internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : IEmitter
+internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : EmitterSerializer
 {
-    public EmitState State { get; } = EmitState.FlowSequenceEntry;
+    public override EmitState State { get; } = EmitState.FlowSequenceEntry;
 
-    public void Begin()
+    public override void Begin()
     {
         switch (emitter.StateStack.Current)
         {
@@ -17,7 +17,7 @@ internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : IEmitter
                 throw new YamlEmitterException("To start block-mapping in the mapping key is not supported.");
             case EmitState.BlockSequenceEntry:
                 {
-                    var output = emitter.Writer.GetSpan(emitter.CurrentIndentLevel * emitter.Options.IndentWidth + EmitCodes.BlockSequenceEntryHeader.Length + 1);
+                    var output = emitter.Writer.GetSpan((emitter.CurrentIndentLevel * emitter.Options.IndentWidth) + EmitCodes.BlockSequenceEntryHeader.Length + 1);
                     var offset = 0;
                     emitter.WriteIndent(output, ref offset);
                     EmitCodes.BlockSequenceEntryHeader.CopyTo(output[offset..]);
@@ -59,7 +59,7 @@ internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : IEmitter
         emitter.PushState(State);
     }
 
-    public void BeginScalar(Span<byte> output, ref int offset)
+    public override void BeginScalar(Span<byte> output, ref int offset)
     {
         if (emitter.IsFirstElement)
         {
@@ -76,7 +76,7 @@ internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : IEmitter
         }
     }
 
-    public void End()
+    public override void End()
     {
         emitter.PopState();
 
@@ -102,7 +102,8 @@ internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : IEmitter
         }
 
         var suffixLength = 1;
-        if (needsLineBreak) suffixLength++;
+        if (needsLineBreak) 
+            suffixLength++;
 
         var offset = 0;
         var output = emitter.Writer.GetSpan(suffixLength);
@@ -114,7 +115,7 @@ internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : IEmitter
         emitter.Writer.Advance(offset);
     }
 
-    public void EndScalar(Span<byte> output, ref int offset)
+    public override void EndScalar(Span<byte> output, ref int offset)
     {
         emitter.currentElementCount++;
     }

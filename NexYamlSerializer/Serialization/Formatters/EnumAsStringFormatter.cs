@@ -9,6 +9,7 @@ using System.Runtime.Serialization;
 namespace NexVYaml.Serialization;
 
 public class EnumAsStringFormatter<T> : YamlSerializer<T>
+    where T : Enum
 {
     static readonly Dictionary<string, T> NameValueMapping;
     static readonly Dictionary<T, string> ValueNameMapping;
@@ -22,7 +23,7 @@ public class EnumAsStringFormatter<T> : YamlSerializer<T>
         foreach (var item in type.GetFields().Where(x => x.FieldType == type))
         {
             var value = item.GetValue(null);
-            values.Add(value);
+            values.Add(value!);
 
             var attributes = item.GetCustomAttributes(true);
             if (attributes.OfType<EnumMemberAttribute>().FirstOrDefault() is { Value: { } enumMemberValue })
@@ -31,8 +32,8 @@ public class EnumAsStringFormatter<T> : YamlSerializer<T>
             }
             else
             {
-                var name = Enum.GetName(type, value);
-                names.Add(ToCamelCase(name));
+                var name = Enum.GetName(type, value!);
+                names.Add(ToCamelCase(name!));
             }
         }
 

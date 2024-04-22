@@ -1,15 +1,9 @@
 #nullable enable
 namespace NexVYaml.Parser;
 
-struct VersionDirective : ITokenContent
+readonly struct VersionDirective(int major, int minor) : ITokenContent
 {
-    public readonly int Major;
-    public readonly int Minor;
-
-    public VersionDirective(int major, int minor)
-    {
-        Major = major;
-        Minor = minor;
-    }
+    public readonly int Major = major;
+    public readonly int Minor = minor;
 }
 

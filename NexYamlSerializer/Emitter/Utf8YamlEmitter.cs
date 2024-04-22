@@ -30,11 +30,11 @@ sealed partial class Utf8YamlEmitter
     internal ExpandBuffer<EmitState> StateStack { get; }
     public IBufferWriter<byte> Writer { get; }
     public YamlEmitOptions Options { get; }
-    private IEmitter blockMapKeySerializer;
-    private IEmitter flowMapKeySerializer;
-    private IEmitter blockSequenceEntrySerializer;
-    private IEmitter flowSequenceEntrySerializer;
-    private IEmitter emptySerializer;
+    private EmitterSerializer blockMapKeySerializer;
+    private EmitterSerializer flowMapKeySerializer;
+    private EmitterSerializer blockSequenceEntrySerializer;
+    private EmitterSerializer flowSequenceEntrySerializer;
+    private EmitterSerializer emptySerializer;
     StyleEnforcer enforcer = new();
     internal bool IsFirstElement
     {

@@ -6,7 +6,7 @@ namespace NexYamlTest;
 
 public class EmptyClassesTest
 {
-    private void Setup()
+    private static void Setup()
     {
         NexYamlSerializerRegistry.Init();
     }

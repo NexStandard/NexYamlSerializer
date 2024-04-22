@@ -3,25 +3,25 @@ using System;
 using System.Linq;
 
 namespace NexYamlSerializer.Emitter.Serializers;
-internal class FlowMapValueSerializer(Utf8YamlEmitter emitter) : IEmitter
+internal class FlowMapValueSerializer(Utf8YamlEmitter emitter) : EmitterSerializer
 {
-    public EmitState State { get; } = EmitState.FlowMappingValue;
+    public override EmitState State { get; } = EmitState.FlowMappingValue;
 
-    public void Begin()
+    public override void Begin()
     {
         throw new InvalidOperationException($"Can't start a {State} as Mapping");
     }
 
-    public void BeginScalar(Span<byte> output, ref int offset)
+    public override void BeginScalar(Span<byte> output, ref int offset)
     {
     }
 
-    public void End()
+    public override void End()
     {
         throw new NotImplementedException();
     }
 
-    public void EndScalar(Span<byte> output, ref int offset)
+    public override void EndScalar(Span<byte> output, ref int offset)
     {
         emitter.StateStack.Current = EmitState.FlowMappingKey;
         emitter.currentElementCount++;

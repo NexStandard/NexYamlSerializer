@@ -8,14 +8,9 @@ using System.Runtime.CompilerServices;
 
 namespace NexVYaml.Parser;
 
-struct ScalarPool
+struct ScalarPool(int capacity)
 {
-    ExpandBuffer<Scalar> queue;
-
-    public ScalarPool(int capacity)
-    {
-        queue = new ExpandBuffer<Scalar>(capacity);
-    }
+    ExpandBuffer<Scalar> queue = new ExpandBuffer<Scalar>(capacity);
 
     public Scalar Rent()
     {

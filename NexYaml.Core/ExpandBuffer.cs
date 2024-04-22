@@ -2,19 +2,12 @@ using System.Buffers;
 
 namespace NexYaml.Core;
 
-public class ExpandBuffer<T>
+public class ExpandBuffer<T>(int capacity)
 {
     const int MinimumGrow = 4;
     const int GrowFactor = 200;
 
-    T[] buffer;
-
-    public ExpandBuffer(int capacity)
-    {
-        buffer = ArrayPool<T>.Shared.Rent(capacity);
-        // buffer = new T[capacity];
-        Length = 0;
-    }
+    T[] buffer = ArrayPool<T>.Shared.Rent(capacity);
 
     public ref T this[int index]
     {
@@ -33,7 +26,7 @@ public class ExpandBuffer<T>
     {
         get => this[^2];
     }
-    public int Length { get; private set; }
+    public int Length { get; private set; } = 0;
 
     public void Dispose()
     {

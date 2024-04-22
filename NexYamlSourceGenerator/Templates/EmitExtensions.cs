@@ -27,10 +27,6 @@ internal static class EmitExtensions
         var sb = new StringBuilder();
         foreach (var member in package.MemberSymbols)
         {
-            var serializeString = ".Serialize";
-            //TODO
-            //if (member.IsArray)
-            //    serializeString = ".SerializeArray";
             var dataStyle = member.DataStyle == "" ? "" : $", {member.DataStyle}";
             sb.AppendLine($$"""
                         stream.Write("{{member.Name}}", value.{{member.Name}}{{dataStyle}});

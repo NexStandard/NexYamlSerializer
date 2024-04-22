@@ -7,12 +7,12 @@ namespace NexVYaml.Emitter;
 internal partial class Utf8YamlEmitter
 {
     static byte[] whiteSpaces =
-    {
+    [
             (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ',
             (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ',
             (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ',
             (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ',
-    };
+    ];
 
     public void WriteScalar(ReadOnlySpan<byte> value)
     {
@@ -30,7 +30,8 @@ internal partial class Utf8YamlEmitter
         int length;
         if (forceWidth > -1)
         {
-            if (forceWidth <= 0) return;
+            if (forceWidth <= 0) 
+                return;
             length = forceWidth;
         }
         else if (CurrentIndentLevel > 0)
@@ -120,7 +121,7 @@ internal partial class Utf8YamlEmitter
 
     public int CalculateMaxScalarBufferLength(int length)
     {
-        var around = (CurrentIndentLevel + 1) * Options.IndentWidth + 3;
+        var around = ((CurrentIndentLevel + 1) * Options.IndentWidth) + 3;
         if (tagStack.Length > 0)
         {
             length += StringEncoding.Utf8.GetMaxByteCount(tagStack.Peek().Length) + around; // TODO:

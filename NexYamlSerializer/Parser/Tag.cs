@@ -3,16 +3,10 @@ using System;
 
 namespace NexVYaml.Parser;
 
-public class Tag : ITokenContent
+public class Tag(string prefix, string handle) : ITokenContent
 {
-    public string Prefix { get; }
-    public string Handle { get; }
-
-    public Tag(string prefix, string handle)
-    {
-        Prefix = prefix;
-        Handle = handle;
-    }
+    public string Prefix { get; } = prefix;
+    public string Handle { get; } = handle;
 
     public override string ToString() => $"{Prefix}{Handle}";
 

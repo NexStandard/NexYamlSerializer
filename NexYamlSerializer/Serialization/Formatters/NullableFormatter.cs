@@ -32,14 +32,9 @@ public class NullableFormatter<T> : YamlSerializer<T?>, IYamlFormatter<T?> where
         }
     }
 }
-public sealed class StaticNullableFormatter<T> : YamlSerializer<T?>, IYamlFormatter<T?> where T : struct
+public sealed class StaticNullableFormatter<T>(YamlSerializer<T> underlyingFormatter) : YamlSerializer<T?>, IYamlFormatter<T?> where T : struct
 {
-    readonly YamlSerializer<T> underlyingSerializer;
-
-    public StaticNullableFormatter(YamlSerializer<T> underlyingFormatter)
-    {
-        underlyingSerializer = underlyingFormatter;
-    }
+    readonly YamlSerializer<T> underlyingSerializer = underlyingFormatter;
 
     public override T? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {

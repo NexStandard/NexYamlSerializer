@@ -14,6 +14,6 @@ internal class Collections
 [DataContract]
 public record TempData
 {
-    public string name { get; set; }
-    public int id { get; set; }
+    public string Name { get; set; } = "";
+    public int Id { get; set; }
 }

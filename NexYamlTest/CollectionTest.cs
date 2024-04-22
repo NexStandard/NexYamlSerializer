@@ -29,13 +29,13 @@ public class CollectionTest
         // Creating test data
         var data1 = new TempData()
         {
-            name = "John",
-            id = 1,
+            Name = "John",
+            Id = 1,
         };
         var data2 = new TempData()
         {
-            name = "Alice",
-            id = 2,
+            Name = "Alice",
+            Id = 2,
         };
 
         // Creating an object of the Collections class

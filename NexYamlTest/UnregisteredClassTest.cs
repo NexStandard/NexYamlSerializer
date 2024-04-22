@@ -5,7 +5,7 @@ using Xunit;
 namespace NexYamlTest;
 public class UnregisteredClassTest
 {
-    private void Setup()
+    private static void Setup()
     {
         NexYamlSerializerRegistry.Init();
     }

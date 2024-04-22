@@ -34,10 +34,10 @@ class StyleEnforcer
         }
     }
 }
-public class YamlSerializationContext
+public class YamlSerializationContext(YamlSerializerOptions options)
 {
-    public IYamlFormatterResolver Resolver { get; }
-    public YamlEmitOptions EmitOptions { get; }
+    public IYamlFormatterResolver Resolver { get; } = options.Resolver;
+    public YamlEmitOptions EmitOptions { get; } = options.EmitOptions;
     /// <summary>
     /// Decides if the <see cref="RedirectFormatter{T}"/> had to redirect it as it's an interface or abstract class
     /// </summary>
@@ -45,12 +45,6 @@ public class YamlSerializationContext
     public bool IsFirst { get; set; } = true;
     public bool SecureMode { get; set; } = false;
     ArrayBufferWriter<byte>? arrayBufferWriter;
-
-    public YamlSerializationContext(YamlSerializerOptions options)
-    {
-        Resolver = options.Resolver;
-        EmitOptions = options.EmitOptions;
-    }
 
     public void Serialize<T>(ISerializationWriter stream, T value, DataStyle style = DataStyle.Any)
     {
