@@ -2,7 +2,6 @@
 
 public static class EmitCodes
 {
-
     public static readonly byte[] BlockSequenceEntryHeader = [(byte)'-', (byte)' '];
     public static readonly byte[] FlowSequenceEntryHeader = [(byte)'[', (byte)' '];
     public static readonly byte[] FlowSequenceEmpty = [(byte)'[', (byte)']'];

@@ -21,7 +21,6 @@ public class InsertionQueue<T>
 
     public int Count
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get;
         private set;
     }
@@ -32,7 +31,6 @@ public class InsertionQueue<T>
         return array[headIndex];
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Enqueue(T item)
     {
         if (Count == array.Length)
@@ -43,7 +41,6 @@ public class InsertionQueue<T>
         Count++;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public T Dequeue()
     {
         if (Count == 0) ThrowForEmptyQueue();
@@ -100,13 +97,11 @@ public class InsertionQueue<T>
         tailIndex = Count == capacity ? 0 : Count;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void MoveNext(ref int index)
     {
         index = (index + 1) % array.Length;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static void ThrowForEmptyQueue()
     {
         throw new InvalidOperationException("EmptyQueue");

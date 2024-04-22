@@ -26,13 +26,11 @@ public class Utf8YamlTokenizer
 {
     public TokenType CurrentTokenType
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => currentToken.Type;
     }
 
     public Marker CurrentMark
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => mark;
     }
 
@@ -125,13 +123,11 @@ public class Utf8YamlTokenizer
         return true;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal void ReturnToPool(Scalar scalar)
     {
         scalarPool.Return(scalar);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal T TakeCurrentTokenContent<T>() where T : ITokenContent
     {
         var result = currentToken;
@@ -1401,7 +1397,6 @@ public class Utf8YamlTokenizer
         }
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void Advance(int offset, ref SequenceReader<byte> reader)
     {
         for (var i = 0; i < offset; i++)
@@ -1524,14 +1519,12 @@ public class Utf8YamlTokenizer
         }
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void IncreaseFlowLevel()
     {
         simpleKeyCandidates.Add(new SimpleKeyState());
         flowLevel++;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void DecreaseFlowLevel()
     {
         if (flowLevel <= 0) return;
@@ -1574,7 +1567,6 @@ public class Utf8YamlTokenizer
         return YamlCodes.IsEmpty(currentMemory.Span[remainingOffset]);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     bool TryPeek(long offset, out byte value, ref SequenceReader<byte> reader)
     {
         // If we've got data and offset is not out of bounds

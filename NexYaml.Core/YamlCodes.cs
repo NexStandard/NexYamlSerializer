@@ -87,7 +87,6 @@ public static class YamlCodes
     public const byte FlowSequenceStart = (byte)'[';
     public const byte FlowSequenceEnd = (byte)']';
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsAlphaNumericDashOrUnderscore(byte code) => code is
         >= (byte)'0' and <= (byte)'9' or
         >= (byte)'A' and <= (byte)'Z' or
@@ -95,37 +94,28 @@ public static class YamlCodes
         (byte)'_' or
         (byte)'-';
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsAscii(byte code) => code <= '\x7F';
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsNumber(byte code) => code is >= (byte)'0' and <= (byte)'9';
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsEmpty(byte code) => code is Space or Tab or Lf or Cr;
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsLineBreak(byte code) => code is Lf or Cr;
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsBlank(byte code) => code is Space or Tab;
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsNumberRepresentation(byte code) => code is
         >= (byte)'0' and <= (byte)'9' or
         (byte)'+' or (byte)'-' or (byte)'.';
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsHex(byte code) => code is
         >= (byte)'0' and <= (byte)'9' or
         >= (byte)'A' and <= (byte)'F' or
         >= (byte)'a' and <= (byte)'f';
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsAnyFlowSymbol(byte code) => code is
         (byte)',' or (byte)'[' or (byte)']' or (byte)'{' or (byte)'}';
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static byte AsHex(byte code) => code switch
     {
         >= (byte)'0' and <= (byte)'9' => (byte)(code - (byte)'0'),

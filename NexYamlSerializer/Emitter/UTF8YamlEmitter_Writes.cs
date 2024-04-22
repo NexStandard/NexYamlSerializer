@@ -13,7 +13,7 @@ internal partial class Utf8YamlEmitter
             (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ',
             (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ',
     };
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
     public void WriteScalar(ReadOnlySpan<byte> value)
     {
         var offset = 0;

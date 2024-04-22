@@ -80,7 +80,6 @@ public partial class YamlParser
 
     public Marker CurrentMark
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => tokenizer.CurrentMark;
     }
 
@@ -88,7 +87,6 @@ public partial class YamlParser
 
     TokenType CurrentTokenType
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => tokenizer.CurrentTokenType;
     }
 
@@ -243,7 +241,6 @@ public partial class YamlParser
         return true;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void ReadWithVerify(ParseEventType eventType)
     {
         if (CurrentEventType != eventType)
@@ -828,26 +825,22 @@ public partial class YamlParser
         }
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void ParseFlowSequenceEntryMappingEnd()
     {
         currentState = ParseState.FlowSequenceEntry;
         CurrentEventType = ParseEventType.MappingEnd;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void PopState()
     {
         currentState = stateStack.Pop();
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void PushState(ParseState state)
     {
         stateStack.Add(state);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void EmptyScalar()
     {
         currentScalar = null;
@@ -880,7 +873,6 @@ public partial class YamlParser
         return newId;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void ThrowIfCurrentTokenUnless(TokenType expectedTokenType)
     {
         if (CurrentTokenType != expectedTokenType)

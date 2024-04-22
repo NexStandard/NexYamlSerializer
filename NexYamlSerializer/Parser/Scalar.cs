@@ -17,7 +17,6 @@ struct ScalarPool
         queue = new ExpandBuffer<Scalar>(capacity);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Scalar Rent()
     {
         return queue.TryPop(out var scalar)
@@ -25,7 +24,6 @@ struct ScalarPool
             : new Scalar(32);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Return(Scalar scalar)
     {
         scalar.Clear();
@@ -67,7 +65,6 @@ class Scalar : ITokenContent, IDisposable
 
     public Span<byte> AsSpan(int start, int length) => buffer.AsSpan(start, length);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Write(byte code)
     {
         if (Length == buffer.Length)
@@ -78,7 +75,6 @@ class Scalar : ITokenContent, IDisposable
         buffer[Length++] = code;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Write(LineBreakState lineBreak)
     {
         switch (lineBreak)
@@ -100,7 +96,6 @@ class Scalar : ITokenContent, IDisposable
         }
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Write(ReadOnlySpan<byte> codes)
     {
         Grow(Length + codes.Length);
@@ -108,7 +103,6 @@ class Scalar : ITokenContent, IDisposable
         Length += codes.Length;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteUnicodeCodepoint(int codepoint)
     {
         Span<char> chars = [(char)codepoint];
@@ -118,13 +112,11 @@ class Scalar : ITokenContent, IDisposable
         Write(utf8Bytes);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Clear()
     {
         Length = 0;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Dispose()
     {
         if (Length < 0) return;
@@ -132,7 +124,6 @@ class Scalar : ITokenContent, IDisposable
         Length = -1;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override string ToString()
     {
         return StringEncoding.Utf8.GetString(AsSpan());
@@ -365,19 +356,16 @@ class Scalar : ITokenContent, IDisposable
         return false;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool SequenceEqual(Scalar other)
     {
         return AsSpan().SequenceEqual(other.AsSpan());
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool SequenceEqual(ReadOnlySpan<byte> span)
     {
         return AsSpan().SequenceEqual(span);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Grow(int sizeHint)
     {
         if (sizeHint <= buffer.Length)
@@ -392,7 +380,6 @@ class Scalar : ITokenContent, IDisposable
         SetCapacity(newCapacity);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static bool TryDetectHex(ReadOnlySpan<byte> span, out ReadOnlySpan<byte> slice)
     {
         if (span.Length > YamlCodes.HexPrefix.Length && span.StartsWith(YamlCodes.HexPrefix))
@@ -405,7 +392,6 @@ class Scalar : ITokenContent, IDisposable
         return false;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static bool TryDetectHexNegative(ReadOnlySpan<byte> span, out ReadOnlySpan<byte> slice)
     {
         if (span.Length > YamlCodes.HexPrefixNegative.Length &&
@@ -419,7 +405,6 @@ class Scalar : ITokenContent, IDisposable
         return false;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void Grow()
     {
         var newCapacity = buffer.Length * GrowFactor / 100;
@@ -430,7 +415,6 @@ class Scalar : ITokenContent, IDisposable
         SetCapacity(newCapacity);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void SetCapacity(int newCapacity)
     {
         if (buffer.Length >= newCapacity) return;

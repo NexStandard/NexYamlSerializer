@@ -38,7 +38,6 @@ sealed partial class Utf8YamlEmitter
     StyleEnforcer enforcer = new();
     internal bool IsFirstElement
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => currentElementCount <= 0;
     }
 
@@ -133,7 +132,7 @@ sealed partial class Utf8YamlEmitter
         else if (StateStack.Current is EmitState.FlowMappingKey)
             flowMapKeySerializer.End();
     }
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
     public void BeginScalar(Span<byte> output, ref int offset)
     {
         switch (StateStack.Current)
@@ -162,7 +161,6 @@ sealed partial class Utf8YamlEmitter
         }
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void EndScalar(Span<byte> output, ref int offset)
     {
         switch (StateStack.Current)
