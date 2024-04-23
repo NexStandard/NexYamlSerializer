@@ -15,7 +15,7 @@ public class GenericArrayTest
         Setup();
         var array = new Generics<int[]>()
         {
-            Value = new int[] { 1, 2 }
+            Value = [1, 2]
         };
         var s = YamlSerializer.SerializeToString(array);
         // TODO: activate

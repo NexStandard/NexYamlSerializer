@@ -9,7 +9,7 @@ public class UnregisteredClassTest
     {
         NexYamlSerializerRegistry.Init();
     }
-    private void Compare<T>(T data)
+    private static void Compare<T>(T data)
     {
         // Arrange
         Setup();

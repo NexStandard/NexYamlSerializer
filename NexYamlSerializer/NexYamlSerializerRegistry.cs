@@ -144,7 +144,7 @@ public class SerializerRegistry
         [typeof(Tuple<,,,,,,>)] = typeof(TupleFormatter<,,,,,,>),
         [typeof(Tuple<,,,,,,,>)] = typeof(TupleFormatter<,,,,,,,>)
     };
-    internal Dictionary<string, Type> TypeMap { get; } = new();
+    internal Dictionary<string, Type> TypeMap { get; } = [];
     internal Dictionary<Type, YamlSerializer> DefinedFormatters { get; } = new Dictionary<Type, YamlSerializer>()
     {
             // Primitive

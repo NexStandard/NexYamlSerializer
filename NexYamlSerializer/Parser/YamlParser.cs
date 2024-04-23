@@ -102,7 +102,7 @@ public partial class YamlParser
         currentState = ParseState.StreamStart;
         CurrentEventType = default;
         lastAnchorId = -1;
-        anchors = new Dictionary<string, int>();
+        anchors = [];
         stateStack = new ExpandBuffer<ParseState>(16);
 
         currentScalar = null;
@@ -116,7 +116,7 @@ public partial class YamlParser
         currentState = ParseState.StreamStart;
         CurrentEventType = default;
         lastAnchorId = -1;
-        anchors = new Dictionary<string, int>();
+        anchors = [];
         stateStack = new ExpandBuffer<ParseState>(16);
 
         currentScalar = null;

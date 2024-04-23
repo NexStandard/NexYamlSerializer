@@ -695,7 +695,7 @@ public class Utf8YamlTokenizer
         }
         else if (directive)
         {
-            if (!buf.SequenceEqual(stackalloc byte[] { (byte)'!' }))
+            if (!buf.SequenceEqual([(byte)'!']))
             {
                 // It's either the '!' tag or not really a tag handle.  If it's a %TAG
                 // directive, it's an error.  If it's a tag token, it must be a part of
@@ -904,7 +904,8 @@ public class Utf8YamlTokenizer
                 Advance(1, ref reader);
             }
             // break on EOF
-            if (reader.End) break;
+            if (reader.End) 
+                break;
 
             leadingBreak = ConsumeLineBreaks(ref reader);
             // Eat the following indentation spaces and line breaks.
@@ -1376,7 +1377,8 @@ public class Utf8YamlTokenizer
                 case YamlCodes.Lf:
                 case YamlCodes.Cr:
                     ConsumeLineBreaks(ref reader);
-                    if (flowLevel == 0) simpleKeyAllowed = true;
+                    if (flowLevel == 0) 
+                        simpleKeyAllowed = true;
                     break;
                 case YamlCodes.Comment:
                     while (!reader.End && !YamlCodes.IsLineBreak(currentCode))
@@ -1523,12 +1525,13 @@ public class Utf8YamlTokenizer
 
     void DecreaseFlowLevel()
     {
-        if (flowLevel <= 0) return;
+        if (flowLevel <= 0) 
+            return;
         flowLevel--;
         simpleKeyCandidates.Pop();
     }
 
-    bool IsEmptyNext(int offset, ref SequenceReader<byte> reader)
+    static bool IsEmptyNext(int offset, ref SequenceReader<byte> reader)
     {
         if (reader.End || reader.Remaining <= offset)
             return true;
@@ -1563,7 +1566,7 @@ public class Utf8YamlTokenizer
         return YamlCodes.IsEmpty(currentMemory.Span[remainingOffset]);
     }
 
-    bool TryPeek(long offset, out byte value, ref SequenceReader<byte> reader)
+    static bool TryPeek(long offset, out byte value, ref SequenceReader<byte> reader)
     {
         // If we've got data and offset is not out of bounds
         if (reader.End || reader.Remaining <= offset)

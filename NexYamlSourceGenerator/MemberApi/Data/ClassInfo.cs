@@ -91,7 +91,7 @@ internal record ClassInfo
             ShortDefinition = shortDefinition,
             Accessibility = namedType.DeclaredAccessibility,
             TypeParameterArguments = genericTypeArguments,
-            TypeParameters = typeParameters.ToArray(),
+            TypeParameters = [.. typeParameters],
             TypeParameterRestrictions = restrictions,
             TypeParameterArgumentsShort = new ShortGenericDefinition(namedType.TypeArguments.Length).ToString(),
             NameSpace = GetFullNamespace(namedType, '.'),
@@ -103,7 +103,7 @@ internal record ClassInfo
     }
     private static ImmutableList<DataPackage> GetDataPackages(ImmutableArray<INamedTypeSymbol> types)
     {
-        List<DataPackage> result = new();
+        List<DataPackage> result = [];
 
         foreach (var type in types)
         {

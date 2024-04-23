@@ -50,11 +50,11 @@ internal record class CompactMembers
 internal record class CompactList
 {
     [DataStyle(DataStyle.Compact)]
-    public List<NonCompactClass> Lists { get; set; } = new()
-    {
+    public List<NonCompactClass> Lists { get; set; } =
+    [
         new NonCompactClass(),
         new NonCompactClass()
-    };
+    ];
     public int Count { get; set; }
 }
 [DataContract]

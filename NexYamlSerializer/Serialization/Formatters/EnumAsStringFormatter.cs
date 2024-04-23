@@ -63,12 +63,7 @@ public class EnumAsStringFormatter<T> : YamlSerializer<T>
     }
     public override T Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
-        var scalar = parser.ReadScalarAsString();
-        if (scalar is null)
-        {
-            throw new YamlSerializerException($"Cannot detect a scalar value of {typeof(T)}");
-        }
-
+        var scalar = parser.ReadScalarAsString() ?? throw new YamlSerializerException($"Cannot detect a scalar value of {typeof(T)}");
         if (NameValueMapping.TryGetValue(scalar, out var value))
         {
             return value;

@@ -60,7 +60,7 @@ class ReusableByteSequenceSegment : ReadOnlySequenceSegment<byte>
 public class ReusableByteSequenceBuilder
 {
     readonly Stack<ReusableByteSequenceSegment> segmentPool = new();
-    readonly List<ReusableByteSequenceSegment> segments = new();
+    readonly List<ReusableByteSequenceSegment> segments = [];
 
     public void Add(ReadOnlyMemory<byte> buffer, bool returnToPool)
     {

@@ -6,7 +6,7 @@ namespace NexYamlTest.SimpleClasses;
 public struct EmptyStruct
 {
     public int ID { get; set; }
-    public override bool Equals(object obj)
+    public override readonly bool Equals(object obj)
     {
         // Check if the object is null or of a different type
         if (obj is not EmptyStruct)
@@ -21,7 +21,7 @@ public struct EmptyStruct
         return ID == other.ID;
     }
 
-    public override int GetHashCode()
+    public override readonly int GetHashCode()
     {
         return HashCode.Combine(ID);
     }
@@ -40,7 +40,7 @@ public struct EmptyStruct
 internal struct InternalEmptyStruct
 {
     public int ID { get; set; }
-    public override bool Equals(object obj)
+    public override readonly bool Equals(object obj)
     {
         // Check if the object is null or of a different type
         if (obj is not InternalEmptyStruct)
@@ -55,7 +55,7 @@ internal struct InternalEmptyStruct
         return ID == other.ID;
     }
 
-    public override int GetHashCode()
+    public override readonly int GetHashCode()
     {
         return HashCode.Combine(ID);
     }

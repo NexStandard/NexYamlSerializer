@@ -37,8 +37,8 @@ public class CompactTest
         NexYamlSerializerRegistry.Init();
         var s = YamlSerializer.SerializeToString(compact);
         var d = YamlSerializer.Deserialize<CompactList>(s);
-        Assert.True(d.Lists[0] is NonCompactClass);
-        Assert.True(d.Lists[1] is NonCompactClass);
+        Assert.True(d!.Lists[0] is not null);
+        Assert.True(d.Lists[1] is not null);
     }    
     [Fact]
     public void Double_Compact_RecordWithMember()

@@ -8,7 +8,7 @@ internal class BaseFormatterTest
     // Fields
     public int IntField;
 
-    public string StringField;
+    public string StringField = "";
 
     public float FloatField;
 

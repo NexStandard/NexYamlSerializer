@@ -10,22 +10,22 @@ namespace NexVYaml.Parser;
 
 struct ScalarPool(int capacity)
 {
-    ExpandBuffer<Scalar> queue = new ExpandBuffer<Scalar>(capacity);
+    ExpandBuffer<Scalar> queue = new(capacity);
 
-    public Scalar Rent()
+    public readonly Scalar Rent()
     {
         return queue.TryPop(out var scalar)
             ? scalar
             : new Scalar(32);
     }
 
-    public void Return(Scalar scalar)
+    public readonly void Return(Scalar scalar)
     {
         scalar.Clear();
         queue.Add(scalar);
     }
 
-    public void Dispose()
+    public readonly void Dispose()
     {
         queue.Dispose();
         for (var i = 0; i < queue.Length; i++)
@@ -114,7 +114,8 @@ class Scalar : ITokenContent, IDisposable
 
     public void Dispose()
     {
-        if (Length < 0) return;
+        if (Length < 0) 
+            return;
         ArrayPool<byte>.Shared.Return(buffer);
         Length = -1;
     }
@@ -412,7 +413,8 @@ class Scalar : ITokenContent, IDisposable
 
     void SetCapacity(int newCapacity)
     {
-        if (buffer.Length >= newCapacity) return;
+        if (buffer.Length >= newCapacity) 
+            return;
 
         var newBuffer = ArrayPool<byte>.Shared.Rent(newCapacity);
         Array.Copy(buffer, 0, newBuffer, 0, Length);

@@ -5,7 +5,7 @@ using Xunit;
 namespace NexYamlTest.SimpleClasses;
 public class AttributeTest
 {
-    void Setup() => NexYamlSerializerRegistry.Init();
+    static void Setup() => NexYamlSerializerRegistry.Init();
     [Fact]
     public void BaseAttributesTest()
     {

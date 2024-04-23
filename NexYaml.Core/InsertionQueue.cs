@@ -27,7 +27,8 @@ public class InsertionQueue<T>
 
     public T Peek()
     {
-        if (Count == 0) ThrowForEmptyQueue();
+        if (Count == 0) 
+            ThrowForEmptyQueue();
         return array[headIndex];
     }
 
@@ -43,7 +44,8 @@ public class InsertionQueue<T>
 
     public T Dequeue()
     {
-        if (Count == 0) ThrowForEmptyQueue();
+        if (Count == 0) 
+            ThrowForEmptyQueue();
 
         var removed = array[headIndex];
         MoveNext(ref headIndex);

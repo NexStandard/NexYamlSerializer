@@ -5,7 +5,7 @@ using Xunit;
 namespace NexYamlTest;
 public class DataContractAliasTest
 {
-    void Setup () => NexYamlSerializerRegistry.Init();
+    static void Setup () => NexYamlSerializerRegistry.Init();
     [Fact]
     public void CheckAliasString()
     {

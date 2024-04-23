@@ -6,7 +6,7 @@ using Xunit;
 namespace NexYamlTest;
 public class ComplexTests
 {
-    private void Setup()
+    private static void Setup()
     {
         NexYamlSerializerRegistry.Init();
     }
@@ -22,7 +22,7 @@ public class ComplexTests
         var s = YamlSerializer.SerializeToString(list);
         var deserialized = YamlSerializer.Deserialize<DoubleInheritedList>(s);
         Assert.Null(s);
-        Assert.Equal(list.Count,deserialized.Count);
+        Assert.Equal(list.Count,deserialized!.Count);
         for ( var i = 0; i < list.Count; i++ )
         {
             Assert.Equal(list[i], deserialized[i] );
@@ -91,6 +91,7 @@ public class ComplexTests
         };
         var s = YamlSerializer.SerializeToString(genericInterface);
         var deserialized = YamlSerializer.Deserialize<IGenericInterface<IGenericInterface<int, int>, int>>(s);
+        Assert.NotNull(deserialized);
         Assert.Equal(genericInterface.Generic.Generic, deserialized.Generic.Generic);
         Assert.Equal(genericInterface.Generic.Generic2, deserialized.Generic.Generic2);
         Assert.Equal(genericInterface.Generic2, deserialized.Generic2);
@@ -105,6 +106,7 @@ public class ComplexTests
         };
         var s = YamlSerializer.SerializeToString(genericInterface);
         var deserialized = YamlSerializer.Deserialize<IGenericInterface<int, int>>(s);
+        Assert.NotNull(deserialized);
         Assert.Equal(genericInterface.Generic, deserialized.Generic);
         Assert.Equal(genericInterface.Generic2, deserialized.Generic2);
     }
@@ -119,6 +121,7 @@ public class ComplexTests
         };
         var s = YamlSerializer.SerializeToString(genericInterface);
         var deserialized = YamlSerializer.Deserialize<GenericAbstractImplementation<int, int>>(s);
+        Assert.NotNull(deserialized);
         Assert.Equal(genericInterface.Test, deserialized.Test);
     }
     [Fact()]
@@ -131,6 +134,7 @@ public class ComplexTests
         };
         var s = YamlSerializer.SerializeToString(abstractObject);
         var deserialized = YamlSerializer.Deserialize<GenericAbstractImlementationLessParams<int>>(s);
+        Assert.NotNull(deserialized);
         Assert.Equal(0, deserialized.Test);
     }
     [Fact()]
@@ -143,6 +147,7 @@ public class ComplexTests
         };
         var s = YamlSerializer.SerializeToString(abstractObject);
         var deserialized = YamlSerializer.Deserialize<GenericAbstractImlementationLessParamsDataContract<int>>(s);
+        Assert.NotNull(deserialized);
         Assert.Equal(abstractObject.Test, deserialized.Test);
     }
     [Fact()]
@@ -155,6 +160,7 @@ public class ComplexTests
         };
         var s = YamlSerializer.SerializeToString(abstractObject);
         var deserialized = YamlSerializer.Deserialize<GenericImplementedClassWithLessParams<int>>(s);
+        Assert.NotNull(deserialized);
         Assert.Equal(abstractObject.Generic, deserialized.Generic);
     }
     [Fact()]

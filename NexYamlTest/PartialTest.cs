@@ -5,7 +5,7 @@ using Xunit;
 namespace NexYamlTest;
 public class PartialTest
 {
-    void Setup() => NexYamlSerializerRegistry.Init();
+    static void Setup() => NexYamlSerializerRegistry.Init();
 
     [Fact]
     public void SimplePartialTest()

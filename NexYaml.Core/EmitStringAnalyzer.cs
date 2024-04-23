@@ -4,18 +4,11 @@ using Stride.Core;
 
 namespace NexYaml.Core;
 
-public readonly struct EmitStringInfo
+public readonly struct EmitStringInfo(int lines, bool needsQuotes, bool isReservedWord)
 {
-    public readonly int Lines;
-    public readonly bool NeedsQuotes;
-    public readonly bool IsReservedWord;
-
-    public EmitStringInfo(int lines, bool needsQuotes, bool isReservedWord)
-    {
-        Lines = lines;
-        NeedsQuotes = needsQuotes;
-        IsReservedWord = isReservedWord;
-    }
+    public readonly int Lines = lines;
+    public readonly bool NeedsQuotes = needsQuotes;
+    public readonly bool IsReservedWord = isReservedWord;
 
     public ScalarStyle SuggestScalarStyle()
     {
@@ -31,12 +24,12 @@ public static class EmitStringAnalyzer
     static StringBuilder? stringBuilderThreadStatic;
 
     static char[] whiteSpaces =
-    {
+    [
         ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
         ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
         ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
         ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-    };
+    ];
 
     public static EmitStringInfo Analyze(string value)
     {

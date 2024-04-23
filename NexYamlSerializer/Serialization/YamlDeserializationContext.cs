@@ -13,13 +13,13 @@ public class YamlDeserializationContext(YamlSerializerOptions options)
 {
     public IYamlFormatterResolver Resolver { get; } = options.Resolver;
     public bool SecureMode { get; set; } = options.SecureMode;
-    readonly Dictionary<Anchor, object?> aliases = new();
+    readonly Dictionary<Anchor, object?> aliases = [];
 
     public void Reset()
     {
         aliases.Clear();
     }
-    public static Type NullableFormatter = typeof(NullableFormatter<>);
+    public static readonly Type NullableFormatter = typeof(NullableFormatter<>);
     public static bool IsNullable(Type value, [MaybeNullWhen(false)] out Type underlyingType)
     {
         return (underlyingType = Nullable.GetUnderlyingType(value)) != null;

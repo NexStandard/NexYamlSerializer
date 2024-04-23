@@ -52,7 +52,7 @@ internal static class Extensionss
         foreach (var typeRestriction in namedType.TypeParameters)
         {
             var constraints = typeRestriction.ConstraintTypes.Select(restriction => restriction.ToDisplayString());
-            List<string> restrictionsString = new();
+            List<string> restrictionsString = [];
             if (constraints.Any())
                 restrictionsString.AddRange(constraints);
             if (typeRestriction.HasNotNullConstraint)
@@ -183,14 +183,14 @@ internal static class Extensionss
             .WhenNot(x => x.IsReadOnly())
             .IsNonStatic();
 
-        List<IMemberSymbolAnalyzer<IFieldSymbol>> fieldAnalyzers = new()
-        {
+        List<IMemberSymbolAnalyzer<IFieldSymbol>> fieldAnalyzers =
+        [
             standardFieldAssignAnalyzer
-        };
-        List<IMemberSymbolAnalyzer<IPropertySymbol>> propertyAnalyzers = new()
-        {
+        ];
+        List<IMemberSymbolAnalyzer<IPropertySymbol>> propertyAnalyzers =
+        [
             standardAssignAnalyzer
-        };
+        ];
         var members = namedTypeSymbol.GetAllMembers(package).AsSymbolInfo(package, propertyAnalyzers, fieldAnalyzers).Reduce();
 
         var memberList = ImmutableList.Create(members.ToArray());

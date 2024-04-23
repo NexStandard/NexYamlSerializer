@@ -55,13 +55,13 @@ internal class DeserializeEmitter
     }
     Dictionary<int, List<SymbolInfo>> MapPropertiesToLength(IEnumerable<SymbolInfo> properties)
     {
-        Dictionary<int, List<SymbolInfo>> map = new();
+        Dictionary<int, List<SymbolInfo>> map = [];
         foreach (var property in properties)
         {
             var propertyLength = property.Name.Length;
             if (!map.ContainsKey(propertyLength))
             {
-                map.Add(propertyLength, new() { property });
+                map.Add(propertyLength, [property]);
             }
             else
             {

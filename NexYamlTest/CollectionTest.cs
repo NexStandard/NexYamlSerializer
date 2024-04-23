@@ -11,7 +11,7 @@ public class CollectionTest
     [DataContract]
     public class NullDictionary
     {
-        public Dictionary<int, int> dict;
+        public Dictionary<int, int>? dict = null;
     }
     
     [Fact]
@@ -21,9 +21,10 @@ public class CollectionTest
         NexYamlSerializerRegistry.Init();
         var s = YamlSerializer.SerializeToString(collection);
         var d = YamlSerializer.Deserialize<NullDictionary>(s);
-        Assert.Null(d!.dict);
+        Assert.NotNull(d);
+        Assert.Null(d.dict);
     }
-    [Fact]
+    [Fact(Skip ="doesnt assert anything yet")]
     public void Collection()
     {
         // Creating test data

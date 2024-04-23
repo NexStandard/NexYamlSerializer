@@ -6,7 +6,7 @@ namespace NexYamlTest.SimpleClasses;
 public class EmptyClass
 {
     public int ID { get; set; }
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         // Check if the object is null or of a different type
         if (obj == null || GetType() != obj.GetType())
@@ -18,7 +18,7 @@ public class EmptyClass
         var other = obj as EmptyClass;
 
         // Compare the ID property for equality
-        return ID == other.ID;
+        return ID == other?.ID;
     }
 
     public override int GetHashCode()

@@ -30,7 +30,8 @@ public class ExpandBuffer<T>(int capacity)
 
     public void Dispose()
     {
-        if (Length < 0) return;
+        if (Length < 0) 
+            return;
         ArrayPool<T>.Shared.Return(buffer);
         Length = -1;
     }
@@ -79,10 +80,10 @@ public class ExpandBuffer<T>(int capacity)
 
     void SetCapacity(int newCapacity)
     {
-        if (buffer.Length >= newCapacity) return;
+        if (buffer.Length >= newCapacity) 
+            return;
 
         var newBuffer = ArrayPool<T>.Shared.Rent(newCapacity);
-        // var newBuffer = new T[newCapacity];
         Array.Copy(buffer, 0, newBuffer, 0, Length);
         ArrayPool<T>.Shared.Return(buffer);
         buffer = newBuffer;
