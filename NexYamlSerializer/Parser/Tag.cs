@@ -3,7 +3,7 @@ using System;
 
 namespace NexVYaml.Parser;
 
-public class Tag(string prefix, string handle) : ITokenContent
+public record class Tag(string prefix, string handle) : ITokenContent
 {
     public string Prefix { get; } = prefix;
     public string Handle { get; } = handle;
@@ -21,7 +21,7 @@ public class Tag(string prefix, string handle) : ITokenContent
         {
             return false;
         }
-        return tagString.IndexOf(Handle, handleIndex, StringComparison.Ordinal) > 0;
+        return tagString.IndexOf(Handle, handleIndex, StringComparison.Ordinal) >= 0;
     }
 }
 

@@ -99,8 +99,7 @@ public static class DeserializeExtensions
             value = (f).Deserialize(ref parser, context);
             return;
         }
-        else
-        if (type.IsInterface || type.IsAbstract || type.IsGenericType)
+        else if (type.IsInterface || type.IsAbstract || type.IsGenericType)
         {
             if (context.SecureMode)
             {
@@ -148,11 +147,6 @@ public static class DeserializeExtensions
                 return;
             }
             value = (T?)formatter.IndirectDeserialize(ref parser, context);
-            // C# forgets the cast of T when invoking Deserialize,
-            // this way we can call the deserialize method with the "real type"
-            // that is in the object
-            // var method = formatter.GetType().GetMethod("Deserialize");
-            // return (T)method.Invoke(formatter, new object[] { parser, this });
         }
         else
         {

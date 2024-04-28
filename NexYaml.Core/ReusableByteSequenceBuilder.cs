@@ -40,11 +40,8 @@ class ReusableByteSequenceSegment : ReadOnlySequenceSegment<byte>
 
     public void Reset()
     {
-        if (returnToPool)
-        {
-            if (MemoryMarshal.TryGetArray(Memory, out var segment) && segment.Array != null)
-                ArrayPool<byte>.Shared.Return(segment.Array);
-        }
+        if (returnToPool && MemoryMarshal.TryGetArray(Memory, out var segment) && segment.Array != null)
+            ArrayPool<byte>.Shared.Return(segment.Array);
         Memory = default;
         RunningIndex = 0;
         Next = null;

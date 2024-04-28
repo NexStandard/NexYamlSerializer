@@ -22,7 +22,7 @@ public class TimeSpanFormatter : YamlSerializer<TimeSpan>
         throw new YamlSerializerException($"Cannot detect a scalar value of TimeSpan : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 
-    public override void Serialize(ISerializationWriter stream, TimeSpan value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, TimeSpan value, DataStyle style)
     {
         Span<byte> buf = stackalloc byte[64];
         if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten))

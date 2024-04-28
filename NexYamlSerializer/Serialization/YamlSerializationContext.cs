@@ -24,11 +24,7 @@ class StyleEnforcer
     }
     public void End()
     {
-        if( count == 0 )
-        {
-            return;
-        }
-        else
+        if(count > 0)
         {
             count--;
         }

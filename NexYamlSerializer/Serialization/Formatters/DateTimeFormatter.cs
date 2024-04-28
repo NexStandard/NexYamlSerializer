@@ -11,7 +11,11 @@ namespace NexVYaml.Serialization;
 public class DateTimeFormatter : YamlSerializer<DateTime>
 {
     public static readonly DateTimeFormatter Instance = new();
-
+    /// <summary>
+    /// See DateTime source which sets FormatOMaxLength to 33
+    /// https://source.dot.net/#System.Private.CoreLib/src/libraries/System.Private.CoreLib/src/System/Globalization/DateTimeFormat.cs,135
+    /// </summary>
+    private const int FormatOMaxLength = 33;
     public override DateTime Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
         if (parser.TryGetScalarAsSpan(out var span) &&
@@ -31,11 +35,10 @@ public class DateTimeFormatter : YamlSerializer<DateTime>
         throw new YamlSerializerException($"Cannot detect a scalar value of DateTime : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 
-    public override void Serialize(ISerializationWriter stream, DateTime value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, DateTime value, DataStyle style)
     {
-        // 2017-06-12T12:30:45.1234578+00:00
-        // Span<byte> buf = stackalloc byte[29];
-        Span<byte> buf = stackalloc byte[64];
+        
+        Span<byte> buf = stackalloc byte[FormatOMaxLength];
         if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten, new StandardFormat('O')))
         {
             stream.Serialize(buf[..bytesWritten]);

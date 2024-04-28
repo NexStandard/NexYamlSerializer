@@ -24,6 +24,7 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
 internal class DictionaryFormatterHelper : IYamlFormatterHelper
 {
     public static void Serialize<TKey,TValue>(ISerializationWriter stream, Dictionary<TKey, TValue> value, DataStyle style = DataStyle.Normal)
+        where TKey : notnull
     {
         YamlSerializer<TKey> keyFormatter = null!;
         YamlSerializer<TValue> valueFormatter = null!;
@@ -85,6 +86,7 @@ internal class DictionaryFormatterHelper : IYamlFormatterHelper
         }
     }
     public static Dictionary<TKey, TValue>? Deserialize<TKey, TValue>(ref YamlParser parser, YamlDeserializationContext context)
+        where TKey : notnull
     {
         if (parser.IsNullScalar())
         {
@@ -124,14 +126,14 @@ internal class DictionaryFormatterHelper : IYamlFormatterHelper
         resolver.RegisterGenericFormatter(typeof(Dictionary<,>), typeof(DictionaryFormatter<,>));
         resolver.RegisterFormatter(typeof(Dictionary<,>));
 
-        resolver.Register(this, typeof(Dictionary<,>), typeof(System.Collections.Generic.IDictionary<,>));
-        resolver.Register(this, typeof(Dictionary<,>), typeof(System.Collections.Generic.IReadOnlyDictionary<,>));
+        resolver.Register(this, typeof(Dictionary<,>), typeof(IDictionary<,>));
+        resolver.Register(this, typeof(Dictionary<,>), typeof(IReadOnlyDictionary<,>));
 
     }
 
     public YamlSerializer Instantiate(Type type)
     {
-        if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IDictionary<,>))
+        if (type.GetGenericTypeDefinition() == typeof(IDictionary<,>))
         {
             var generatorType = typeof(DictionaryFormatter<,>);
             var genericParams = type.GenericTypeArguments;
@@ -140,7 +142,7 @@ internal class DictionaryFormatterHelper : IYamlFormatterHelper
             return (YamlSerializer)Activator.CreateInstance(filledGeneratorType)!;
         }
 
-        if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IReadOnlyDictionary<,>))
+        if (type.GetGenericTypeDefinition() == typeof(IReadOnlyDictionary<,>))
         {
             var generatorType = typeof(DictionaryFormatter<,>);
             var genericParams = type.GenericTypeArguments;

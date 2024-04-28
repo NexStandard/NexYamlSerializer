@@ -22,7 +22,7 @@ public class ListFormatter<T> : YamlSerializer<List<T>?>
         while (!parser.End && parser.CurrentEventType != ParseEventType.SequenceEnd)
         {
             var value = default(T);
-            context.DeserializeWithAlias<T>(ref parser, ref value);
+            context.DeserializeWithAlias(ref parser, ref value);
             list.Add(value!);
         }
 
@@ -30,33 +30,20 @@ public class ListFormatter<T> : YamlSerializer<List<T>?>
         return list;
     }
 
-    public override void Serialize(ISerializationWriter stream, List<T> value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, List<T> value, DataStyle style)
     {
         ListFormatterHelper.Serialize(stream, value, style);
     }
 }
 internal class ListFormatterHelper : IYamlFormatterHelper
 {
-    public static void Serialize<T>(ISerializationWriter stream, List<T> value, DataStyle style = DataStyle.Normal)
+    public static void Serialize<T>(ISerializationWriter stream, List<T> value, DataStyle style)
     {
         stream.BeginSequence(style);
-        if (typeof(T).IsValueType || typeof(T) == typeof(string))
+        foreach (var x in value)
         {
-            var y = stream.SerializeContext.Resolver.GetFormatter<T>();
-            foreach (var x in value)
-            {
-                stream.Write(x, style);
-                // y.Serialize(stream, x, style);
-            }
+            stream.Write(x, style);
         }
-        else
-        {
-            foreach (var x in value)
-            {
-                stream.Write(x, style);
-            }
-        }
-
         stream.EndSequence();
     }
     public void Register(IYamlFormatterResolver resolver)
@@ -67,71 +54,71 @@ internal class ListFormatterHelper : IYamlFormatterHelper
 
         resolver.Register(this, typeof(List<>), typeof(List<>));
 
-        resolver.Register(this, typeof(List<>), typeof(System.Collections.Generic.IList<>));
-        resolver.Register(this, typeof(List<>), typeof(System.Collections.Generic.ICollection<>));
-        resolver.Register(this, typeof(List<>), typeof(System.Collections.Generic.IReadOnlyList<>));
-        resolver.Register(this, typeof(List<>), typeof(System.Collections.Generic.IReadOnlyCollection<>));
-        resolver.Register(this, typeof(List<>), typeof(System.Collections.Generic.IEnumerable<>));
+        resolver.Register(this, typeof(List<>), typeof(IList<>));
+        resolver.Register(this, typeof(List<>), typeof(ICollection<>));
+        resolver.Register(this, typeof(List<>), typeof(IReadOnlyList<>));
+        resolver.Register(this, typeof(List<>), typeof(IReadOnlyCollection<>));
+        resolver.Register(this, typeof(List<>), typeof(IEnumerable<>));
     }
 
-    public YamlSerializer Instantiate(Type type)
+    public YamlSerializer Instantiate(Type target)
     {
-        if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IList<>))
+        if (target.GetGenericTypeDefinition() == typeof(IList<>))
         {
             var generatorType = typeof(ListFormatter<>);
-            var genericParams = type.GenericTypeArguments;
+            var genericParams = target.GenericTypeArguments;
             var param = new Type[] { genericParams[0] };
             var filledGeneratorType = generatorType.MakeGenericType(param);
             return (YamlSerializer)Activator.CreateInstance(filledGeneratorType)!;
         }
 
-        if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.ICollection<>))
+        if (target.GetGenericTypeDefinition() == typeof(ICollection<>))
         {
             var generatorType = typeof(ListFormatter<>);
-            var genericParams = type.GenericTypeArguments;
+            var genericParams = target.GenericTypeArguments;
             var param = new Type[] { genericParams[0] };
             var filledGeneratorType = generatorType.MakeGenericType(param);
             return (YamlSerializer)Activator.CreateInstance(filledGeneratorType)!;
         }
 
-        if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IReadOnlyList<>))
+        if (target.GetGenericTypeDefinition() == typeof(IReadOnlyList<>))
         {
             var generatorType = typeof(ListFormatter<>);
-            var genericParams = type.GenericTypeArguments;
+            var genericParams = target.GenericTypeArguments;
             var param = new Type[] { genericParams[0] };
             var filledGeneratorType = generatorType.MakeGenericType(param);
             return (YamlSerializer)Activator.CreateInstance(filledGeneratorType)!;
         }
 
-        if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IReadOnlyCollection<>))
+        if (target.GetGenericTypeDefinition() == typeof(IReadOnlyCollection<>))
         {
             var generatorType = typeof(ListFormatter<>);
-            var genericParams = type.GenericTypeArguments;
+            var genericParams = target.GenericTypeArguments;
             var param = new Type[] { genericParams[0] };
             var filledGeneratorType = generatorType.MakeGenericType(param);
             return (YamlSerializer)Activator.CreateInstance(filledGeneratorType)!;
         }
 
-        if (type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IEnumerable<>))
+        if (target.GetGenericTypeDefinition() == typeof(IEnumerable<>))
         {
             var generatorType = typeof(ListFormatter<>);
-            var genericParams = type.GenericTypeArguments;
+            var genericParams = target.GenericTypeArguments;
             var param = new Type[] { genericParams[0] };
             var filledGeneratorType = generatorType.MakeGenericType(param);
             return (YamlSerializer)Activator.CreateInstance(filledGeneratorType)!;
         }
 
-        if (type.GetGenericTypeDefinition() == typeof(List<>))
+        if (target.GetGenericTypeDefinition() == typeof(List<>))
         {
             var generatorType = typeof(ListFormatter<>);
-            var genericParams = type.GenericTypeArguments;
+            var genericParams = target.GenericTypeArguments;
             var param = new Type[] { genericParams[0] };
             var filledGeneratorType = generatorType.MakeGenericType(param);
             return (YamlSerializer)Activator.CreateInstance(filledGeneratorType)!;
         }
 
         var gen = typeof(ListFormatter<>);
-        var genParams = type.GenericTypeArguments;
+        var genParams = target.GenericTypeArguments;
         var fillGen = gen.MakeGenericType(genParams);
         return (YamlSerializer)Activator.CreateInstance(fillGen)!;
     }

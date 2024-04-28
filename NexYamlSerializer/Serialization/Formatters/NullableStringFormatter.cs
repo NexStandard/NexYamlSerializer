@@ -18,7 +18,7 @@ public class NullableStringFormatter : YamlSerializer<string?>
         return parser.ReadScalarAsString();
     }
 
-    public override void Serialize(ISerializationWriter stream, string? value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, string? value, DataStyle style)
     {
         stream.Serialize(ref value!);
     }

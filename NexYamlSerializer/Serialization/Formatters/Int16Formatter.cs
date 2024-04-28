@@ -15,7 +15,7 @@ public class Int16Formatter : YamlSerializer<short>
         return checked((short)result);
     }
 
-    public override void Serialize(ISerializationWriter stream, short value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, short value, DataStyle style)
     {
         stream.Serialize(ref value);
     }

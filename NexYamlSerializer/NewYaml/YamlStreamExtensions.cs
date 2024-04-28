@@ -15,31 +15,28 @@ public static class YamlStreamExtensions
 
     public static void Write<T>(this ISerializationWriter stream, T value, DataStyle style = DataStyle.Any)
     {
-        if (value == null)
+        if (value is null)
         {
             ReadOnlySpan<byte> buf = YamlCodes.Null0;
             stream.Serialize(buf);
+            return;
+        }
+        if (value is Array)
+        {
+            var t = typeof(T).GetElementType();
+            var arrayFormatterType = typeof(ArrayFormatter<>).MakeGenericType(t!);
+            var arrayFormatter = (YamlSerializer)Activator.CreateInstance(arrayFormatterType)!;
+
+            arrayFormatter.Serialize(stream, value, style);
+            return;
+        }
+        if (style is DataStyle.Any)
+        {
+            stream.SerializeContext.Serialize(stream, value);
         }
         else
         {
-            if (value is Array)
-            {
-                var t = typeof(T).GetElementType();
-                var arrayFormatterType = typeof(ArrayFormatter<>).MakeGenericType(t!);
-                var arrayFormatter = (YamlSerializer)Activator.CreateInstance(arrayFormatterType)!;
-                arrayFormatter.Serialize(stream, value, style);
-            }
-            else
-            {
-                if(style is DataStyle.Any)
-                {
-                    stream.SerializeContext.Serialize(stream, value);
-                }
-                else
-                {
-                    stream.SerializeContext.Serialize(stream, value, style);
-                }
-            }
+            stream.SerializeContext.Serialize(stream, value, style);
         }
     }
 
@@ -55,7 +52,7 @@ public static class YamlStreamExtensions
         stream.Serialize(ref key);
         stream.Write(value, style);
     }
-    public static void Serialize<T, K>(this ISerializationWriter stream, Dictionary<T, K> value, DataStyle style = DataStyle.Any)
+    public static void Write<T, K>(this ISerializationWriter stream, Dictionary<T, K> value, DataStyle style = DataStyle.Any)
         where T : notnull
     {
         if (value is null)
@@ -67,7 +64,7 @@ public static class YamlStreamExtensions
         where T : notnull
     {
         stream.Serialize(ref key);
-        stream.Serialize(value, style);
+        stream.Write(value, style);
     }
     public static void Write<T>(this ISerializationWriter stream, List<T> value, DataStyle style)
     {

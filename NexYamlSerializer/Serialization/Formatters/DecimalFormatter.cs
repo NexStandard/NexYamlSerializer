@@ -23,7 +23,7 @@ public class DecimalFormatter : YamlSerializer<decimal>
         throw new YamlSerializerException($"Cannot detect a scalar value of decimal : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 
-    public override void Serialize(ISerializationWriter stream, decimal value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, decimal value, DataStyle style)
     {
         stream.Serialize(ref value);
     }

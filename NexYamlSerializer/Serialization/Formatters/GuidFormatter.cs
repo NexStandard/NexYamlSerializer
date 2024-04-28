@@ -22,7 +22,7 @@ public class GuidFormatter : YamlSerializer<Guid>
         throw new YamlSerializerException($"Cannot detect a scalar value of Guid : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 
-    public override void Serialize(ISerializationWriter stream, Guid value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, Guid value, DataStyle style)
     {
         // nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn
         Span<byte> buf = stackalloc byte[64];

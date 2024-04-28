@@ -10,11 +10,11 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 namespace NexVYaml.Emitter;
 
-class YamlEmitterException(string message) : Exception(message)
+public class YamlEmitterException(string message) : Exception(message)
 {
 }
 
- enum EmitState
+enum EmitState
 {
     None,
     BlockSequenceEntry,
@@ -126,7 +126,7 @@ sealed partial class Utf8YamlEmitter
         enforcer.End();
         if (StateStack.Current is not EmitState.BlockMappingKey and not EmitState.FlowMappingKey)
         {
-            throw new Exception($"Invalid block mapping end: {StateStack.Current}");
+            throw new YamlSerializerException($"Invalid block mapping end: {StateStack.Current}");
         }
         if (StateStack.Current is EmitState.BlockMappingKey)
             blockMapKeySerializer.End();

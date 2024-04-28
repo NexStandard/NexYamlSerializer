@@ -8,9 +8,9 @@ using System.Runtime.CompilerServices;
 
 namespace NexVYaml.Parser;
 
-struct ScalarPool(int capacity)
+readonly struct ScalarPool(int capacity) : IDisposable
 {
-    ExpandBuffer<Scalar> queue = new(capacity);
+    readonly ExpandBuffer<Scalar> queue = new(capacity);
 
     public readonly Scalar Rent()
     {

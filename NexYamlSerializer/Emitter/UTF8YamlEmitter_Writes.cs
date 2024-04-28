@@ -124,7 +124,7 @@ internal partial class Utf8YamlEmitter
         var around = ((CurrentIndentLevel + 1) * Options.IndentWidth) + 3;
         if (tagStack.Length > 0)
         {
-            length += StringEncoding.Utf8.GetMaxByteCount(tagStack.Peek().Length) + around; // TODO:
+            length += StringEncoding.Utf8.GetMaxByteCount(tagStack.Peek().Length) + around;
         }
         return length;
     }

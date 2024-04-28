@@ -7,6 +7,7 @@ using NexYaml.Core;
 using Stride.Core;
 using System;
 using System.Buffers;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -95,20 +96,6 @@ public abstract class YamlSerializer
     }
 
     /// <summary>
-    /// Asynchronously serializes the specified object of type <typeparamref name="T"/> or any derived class/interface of type <typeparamref name="T"/> to YAML format 
-    /// and writes it to the given <paramref name="stream"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to be serialized, or any type derived from <typeparamref name="T"/>.</typeparam>
-    /// <param name="value">The object to be serialized.</param>
-    /// <param name="stream">The stream to which the YAML representation will be written asynchronously.</param>
-    /// <param name="options">Optional settings for customizing the YAML serialization process.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    public async static Task SerializeAsync<T>(T value, Stream stream, YamlSerializerOptions? options = null)
-    {
-        await stream.WriteAsync(Serialize(value, options));
-    }
-
-    /// <summary>
     /// Serializes the specified object of type <typeparamref name="T"/> or any derived class/interface of type <typeparamref name="T"/> to YAML format 
     /// and writes it to the provided <paramref name="writer"/> using an <see cref="IBufferWriter{T}"/>.
     /// </summary>
@@ -147,6 +134,20 @@ public abstract class YamlSerializer
         {
             emitter.Dispose();
         }
+    }
+
+    /// <summary>
+    /// Asynchronously serializes the specified object of type <typeparamref name="T"/> or any derived class/interface of type <typeparamref name="T"/> to YAML format 
+    /// and writes it to the given <paramref name="stream"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to be serialized, or any type derived from <typeparamref name="T"/>.</typeparam>
+    /// <param name="value">The object to be serialized.</param>
+    /// <param name="stream">The stream to which the YAML representation will be written asynchronously.</param>
+    /// <param name="options">Optional settings for customizing the YAML serialization process.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    public async static Task SerializeAsync<T>(T value, Stream stream, YamlSerializerOptions? options = null)
+    {
+        await stream.WriteAsync(Serialize(value, options));
     }
 
     /// <summary>
@@ -202,6 +203,31 @@ public abstract class YamlSerializer
     }
 
     /// <summary>
+    /// Deserializes the YAML content using the provided <paramref name="parser"/> to an object of type <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to be deserialized.</typeparam>
+    /// <param name="parser">The YamlParser used for deserializing the YAML content.</param>
+    /// <param name="options">Optional settings for customizing the YAML deserialization process.</param>
+    /// <returns>An object of type <typeparamref name="T"/> representing the deserialized YAML content.</returns>
+    public static T? Deserialize<T>(ref YamlParser parser, YamlSerializerOptions? options = null)
+    {
+        try
+        {
+            options ??= DefaultOptions;
+            var contextLocal = new YamlDeserializationContext(options);
+
+            parser.SkipAfter(ParseEventType.DocumentStart);
+            var value = default(T);
+            contextLocal.DeserializeWithAlias(ref parser, ref value);
+            return value;
+        }
+        finally
+        {
+            parser.Dispose();
+        }
+    }
+
+    /// <summary>
     /// Asynchronously deserializes the YAML content from the specified <paramref name="stream"/> to an object of type <typeparamref name="T"/>.
     /// </summary>
     /// <typeparam name="T">The type of the object to be deserialized.</typeparam>
@@ -222,39 +248,16 @@ public abstract class YamlSerializer
         }
     }
 
-    /// <summary>
-    /// Deserializes the YAML content using the provided <paramref name="parser"/> to an object of type <typeparamref name="T"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to be deserialized.</typeparam>
-    /// <param name="parser">The YamlParser used for deserializing the YAML content.</param>
-    /// <param name="options">Optional settings for customizing the YAML deserialization process.</param>
-    /// <returns>An object of type <typeparamref name="T"/> representing the deserialized YAML content.</returns>
-    public static T? Deserialize<T>(ref YamlParser parser, YamlSerializerOptions? options = null)
-    {
-        try
-        {
-            options ??= DefaultOptions;
-            var contextLocal = new YamlDeserializationContext(options);
 
-            parser.SkipAfter(ParseEventType.DocumentStart);
-            var value = default(T);
-            contextLocal.DeserializeWithAlias<T?>(ref parser, ref value);
-            return value;
-        }
-        finally
-        {
-            parser.Dispose();
-        }
-    }
     protected virtual DataStyle Style { get; } = DataStyle.Any;
-    public abstract void Serialize(ref ISerializationWriter emitter, object value, DataStyle style);
-    public void Serialize(ref ISerializationWriter emitter, object value)
+    public abstract void Serialize(ref ISerializationWriter stream, object value, DataStyle style);
+    public void Serialize(ref ISerializationWriter stream, object value)
     {
-        Serialize(ref emitter, value, Style);
+        Serialize(ref stream, value, Style);
     }
-    public void Serialize(ISerializationWriter emitter, object value, DataStyle style)
+    public void Serialize(ISerializationWriter stream, object value, DataStyle style)
     {
-        Serialize(ref emitter, value, style);
+        Serialize(ref stream, value, style);
     }
     public abstract object? IndirectDeserialize(ref YamlParser parser, YamlDeserializationContext context);
 }

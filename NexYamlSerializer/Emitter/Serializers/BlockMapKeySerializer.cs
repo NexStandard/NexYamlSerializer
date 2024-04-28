@@ -127,12 +127,16 @@ internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : EmitterSerialize
                 emitter.currentElementCount++;
                 break;
             case EmitState.FlowMappingValue:
+                // TODO: What should be here?
+                /*
                 if (!isEmptyMapping)
                 {
                     emitter.IndentationManager.DecreaseIndent();
                 }
                 emitter.StateStack.Current = EmitState.BlockMappingKey;
                 emitter.currentElementCount++;
+                */
+                throw new NotImplementedException();
                 break;
             case EmitState.FlowSequenceEntry:
                 emitter.currentElementCount++;

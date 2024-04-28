@@ -30,7 +30,7 @@ public class InterfaceReadOnlyListFormatter<T> : YamlSerializer<IReadOnlyList<T>
         return list!;
     }
 
-    public override void Serialize(ISerializationWriter stream, IReadOnlyList<T>? value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, IReadOnlyList<T> value, DataStyle style)
     {
         stream.BeginSequence(style);
         YamlSerializer<T>? y = null;
@@ -38,14 +38,14 @@ public class InterfaceReadOnlyListFormatter<T> : YamlSerializer<IReadOnlyList<T>
             y = stream.SerializeContext.Resolver.GetFormatter<T>();
         if(y is not null)
         {
-            foreach (var x in value)
+            foreach (var x in value!)
             {
                 y.Serialize(stream, x,style);
             }
         }
         else
         {
-            foreach (var x in value)
+            foreach (var x in value!)
             {
                 stream.Write(x, style);
             }

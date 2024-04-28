@@ -232,7 +232,7 @@ public partial class YamlParser
 
             case ParseState.End:
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException($"The {nameof(CurrentEventType)} is {CurrentEventType} and it's out of range");
         }
         return true;
     }
@@ -303,7 +303,7 @@ public partial class YamlParser
                     break;
                 }
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException($"The {nameof(CurrentEventType)} is {CurrentEventType} and it's out of range");
         }
     }
 

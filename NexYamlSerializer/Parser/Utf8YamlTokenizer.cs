@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace NexVYaml.Parser;
 
-class YamlTokenizerException(in Marker marker, string message) : Exception($"{message} at {marker}")
+public class YamlTokenizerException(in Marker marker, string message) : Exception($"{message} at {marker}")
 {
 }
 
@@ -44,10 +44,10 @@ public class Utf8YamlTokenizer
     int tokensParsed;
     bool tokenAvailable;
 
-    InsertionQueue<Token> tokens;
+    readonly InsertionQueue<Token> tokens;
     ScalarPool scalarPool;
-    ExpandBuffer<SimpleKeyState> simpleKeyCandidates;
-    ExpandBuffer<int> indents;
+    readonly ExpandBuffer<SimpleKeyState> simpleKeyCandidates;
+    readonly ExpandBuffer<int> indents;
     ExpandBuffer<byte> lineBreaksBuffer;
 
     public Utf8YamlTokenizer(ReadOnlySequence<byte> sequence)
@@ -693,15 +693,12 @@ public class Utf8YamlTokenizer
             buf.Write(currentCode);
             Advance(1, ref reader);
         }
-        else if (directive)
+        else if (directive && !buf.SequenceEqual([(byte)'!']))
         {
-            if (!buf.SequenceEqual([(byte)'!']))
-            {
-                // It's either the '!' tag or not really a tag handle.  If it's a %TAG
-                // directive, it's an error.  If it's a tag token, it must be a part of
-                // URI.
-                throw new YamlTokenizerException(mark, "While parsing a tag directive, did not find expected '!'");
-            }
+            // It's either the '!' tag or not really a tag handle.  If it's a %TAG
+            // directive, it's an error.  If it's a tag token, it must be a part of
+            // URI.
+            throw new YamlTokenizerException(mark, "While parsing a tag directive, did not find expected '!'");
         }
     }
 

@@ -21,8 +21,9 @@ public interface IYamlFormatterResolver
 
 public static class YamlFormatterResolverExtensions
 {
-    public static bool IsNullable(Type value, [NotNullWhen(true)] out Type underlyingType)
+    public static bool IsNullable(Type value, [NotNullWhen(true)] out Type? underlyingType)
     {
-        return (underlyingType = Nullable.GetUnderlyingType(value)!) != null;
+        underlyingType = Nullable.GetUnderlyingType(value);
+        return underlyingType is not null;
     }
 }

@@ -15,7 +15,7 @@ public class Float32Formatter : YamlSerializer<float>
         return result;
     }
 
-    public override void Serialize(ISerializationWriter stream, float value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, float value, DataStyle style)
     {
         stream.Serialize(ref value);
     }

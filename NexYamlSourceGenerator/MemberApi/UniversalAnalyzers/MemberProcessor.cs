@@ -12,11 +12,7 @@ internal class MemberProcessor<T>(IEnumerable<IMemberSymbolAnalyzer<T>> analyzer
 {
     public bool AppliesTo(MemberData<T> symbol)
     {
-        foreach (var analyzer in analyzers)
-        {
-            return analyzer.AppliesTo(symbol);
-        }
-        return false;
+        return analyzers.Any(analyzer => analyzer.AppliesTo(symbol));
     }
 
     public SymbolInfo Analyze(MemberData<T> symbol)

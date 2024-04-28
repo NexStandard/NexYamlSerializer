@@ -15,7 +15,7 @@ public class ByteFormatter : YamlSerializer<byte>
         return checked((byte)result);
     }
 
-    public override void Serialize(ISerializationWriter stream, byte value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, byte value, DataStyle style)
     {
         stream.Serialize(ref value);
     }

@@ -64,7 +64,10 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
         if (FormatterRegistry.FormatterFactories.TryGetValue(origin, out var formatter))
         {
             formatter.TryGetValue(type, out var t);
-            return t.Instantiate(origin);
+            if(t is not null)
+            {
+                return t.Instantiate(origin);
+            }
         }
         var genericFormatter = typeof(EmptyFormatter<>);
         var genericType = genericFormatter.MakeGenericType(origin);
@@ -78,7 +81,7 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
     /// </summary>
     public static void Init()
     {
-        NexYamlSerializerRegistry.Instance.FormatterRegistry = new();
+        Instance.FormatterRegistry = new();
         // Get all loaded assemblies
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
@@ -91,7 +94,7 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
             foreach (var formatterHelperType in formatterHelperTypes)
             {
                 var instance = (IYamlFormatterHelper)Activator.CreateInstance(formatterHelperType)!;
-                instance.Register(NexYamlSerializerRegistry.Instance);
+                instance.Register(Instance);
             }
         }
     }
@@ -109,14 +112,17 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
         var keyType = typeof(T);
         FormatterRegistry.DefinedFormatters[keyType] = formatter;
     }
-    public void RegisterTag(string tag, Type formatterGenericType)
-    {
-        FormatterRegistry.TypeMap[tag] = formatterGenericType;
-    }
+
     public void RegisterFormatter(Type formatter)
     {
         FormatterRegistry.TypeMap[formatter.FullName] = formatter;
     }
+
+    public void RegisterTag(string tag, Type formatterGenericType)
+    {
+        FormatterRegistry.TypeMap[tag] = formatterGenericType;
+    }
+
     public void RegisterGenericFormatter(Type target, Type formatterType)
     {
         FormatterRegistry.GenericFormatterBuffer.TryAdd(target, formatterType);

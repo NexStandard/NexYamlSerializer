@@ -21,7 +21,7 @@ public class ArrayFormatter<T> : YamlSerializer<T[]>
         while (!parser.End && parser.CurrentEventType != ParseEventType.SequenceEnd)
         {
             var value = default(T);
-            context.DeserializeWithAlias<T>(ref parser, ref value);
+            context.DeserializeWithAlias(ref parser, ref value);
             list.Add(value!);
         }
 
@@ -29,7 +29,7 @@ public class ArrayFormatter<T> : YamlSerializer<T[]>
         return [.. list];
     }
 
-    public override void Serialize(ISerializationWriter stream, T[] value, DataStyle style = DataStyle.Any)
+    public override void Serialize(ISerializationWriter stream, T[] value, DataStyle style)
     {
         var contentStyle = DataStyle.Any;
         if (style == DataStyle.Compact)

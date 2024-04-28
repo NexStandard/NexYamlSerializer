@@ -7,11 +7,11 @@ namespace NexVYaml.Serialization;
 
 public class CollectionInterfaceFormatter<T> : YamlSerializer<ICollection<T>?>
 {
-    public override void Serialize(ISerializationWriter stream, ICollection<T>? value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, ICollection<T>? value, DataStyle style)
     {
         stream.BeginSequence(style);
 
-        foreach (var x in value)
+        foreach (var x in value!)
         {
             stream.Write(x);
         }

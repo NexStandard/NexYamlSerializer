@@ -24,7 +24,7 @@ public class KeyValuePairFormatter<TKey, TValue> : YamlSerializer<KeyValuePair<T
         return new KeyValuePair<TKey, TValue>(key, value);
     }
 
-    public override void Serialize(ISerializationWriter stream, KeyValuePair<TKey, TValue> value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, KeyValuePair<TKey, TValue> value, DataStyle style)
     {
         stream.BeginSequence(style);
         stream.Write(value.Key);
@@ -32,7 +32,7 @@ public class KeyValuePairFormatter<TKey, TValue> : YamlSerializer<KeyValuePair<T
         stream.EndSequence();
     }
 }
-file class NexSourceGenerated_NexYamlTest_ComplexCasesTempListHelper : IYamlFormatterHelper
+file sealed class KeyValuePairFormatterHelper : IYamlFormatterHelper
 {
     public void Register(IYamlFormatterResolver resolver)
     {
@@ -41,10 +41,10 @@ file class NexSourceGenerated_NexYamlTest_ComplexCasesTempListHelper : IYamlForm
         resolver.RegisterFormatter(typeof(KeyValuePairFormatter<,>));
     }
 
-    public YamlSerializer Instantiate(Type type)
+    public YamlSerializer Instantiate(Type target)
     {
         var gen = typeof(KeyValuePairFormatter<,>);
-        var genParams = type.GenericTypeArguments;
+        var genParams = target.GenericTypeArguments;
         var fillGen = gen.MakeGenericType(genParams);
         return (YamlSerializer)Activator.CreateInstance(fillGen)!;
     }

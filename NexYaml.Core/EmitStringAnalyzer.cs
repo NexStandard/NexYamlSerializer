@@ -252,8 +252,6 @@ public static class EmitStringAnalyzer
 
     static bool IsReservedWord(string value)
     {
-        var b = new StringBuilder();
-        b.Append('\n');
         switch (value.Length)
         {
             case 1:

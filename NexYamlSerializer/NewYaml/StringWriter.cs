@@ -25,11 +25,8 @@ ref struct StringWriter(Utf8YamlEmitter emitter)
         var scalarStringBuilt = EmitStringAnalyzer.BuildLiteralScalar(value, indentCharCount);
         Span<char> scalarChars = stackalloc char[scalarStringBuilt.Length];
         scalarStringBuilt.CopyTo(0, scalarChars, scalarStringBuilt.Length);
-
-        if (emitter.StateStack.Current is EmitState.BlockMappingValue or EmitState.BlockSequenceEntry)
-        {
-            scalarChars = scalarChars[..^1]; // Remove duplicate last line-break;
-        }
+        
+        scalarChars = TryRemoveDuplicateLineBreak(emitter, scalarChars);
 
         var maxByteCount = StringEncoding.Utf8.GetMaxByteCount(scalarChars.Length);
         var offset = 0;
@@ -37,5 +34,15 @@ ref struct StringWriter(Utf8YamlEmitter emitter)
         emitter.BeginScalar(output, ref offset);
         offset += StringEncoding.Utf8.GetBytes(scalarChars, output[offset..]);
         emitter.EndScalar(output, ref offset);
+    }
+
+    private static Span<char> TryRemoveDuplicateLineBreak(Utf8YamlEmitter emitter, Span<char> scalarChars)
+    {
+        if (emitter.StateStack.Current is EmitState.BlockMappingValue or EmitState.BlockSequenceEntry)
+        {
+            scalarChars = scalarChars[..^1];
+        }
+
+        return scalarChars;
     }
 }

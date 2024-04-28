@@ -14,12 +14,9 @@ internal class DataStyleAnalyzer(ISymbol namedType, ReferencePackage package)
         {
             dataStyle = "DataStyle.Any";
         }
-        if (namedType.TryGetAttribute(package.DataStyleAttribute, out var dataStyleData))
+        if (namedType.TryGetAttribute(package.DataStyleAttribute, out var dataStyleData) && dataStyleData is { AttributeConstructor.Parameters: [.., { Name: "style" }], ConstructorArguments: [.., { Value: int value }] })
         {
-            if (dataStyleData is { AttributeConstructor.Parameters: [.., { Name: "style" }], ConstructorArguments: [.., { Value: int value }] })
-            {
-                dataStyle = GetDataStyle(value);
-            }
+            dataStyle = GetDataStyle(value);
         }
         return dataStyle;
     }

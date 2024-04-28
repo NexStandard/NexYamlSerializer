@@ -8,6 +8,7 @@ using System.Linq;
 namespace NexVYaml.Serialization;
 
 public class DictionaryInterfaceFormatter<TKey, TValue> : YamlSerializer<IDictionary<TKey, TValue>?>
+    where TKey : notnull
 {
     public override IDictionary<TKey, TValue>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
     {
@@ -44,7 +45,7 @@ public class DictionaryInterfaceFormatter<TKey, TValue> : YamlSerializer<IDictio
         }
     }
 
-    public override void Serialize(ISerializationWriter stream, IDictionary<TKey, TValue>? value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, IDictionary<TKey, TValue>? value, DataStyle style)
     {
 
         YamlSerializer<TKey>? keyFormatter = null;
@@ -59,7 +60,7 @@ public class DictionaryInterfaceFormatter<TKey, TValue> : YamlSerializer<IDictio
         if (keyFormatter == null)
         {
             stream.BeginSequence(style);
-            foreach (var x in value)
+            foreach (var x in value!)
             {
                 stream.Write(x, style);
             }
@@ -69,7 +70,7 @@ public class DictionaryInterfaceFormatter<TKey, TValue> : YamlSerializer<IDictio
         {
             stream.BeginMapping(style);
             {
-                foreach (var x in value)
+                foreach (var x in value!)
                 {
                     keyFormatter.Serialize(ref stream, x.Key, style);
                     stream.Write(x.Value, style);
@@ -81,7 +82,7 @@ public class DictionaryInterfaceFormatter<TKey, TValue> : YamlSerializer<IDictio
         {
             stream.BeginMapping(style);
             {
-                foreach (var x in value)
+                foreach (var x in value!)
                 {
                     keyFormatter.Serialize(ref stream, x.Key, style);
                     valueFormatter.Serialize(ref stream, x.Value, style);

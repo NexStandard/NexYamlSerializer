@@ -21,14 +21,14 @@ public class InterfaceEnumerableFormatter<T> : YamlSerializer<IEnumerable<T>?>
         while (!parser.End && parser.CurrentEventType != ParseEventType.SequenceEnd)
         {
             T? value = default;
-            context.DeserializeWithAlias<T>(ref parser, ref value);
+            context.DeserializeWithAlias(ref parser, ref value);
             list.Add(value!);
         }
         parser.ReadWithVerify(ParseEventType.SequenceEnd);
         return list;
     }
 
-    public override void Serialize(ISerializationWriter stream, IEnumerable<T> value, DataStyle style = DataStyle.Normal)
+    public override void Serialize(ISerializationWriter stream, IEnumerable<T> value, DataStyle style)
     {
         stream.BeginSequence(style);
         if (value.Any())
