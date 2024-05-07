@@ -3,6 +3,7 @@ using NexVYaml.Parser;
 using NexYamlSerializer;
 using Stride.Core;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NexVYaml.Serialization;
 
@@ -30,25 +31,13 @@ public class InterfaceReadOnlyListFormatter<T> : YamlSerializer<IReadOnlyList<T>
         return list!;
     }
 
-    public override void Serialize(ISerializationWriter stream, IReadOnlyList<T> value, DataStyle style)
+    public override void Serialize(ISerializationWriter stream, IReadOnlyList<T>? value, DataStyle style)
     {
         stream.BeginSequence(style);
-        YamlSerializer<T>? y = null;
-        if (typeof(T).IsValueType || typeof(T) == typeof(string))
-            y = stream.SerializeContext.Resolver.GetFormatter<T>();
-        if(y is not null)
+
+        foreach (var x in value!)
         {
-            foreach (var x in value!)
-            {
-                y.Serialize(stream, x,style);
-            }
-        }
-        else
-        {
-            foreach (var x in value!)
-            {
-                stream.Write(x, style);
-            }
+            stream.Write(x, style);
         }
 
         stream.EndSequence();

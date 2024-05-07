@@ -30,9 +30,9 @@ public class ListFormatter<T> : YamlSerializer<List<T>?>
         return list;
     }
 
-    public override void Serialize(ISerializationWriter stream, List<T> value, DataStyle style)
+    public override void Serialize(ISerializationWriter stream, List<T>? value, DataStyle style)
     {
-        ListFormatterHelper.Serialize(stream, value, style);
+        ListFormatterHelper.Serialize(stream, value!, style);
     }
 }
 internal class ListFormatterHelper : IYamlFormatterHelper

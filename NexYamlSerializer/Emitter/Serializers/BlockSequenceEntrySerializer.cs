@@ -40,7 +40,7 @@ internal class BlockSequenceEntrySerializer(Utf8YamlEmitter emitter) : EmitterSe
             var offset2 = 0;
             EmitCodes.FlowSequenceSeparator.CopyTo(output2);
             offset2 += EmitCodes.FlowSequenceSeparator.Length;
-            output2[offset2++] = YamlCodes.FlowSequenceStart;
+            output2[offset2 + 1] = YamlCodes.FlowSequenceStart;
             emitter.Writer.Advance(offset);
             switch (emitter.StateStack.Previous)
             {

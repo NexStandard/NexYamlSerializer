@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 namespace NexVYaml.Emitter;
 internal partial class Utf8YamlEmitter
 {
-    static byte[] whiteSpaces =
+    byte[] whiteSpaces =
     [
             (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ',
             (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ',

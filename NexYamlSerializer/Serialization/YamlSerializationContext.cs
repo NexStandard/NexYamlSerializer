@@ -79,8 +79,6 @@ public class YamlSerializationContext(YamlSerializerOptions options)
             {
                 formatt.Serialize(ref stream, value!, style);
             }
-            // var method = formatt.GetType().GetMethod("Serialize");
-            //method.Invoke(formatt, new object[] { emitter, value, this });
         }
         else
         {

@@ -28,16 +28,15 @@ public class InterfaceEnumerableFormatter<T> : YamlSerializer<IEnumerable<T>?>
         return list;
     }
 
-    public override void Serialize(ISerializationWriter stream, IEnumerable<T> value, DataStyle style)
+    public override void Serialize(ISerializationWriter stream, IEnumerable<T>? value, DataStyle style)
     {
         stream.BeginSequence(style);
-        if (value.Any())
+
+        foreach (var x in value!)
         {
-            foreach (var x in value)
-            {
-                stream.Write(x, style);
-            }
+            stream.Write(x, style);
         }
+
         stream.EndSequence();
     }
 }

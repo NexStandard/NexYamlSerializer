@@ -21,7 +21,7 @@ public class KeyValuePairFormatter<TKey, TValue> : YamlSerializer<KeyValuePair<T
         context.DeserializeWithAlias(ref parser, ref key);
         context.DeserializeWithAlias(ref parser, ref value);
         parser.ReadWithVerify(ParseEventType.SequenceEnd);
-        return new KeyValuePair<TKey, TValue>(key, value);
+        return new KeyValuePair<TKey, TValue>(key!, value!);
     }
 
     public override void Serialize(ISerializationWriter stream, KeyValuePair<TKey, TValue> value, DataStyle style)

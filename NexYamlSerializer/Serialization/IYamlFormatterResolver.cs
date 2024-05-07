@@ -9,21 +9,12 @@ public interface IYamlFormatterResolver
     YamlSerializer<T> GetFormatter<T>();
     public YamlSerializer? GetFormatter(Type type);
     YamlSerializer GetFormatter(Type type, Type origin);
-    public void Register(IYamlFormatterHelper yamlFormatterHelper, Type target, Type interfaceType);
     YamlSerializer<T>? GetGenericFormatter<T>();
     public Type GetAliasType(string alias);
+    public void Register(IYamlFormatterHelper yamlFormatterHelper, Type target, Type interfaceType);
     public void RegisterFormatter<T>(YamlSerializer<T> formatter);
-    public void RegisterTag(string tag, Type formatterGenericType);
     public void RegisterFormatter(Type formatter);
+    public void RegisterTag(string tag, Type formatterGenericType);
     public void RegisterGenericFormatter(Type target, Type formatterType);
     public static IYamlFormatterResolver Default { get; set; } = NexYamlSerializerRegistry.Instance;
-}
-
-public static class YamlFormatterResolverExtensions
-{
-    public static bool IsNullable(Type value, [NotNullWhen(true)] out Type? underlyingType)
-    {
-        underlyingType = Nullable.GetUnderlyingType(value);
-        return underlyingType is not null;
-    }
 }

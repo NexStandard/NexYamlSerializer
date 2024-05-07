@@ -2,7 +2,7 @@ using System.Buffers;
 
 namespace NexYaml.Core;
 
-public class ExpandBuffer<T>(int capacity) : IDisposable
+public sealed class ExpandBuffer<T>(int capacity) : IDisposable
 {
     const int MinimumGrow = 4;
     const int GrowFactor = 200;
