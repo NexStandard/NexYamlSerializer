@@ -7,7 +7,7 @@ namespace NexVYaml.Serialization;
 
 public class InterfaceReadOnlyCollectionFormatter<T> : YamlSerializer<IReadOnlyCollection<T>?>
 {
-    public override void Serialize(ISerializationWriter stream, IReadOnlyCollection<T>? value, DataStyle style)
+    protected override void Write(ISerializationWriter stream, IReadOnlyCollection<T>? value, DataStyle style)
     {
         stream.BeginSequence(style);
 

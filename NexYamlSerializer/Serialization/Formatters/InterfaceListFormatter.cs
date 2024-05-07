@@ -7,7 +7,7 @@ namespace NexVYaml.Serialization;
 
 public class InterfaceListFormatter<T> : YamlSerializer<IList<T>>
 {
-    public override void Serialize(ISerializationWriter stream, IList<T> value, DataStyle style)
+    protected override void Write(ISerializationWriter stream, IList<T> value, DataStyle style)
     {
         stream.BeginSequence(style);
         if (value.Count > 0)

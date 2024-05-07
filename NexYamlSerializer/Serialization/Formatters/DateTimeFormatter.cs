@@ -17,7 +17,7 @@ public class DateTimeFormatter : YamlSerializer<DateTime>
     /// </summary>
     private const int FormatOMaxLength = 33;
 
-    public override void Serialize(ISerializationWriter stream, DateTime value, DataStyle style)
+    protected override void Write(ISerializationWriter stream, DateTime value, DataStyle style)
     {
         
         Span<byte> buf = stackalloc byte[FormatOMaxLength];

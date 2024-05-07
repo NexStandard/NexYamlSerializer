@@ -52,12 +52,12 @@ public class YamlSerializationContext(YamlSerializerOptions options)
             {
                 var protectedGeneric = Resolver.GetGenericFormatter<T>();
                 protectedGeneric ??= new EmptyFormatter<T>();
-                protectedGeneric.Serialize(ref stream, value!, style);
+                protectedGeneric.Serialize(stream, value!, style);
             }
             else
             {
                 var protectedFormatter = Resolver.GetFormatter<T>();
-                protectedFormatter.Serialize(ref stream, value!, style);
+                protectedFormatter.Serialize(stream, value!, style);
             }
             return;
         }
@@ -73,22 +73,22 @@ public class YamlSerializationContext(YamlSerializerOptions options)
             // that is in the object
             if(style is DataStyle.Any)
             {
-                formatt.Serialize(ref stream, value!);
+                formatt.Serialize(stream, value!);
             }
             else
             {
-                formatt.Serialize(ref stream, value!, style);
+                formatt.Serialize(stream, value!, style);
             }
         }
         else
         {
             if(style is DataStyle.Any)
             {
-                Resolver.GetFormatter<T>().Serialize(ref stream, value!);
+                Resolver.GetFormatter<T>().Serialize(stream, value!);
             }
             else
             {
-                Resolver.GetFormatter<T>().Serialize(ref stream, value, style);
+                Resolver.GetFormatter<T>().Serialize(stream, value!, style);
             }
         }
     }

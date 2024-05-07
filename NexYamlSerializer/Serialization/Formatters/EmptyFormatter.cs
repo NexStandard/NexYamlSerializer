@@ -11,7 +11,7 @@ public class EmptyFormatter<T> : YamlSerializer<T>
 {
     public static YamlSerializer<T> EmptyS() => new EmptyFormatter<T>();
 
-    public override void Serialize(ISerializationWriter stream, T value, DataStyle style)
+    protected override void Write(ISerializationWriter stream, T value, DataStyle style)
     {
         stream.Serialize(YamlCodes.Null0);
     }

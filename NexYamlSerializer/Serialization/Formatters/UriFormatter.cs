@@ -9,7 +9,7 @@ public class UriFormatter : YamlSerializer<Uri>
 {
     public static readonly UriFormatter Instance = new();
 
-    public override void Serialize(ISerializationWriter stream, Uri value, DataStyle style)
+    protected override void Write(ISerializationWriter stream, Uri value, DataStyle style)
     {
         stream.Write(value.ToString());
     }

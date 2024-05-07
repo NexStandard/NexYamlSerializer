@@ -10,7 +10,7 @@ public class SByteFormatter : YamlSerializer<sbyte>
 {
     public static readonly SByteFormatter Instance = new();
 
-    public override void Serialize(ISerializationWriter stream, sbyte value, DataStyle style)
+    protected override void Write(ISerializationWriter stream, sbyte value, DataStyle style)
     {
         stream.Serialize(ref value);
     }

@@ -8,7 +8,7 @@ namespace NexVYaml.Serialization;
 
 public class InterfaceEnumerableFormatter<T> : YamlSerializer<IEnumerable<T>?>
 {
-    public override void Serialize(ISerializationWriter stream, IEnumerable<T>? value, DataStyle style)
+    protected override void Write(ISerializationWriter stream, IEnumerable<T>? value, DataStyle style)
     {
         stream.BeginSequence(style);
 

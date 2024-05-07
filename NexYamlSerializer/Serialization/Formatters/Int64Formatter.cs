@@ -8,7 +8,7 @@ public class Int64Formatter : YamlSerializer<long>
 {
     public static readonly Int64Formatter Instance = new();
 
-    public override void Serialize(ISerializationWriter stream, long value, DataStyle style)
+    protected override void Write(ISerializationWriter stream, long value, DataStyle style)
     {
         stream.Serialize(ref value);
     }

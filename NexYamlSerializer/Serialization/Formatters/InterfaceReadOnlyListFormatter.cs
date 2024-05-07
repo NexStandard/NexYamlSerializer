@@ -9,7 +9,7 @@ namespace NexVYaml.Serialization;
 
 public class InterfaceReadOnlyListFormatter<T> : YamlSerializer<IReadOnlyList<T>?>
 {
-    public override void Serialize(ISerializationWriter stream, IReadOnlyList<T>? value, DataStyle style)
+    protected override void Write(ISerializationWriter stream, IReadOnlyList<T>? value, DataStyle style)
     {
         stream.BeginSequence(style);
 

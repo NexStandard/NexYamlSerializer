@@ -8,7 +8,7 @@ public class Int16Formatter : YamlSerializer<short>
 {
     public static readonly Int16Formatter Instance = new();
 
-    public override void Serialize(ISerializationWriter stream, short value, DataStyle style)
+    protected override void Write(ISerializationWriter stream, short value, DataStyle style)
     {
         stream.Serialize(ref value);
     }

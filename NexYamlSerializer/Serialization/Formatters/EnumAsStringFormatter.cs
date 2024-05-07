@@ -62,7 +62,7 @@ public class EnumAsStringFormatter<T> : YamlSerializer<T>
         return buf.ToString();
     }
 
-    public override void Serialize(ISerializationWriter stream, T value, DataStyle style)
+    protected override void Write(ISerializationWriter stream, T value, DataStyle style)
     {
         if (ValueNameMapping.TryGetValue(value, out var name))
         {

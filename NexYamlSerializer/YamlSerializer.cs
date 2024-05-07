@@ -250,23 +250,30 @@ public abstract class YamlSerializer
 
 
     protected virtual DataStyle Style { get; } = DataStyle.Any;
-    public abstract void Serialize(ref ISerializationWriter stream, object value, DataStyle style);
-    public void Serialize(ref ISerializationWriter stream, object value)
-    {
-        Serialize(ref stream, value, Style);
-    }
-    public void Serialize(ISerializationWriter stream, object value, DataStyle style)
-    {
-        Serialize(ref stream, value, style);
-    }
-
+    public abstract void Serialize(ISerializationWriter stream, object value, DataStyle style);
+    public abstract void Serialize(ISerializationWriter stream, object value);
     public abstract void Deserialize(YamlParser parser, YamlDeserializationContext context, ref object? value);
 }
 public abstract class YamlSerializer<T> : YamlSerializer
 {
-    public override void Serialize(ref ISerializationWriter stream, object value, DataStyle style) // TODO: readd when serializer is independent from style  = DataStyle.Any
+    public override void Serialize(ISerializationWriter stream, object value)
     {
-        Serialize(ref stream, (T)value, style);
+        Serialize(stream, (T)value, Style);
+    }
+    public override void Serialize(ISerializationWriter stream, object value, DataStyle style)
+    {
+        Serialize(stream, (T)value, style);
+    }
+    public void Serialize(ISerializationWriter stream, T value, DataStyle style)
+    {
+        if (value is null)
+        {
+            stream.WriteNull();
+        }
+        else
+        {
+            Write(stream, value, style);
+        }
     }
     public override void Deserialize(YamlParser parser, YamlDeserializationContext context, ref object? value)
     {
@@ -286,16 +293,6 @@ public abstract class YamlSerializer<T> : YamlSerializer
     }
     protected abstract void Read(YamlParser parser, YamlDeserializationContext context, ref T value);
 
-    public void Serialize(ref ISerializationWriter stream, T value, DataStyle style) // TODO: readd when serializer is independent from style  = DataStyle.Any
-    {
-        if (value is null)
-        {
-            stream.WriteNull();
-        }
-        else
-        {
-            Serialize(stream, value, style);
-        }
-    }
-    public abstract void Serialize(ISerializationWriter stream, T value, DataStyle style); // TODO: readd when serializer is independent from style  = DataStyle.Any
+
+    protected abstract void Write(ISerializationWriter stream, T value, DataStyle style);
 }

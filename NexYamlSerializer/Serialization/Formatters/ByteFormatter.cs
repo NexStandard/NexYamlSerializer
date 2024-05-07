@@ -8,7 +8,7 @@ public class ByteFormatter : YamlSerializer<byte>
 {
     public static readonly ByteFormatter Instance = new();
 
-    public override void Serialize(ISerializationWriter stream, byte value, DataStyle style)
+    protected override void Write(ISerializationWriter stream, byte value, DataStyle style)
     {
         stream.Serialize(ref value);
     }

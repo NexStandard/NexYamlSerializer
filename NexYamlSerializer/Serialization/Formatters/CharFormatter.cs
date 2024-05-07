@@ -10,7 +10,7 @@ public class CharFormatter : YamlSerializer<char>
 {
     public static readonly CharFormatter Instance = new();
 
-    public override void Serialize(ISerializationWriter stream, char value, DataStyle style)
+    protected override void Write(ISerializationWriter stream, char value, DataStyle style)
     {
         stream.Serialize(ref value);
     }

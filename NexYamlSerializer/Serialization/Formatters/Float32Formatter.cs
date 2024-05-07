@@ -8,7 +8,7 @@ public class Float32Formatter : YamlSerializer<float>
 {
     public static readonly Float32Formatter Instance = new();
 
-    public override void Serialize(ISerializationWriter stream, float value, DataStyle style)
+    protected override void Write(ISerializationWriter stream, float value, DataStyle style)
     {
         stream.Serialize(ref value);
     }
