@@ -11,20 +11,21 @@ public class DecimalFormatter : YamlSerializer<decimal>
 {
     public static readonly DecimalFormatter Instance = new();
 
-    public override decimal Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-    {
-        if (parser.TryGetScalarAsSpan(out var span) &&
-            Utf8Parser.TryParse(span, out decimal value, out var bytesConsumed) &&
-            bytesConsumed == span.Length)
-        {
-            parser.Read();
-            return value;
-        }
-        throw new YamlSerializerException($"Cannot detect a scalar value of decimal : {parser.CurrentEventType} {parser.GetScalarAsString()}");
-    }
-
     public override void Serialize(ISerializationWriter stream, decimal value, DataStyle style)
     {
         stream.Serialize(ref value);
+    }
+
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref decimal value)
+    {
+        if (parser.TryGetScalarAsSpan(out var span) &&
+                   Utf8Parser.TryParse(span, out decimal val, out var bytesConsumed) &&
+                   bytesConsumed == span.Length)
+        {
+            parser.Read();
+            value = val;
+            return;
+        }
+        throw new YamlSerializerException($"Cannot detect a scalar value of decimal : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 }

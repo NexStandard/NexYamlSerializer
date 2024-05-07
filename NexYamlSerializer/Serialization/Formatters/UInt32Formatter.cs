@@ -10,15 +10,15 @@ public class UInt32Formatter : YamlSerializer<uint>
 {
     public static readonly UInt32Formatter Instance = new();
 
-    public override uint Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-    {
-        var result = parser.GetScalarAsUInt32();
-        parser.Read();
-        return result;
-    }
-
     public override void Serialize(ISerializationWriter stream, uint value, DataStyle style)
     {
         stream.Serialize(ref value);
+    }
+
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref uint value)
+    {
+        var result = parser.GetScalarAsUInt32();
+        parser.Read();
+        value = result;
     }
 }

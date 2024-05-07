@@ -8,15 +8,15 @@ public class Float64Formatter : YamlSerializer<double>
 {
     public static readonly Float64Formatter Instance = new();
 
-    public override double Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-    {
-        var result = parser.GetScalarAsDouble();
-        parser.Read();
-        return result;
-    }
-
     public override void Serialize(ISerializationWriter stream, double value, DataStyle style)
     {
         stream.Serialize(ref value);
+    }
+
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref double value)
+    {
+        var result = parser.GetScalarAsDouble();
+        parser.Read();
+        value = result;
     }
 }

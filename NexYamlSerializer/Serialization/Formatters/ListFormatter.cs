@@ -8,31 +8,25 @@ namespace NexVYaml.Serialization;
 
 public class ListFormatter<T> : YamlSerializer<List<T>?>
 {
-    public override List<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    public override void Serialize(ISerializationWriter stream, List<T>? value, DataStyle style)
     {
-        if (parser.IsNullScalar())
-        {
-            parser.Read();
-            return default;
-        }
+        ListFormatterHelper.Serialize(stream, value!, style);
+    }
 
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref List<T>? value)
+    {
         parser.ReadWithVerify(ParseEventType.SequenceStart);
 
         var list = new List<T>();
         while (!parser.End && parser.CurrentEventType != ParseEventType.SequenceEnd)
         {
-            var value = default(T);
-            context.DeserializeWithAlias(ref parser, ref value);
-            list.Add(value!);
+            var val = default(T);
+            context.DeserializeWithAlias(ref parser, ref val);
+            list.Add(val!);
         }
 
         parser.ReadWithVerify(ParseEventType.SequenceEnd);
-        return list;
-    }
-
-    public override void Serialize(ISerializationWriter stream, List<T>? value, DataStyle style)
-    {
-        ListFormatterHelper.Serialize(stream, value!, style);
+        value = list;
     }
 }
 internal class ListFormatterHelper : IYamlFormatterHelper

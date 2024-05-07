@@ -10,15 +10,15 @@ public class CharFormatter : YamlSerializer<char>
 {
     public static readonly CharFormatter Instance = new();
 
-    public override char Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-    {
-        var result = parser.GetScalarAsUInt32();
-        parser.Read();
-        return checked((char)result);
-    }
-
     public override void Serialize(ISerializationWriter stream, char value, DataStyle style)
     {
         stream.Serialize(ref value);
+    }
+
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref char value)
+    {
+        var result = parser.GetScalarAsUInt32();
+        parser.Read();
+        value = checked((char)result);
     }
 }

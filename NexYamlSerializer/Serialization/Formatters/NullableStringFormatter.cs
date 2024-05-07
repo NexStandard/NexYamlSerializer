@@ -6,21 +6,15 @@ namespace NexVYaml.Serialization;
 
 public class NullableStringFormatter : YamlSerializer<string?>
 {
-    public static readonly NullableStringFormatter Instance = new();
-
-    public override string? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-    {
-        if (parser.IsNullScalar())
-        {
-            parser.Read();
-            return null;
-        }
-        return parser.ReadScalarAsString();
-    }
-
+    public static readonly NullableStringFormatter Instance = new NullableStringFormatter();
     public override void Serialize(ISerializationWriter stream, string? value, DataStyle style)
     {
         stream.Serialize(ref value!);
+    }
+
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref string? value)
+    {
+        value = parser.ReadScalarAsString();
     }
 }
 

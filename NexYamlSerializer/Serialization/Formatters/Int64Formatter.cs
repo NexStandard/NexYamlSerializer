@@ -8,15 +8,15 @@ public class Int64Formatter : YamlSerializer<long>
 {
     public static readonly Int64Formatter Instance = new();
 
-    public override long Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-    {
-        var result = parser.GetScalarAsInt64();
-        parser.Read();
-        return result;
-    }
-
     public override void Serialize(ISerializationWriter stream, long value, DataStyle style)
     {
         stream.Serialize(ref value);
+    }
+
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref long value)
+    {
+        var result = parser.GetScalarAsInt64();
+        parser.Read();
+        value = result;
     }
 }

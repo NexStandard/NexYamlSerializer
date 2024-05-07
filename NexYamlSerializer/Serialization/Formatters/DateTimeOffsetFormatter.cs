@@ -11,19 +11,6 @@ public class DateTimeOffsetFormatter : YamlSerializer<DateTimeOffset>
 {
     public static readonly DateTimeOffsetFormatter Instance = new();
 
-    public override DateTimeOffset Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-    {
-        if (parser.TryGetScalarAsSpan(out var span) &&
-            Utf8Parser.TryParse(span, out DateTimeOffset value, out var bytesConsumed) &&
-            bytesConsumed == span.Length)
-        {
-            parser.Read();
-            return value;
-        }
-
-        throw new YamlSerializerException($"Cannot detect a scalar value of DateTimeOffset : {parser.CurrentEventType} {parser.GetScalarAsString()}");
-    }
-
     public override void Serialize(ISerializationWriter stream, DateTimeOffset value, DataStyle style)
     {
         Span<byte> buf = stackalloc byte[64];
@@ -35,5 +22,18 @@ public class DateTimeOffsetFormatter : YamlSerializer<DateTimeOffset>
         {
             throw new YamlSerializerException($"Cannot format {value}");
         }
+    }
+
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref DateTimeOffset value)
+    {
+        if (parser.TryGetScalarAsSpan(out var span) &&
+             Utf8Parser.TryParse(span, out DateTimeOffset val, out var bytesConsumed) &&
+             bytesConsumed == span.Length)
+        {
+            parser.Read();
+            value = val;
+        }
+
+        throw new YamlSerializerException($"Cannot detect a scalar value of DateTimeOffset : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 }

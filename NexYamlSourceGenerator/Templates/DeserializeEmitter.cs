@@ -13,11 +13,6 @@ internal class DeserializeEmitter
         package.MemberSymbols.ForEach(member => objectCreation.Append(member.Name + "=__TEMP__" + member.Name + ","));
 
         return $$"""
-                if (parser.IsNullScalar())
-                {
-                    parser.Read();
-                    return default;
-                }
                 parser.ReadWithVerify(ParseEventType.MappingStart);
         {{package.CreateTempMembers()}}
                 while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
@@ -48,7 +43,7 @@ internal class DeserializeEmitter
                      {{objectCreation.ToString().Trim(',')}}
                  };
              
-                 return __TEMP__RESULT;
+                 value = __TEMP__RESULT;
         """;
     }
     Dictionary<int, List<SymbolInfo>> MapPropertiesToLength(IEnumerable<SymbolInfo> properties)

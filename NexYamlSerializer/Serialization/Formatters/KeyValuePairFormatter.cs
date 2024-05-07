@@ -8,28 +8,23 @@ namespace NexVYaml.Serialization;
 
 public class KeyValuePairFormatter<TKey, TValue> : YamlSerializer<KeyValuePair<TKey, TValue>>
 {
-    public override KeyValuePair<TKey, TValue> Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-    {
-        if (parser.IsNullScalar())
-        {
-            return default;
-        }
-
-        parser.ReadWithVerify(ParseEventType.SequenceStart);
-        var key = default(TKey);
-        var value = default(TValue);
-        context.DeserializeWithAlias(ref parser, ref key);
-        context.DeserializeWithAlias(ref parser, ref value);
-        parser.ReadWithVerify(ParseEventType.SequenceEnd);
-        return new KeyValuePair<TKey, TValue>(key!, value!);
-    }
-
     public override void Serialize(ISerializationWriter stream, KeyValuePair<TKey, TValue> value, DataStyle style)
     {
         stream.BeginSequence(style);
         stream.Write(value.Key);
         stream.Write(value.Value);
         stream.EndSequence();
+    }
+
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref KeyValuePair<TKey, TValue> value)
+    {
+        parser.ReadWithVerify(ParseEventType.SequenceStart);
+        var key = default(TKey);
+        var val = default(TValue);
+        context.DeserializeWithAlias(ref parser, ref key);
+        context.DeserializeWithAlias(ref parser, ref val);
+        parser.ReadWithVerify(ParseEventType.SequenceEnd);
+        value = new KeyValuePair<TKey, TValue>(key!, val!);
     }
 }
 file sealed class KeyValuePairFormatterHelper : IYamlFormatterHelper

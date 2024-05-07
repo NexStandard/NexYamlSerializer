@@ -8,15 +8,15 @@ public class BooleanFormatter : YamlSerializer<bool>
 {
     public static readonly BooleanFormatter Instance = new();
 
-    public override bool Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-    {
-        var result = parser.GetScalarAsBool();
-        parser.Read();
-        return result;
-    }
-
     public override void Serialize(ISerializationWriter stream, bool value, DataStyle style)
     {
         stream.Serialize(ref value);
+    }
+
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref bool value)
+    {
+        var result = parser.GetScalarAsBool();
+        parser.Read();
+        value = result;
     }
 }

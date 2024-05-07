@@ -259,7 +259,8 @@ public abstract class YamlSerializer
     {
         Serialize(ref stream, value, style);
     }
-    public abstract object? IndirectDeserialize(ref YamlParser parser, YamlDeserializationContext context);
+
+    public abstract void Deserialize(YamlParser parser, YamlDeserializationContext context, ref object? value);
 }
 public abstract class YamlSerializer<T> : YamlSerializer
 {
@@ -267,6 +268,24 @@ public abstract class YamlSerializer<T> : YamlSerializer
     {
         Serialize(ref stream, (T)value, style);
     }
+    public override void Deserialize(YamlParser parser, YamlDeserializationContext context, ref object? value)
+    {
+        var val = (T)value!;
+        Deserialize(parser, context, ref val);
+        value = val;
+    }
+    public void Deserialize(YamlParser parser, YamlDeserializationContext context, [MaybeNull] ref T value)
+    {
+        if (parser.IsNullScalar())
+        {
+            parser.Read();
+            value = default;
+            return;
+        }
+        Read(parser, context, ref value);
+    }
+    protected abstract void Read(YamlParser parser, YamlDeserializationContext context, ref T value);
+
     public void Serialize(ref ISerializationWriter stream, T value, DataStyle style) // TODO: readd when serializer is independent from style  = DataStyle.Any
     {
         if (value is null)
@@ -279,16 +298,4 @@ public abstract class YamlSerializer<T> : YamlSerializer
         }
     }
     public abstract void Serialize(ISerializationWriter stream, T value, DataStyle style); // TODO: readd when serializer is independent from style  = DataStyle.Any
-
-    public override object? IndirectDeserialize(ref YamlParser parser, YamlDeserializationContext context)
-    {
-        return Deserialize(ref parser, context);
-    }
-    /// <summary>
-    /// Deserializes a YAML representation from the provided <see cref="YamlParser"/> and <see cref="YamlDeserializationContext"/>.
-    /// </summary>
-    /// <param name="parser">The <see cref="YamlParser"/> containing the YAML data to be deserialized.</param>
-    /// <param name="context">The <see cref="YamlDeserializationContext"/> providing deserialization context.</param>
-    /// <returns>The deserialized value of type <typeparamref name="T"/>.</returns>
-    public abstract T? Deserialize(ref YamlParser parser, YamlDeserializationContext context);
 }

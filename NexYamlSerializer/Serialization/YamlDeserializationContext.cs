@@ -27,7 +27,9 @@ public class YamlDeserializationContext(YamlSerializerOptions options)
 
     public T[]? DeserializeArray<T>(ref YamlParser parser)
     {
-        return new ArrayFormatter<T>().Deserialize(ref parser, this);
+        T[]? result = default;
+        new ArrayFormatter<T>().Deserialize(parser, this, ref result);
+        return result;
     }
     public void DeserializeWithAlias<T>(YamlSerializer<T> innerFormatter, ref YamlParser parser, ref T value)
     {
@@ -39,13 +41,12 @@ public class YamlDeserializationContext(YamlSerializerOptions options)
 
         var withAnchor = parser.TryGetCurrentAnchor(out var anchor);
 
-        var result = innerFormatter.Deserialize(ref parser, this);
+        innerFormatter.Deserialize(parser, this, ref value);
 
         if (withAnchor)
         {
-            RegisterAnchor(anchor, result);
+            RegisterAnchor(anchor, value);
         }
-        value = result!;
         return;
     }
 
@@ -96,11 +97,12 @@ public static class DeserializeExtensions
             var genericFilledFormatter = YamlDeserializationContext.NullableFormatter.MakeGenericType(underlyingType);
             // TODO : Nullable makes sense?
             var f = (YamlSerializer<T?>?)Activator.CreateInstance(genericFilledFormatter)!;
-            value = (f).Deserialize(ref parser, context);
+            f.Deserialize(parser, context, ref value);
             return;
         }
         else if (type.IsInterface || type.IsAbstract || type.IsGenericType)
         {
+            
             if (context.SecureMode)
             {
                 context.DeserializeWithAlias(context.Resolver.GetFormatter<T>(), ref parser, ref value);
@@ -127,7 +129,7 @@ public static class DeserializeExtensions
             else
             {
                 Type alias;
-                // TODO: Problem is that !!null etc gets consumed as Tag instead of a scalar value
+                // TODO: Problem is that !!null etc gets consumed as Tag on collections instead of a scalar value
                 if (parser.IsNullScalar())
                 {
                     parser.Read();
@@ -146,11 +148,14 @@ public static class DeserializeExtensions
                 value = default;
                 return;
             }
-            value = (T?)formatter.IndirectDeserialize(ref parser, context);
+            var valueObject = (object)value;
+            formatter.Deserialize(parser, context, ref valueObject);
+            value = (T?)valueObject;
         }
         else
         {
-            value = context.Resolver.GetFormatter<T>().Deserialize(ref parser, context);
+            context.Resolver.GetFormatter<T>().Deserialize(parser, context, ref value!);
+            var x = value!;
         }
     }
     public static void DeserializeWithAlias(this YamlDeserializationContext context, ref YamlParser parser, ref int value)

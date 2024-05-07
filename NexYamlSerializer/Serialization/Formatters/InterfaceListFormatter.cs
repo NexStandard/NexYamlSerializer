@@ -7,28 +7,6 @@ namespace NexVYaml.Serialization;
 
 public class InterfaceListFormatter<T> : YamlSerializer<IList<T>>
 {
-    public override IList<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-    {
-        if (parser.IsNullScalar())
-        {
-            parser.Read();
-            return default;
-        }
-
-        parser.ReadWithVerify(ParseEventType.SequenceStart);
-
-        var list = new List<T>();
-        while (!parser.End && parser.CurrentEventType != ParseEventType.SequenceEnd)
-        {
-            var value = default(T);
-            context.DeserializeWithAlias(ref parser, ref value);
-            list.Add(value!);
-        }
-
-        parser.ReadWithVerify(ParseEventType.SequenceEnd);
-        return list!;
-    }
-
     public override void Serialize(ISerializationWriter stream, IList<T> value, DataStyle style)
     {
         stream.BeginSequence(style);
@@ -40,5 +18,21 @@ public class InterfaceListFormatter<T> : YamlSerializer<IList<T>>
             }
         }
         stream.EndSequence();
+    }
+
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref IList<T> value)
+    {
+        parser.ReadWithVerify(ParseEventType.SequenceStart);
+
+        var list = new List<T>();
+        while (!parser.End && parser.CurrentEventType != ParseEventType.SequenceEnd)
+        {
+            var val = default(T);
+            context.DeserializeWithAlias(ref parser, ref val);
+            list.Add(val!);
+        }
+
+        parser.ReadWithVerify(ParseEventType.SequenceEnd);
+        value = list!;
     }
 }

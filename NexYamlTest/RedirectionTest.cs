@@ -17,6 +17,7 @@ public class RedirectionTest
         };
         var s = YamlSerializer.Serialize(dInterface);
         var deserialized = YamlSerializer.Deserialize<IDInterface>(s);
+        Assert.NotNull(deserialized);
         Assert.Equal(dInterface.Id, deserialized.Id);
     }
     [Fact]

@@ -5,21 +5,8 @@ using Stride.Core;
 
 namespace NexVYaml.Serialization;
 
-public class NullableFormatter<T> : YamlSerializer<T?>, IYamlFormatter<T?> where T : struct
+public class NullableFormatter<T> : YamlSerializer<T?> where T : struct
 {
-    public override T? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-    {
-        if (parser.IsNullScalar())
-        {
-            parser.Read();
-            return null;
-        }
-        var value = default(T);
-        context.DeserializeWithAlias(ref parser, ref value);
-        var x = new T?(value);
-        return x;
-    }
-
     public override void Serialize(ISerializationWriter stream, T? value, DataStyle style)
     {
         if (value is null)
@@ -31,22 +18,17 @@ public class NullableFormatter<T> : YamlSerializer<T?>, IYamlFormatter<T?> where
             stream.Write(value.Value);
         }
     }
+
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref T? value)
+    {
+        var val = default(T);
+        context.DeserializeWithAlias(ref parser, ref val);
+        value =  new T?(val);
+    }
 }
-public sealed class StaticNullableFormatter<T>(YamlSerializer<T> underlyingFormatter) : YamlSerializer<T?>, IYamlFormatter<T?> where T : struct
+public sealed class StaticNullableFormatter<T>(YamlSerializer<T> underlyingFormatter) : YamlSerializer<T?> where T : struct
 {
     readonly YamlSerializer<T> underlyingSerializer = underlyingFormatter;
-
-    public override T? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-    {
-        if (parser.IsNullScalar())
-        {
-            parser.Read();
-            return null;
-        }
-        var value = default(T);
-        context.DeserializeWithAlias(ref parser,ref value);
-        return value;
-    }
 
     public override void Serialize(ISerializationWriter stream, T? value, DataStyle style)
     {
@@ -58,5 +40,12 @@ public sealed class StaticNullableFormatter<T>(YamlSerializer<T> underlyingForma
         {
             stream.Write(YamlCodes.Null0);
         }
+    }
+
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref T? value)
+    {
+        var val = default(T);
+        context.DeserializeWithAlias(ref parser, ref val);
+        value = val;
     }
 }

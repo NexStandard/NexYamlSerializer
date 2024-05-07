@@ -10,13 +10,14 @@ namespace NexYamlSerializer.Serialization.Formatters;
 public class EmptyFormatter<T> : YamlSerializer<T>
 {
     public static YamlSerializer<T> EmptyS() => new EmptyFormatter<T>();
-    public override T? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-    {
-        return default!;
-    }
 
     public override void Serialize(ISerializationWriter stream, T value, DataStyle style)
     {
         stream.Serialize(YamlCodes.Null0);
+    }
+
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref T value)
+    {
+        value = default!;
     }
 }

@@ -19,25 +19,19 @@ public class CollectionInterfaceFormatter<T> : YamlSerializer<ICollection<T>?>
         stream.EndSequence();
     }
 
-    public override ICollection<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref ICollection<T>? value)
     {
-        if (parser.IsNullScalar())
-        {
-            parser.Read();
-            return default;
-        }
-
         parser.ReadWithVerify(ParseEventType.SequenceStart);
 
         var list = new List<T?>();
         while (!parser.End && parser.CurrentEventType != ParseEventType.SequenceEnd)
         {
-            var value = default(T);
+            var val = default(T);
             context.DeserializeWithAlias(ref parser, ref value);
-            list.Add(value);
+            list.Add(val);
         }
 
         parser.ReadWithVerify(ParseEventType.SequenceEnd);
-        return list!;
+        value = list!;
     }
 }

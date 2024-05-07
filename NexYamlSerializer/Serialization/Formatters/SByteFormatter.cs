@@ -10,15 +10,15 @@ public class SByteFormatter : YamlSerializer<sbyte>
 {
     public static readonly SByteFormatter Instance = new();
 
-    public override sbyte Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-    {
-        var result = parser.GetScalarAsInt32();
-        parser.Read();
-        return checked((sbyte)result);
-    }
-
     public override void Serialize(ISerializationWriter stream, sbyte value, DataStyle style)
     {
         stream.Serialize(ref value);
+    }
+
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref sbyte value)
+    {
+        var result = parser.GetScalarAsInt32();
+        parser.Read();
+        value = checked((sbyte)result);
     }
 }

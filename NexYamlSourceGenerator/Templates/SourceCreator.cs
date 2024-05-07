@@ -61,7 +61,7 @@ file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSeria
         stream.EndMapping();
     }}
 
-    public override {info.NameDefinition}{(info.TypeKind == TypeKind.Struct ? "" : "?")} Deserialize(ref YamlParser parser, YamlDeserializationContext context)
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref {info.NameDefinition}{(info.TypeKind == TypeKind.Struct ? "" : "?")} value)
     {{
 {package.CreateDeserialize()}
     }}

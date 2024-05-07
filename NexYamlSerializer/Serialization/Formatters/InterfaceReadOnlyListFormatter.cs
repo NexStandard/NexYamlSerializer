@@ -9,28 +9,6 @@ namespace NexVYaml.Serialization;
 
 public class InterfaceReadOnlyListFormatter<T> : YamlSerializer<IReadOnlyList<T>?>
 {
-    public override IReadOnlyList<T>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-    {
-        if (parser.IsNullScalar())
-        {
-            parser.Read();
-            return default;
-        }
-
-        parser.ReadWithVerify(ParseEventType.SequenceStart);
-
-        var list = new List<T>();
-        while (!parser.End && parser.CurrentEventType != ParseEventType.SequenceEnd)
-        {
-            var value = default(T);
-            context.DeserializeWithAlias(ref parser, ref value);
-            list.Add(value!);
-        }
-
-        parser.ReadWithVerify(ParseEventType.SequenceEnd);
-        return list!;
-    }
-
     public override void Serialize(ISerializationWriter stream, IReadOnlyList<T>? value, DataStyle style)
     {
         stream.BeginSequence(style);
@@ -41,5 +19,21 @@ public class InterfaceReadOnlyListFormatter<T> : YamlSerializer<IReadOnlyList<T>
         }
 
         stream.EndSequence();
+    }
+
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref IReadOnlyList<T>? value)
+    {
+        parser.ReadWithVerify(ParseEventType.SequenceStart);
+
+        var list = new List<T>();
+        while (!parser.End && parser.CurrentEventType != ParseEventType.SequenceEnd)
+        {
+            var val = default(T);
+            context.DeserializeWithAlias(ref parser, ref val);
+            list.Add(val!);
+        }
+
+        parser.ReadWithVerify(ParseEventType.SequenceEnd);
+        value = list!;
     }
 }

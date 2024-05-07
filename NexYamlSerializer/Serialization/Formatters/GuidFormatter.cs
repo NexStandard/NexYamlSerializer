@@ -10,18 +10,6 @@ public class GuidFormatter : YamlSerializer<Guid>
 {
     public static readonly GuidFormatter Instance = new();
 
-    public override Guid Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-    {
-        if (parser.TryGetScalarAsSpan(out var span) &&
-            Utf8Parser.TryParse(span, out Guid guid, out var bytesConsumed) &&
-            bytesConsumed == span.Length)
-        {
-            parser.Read();
-            return guid;
-        }
-        throw new YamlSerializerException($"Cannot detect a scalar value of Guid : {parser.CurrentEventType} {parser.GetScalarAsString()}");
-    }
-
     public override void Serialize(ISerializationWriter stream, Guid value, DataStyle style)
     {
         // nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn
@@ -34,5 +22,17 @@ public class GuidFormatter : YamlSerializer<Guid>
         {
             throw new YamlSerializerException($"Cannot serialize {value}");
         }
+    }
+
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref Guid value)
+    {
+        if (parser.TryGetScalarAsSpan(out var span) &&
+              Utf8Parser.TryParse(span, out Guid guid, out var bytesConsumed) &&
+              bytesConsumed == span.Length)
+        {
+            parser.Read();
+            value = guid;
+        }
+        throw new YamlSerializerException($"Cannot detect a scalar value of Guid : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 }

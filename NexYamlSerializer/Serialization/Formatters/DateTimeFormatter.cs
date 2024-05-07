@@ -16,24 +16,6 @@ public class DateTimeFormatter : YamlSerializer<DateTime>
     /// https://source.dot.net/#System.Private.CoreLib/src/libraries/System.Private.CoreLib/src/System/Globalization/DateTimeFormat.cs,135
     /// </summary>
     private const int FormatOMaxLength = 33;
-    public override DateTime Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-    {
-        if (parser.TryGetScalarAsSpan(out var span) &&
-            Utf8Parser.TryParse(span, out DateTime dateTime, out var bytesConsumed, 'O') &&
-            bytesConsumed == span.Length)
-        {
-            parser.Read();
-            return dateTime;
-        }
-
-        // fallback
-        if (DateTime.TryParse(parser.GetScalarAsString(), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out dateTime))
-        {
-            parser.Read();
-            return dateTime;
-        }
-        throw new YamlSerializerException($"Cannot detect a scalar value of DateTime : {parser.CurrentEventType} {parser.GetScalarAsString()}");
-    }
 
     public override void Serialize(ISerializationWriter stream, DateTime value, DataStyle style)
     {
@@ -47,6 +29,27 @@ public class DateTimeFormatter : YamlSerializer<DateTime>
         {
             throw new YamlSerializerException($"Cannot format {value}");
         }
+    }
+
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref DateTime value)
+    {
+        if (parser.TryGetScalarAsSpan(out var span) &&
+      Utf8Parser.TryParse(span, out DateTime dateTime, out var bytesConsumed, 'O') &&
+      bytesConsumed == span.Length)
+        {
+            parser.Read();
+            value = dateTime;
+            return;
+        }
+
+        // fallback
+        if (DateTime.TryParse(parser.GetScalarAsString(), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out dateTime))
+        {
+            parser.Read();
+            value = dateTime;
+            return;
+        }
+        throw new YamlSerializerException($"Cannot detect a scalar value of DateTime : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 }
 

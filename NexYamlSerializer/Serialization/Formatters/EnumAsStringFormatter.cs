@@ -61,15 +61,6 @@ public class EnumAsStringFormatter<T> : YamlSerializer<T>
         span[1..].CopyTo(buf[1..]);
         return buf.ToString();
     }
-    public override T Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-    {
-        var scalar = parser.ReadScalarAsString() ?? throw new YamlSerializerException($"Cannot detect a scalar value of {typeof(T)}");
-        if (NameValueMapping.TryGetValue(scalar, out var value))
-        {
-            return value;
-        }
-        throw new YamlSerializerException($"Cannot detect a scalar value of {typeof(T)}");
-    }
 
     public override void Serialize(ISerializationWriter stream, T value, DataStyle style)
     {
@@ -81,6 +72,16 @@ public class EnumAsStringFormatter<T> : YamlSerializer<T>
         {
             throw new YamlSerializerException($"Cannot detect a value of enum: {typeof(T)}, {value}");
         }
+    }
+
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref T value)
+    {
+        var scalar = parser.ReadScalarAsString() ?? throw new YamlSerializerException($"Cannot detect a scalar value of {typeof(T)}");
+        if (NameValueMapping.TryGetValue(scalar, out var val))
+        {
+            value = val;
+        }
+        throw new YamlSerializerException($"Cannot detect a scalar value of {typeof(T)}");
     }
 }
 

@@ -8,15 +8,15 @@ public class Int16Formatter : YamlSerializer<short>
 {
     public static readonly Int16Formatter Instance = new();
 
-    public override short Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-    {
-        var result = parser.GetScalarAsInt32();
-        parser.Read();
-        return checked((short)result);
-    }
-
     public override void Serialize(ISerializationWriter stream, short value, DataStyle style)
     {
         stream.Serialize(ref value);
+    }
+
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref short value)
+    {
+        var result = parser.GetScalarAsInt32();
+        parser.Read();
+        value = checked((short)result);
     }
 }

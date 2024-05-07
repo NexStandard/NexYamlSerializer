@@ -10,41 +10,6 @@ namespace NexVYaml.Serialization;
 public class DictionaryReadonlyInterfaceFormatter<TKey, TValue> : YamlSerializer<IReadOnlyDictionary<TKey, TValue>>
     where TKey : notnull
 {
-    public override IReadOnlyDictionary<TKey, TValue>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-    {
-        if (parser.IsNullScalar())
-        {
-            parser.Read();
-            return default;
-        }
-        var map = new Dictionary<TKey, TValue>();
-        if (FormatterExtensions.IsPrimitive(typeof(TKey)))
-        {
-            var keyFormatter = context.Resolver.GetFormatter<TKey>();
-            parser.ReadWithVerify(ParseEventType.MappingStart);
-
-            while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
-            {
-                var key = default(TKey);
-                context.DeserializeWithAlias(keyFormatter, ref parser, ref key);
-                var value = default(TValue);
-                context.DeserializeWithAlias(ref parser, ref value);
-                map.Add(key, value!);
-            }
-
-            parser.ReadWithVerify(ParseEventType.MappingEnd);
-            return map;
-        }
-        else
-        {
-            var listFormatter = new ListFormatter<KeyValuePair<TKey, TValue>>();
-            var keyValuePairs = default(List<KeyValuePair<TKey, TValue>>);
-            context.DeserializeWithAlias(listFormatter, ref parser, ref keyValuePairs);
-
-            return keyValuePairs?.ToDictionary() ?? [];
-        }
-    }
-
     public override void Serialize(ISerializationWriter stream, IReadOnlyDictionary<TKey, TValue> value, DataStyle style)
     {
 
@@ -96,6 +61,37 @@ public class DictionaryReadonlyInterfaceFormatter<TKey, TValue> : YamlSerializer
             }
 
             stream.EndMapping();
+        }
+    }
+
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref IReadOnlyDictionary<TKey, TValue> value)
+    {
+        var map = new Dictionary<TKey, TValue>();
+        if (FormatterExtensions.IsPrimitive(typeof(TKey)))
+        {
+            var keyFormatter = context.Resolver.GetFormatter<TKey>();
+            parser.ReadWithVerify(ParseEventType.MappingStart);
+
+            while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
+            {
+                var key = default(TKey);
+                context.DeserializeWithAlias(keyFormatter, ref parser, ref key);
+                var val = default(TValue);
+                context.DeserializeWithAlias(ref parser, ref value);
+                map.Add(key, val!);
+            }
+
+            parser.ReadWithVerify(ParseEventType.MappingEnd);
+            value = map;
+            return;
+        }
+        else
+        {
+            var listFormatter = new ListFormatter<KeyValuePair<TKey, TValue>>();
+            var keyValuePairs = default(List<KeyValuePair<TKey, TValue>>);
+            context.DeserializeWithAlias(listFormatter, ref parser, ref keyValuePairs);
+
+            value = keyValuePairs?.ToDictionary() ?? [];
         }
     }
 }

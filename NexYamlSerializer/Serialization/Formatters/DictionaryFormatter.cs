@@ -11,14 +11,14 @@ namespace NexVYaml.Serialization;
 public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey, TValue>?>
     where TKey : notnull
 {
-    public override Dictionary<TKey, TValue>? Deserialize(ref YamlParser parser, YamlDeserializationContext context)
-    {
-        return DictionaryFormatterHelper.Deserialize<TKey,TValue>(ref parser, context);
-    }
-
     public override void Serialize(ISerializationWriter stream, Dictionary<TKey, TValue>? value, DataStyle style = DataStyle.Normal)
     {
         DictionaryFormatterHelper.Serialize(stream, value!, style);
+    }
+
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref Dictionary<TKey, TValue>? value)
+    {
+        value = DictionaryFormatterHelper.Deserialize<TKey,TValue>(ref parser, context);
     }
 }
 internal class DictionaryFormatterHelper : IYamlFormatterHelper
