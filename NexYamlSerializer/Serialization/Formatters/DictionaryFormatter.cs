@@ -18,7 +18,32 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref Dictionary<TKey, TValue>? value)
     {
-        value = DictionaryFormatterHelper.Deserialize<TKey,TValue>(ref parser, context);
+        var map = new Dictionary<TKey, TValue>();
+        if (FormatterExtensions.IsPrimitive(typeof(TKey)))
+        {
+            var keyFormatter = context.Resolver.GetFormatter<TKey>();
+            parser.ReadWithVerify(ParseEventType.MappingStart);
+
+            while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
+            {
+                var key = default(TKey);
+                context.DeserializeWithAlias(keyFormatter, ref parser, ref key);
+                var val = default(TValue);
+                context.DeserializeWithAlias(ref parser, ref val);
+                map.Add(key, val!);
+            }
+
+            parser.ReadWithVerify(ParseEventType.MappingEnd);
+            value = map;
+        }
+        else
+        {
+            var listFormatter = new ListFormatter<KeyValuePair<TKey, TValue>>();
+            var keyValuePairs = default(List<KeyValuePair<TKey, TValue>>);
+            context.DeserializeWithAlias(listFormatter, ref parser, ref keyValuePairs);
+
+            value = keyValuePairs?.ToDictionary() ?? [];
+        }
     }
 }
 internal class DictionaryFormatterHelper : IYamlFormatterHelper
@@ -85,41 +110,7 @@ internal class DictionaryFormatterHelper : IYamlFormatterHelper
             stream.EndMapping();
         }
     }
-    public static Dictionary<TKey, TValue>? Deserialize<TKey, TValue>(ref YamlParser parser, YamlDeserializationContext context)
-        where TKey : notnull
-    {
-        if (parser.IsNullScalar())
-        {
-            parser.Read();
-            return default;
-        }
-        var map = new Dictionary<TKey, TValue>();
-        if (FormatterExtensions.IsPrimitive(typeof(TKey)))
-        {
-            var keyFormatter = context.Resolver.GetFormatter<TKey>();
-            parser.ReadWithVerify(ParseEventType.MappingStart);
 
-            while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
-            {
-                var key = default(TKey);
-                context.DeserializeWithAlias(keyFormatter, ref parser, ref key);
-                var value = default(TValue);
-                context.DeserializeWithAlias(ref parser, ref value);
-                map.Add(key, value!);
-            }
-
-            parser.ReadWithVerify(ParseEventType.MappingEnd);
-            return map;
-        }
-        else
-        {
-            var listFormatter = new ListFormatter<KeyValuePair<TKey, TValue>>();
-            var keyValuePairs = default(List<KeyValuePair<TKey, TValue>>);
-            context.DeserializeWithAlias(listFormatter, ref parser, ref keyValuePairs);
-
-            return keyValuePairs?.ToDictionary() ?? [];
-        }
-    }
     public void Register(IYamlFormatterResolver resolver)
     {
         resolver.Register(this, typeof(Dictionary<,>), typeof(Dictionary<,>));

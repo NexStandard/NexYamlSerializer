@@ -11,7 +11,7 @@ internal class HasAttribute<T>(IMemberSymbolAnalyzer<T> analyzer, INamedTypeSymb
 {
     public override bool AppliesTo(MemberData<T> symbol)
     {
-        if(symbol.Symbol.TryGetAttribute(attribute, out var attr))
+        if(symbol.Symbol.TryGetAttribute(attribute, out var _))
         {
             return true;
         }

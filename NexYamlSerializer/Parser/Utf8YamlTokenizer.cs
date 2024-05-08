@@ -793,8 +793,6 @@ public class Utf8YamlTokenizer
         var chomping = 0;
         var increment = 0;
         var blockIndent = 0;
-
-        var trailingBlank = false;
         var leadingBlank = false;
         var leadingBreak = LineBreakState.None;
         var scalar = scalarPool.Rent();
@@ -874,7 +872,7 @@ public class Utf8YamlTokenizer
         while (mark.Col == blockIndent)
         {
             // We are at the beginning of a non-empty line.
-            trailingBlank = YamlCodes.IsBlank(currentCode);
+            var trailingBlank = YamlCodes.IsBlank(currentCode);
             if (!literal &&
                 leadingBreak != LineBreakState.None &&
                 !leadingBlank &&

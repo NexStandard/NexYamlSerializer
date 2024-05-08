@@ -92,7 +92,7 @@ internal static class Extensionss
         var baseType = typeSymbol.BaseType;
         while (baseType != null)
         {
-            if (baseType.IsAbstract || baseType.TryGetAttribute(package.DataContractAttribute, out var d))
+            if (baseType.IsAbstract || baseType.TryGetAttribute(package.DataContractAttribute, out var _))
                 result.Add(baseType);
             baseType = baseType.BaseType;
         }
@@ -107,7 +107,7 @@ internal static class Extensionss
         foreach (var baseType in baseTypes)
         {
             // Get members of the base type in bottom to top order
-            foreach (var member in (ImmutableArray<ISymbol>)baseType.GetMembers())
+            foreach (var member in baseType.GetMembers())
             {
                 // Filter only properties and fields
                 if (member is IPropertySymbol property)

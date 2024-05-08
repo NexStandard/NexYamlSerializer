@@ -138,10 +138,7 @@ public static class DeserializeExtensions
                 }
                 alias = context.Resolver.GetAliasType(tag.Handle);
                 formatter = context.Resolver.GetFormatter(alias);
-                if (formatter is null)
-                {
-                    formatter = context.Resolver.GetFormatter(alias, type);
-                }
+                formatter ??= context.Resolver.GetFormatter(alias, type);
             }
             if (formatter == null)
             {
@@ -155,7 +152,6 @@ public static class DeserializeExtensions
         else
         {
             context.Resolver.GetFormatter<T>().Deserialize(parser, context, ref value!);
-            var x = value!;
         }
     }
     public static void DeserializeWithAlias(this YamlDeserializationContext context, ref YamlParser parser, ref int value)

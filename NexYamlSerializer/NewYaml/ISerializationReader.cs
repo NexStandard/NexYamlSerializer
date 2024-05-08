@@ -2,6 +2,7 @@
 using System.Linq;
 
 namespace NexYamlSerializer.NewYaml;
-internal interface ISerializationReader
+internal interface ISerializationReader :  ISerializationStream
 {
+    bool IsNull();
 }

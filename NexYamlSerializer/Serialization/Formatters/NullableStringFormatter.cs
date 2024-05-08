@@ -6,7 +6,7 @@ namespace NexVYaml.Serialization;
 
 public class NullableStringFormatter : YamlSerializer<string?>
 {
-    public static readonly NullableStringFormatter Instance = new NullableStringFormatter();
+    public static readonly NullableStringFormatter Instance = new ();
     protected override void Write(ISerializationWriter stream, string? value, DataStyle style)
     {
         stream.Serialize(ref value!);
