@@ -8,7 +8,7 @@ namespace NexVYaml.Serialization;
 
 public class ListFormatter<T> : YamlSerializer<List<T>?>
 {
-    protected override void Write(ISerializationWriter stream, List<T>? value, DataStyle style)
+    protected override void Write(SerializationWriter stream, List<T>? value, DataStyle style)
     {
         ListFormatterHelper.Serialize(stream, value!, style);
     }
@@ -31,7 +31,7 @@ public class ListFormatter<T> : YamlSerializer<List<T>?>
 }
 internal class ListFormatterHelper : IYamlFormatterHelper
 {
-    public static void Serialize<T>(ISerializationWriter stream, List<T> value, DataStyle style)
+    public static void Serialize<T>(SerializationWriter stream, List<T> value, DataStyle style)
     {
         stream.BeginSequence(style);
         foreach (var x in value)

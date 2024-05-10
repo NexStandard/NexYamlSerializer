@@ -11,12 +11,13 @@ public class DateTimeOffsetFormatter : YamlSerializer<DateTimeOffset>
 {
     public static readonly DateTimeOffsetFormatter Instance = new();
 
-    protected override void Write(ISerializationWriter stream, DateTimeOffset value, DataStyle style)
+    protected override void Write(SerializationWriter stream, DateTimeOffset value, DataStyle style)
     {
         Span<byte> buf = stackalloc byte[64];
         if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten, new StandardFormat('O')))
         {
-            stream.Serialize(buf[..bytesWritten]);
+            ReadOnlySpan<byte> bytes = buf[..bytesWritten];
+            stream.Serialize(ref bytes);
         }
         else
         {

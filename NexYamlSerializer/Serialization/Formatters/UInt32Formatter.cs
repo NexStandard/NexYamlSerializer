@@ -10,7 +10,7 @@ public class UInt32Formatter : YamlSerializer<uint>
 {
     public static readonly UInt32Formatter Instance = new();
 
-    protected override void Write(ISerializationWriter stream, uint value, DataStyle style)
+    protected override void Write(SerializationWriter stream, uint value, DataStyle style)
     {
         stream.Serialize(ref value);
     }

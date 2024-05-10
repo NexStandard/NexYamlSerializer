@@ -42,7 +42,7 @@ public class YamlSerializationContext(YamlSerializerOptions options)
     public bool SecureMode { get; set; } = false;
     ArrayBufferWriter<byte>? arrayBufferWriter;
 
-    public void Serialize<T>(ISerializationWriter stream, T value, DataStyle style = DataStyle.Any)
+    public void Serialize<T>(SerializationWriter stream, T value, DataStyle style = DataStyle.Any)
     {
 
         var type = typeof(T);

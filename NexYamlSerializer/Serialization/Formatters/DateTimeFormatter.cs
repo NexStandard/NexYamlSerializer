@@ -17,13 +17,14 @@ public class DateTimeFormatter : YamlSerializer<DateTime>
     /// </summary>
     private const int FormatOMaxLength = 33;
 
-    protected override void Write(ISerializationWriter stream, DateTime value, DataStyle style)
+    protected override void Write(SerializationWriter stream, DateTime value, DataStyle style)
     {
         
         Span<byte> buf = stackalloc byte[FormatOMaxLength];
         if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten, new StandardFormat('O')))
         {
-            stream.Serialize(buf[..bytesWritten]);
+            ReadOnlySpan<byte> bytes = buf[..bytesWritten];
+            stream.Serialize(ref bytes);
         }
         else
         {

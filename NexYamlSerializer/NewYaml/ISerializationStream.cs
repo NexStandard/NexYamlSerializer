@@ -18,4 +18,5 @@ public interface ISerializationStream
     void Serialize(ref bool value);
     void Serialize(ref string value);
     void Serialize(ref decimal value);
+    void Serialize(ref ReadOnlySpan<byte> value);
 }

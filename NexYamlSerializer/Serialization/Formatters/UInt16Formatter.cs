@@ -10,7 +10,7 @@ public class UInt16Formatter : YamlSerializer<ushort>
 {
     public static readonly UInt16Formatter Instance = new();
 
-    protected override void Write(ISerializationWriter stream, ushort value, DataStyle style)
+    protected override void Write(SerializationWriter stream, ushort value, DataStyle style)
     {
         stream.Serialize(ref value);
     }

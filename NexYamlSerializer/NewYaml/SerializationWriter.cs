@@ -6,10 +6,9 @@ using System;
 using System.Linq;
 
 namespace NexVYaml;
-public interface ISerializationWriter : ISerializationStream
+public interface SerializationWriter : ISerializationStream
 {
     public YamlSerializationContext SerializeContext { get; init; }
-    void Serialize(ReadOnlySpan<byte> value);
     void WriteTag(string tag);
     void BeginMapping(DataStyle style);
     void EndMapping();

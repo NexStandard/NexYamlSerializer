@@ -7,7 +7,7 @@ using System.Buffers.Text;
 using System.Globalization;
 
 namespace NexVYaml;
-public class YamlSerializationWriter : ISerializationWriter
+public class YamlSerializationWriter : SerializationWriter
 {
     internal Utf8YamlEmitter Emitter { get; set; }
 
@@ -174,7 +174,7 @@ public class YamlSerializationWriter : ISerializationWriter
         Emitter.WriteScalar(value ? YamlCodes.True0 : YamlCodes.False0);
     }
 
-    public void Serialize(ReadOnlySpan<byte> value)
+    public void Serialize(ref ReadOnlySpan<byte> value)
     {
         Emitter.WriteScalar(value);
     }

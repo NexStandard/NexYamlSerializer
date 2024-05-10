@@ -7,7 +7,7 @@ namespace NexVYaml.Serialization;
 
 public class ArrayFormatter<T> : YamlSerializer<T[]>
 {
-    protected override void Write(ISerializationWriter stream, T[] value, DataStyle style)
+    protected override void Write(SerializationWriter stream, T[] value, DataStyle style)
     {
         var contentStyle = DataStyle.Any;
         if (style == DataStyle.Compact)

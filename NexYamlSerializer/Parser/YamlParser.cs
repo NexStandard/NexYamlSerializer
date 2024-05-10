@@ -88,7 +88,7 @@ public partial class YamlParser
 
     Utf8YamlTokenizer tokenizer;
     ParseState currentState;
-    Scalar? currentScalar;
+    internal Scalar? currentScalar;
     Tag? currentTag;
     Anchor? currentAnchor;
     int lastAnchorId;

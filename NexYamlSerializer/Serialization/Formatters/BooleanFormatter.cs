@@ -8,7 +8,7 @@ public class BooleanFormatter : YamlSerializer<bool>
 {
     public static readonly BooleanFormatter Instance = new();
 
-    protected override void Write(ISerializationWriter stream, bool value, DataStyle style)
+    protected override void Write(SerializationWriter stream, bool value, DataStyle style)
     {
         stream.Serialize(ref value);
     }

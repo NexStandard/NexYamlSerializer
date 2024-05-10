@@ -53,7 +53,7 @@ file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSeria
     { (info.DataStyle != "DataStyle.Any" ? $"protected override DataStyle Style {{ get; }} = {info.DataStyle};" : "")}
     {package.CreateUTF8Members()}
 
-    protected override void Write(ISerializationWriter stream, {info.NameDefinition} value, DataStyle style = {info.DataStyle})
+    protected override void Write(SerializationWriter stream, {info.NameDefinition} value, DataStyle style = {info.DataStyle})
     {{
         stream.{package.BeginMappingStyle()};
         stream.WriteTag(""{tag}"");
@@ -61,7 +61,7 @@ file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSeria
         stream.EndMapping();
     }}
 
-    protected override void Read(YamlParser parser, YamlDeserializationContext context, [MaybeNull] ref {info.NameDefinition} value)
+    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref {info.NameDefinition} value)
     {{
 {package.CreateDeserialize()}
     }}

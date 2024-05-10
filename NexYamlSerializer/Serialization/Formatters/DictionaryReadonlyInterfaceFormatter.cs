@@ -10,7 +10,7 @@ namespace NexVYaml.Serialization;
 public class DictionaryReadonlyInterfaceFormatter<TKey, TValue> : YamlSerializer<IReadOnlyDictionary<TKey, TValue>>
     where TKey : notnull
 {
-    protected override void Write(ISerializationWriter stream, IReadOnlyDictionary<TKey, TValue> value, DataStyle style)
+    protected override void Write(SerializationWriter stream, IReadOnlyDictionary<TKey, TValue> value, DataStyle style)
     {
 
         YamlSerializer<TKey>? keyFormatter = null;
