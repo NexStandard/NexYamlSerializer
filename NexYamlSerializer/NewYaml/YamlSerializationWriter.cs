@@ -7,7 +7,7 @@ using System.Buffers.Text;
 using System.Globalization;
 
 namespace NexVYaml;
-[DataStyle(DataStyle.)]
+
 public class YamlSerializationWriter : SerializationWriter
 {
     internal Utf8YamlEmitter Emitter { get; set; }
