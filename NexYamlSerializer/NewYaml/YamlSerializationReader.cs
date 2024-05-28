@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 namespace NexYamlSerializer.NewYaml;
 internal class YamlSerializationReader(YamlParser parser) : ISerializationReader
 {
-    YamlParser parser;
     public bool IsNull()
     {
         if (parser.IsNullScalar())

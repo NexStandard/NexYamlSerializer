@@ -7,6 +7,7 @@ using System.Buffers.Text;
 using System.Globalization;
 
 namespace NexVYaml;
+[DataStyle(DataStyle.)]
 public class YamlSerializationWriter : SerializationWriter
 {
     internal Utf8YamlEmitter Emitter { get; set; }
@@ -162,12 +163,36 @@ public class YamlSerializationWriter : SerializationWriter
     /// <param name="value">The value to be Serialized to the Stream.</param>
     public void Serialize(ref string value)
     {
-        var stringMaxByteCount = StringEncoding.Utf8.GetMaxByteCount(value.Length);
-        var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(stringMaxByteCount));
-        var offset = 0;
-        Emitter.BeginScalar(output, ref offset);
-        offset += StringEncoding.Utf8.GetBytes(value, output[offset..]);
-        Emitter.EndScalar(output, ref offset);
+        var result = EmitStringAnalyzer.Analyze(value);
+        var style = result.SuggestScalarStyle();
+        if(style is ScalarStyle.Plain or ScalarStyle.Any)
+        {
+            var stringMaxByteCount = StringEncoding.Utf8.GetMaxByteCount(value.Length);
+            var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(stringMaxByteCount));
+            var offset = 0;
+            Emitter.BeginScalar(output, ref offset);
+            offset += StringEncoding.Utf8.GetBytes(value, output[offset..]);
+            Emitter.EndScalar(output, ref offset);
+        }
+        else if(ScalarStyle.Folded == style)
+        {
+            throw new NotSupportedException($"The {ScalarStyle.Folded} is not supported.");
+        }
+        else if(ScalarStyle.SingleQuoted == style)
+        {
+            var writer = new StringWriter(Emitter);
+            writer.WriteQuotedScalar(value);
+        }
+        else if(ScalarStyle.DoubleQuoted == style)
+        {
+            var writer = new StringWriter(Emitter);
+            writer.WriteQuotedScalar(value, true);
+        }
+        else if(ScalarStyle.Literal == style)
+        {
+            var writer = new StringWriter();
+            writer.WriteLiteralScalar(value);
+        }
     }
     public void Serialize(ref bool value)
     {
