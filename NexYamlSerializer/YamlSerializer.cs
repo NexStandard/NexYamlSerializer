@@ -52,7 +52,6 @@ public abstract class YamlSerializer
 
         var contextLocal = new YamlSerializationContext(options)
         {
-            SecureMode = options.SecureMode,
         };
 
         var writer = contextLocal.GetArrayBufferWriter();
