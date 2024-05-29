@@ -1,19 +1,10 @@
-﻿using NexVYaml.Serialization;
-using NexYaml.Core;
-using NexYamlSerializer.NewYaml;
-using Stride.Core;
-using System;
+﻿using System;
 using System.Linq;
 
-namespace NexVYaml;
-public abstract class SerializationWriter : ISerializationStream
+namespace NexYamlSerializer.NewYaml;
+internal abstract class SerializationReader :  ISerializationStream
 {
-    public YamlSerializationContext SerializeContext { get; init; }
-    public abstract void WriteTag(string tag);
-    public abstract void BeginMapping(DataStyle style);
-    public abstract void EndMapping();
-    public abstract void BeginSequence(DataStyle style);
-    public abstract void EndSequence();
+    public abstract bool IsNull();
     public abstract void Serialize(ref byte value);
     public abstract void Serialize(ref sbyte value);
     public abstract void Serialize(ref int value);
