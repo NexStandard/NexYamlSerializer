@@ -28,26 +28,7 @@ public class ComplexTests
             Assert.Equal(list[i], deserialized[i] );
         }
     }
-    [Fact]
-    public void SecureModeTest()
-    {
-        Setup();
-        var secureObject = new SecureMode();
-        IInSecure inSecure = secureObject;
-        var secureMode = new YamlSerializerOptions()
-        {
-            Resolver = NexYamlSerializerRegistry.Instance,
-            SecureMode = true
-        };
-        var s = YamlSerializer.SerializeToString(secureObject,secureMode);
-        var deserialized = YamlSerializer.Deserialize<SecureMode>(s);
 
-        Assert.NotNull(deserialized);
-        var insecureSerialize = YamlSerializer.SerializeToString(inSecure, secureMode);
-        Assert.Equal("!!null",insecureSerialize.ToString());
-        var insecureDeserialize = YamlSerializer.Deserialize<IInSecure>(s, secureMode);
-        Assert.Null(insecureDeserialize);
-    }
     [Fact]
     public void DynamicGenerics()
     {

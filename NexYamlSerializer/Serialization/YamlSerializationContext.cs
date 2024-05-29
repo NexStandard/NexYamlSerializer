@@ -46,22 +46,13 @@ public class YamlSerializationContext(YamlSerializerOptions options)
     {
 
         var type = typeof(T);
-        if (SecureMode)
+
+        if (type.IsValueType || type.IsSealed)
         {
-            if (type.IsGenericType)
-            {
-                var protectedGeneric = Resolver.GetGenericFormatter<T>();
-                protectedGeneric ??= new EmptyFormatter<T>();
-                protectedGeneric.Serialize(stream, value!, style);
-            }
-            else
-            {
-                var protectedFormatter = Resolver.GetFormatter<T>();
-                protectedFormatter.Serialize(stream, value!, style);
-            }
-            return;
+            var formatter = Resolver.GetFormatter<T>();
+            formatter.Serialize(stream, value, style);
         }
-        if (type.IsInterface || type.IsAbstract || type.IsGenericType || type.IsArray)
+        else if(type.IsInterface || type.IsAbstract || type.IsGenericType || type.IsArray)
         {
             var valueType = value!.GetType();
             var formatt = Resolver.GetFormatter(value!.GetType(), typeof(T));

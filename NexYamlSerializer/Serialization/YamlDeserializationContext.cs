@@ -12,7 +12,6 @@ namespace NexVYaml.Serialization;
 public class YamlDeserializationContext(YamlSerializerOptions options)
 {
     public IYamlFormatterResolver Resolver { get; } = options.Resolver;
-    public bool SecureMode { get; set; } = options.SecureMode;
     readonly Dictionary<Anchor, object?> aliases = [];
 
     public void Reset()
@@ -102,13 +101,6 @@ public static class DeserializeExtensions
         }
         else if (type.IsInterface || type.IsAbstract || type.IsGenericType)
         {
-            
-            if (context.SecureMode)
-            {
-                context.DeserializeWithAlias(context.Resolver.GetFormatter<T>(), ref parser, ref value);
-                return;
-            }
-
             parser.TryGetCurrentTag(out var tag);
             YamlSerializer? formatter;
             if (tag == null)
