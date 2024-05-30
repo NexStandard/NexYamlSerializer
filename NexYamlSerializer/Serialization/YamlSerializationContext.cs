@@ -30,16 +30,16 @@ class StyleEnforcer
         }
     }
 }
-public class YamlSerializationContext(IYamlFormatterResolver options)
+public class YamlSerializationContext(IYamlFormatterResolver resolver)
 {
-    public IYamlFormatterResolver Resolver { get; } = options;
+    public IYamlFormatterResolver Resolver { get; } = resolver;
     /// <summary>
     /// Decides if the <see cref="RedirectFormatter{T}"/> had to redirect it as it's an interface or abstract class
     /// </summary>
     public bool IsRedirected { get; set; } = false;
     public bool IsFirst { get; set; } = true;
     public bool SecureMode { get; set; } = false;
-    ArrayBufferWriter<byte>? arrayBufferWriter;
+    public ArrayBufferWriter<byte>? ArrayBufferWriter { get; } = new ArrayBufferWriter<byte>(512);
 
     public void Serialize<T>(SerializationWriter stream, T value, DataStyle style = DataStyle.Any)
     {
@@ -81,9 +81,5 @@ public class YamlSerializationContext(IYamlFormatterResolver options)
                 Resolver.GetFormatter<T>().Serialize(stream, value!, style);
             }
         }
-    }
-    public ArrayBufferWriter<byte> GetArrayBufferWriter()
-    {
-        return arrayBufferWriter ??= new ArrayBufferWriter<byte>(512);
     }
 }

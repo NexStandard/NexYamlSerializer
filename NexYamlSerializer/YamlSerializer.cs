@@ -45,7 +45,7 @@ public abstract class YamlSerializer
         {
         };
 
-        var writer = contextLocal.GetArrayBufferWriter();
+        var writer = contextLocal.ArrayBufferWriter;
 
         var emitter = new Utf8YamlEmitter(writer);
         var stream = new YamlSerializationWriter(emitter)
