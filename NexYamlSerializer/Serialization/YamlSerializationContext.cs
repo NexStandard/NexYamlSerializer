@@ -38,7 +38,6 @@ public class YamlSerializationContext(IYamlFormatterResolver resolver)
     /// </summary>
     public bool IsRedirected { get; set; } = false;
     public bool IsFirst { get; set; } = true;
-    public bool SecureMode { get; set; } = false;
     public ArrayBufferWriter<byte>? ArrayBufferWriter { get; } = new ArrayBufferWriter<byte>(512);
 
     public void Serialize<T>(SerializationWriter stream, T value, DataStyle style = DataStyle.Any)
