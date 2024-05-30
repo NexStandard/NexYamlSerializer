@@ -36,7 +36,7 @@ internal class BaseFormatterTest
     // Properties
     public int IntProperty { get; set; }
 
-    public string StringProperty { get; set; }
+    public string StringProperty { get; set; } = string.Empty;
 
     public float FloatProperty { get; set; }
 

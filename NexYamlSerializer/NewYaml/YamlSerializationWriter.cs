@@ -10,7 +10,12 @@ namespace NexVYaml;
 
 public class YamlSerializationWriter : SerializationWriter
 {
-    internal Utf8YamlEmitter Emitter { get; set; }
+    Utf8YamlEmitter Emitter { get; set; }
+
+    internal YamlSerializationWriter(Utf8YamlEmitter emitter)
+    {
+        Emitter = emitter;
+    }
 
     public override void BeginMapping(DataStyle style)
     {

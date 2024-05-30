@@ -8,7 +8,7 @@ using System.Linq;
 namespace NexVYaml;
 public abstract class SerializationWriter : ISerializationStream
 {
-    public YamlSerializationContext SerializeContext { get; init; }
+    public required YamlSerializationContext SerializeContext { get; init; }
     public abstract void WriteTag(string tag);
     public abstract void BeginMapping(DataStyle style);
     public abstract void EndMapping();

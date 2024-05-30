@@ -57,9 +57,8 @@ public abstract class YamlSerializer
         var writer = contextLocal.GetArrayBufferWriter();
 
         var emitter = new Utf8YamlEmitter(writer);
-        var stream = new YamlSerializationWriter()
+        var stream = new YamlSerializationWriter(emitter)
         {
-            Emitter = emitter,
             SerializeContext = contextLocal,
         };
         try
@@ -122,9 +121,8 @@ public abstract class YamlSerializer
         {
             options ??= DefaultOptions;
             var contextLocal = new YamlSerializationContext(options);
-            SerializationWriter stream = new YamlSerializationWriter()
+            SerializationWriter stream = new YamlSerializationWriter(emitter)
             {
-                Emitter = emitter,
                 SerializeContext = contextLocal,
             };
             stream.Write(value);

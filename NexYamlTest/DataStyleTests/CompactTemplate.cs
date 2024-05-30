@@ -9,7 +9,7 @@ internal record class CompactClass
 {
     public int X { get; set; }
     public int Y { get; set; }
-    public string W { get; set; }
+    public string W { get; set; } = string.Empty;
 }
 [DataStyle(DataStyle.Compact)]
 [DataContract]
@@ -25,7 +25,7 @@ internal record class CompactRecord
 {
     public int X { get; set; }
     public int Y { get; set; }
-    public string W { get; set; }
+    public string? W { get; set; }
 }
 [DataContract]
 internal record class CompactCompactRecord
@@ -61,7 +61,7 @@ internal record class CompactList
 internal record class NonCompactClass
 {
     public int Y { get; set; }
-    public string W { get; set; }
+    public string W { get; set; } = string.Empty;
 }
 [DataContract]
 internal record class CompactArray
