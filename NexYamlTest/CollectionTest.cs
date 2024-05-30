@@ -72,12 +72,12 @@ public class CollectionTest
         var data1 = new CollectionInterfaces()
         {
             Collection = new List<IDInterface>() { },
-            ReadonlyList = new List<IDInterface>() { new Data1() { Id = 1 }, new Data2() { Id = 2 } },
+            ReadonlyList = [new Data1() { Id = 1 }, new Data2() { Id = 2 }],
             Dictionary = new Dictionary<int, IDInterface>() { [1] = new Data1() },
-            Enumerable = new List<IDInterface>()
-            {
+            Enumerable =
+            [
                 new Data1() { Id = 1 },
-            },
+            ],
             ReadonlyDictioanry = new Dictionary<IDInterface, IDInterface>() { }
         };
 
@@ -90,11 +90,11 @@ public class CollectionTest
 [DataContract]
 internal class CollectionInterfaces
 {
-    public ICollection<IDInterface> Collection = new List<IDInterface>();
+    public ICollection<IDInterface> Collection = [];
     public IReadOnlyCollection<IDInterface> ReadOnlyCollection = new List<IDInterface>();
-    public IReadOnlyList<IDInterface> ReadonlyList = new List<IDInterface>();
-    public IList<IDInterface> List = new List<IDInterface>();
-    public IEnumerable<IDInterface> Enumerable = new List<IDInterface>();
+    public IReadOnlyList<IDInterface> ReadonlyList = [];
+    public IList<IDInterface> List = [];
+    public IEnumerable<IDInterface> Enumerable = [];
     public IDictionary<int, IDInterface> Dictionary = new Dictionary<int, IDInterface>();
     public IReadOnlyDictionary<IDInterface, IDInterface> ReadonlyDictioanry = new Dictionary<IDInterface, IDInterface>();
 }
