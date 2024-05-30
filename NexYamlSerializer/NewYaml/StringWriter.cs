@@ -21,7 +21,7 @@ ref struct StringWriter(Utf8YamlEmitter emitter)
     }
     public readonly void WriteLiteralScalar(string value)
     {
-        var indentCharCount = (emitter.CurrentIndentLevel + 1) * emitter.Options.IndentWidth;
+        var indentCharCount = (emitter.CurrentIndentLevel + 1) * Utf8YamlEmitter.IndentWidth;
         var scalarStringBuilt = EmitStringAnalyzer.BuildLiteralScalar(value, indentCharCount);
         Span<char> scalarChars = stackalloc char[scalarStringBuilt.Length];
         scalarStringBuilt.CopyTo(0, scalarChars, scalarStringBuilt.Length);

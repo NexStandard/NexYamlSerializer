@@ -36,7 +36,7 @@ internal partial class Utf8YamlEmitter
         }
         else if (CurrentIndentLevel > 0)
         {
-            length = CurrentIndentLevel * Options.IndentWidth;
+            length = CurrentIndentLevel * IndentWidth;
         }
         else
         {
@@ -61,7 +61,7 @@ internal partial class Utf8YamlEmitter
     internal void WriteRaw(ReadOnlySpan<byte> value, bool indent, bool lineBreak)
     {
         var length = value.Length +
-                     (indent ? CurrentIndentLevel * Options.IndentWidth : 0) +
+                     (indent ? CurrentIndentLevel * IndentWidth : 0) +
                      (lineBreak ? 1 : 0);
 
         var offset = 0;
@@ -81,7 +81,7 @@ internal partial class Utf8YamlEmitter
     internal void WriteRaw(ReadOnlySpan<byte> value1, ReadOnlySpan<byte> value2, bool indent, bool lineBreak)
     {
         var length = value1.Length + value2.Length +
-                     (indent ? CurrentIndentLevel * Options.IndentWidth : 0) +
+                     (indent ? CurrentIndentLevel * IndentWidth : 0) +
                      (lineBreak ? 1 : 0);
         var offset = 0;
         var output = Writer.GetSpan(length);
@@ -121,7 +121,7 @@ internal partial class Utf8YamlEmitter
 
     public int CalculateMaxScalarBufferLength(int length)
     {
-        var around = ((CurrentIndentLevel + 1) * Options.IndentWidth) + 3;
+        var around = ((CurrentIndentLevel + 1) * IndentWidth) + 3;
         if (tagStack.Length > 0)
         {
             length += StringEncoding.Utf8.GetMaxByteCount(tagStack.Peek().Length) + around;

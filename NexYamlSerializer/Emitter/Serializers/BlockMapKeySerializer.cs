@@ -46,7 +46,7 @@ internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : EmitterSerialize
                         }
                         else
                         {
-                            emitter.WriteIndent(output, ref offset, emitter.Options.IndentWidth - 2);
+                            emitter.WriteIndent(output, ref offset, Utf8YamlEmitter.IndentWidth - 2);
                         }
                         // The first key in block-sequence is like so that: "- key: .."
                         break;

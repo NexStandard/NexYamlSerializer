@@ -14,7 +14,7 @@ internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : EmitterSerializer
         var current = emitter.StateStack.Current;
         if (current is EmitState.BlockSequenceEntry)
         {
-            var output = emitter.Writer.GetSpan((emitter.CurrentIndentLevel * emitter.Options.IndentWidth) + EmitCodes.BlockSequenceEntryHeader.Length + EmitCodes.FlowMappingStart.Length);
+            var output = emitter.Writer.GetSpan((emitter.CurrentIndentLevel * Utf8YamlEmitter.IndentWidth) + EmitCodes.BlockSequenceEntryHeader.Length + EmitCodes.FlowMappingStart.Length);
             var offset = 0;
             emitter.WriteIndent(output, ref offset);
 

@@ -17,7 +17,7 @@ internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : EmitterSer
                 throw new YamlEmitterException("To start block-mapping in the mapping key is not supported.");
             case EmitState.BlockSequenceEntry:
                 {
-                    var output = emitter.Writer.GetSpan((emitter.CurrentIndentLevel * emitter.Options.IndentWidth) + EmitCodes.BlockSequenceEntryHeader.Length + 1);
+                    var output = emitter.Writer.GetSpan((emitter.CurrentIndentLevel * Utf8YamlEmitter.IndentWidth) + EmitCodes.BlockSequenceEntryHeader.Length + 1);
                     var offset = 0;
                     emitter.WriteIndent(output, ref offset);
                     EmitCodes.BlockSequenceEntryHeader.CopyTo(output[offset..]);

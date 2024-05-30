@@ -30,10 +30,9 @@ class StyleEnforcer
         }
     }
 }
-public class YamlSerializationContext(YamlSerializerOptions options)
+public class YamlSerializationContext(IYamlFormatterResolver options)
 {
-    public IYamlFormatterResolver Resolver { get; } = options.Resolver;
-    public YamlEmitOptions EmitOptions { get; } = options.EmitOptions;
+    public IYamlFormatterResolver Resolver { get; } = options;
     /// <summary>
     /// Decides if the <see cref="RedirectFormatter{T}"/> had to redirect it as it's an interface or abstract class
     /// </summary>

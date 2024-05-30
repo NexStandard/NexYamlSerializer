@@ -9,9 +9,9 @@ using System.Linq;
 
 namespace NexVYaml.Serialization;
 
-public class YamlDeserializationContext(YamlSerializerOptions options)
+public class YamlDeserializationContext(IYamlFormatterResolver resolver)
 {
-    public IYamlFormatterResolver Resolver { get; } = options.Resolver;
+    public IYamlFormatterResolver Resolver { get; } = resolver;
     readonly Dictionary<Anchor, object?> aliases = [];
 
     public void Reset()
