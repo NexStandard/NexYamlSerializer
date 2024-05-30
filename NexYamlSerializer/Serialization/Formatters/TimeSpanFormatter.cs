@@ -20,7 +20,7 @@ public class TimeSpanFormatter : YamlSerializer<TimeSpan>
         }
         else
         {
-            throw new YamlSerializerException($"Cannot serialize a value: {value}");
+            throw new YamlException($"Cannot serialize a value: {value}");
         }
     }
 
@@ -34,6 +34,6 @@ public class TimeSpanFormatter : YamlSerializer<TimeSpan>
             value = timeSpan;
             return;
         }
-        throw new YamlSerializerException($"Cannot detect a scalar value of TimeSpan : {parser.CurrentEventType} {parser.GetScalarAsString()}");
+        throw new YamlException($"Cannot detect a scalar value of TimeSpan : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 }

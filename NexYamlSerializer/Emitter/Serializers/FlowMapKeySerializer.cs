@@ -1,4 +1,5 @@
-﻿using NexVYaml.Emitter;
+﻿using NexVYaml;
+using NexVYaml.Emitter;
 using NexYaml.Core;
 using System;
 using System.Collections.Generic;
@@ -69,7 +70,7 @@ internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : EmitterSerializer
     {
         if (emitter.StateStack.Current is not EmitState.BlockMappingKey and not EmitState.FlowMappingKey)
         {
-            throw new YamlEmitterException($"Invalid block mapping end: {emitter.StateStack.Current}");
+            throw new YamlException($"Invalid block mapping end: {emitter.StateStack.Current}");
         }
 
         emitter.PopState();

@@ -26,6 +26,6 @@ public class DecimalFormatter : YamlSerializer<decimal>
             value = val;
             return;
         }
-        throw new YamlSerializerException($"Cannot detect a scalar value of decimal : {parser.CurrentEventType} {parser.GetScalarAsString()}");
+        throw new YamlException($"Cannot detect a scalar value of decimal : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 }

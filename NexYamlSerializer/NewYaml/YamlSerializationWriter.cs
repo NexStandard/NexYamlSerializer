@@ -45,7 +45,7 @@ public class YamlSerializationWriter : SerializationWriter
         Emitter.BeginScalar(output, ref offset);
         if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
         {
-            throw new YamlEmitterException($"Failed to emit : {value}");
+            throw new YamlException($"Failed to emit : {value}");
         }
         offset += bytesWritten;
         Emitter.EndScalar(output, ref offset);
@@ -59,7 +59,7 @@ public class YamlSerializationWriter : SerializationWriter
         Emitter.BeginScalar(output, ref offset);
         if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
         {
-            throw new YamlEmitterException($"Failed to emit : {value}");
+            throw new YamlException($"Failed to emit : {value}");
         }
         offset += bytesWritten;
         Emitter.EndScalar(output, ref offset);
@@ -73,7 +73,7 @@ public class YamlSerializationWriter : SerializationWriter
         Emitter.BeginScalar(output, ref offset);
         if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
         {
-            throw new YamlEmitterException($"Failed to emit : {value}");
+            throw new YamlException($"Failed to emit : {value}");
         }
         offset += bytesWritten;
         Emitter.EndScalar(output, ref offset);
@@ -87,7 +87,7 @@ public class YamlSerializationWriter : SerializationWriter
         Emitter.BeginScalar(output, ref offset);
         if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
         {
-            throw new YamlEmitterException($"Failed to emit : {value}");
+            throw new YamlException($"Failed to emit : {value}");
         }
         offset += bytesWritten;
         Emitter.EndScalar(output, ref offset);
@@ -101,7 +101,7 @@ public class YamlSerializationWriter : SerializationWriter
         Emitter.BeginScalar(output, ref offset);
         if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
         {
-            throw new YamlEmitterException($"Failed to emit : {value}");
+            throw new YamlException($"Failed to emit : {value}");
         }
         offset += bytesWritten;
         Emitter.EndScalar(output, ref offset);
@@ -115,7 +115,7 @@ public class YamlSerializationWriter : SerializationWriter
         Emitter.BeginScalar(output, ref offset);
         if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
         {
-            throw new YamlEmitterException($"Failed to emit : {value}");
+            throw new YamlException($"Failed to emit : {value}");
         }
         offset += bytesWritten;
         Emitter.EndScalar(output, ref offset);
@@ -129,7 +129,7 @@ public class YamlSerializationWriter : SerializationWriter
         Emitter.BeginScalar(output, ref offset);
         if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
         {
-            throw new YamlEmitterException($"Failed to emit : {value}");
+            throw new YamlException($"Failed to emit : {value}");
         }
         offset += bytesWritten;
         Emitter.EndScalar(output, ref offset);
@@ -155,7 +155,7 @@ public class YamlSerializationWriter : SerializationWriter
         Emitter.BeginScalar(output, ref offset);
         if (!Utf8Formatter.TryFormat(value, output[offset..], out var bytesWritten))
         {
-            throw new YamlEmitterException($"Failed to emit : {value}");
+            throw new YamlException($"Failed to emit : {value}");
         }
         offset += bytesWritten;
         Emitter.EndScalar(output, ref offset);
@@ -217,7 +217,7 @@ public class YamlSerializationWriter : SerializationWriter
         }
         else
         {
-            throw new YamlSerializerException($"Cannot serialize a value: {value}");
+            throw new YamlException($"Cannot serialize a value: {value}");
         }
     }
 
@@ -229,7 +229,7 @@ public class YamlSerializationWriter : SerializationWriter
         Emitter.BeginScalar(output, ref offset);
         if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
         {
-            throw new YamlEmitterException($"Failed to emit : {value}");
+            throw new YamlException($"Failed to emit : {value}");
         }
         offset += bytesWritten;
         Emitter.EndScalar(output, ref offset);

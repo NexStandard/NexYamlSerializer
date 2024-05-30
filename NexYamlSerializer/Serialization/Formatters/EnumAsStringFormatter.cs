@@ -70,18 +70,18 @@ public class EnumAsStringFormatter<T> : YamlSerializer<T>
         }
         else
         {
-            throw new YamlSerializerException($"Cannot detect a value of enum: {typeof(T)}, {value}");
+            throw new YamlException($"Cannot detect a value of enum: {typeof(T)}, {value}");
         }
     }
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref T value)
     {
-        var scalar = parser.ReadScalarAsString() ?? throw new YamlSerializerException($"Cannot detect a scalar value of {typeof(T)}");
+        var scalar = parser.ReadScalarAsString() ?? throw new YamlException($"Cannot detect a scalar value of {typeof(T)}");
         if (NameValueMapping.TryGetValue(scalar, out var val))
         {
             value = val;
         }
-        throw new YamlSerializerException($"Cannot detect a scalar value of {typeof(T)}");
+        throw new YamlException($"Cannot detect a scalar value of {typeof(T)}");
     }
 }
 

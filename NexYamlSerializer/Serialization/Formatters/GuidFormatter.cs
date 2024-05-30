@@ -21,7 +21,7 @@ public class GuidFormatter : YamlSerializer<Guid>
         }
         else
         {
-            throw new YamlSerializerException($"Cannot serialize {value}");
+            throw new YamlException($"Cannot serialize {value}");
         }
     }
 
@@ -34,6 +34,6 @@ public class GuidFormatter : YamlSerializer<Guid>
             parser.Read();
             value = guid;
         }
-        throw new YamlSerializerException($"Cannot detect a scalar value of Guid : {parser.CurrentEventType} {parser.GetScalarAsString()}");
+        throw new YamlException($"Cannot detect a scalar value of Guid : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 }

@@ -13,13 +13,13 @@ using System.Threading.Tasks;
 
 namespace NexVYaml;
 
-public class YamlSerializerException : Exception
+public class YamlException : Exception
 {
-    public YamlSerializerException(string message) : base(message)
+    public YamlException(string message) : base(message)
     {
     }
 
-    public YamlSerializerException(Marker mark, string message) : base($"{message} at {mark}")
+    public YamlException(Marker mark, string message) : base($"{message} at {mark}")
     {
     }
 }

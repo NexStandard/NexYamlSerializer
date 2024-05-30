@@ -1,4 +1,5 @@
-﻿using NexVYaml.Emitter;
+﻿using NexVYaml;
+using NexVYaml.Emitter;
 using NexYaml.Core;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : EmitterSer
         switch (emitter.StateStack.Current)
         {
             case EmitState.BlockMappingKey:
-                throw new YamlEmitterException("To start block-mapping in the mapping key is not supported.");
+                throw new YamlException("To start block-mapping in the mapping key is not supported.");
             case EmitState.BlockSequenceEntry:
                 {
                     var output = emitter.Writer.GetSpan((emitter.CurrentIndentLevel * Utf8YamlEmitter.IndentWidth) + EmitCodes.BlockSequenceEntryHeader.Length + 1);

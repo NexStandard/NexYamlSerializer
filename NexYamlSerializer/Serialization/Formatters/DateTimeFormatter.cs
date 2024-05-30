@@ -28,7 +28,7 @@ public class DateTimeFormatter : YamlSerializer<DateTime>
         }
         else
         {
-            throw new YamlSerializerException($"Cannot format {value}");
+            throw new YamlException($"Cannot format {value}");
         }
     }
 
@@ -50,7 +50,7 @@ public class DateTimeFormatter : YamlSerializer<DateTime>
             value = dateTime;
             return;
         }
-        throw new YamlSerializerException($"Cannot detect a scalar value of DateTime : {parser.CurrentEventType} {parser.GetScalarAsString()}");
+        throw new YamlException($"Cannot detect a scalar value of DateTime : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 }
 

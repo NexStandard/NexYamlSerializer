@@ -76,10 +76,10 @@ public class YamlDeserializationContext(IYamlFormatterResolver resolver)
                         aliasValue = value;
                         return true;
                     default:
-                        throw new YamlSerializerException($"The alias value is not a type of {typeof(T).Name}");
+                        throw new YamlException($"The alias value is not a type of {typeof(T).Name}");
                 }
             }
-            throw new YamlSerializerException($"Could not found an alias value of anchor: {anchor}");
+            throw new YamlException($"Could not found an alias value of anchor: {anchor}");
         }
 
         aliasValue = default;

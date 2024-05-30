@@ -1,4 +1,5 @@
-﻿using NexVYaml.Emitter;
+﻿using NexVYaml;
+using NexVYaml.Emitter;
 using NexYaml.Core;
 using System;
 using System.Collections.Generic;
@@ -18,13 +19,13 @@ internal class BlockSequenceEntrySerializer(Utf8YamlEmitter emitter) : EmitterSe
                 break;
 
             case EmitState.FlowSequenceEntry:
-                throw new YamlEmitterException(
+                throw new YamlException(
                     "To start block-sequence in the flow-sequence is not supported.");
             case EmitState.FlowMappingKey:
-                throw new YamlEmitterException(
+                throw new YamlException(
                     "To start block-sequence in the flow mapping key is not supported.");
             case EmitState.BlockMappingKey:
-                throw new YamlEmitterException(
+                throw new YamlException(
                     "To start block-sequence in the mapping key is not supported.");
         }
 
@@ -89,7 +90,7 @@ internal class BlockSequenceEntrySerializer(Utf8YamlEmitter emitter) : EmitterSe
                 break;
 
             case EmitState.BlockMappingKey:
-                throw new YamlEmitterException("Complex key is not supported.");
+                throw new YamlException("Complex key is not supported.");
 
             case EmitState.BlockMappingValue:
                 emitter.StateStack.Current = EmitState.BlockMappingKey;

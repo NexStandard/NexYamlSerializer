@@ -21,7 +21,7 @@ public class DateTimeOffsetFormatter : YamlSerializer<DateTimeOffset>
         }
         else
         {
-            throw new YamlSerializerException($"Cannot format {value}");
+            throw new YamlException($"Cannot format {value}");
         }
     }
 
@@ -35,6 +35,6 @@ public class DateTimeOffsetFormatter : YamlSerializer<DateTimeOffset>
             value = val;
         }
 
-        throw new YamlSerializerException($"Cannot detect a scalar value of DateTimeOffset : {parser.CurrentEventType} {parser.GetScalarAsString()}");
+        throw new YamlException($"Cannot detect a scalar value of DateTimeOffset : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 }

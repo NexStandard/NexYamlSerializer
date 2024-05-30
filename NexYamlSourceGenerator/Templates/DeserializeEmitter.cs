@@ -19,12 +19,12 @@ internal class DeserializeEmitter
                 {
                     if (parser.CurrentEventType != ParseEventType.Scalar)
                     {
-                        throw new YamlSerializerException(parser.CurrentMark, "Custom type deserialization supports only string key");
+                        throw new YamlException(parser.CurrentMark, "Custom type deserialization supports only string key");
                     }
          
                     if (!parser.TryGetScalarAsSpan(out var key))
                     {
-                        throw new YamlSerializerException(parser.CurrentMark, "Custom type deserialization supports only string key");
+                        throw new YamlException(parser.CurrentMark, "Custom type deserialization supports only string key");
                     }
          
                     switch (key.Length)
