@@ -11,9 +11,10 @@ namespace NexVYaml;
 public class YamlSerializationWriter : ISerializationWriter
 {
     Utf8YamlEmitter Emitter { get; set; }
-    public YamlSerializationContext SerializeContext { get; init; }
-    internal YamlSerializationWriter(Utf8YamlEmitter emitter)
+    YamlSerializationContext SerializeContext { get; init; }
+    internal YamlSerializationWriter(Utf8YamlEmitter emitter, YamlSerializationContext context)
     {
+        SerializeContext = context;
         Emitter = emitter;
     }
     public void Write<T>(T value, DataStyle style = DataStyle.Any)

@@ -51,63 +51,28 @@ internal class DictionaryFormatterHelper : IYamlFormatterHelper
     public static void Serialize<TKey,TValue>(ISerializationWriter stream, Dictionary<TKey, TValue> value, DataStyle style = DataStyle.Normal)
         where TKey : notnull
     {
-        YamlSerializer<TKey> keyFormatter = null!;
-        YamlSerializer<TValue> valueFormatter = null!;
-        if (typeof(TKey).IsValueType || typeof(TKey) == typeof(string))
-        {
-            keyFormatter = stream.SerializeContext.Resolver.GetFormatter<TKey>();
-        }
-        if (typeof(TValue).IsValueType || typeof(TValue) == typeof(string))
-        {
-            valueFormatter = stream.SerializeContext.Resolver.GetFormatter<TValue>();
-        }
-
-        if (keyFormatter is null)
-        {
-            stream.BeginSequence(style);
-            if (valueFormatter is null)
-            {
-                foreach (var x in value)
-                {
-                    stream.Write(x, style);
-                }
-            }
-            else
-            {
-                foreach (var x in value)
-                {
-                    stream.BeginSequence(style);
-                    stream.Write(x.Key);
-                    stream.Write(x.Value);
-                    stream.EndSequence();
-                }
-            }
-
-            stream.EndSequence();
-        }
-        else if (valueFormatter == null)
+        if (FormatterExtensions.IsPrimitive(typeof(TKey)))
         {
             stream.BeginMapping(style);
             {
                 foreach (var x in value)
                 {
-                    keyFormatter.Serialize(stream, x.Key, style);
-                    stream.Write(x.Value);
+                    stream.Write(x.Key, style);
+                    stream.Write(x.Value, style);
                 }
             }
             stream.EndMapping();
+            return;
         }
         else
         {
-            stream.BeginMapping(style);
+            var kvp = new KeyValuePairFormatter<TKey, TValue>();
+            stream.BeginSequence(style);
+            foreach (var x in value)
             {
-                foreach (var x in value)
-                {
-                    keyFormatter.Serialize(stream, x.Key, style);
-                    valueFormatter.Serialize(stream, x.Value, style);
-                }
+                kvp.Serialize(stream, x);
             }
-            stream.EndMapping();
+            stream.EndSequence();
         }
     }
 

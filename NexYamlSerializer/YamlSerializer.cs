@@ -48,10 +48,7 @@ public abstract class YamlSerializer
         var writer = contextLocal.ArrayBufferWriter;
 
         var emitter = new Utf8YamlEmitter(writer);
-        var stream = new YamlSerializationWriter(emitter)
-        {
-            SerializeContext = contextLocal,
-        };
+        var stream = new YamlSerializationWriter(emitter, contextLocal);
         try
         {
             stream.Write(value);
@@ -106,17 +103,17 @@ public abstract class YamlSerializer
     /// <param name="emitter">The Utf8YamlEmitter used for serializing the YAML content.</param>
     /// <param name="value">The object to be serialized.</param>
     /// <param name="options">Optional settings for customizing the YAML serialization process.</param>
-    internal static void Serialize<T>(ref Utf8YamlEmitter emitter, T value, IYamlFormatterResolver? options = null)
+    internal static void Serialize<T>(ref Utf8YamlEmitter emitter, T value, IYamlFormatterResolver? options = null, ISerializationWriter? stream = null)
     {
         try
         {
             options ??= IYamlFormatterResolver.Default;
             var contextLocal = new YamlSerializationContext(options);
-            ISerializationWriter stream = new YamlSerializationWriter(emitter)
+            if(stream is null)
             {
-                SerializeContext = contextLocal,
-            };
-            stream.Write(value);
+                stream = new YamlSerializationWriter(emitter, contextLocal);
+            }
+            stream.Write(value, DataStyle.Any);
         }
         finally
         {
