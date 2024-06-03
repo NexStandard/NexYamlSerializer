@@ -14,6 +14,7 @@ internal class FlowMapValueSerializer(Utf8YamlEmitter emitter) : EmitterSerializ
 
     public override void BeginScalar(Span<byte> output, ref int offset)
     {
+        // Do Nothing
     }
 
     public override void End()
