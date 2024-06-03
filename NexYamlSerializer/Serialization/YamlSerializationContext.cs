@@ -40,7 +40,7 @@ public class YamlSerializationContext(IYamlFormatterResolver resolver)
     public bool IsFirst { get; set; } = true;
     public ArrayBufferWriter<byte>? ArrayBufferWriter { get; } = new ArrayBufferWriter<byte>(512);
 
-    public void Serialize<T>(SerializationWriter stream, T value, DataStyle style = DataStyle.Any)
+    public void Serialize<T>(ISerializationWriter stream, T value, DataStyle style = DataStyle.Any)
     {
 
         var type = typeof(T);

@@ -112,7 +112,7 @@ public abstract class YamlSerializer
         {
             options ??= IYamlFormatterResolver.Default;
             var contextLocal = new YamlSerializationContext(options);
-            SerializationWriter stream = new YamlSerializationWriter(emitter)
+            ISerializationWriter stream = new YamlSerializationWriter(emitter)
             {
                 SerializeContext = contextLocal,
             };
@@ -238,21 +238,21 @@ public abstract class YamlSerializer
 
 
     protected virtual DataStyle Style { get; } = DataStyle.Any;
-    public abstract void Serialize(SerializationWriter stream, object value, DataStyle style);
-    public abstract void Serialize(SerializationWriter stream, object value);
+    public abstract void Serialize(ISerializationWriter stream, object value, DataStyle style);
+    public abstract void Serialize(ISerializationWriter stream, object value);
     public abstract void Deserialize(YamlParser parser, YamlDeserializationContext context, ref object? value);
 }
 public abstract class YamlSerializer<T> : YamlSerializer
 {
-    public override void Serialize(SerializationWriter stream, object value)
+    public override void Serialize(ISerializationWriter stream, object value)
     {
         Serialize(stream, (T)value, Style);
     }
-    public override void Serialize(SerializationWriter stream, object value, DataStyle style)
+    public override void Serialize(ISerializationWriter stream, object value, DataStyle style)
     {
         Serialize(stream, (T)value, style);
     }
-    public void Serialize(SerializationWriter stream, T value, DataStyle style)
+    public void Serialize(ISerializationWriter stream, T value, DataStyle style)
     {
         if (value is null)
         {
@@ -282,5 +282,5 @@ public abstract class YamlSerializer<T> : YamlSerializer
     protected abstract void Read(YamlParser parser, YamlDeserializationContext context, ref T value);
 
 
-    protected abstract void Write(SerializationWriter stream, T value, DataStyle style);
+    protected abstract void Write(ISerializationWriter stream, T value, DataStyle style);
 }

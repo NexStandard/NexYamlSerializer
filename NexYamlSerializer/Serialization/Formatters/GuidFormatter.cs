@@ -10,7 +10,7 @@ public class GuidFormatter : YamlSerializer<Guid>
 {
     public static readonly GuidFormatter Instance = new();
 
-    protected override void Write(SerializationWriter stream, Guid value, DataStyle style)
+    protected override void Write(ISerializationWriter stream, Guid value, DataStyle style)
     {
         // nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn
         Span<byte> buf = stackalloc byte[64];

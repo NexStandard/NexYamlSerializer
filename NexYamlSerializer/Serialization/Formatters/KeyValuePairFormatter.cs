@@ -8,7 +8,7 @@ namespace NexVYaml.Serialization;
 
 public class KeyValuePairFormatter<TKey, TValue> : YamlSerializer<KeyValuePair<TKey, TValue>>
 {
-    protected override void Write(SerializationWriter stream, KeyValuePair<TKey, TValue> value, DataStyle style)
+    protected override void Write(ISerializationWriter stream, KeyValuePair<TKey, TValue> value, DataStyle style)
     {
         stream.BeginSequence(style);
         stream.Write(value.Key);

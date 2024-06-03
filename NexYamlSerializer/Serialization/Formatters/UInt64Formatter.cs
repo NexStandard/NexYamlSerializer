@@ -10,7 +10,7 @@ public class UInt64Formatter : YamlSerializer<ulong>
 {
     public static readonly UInt64Formatter Instance = new();
 
-    protected override void Write(SerializationWriter stream, ulong value, DataStyle style)
+    protected override void Write(ISerializationWriter stream, ulong value, DataStyle style)
     {
         stream.Serialize(ref value);
     }

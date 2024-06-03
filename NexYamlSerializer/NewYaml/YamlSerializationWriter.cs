@@ -8,36 +8,36 @@ using System.Globalization;
 
 namespace NexVYaml;
 
-public class YamlSerializationWriter : SerializationWriter
+public class YamlSerializationWriter : ISerializationWriter
 {
     Utf8YamlEmitter Emitter { get; set; }
-
+    public YamlSerializationContext SerializeContext { get; init; }
     internal YamlSerializationWriter(Utf8YamlEmitter emitter)
     {
         Emitter = emitter;
     }
 
-    public override void BeginMapping(DataStyle style)
+    public void BeginMapping(DataStyle style)
     {
         Emitter.BeginMapping(style);
     }
 
-    public override void BeginSequence(DataStyle style)
+    public void BeginSequence(DataStyle style)
     {
         Emitter.BeginSequence(style);
     }
 
-    public override void EndMapping()
+    public void EndMapping()
     {
         Emitter.EndMapping();
     }
 
-    public override void EndSequence()
+    public void EndSequence()
     {
         Emitter.EndSequence();
     }
 
-    public override void Serialize(ref int value)
+    public void Serialize(ref int value)
     {
         var offset = 0;
         var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(11)); // -2147483648
@@ -51,7 +51,7 @@ public class YamlSerializationWriter : SerializationWriter
         Emitter.EndScalar(output, ref offset);
     }
 
-    public override void Serialize(ref uint value)
+    public void Serialize(ref uint value)
     {
         var offset = 0;
         var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(10)); // 4294967295
@@ -65,7 +65,7 @@ public class YamlSerializationWriter : SerializationWriter
         Emitter.EndScalar(output, ref offset);
     }
 
-    public override void Serialize(ref long value)
+    public void Serialize(ref long value)
     {
         var offset = 0;
         var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(20)); // -9223372036854775808
@@ -79,7 +79,7 @@ public class YamlSerializationWriter : SerializationWriter
         Emitter.EndScalar(output, ref offset);
     }
 
-    public override void Serialize(ref ulong value)
+    public void Serialize(ref ulong value)
     {
         var offset = 0;
         var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(20)); // 18446744073709551615
@@ -93,7 +93,7 @@ public class YamlSerializationWriter : SerializationWriter
         Emitter.EndScalar(output, ref offset);
     }
 
-    public override void Serialize(ref double value)
+    public void Serialize(ref double value)
     {
         var offset = 0;
         var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(17));
@@ -107,7 +107,7 @@ public class YamlSerializationWriter : SerializationWriter
         Emitter.EndScalar(output, ref offset);
     }
 
-    public override void Serialize(ref float value)
+    public void Serialize(ref float value)
     {
         var offset = 0;
         var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(12));
@@ -121,7 +121,7 @@ public class YamlSerializationWriter : SerializationWriter
         Emitter.EndScalar(output, ref offset);
     }
 
-    public override void Serialize(ref short value)
+    public void Serialize(ref short value)
     {
         var offset = 0;
         var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(11)); // -2147483648
@@ -135,19 +135,19 @@ public class YamlSerializationWriter : SerializationWriter
         Emitter.EndScalar(output, ref offset);
     }
 
-    public override void Serialize(ref ushort value)
+    public void Serialize(ref ushort value)
     {
         var u = (uint)value;
         Serialize(ref u);
     }
 
-    public override void Serialize(ref byte value)
+    public void Serialize(ref byte value)
     {
         var b = (int)value;
         Serialize(ref b);
     }
 
-    public override void Serialize(ref char value)
+    public void Serialize(ref char value)
     {
         var offset = 0;
         var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(11)); // -2147483648
@@ -164,7 +164,7 @@ public class YamlSerializationWriter : SerializationWriter
     /// Serializes the specified value as the suggested <see cref="ScalarStyle"/> of <see cref="EmitStringAnalyzer.Analyze(string)"/> string.
     /// </summary>
     /// <param name="value">The value to be Serialized to the Stream.</param>
-    public override void Serialize(ref string value)
+    public void Serialize(ref string value)
     {
         var result = EmitStringAnalyzer.Analyze(value);
         var style = result.SuggestScalarStyle();
@@ -197,17 +197,17 @@ public class YamlSerializationWriter : SerializationWriter
             writer.WriteLiteralScalar(value);
         }
     }
-    public override void Serialize(ref bool value)
+    public void Serialize(ref bool value)
     {
         Emitter.WriteScalar(value ? YamlCodes.True0 : YamlCodes.False0);
     }
 
-    public override void Serialize(ref ReadOnlySpan<byte> value)
+    public void Serialize(ref ReadOnlySpan<byte> value)
     {
         Emitter.WriteScalar(value);
     }
 
-    public override void Serialize(ref decimal value)
+    public void Serialize(ref decimal value)
     {
         Span<byte> buf = stackalloc byte[64];
 
@@ -221,7 +221,7 @@ public class YamlSerializationWriter : SerializationWriter
         }
     }
 
-    public override void Serialize(ref sbyte value)
+    public void Serialize(ref sbyte value)
     {
         var offset = 0;
         var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(11)); // -2147483648
@@ -235,7 +235,7 @@ public class YamlSerializationWriter : SerializationWriter
         Emitter.EndScalar(output, ref offset);
     }
 
-    public override void WriteTag(string tag)
+    public void WriteTag(string tag)
     {
         if (SerializeContext.IsRedirected || SerializeContext.IsFirst)
         {

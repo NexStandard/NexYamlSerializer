@@ -11,7 +11,7 @@ public class DecimalFormatter : YamlSerializer<decimal>
 {
     public static readonly DecimalFormatter Instance = new();
 
-    protected override void Write(SerializationWriter stream, decimal value, DataStyle style)
+    protected override void Write(ISerializationWriter stream, decimal value, DataStyle style)
     {
         stream.Serialize(ref value);
     }
