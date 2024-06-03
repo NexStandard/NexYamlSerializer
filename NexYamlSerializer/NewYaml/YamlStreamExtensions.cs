@@ -14,65 +14,11 @@ public static class YamlStreamExtensions
         stream.Serialize(ref nullTag);
     }
 
-    public static void Write<T>(this ISerializationWriter stream, T value, DataStyle style = DataStyle.Any)
-    {
-        if (value is null)
-        {
-            ReadOnlySpan<byte> buf = YamlCodes.Null0;
-            stream.Serialize(ref buf);
-            return;
-        }
-        if (value is Array)
-        {
-            var t = typeof(T).GetElementType();
-            var arrayFormatterType = typeof(ArrayFormatter<>).MakeGenericType(t!);
-            var arrayFormatter = (YamlSerializer)Activator.CreateInstance(arrayFormatterType)!;
-
-            arrayFormatter.Serialize(stream, value, style);
-            return;
-        }
-        if (style is DataStyle.Any)
-        {
-            stream.SerializeContext.Serialize(stream, value);
-        }
-        else
-        {
-            stream.SerializeContext.Serialize(stream, value, style);
-        }
-    }
-
-    public static void Write<T, K>(this ISerializationWriter stream, KeyValuePair<T, K> value, DataStyle style = DataStyle.Any)
-    {
-        stream.BeginSequence(style);
-        stream.Write(value.Key);
-        stream.Write(value.Value);
-        stream.EndSequence();
-    }    
-    public static void Write<T, K>(this ISerializationWriter stream, string key, KeyValuePair<T, K> value, DataStyle style = DataStyle.Any)
-    {
-        stream.Serialize(ref key);
-        stream.Write(value, style);
-    }
-    public static void Write<T, K>(this ISerializationWriter stream, Dictionary<T, K> value, DataStyle style = DataStyle.Any)
-        where T : notnull
-    {
-        if (value is null)
-            stream.WriteNull();
-        else
-            DictionaryFormatterHelper.Serialize(stream, value, style);
-    }
     public static void Write<T, K>(this ISerializationWriter stream, string key, Dictionary<T, K> value, DataStyle style)
         where T : notnull
     {
         stream.Serialize(ref key);
         stream.Write(value, style);
-    }
-    public static void Write<T>(this ISerializationWriter stream, List<T> value, DataStyle style)
-    {
-        if (value is null)
-            stream.WriteNull();
-        else
-            ListFormatterHelper.Serialize(stream, value, style);
     }
     public static void Write<T>(this ISerializationWriter stream, string key, List<T> value, DataStyle style)
     {

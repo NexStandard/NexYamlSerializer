@@ -16,7 +16,32 @@ public class YamlSerializationWriter : ISerializationWriter
     {
         Emitter = emitter;
     }
+    public void Write<T>(T value, DataStyle style = DataStyle.Any)
+    {
+        if (value is null)
+        {
+            ReadOnlySpan<byte> buf = YamlCodes.Null0;
+            Serialize(ref buf);
+            return;
+        }
+        if (value is Array)
+        {
+            var t = typeof(T).GetElementType();
+            var arrayFormatterType = typeof(ArrayFormatter<>).MakeGenericType(t!);
+            var arrayFormatter = (YamlSerializer)Activator.CreateInstance(arrayFormatterType)!;
 
+            arrayFormatter.Serialize(this, value, style);
+            return;
+        }
+        if (style is DataStyle.Any)
+        {
+            SerializeContext.Serialize(this, value);
+        }
+        else
+        {
+            SerializeContext.Serialize(this, value, style);
+        }
+    }
     public void BeginMapping(DataStyle style)
     {
         Emitter.BeginMapping(style);

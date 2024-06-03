@@ -14,4 +14,5 @@ public interface ISerializationWriter : ISerializationStream
     public abstract void EndMapping();
     public abstract void BeginSequence(DataStyle style);
     public abstract void EndSequence();
+    public abstract void Write<T>(T value, DataStyle style = DataStyle.Any);
 }
