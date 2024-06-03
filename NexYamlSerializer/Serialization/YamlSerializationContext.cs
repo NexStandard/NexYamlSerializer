@@ -30,7 +30,7 @@ class StyleEnforcer
         }
     }
 }
-public class YamlSerializationContext(IYamlFormatterResolver resolver)
+class YamlSerializationContext(IYamlFormatterResolver resolver)
 {
     public IYamlFormatterResolver Resolver { get; } = resolver;
     /// <summary>
