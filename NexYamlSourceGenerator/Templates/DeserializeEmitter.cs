@@ -15,26 +15,10 @@ internal class DeserializeEmitter
         return $$"""
                 parser.ReadWithVerify(ParseEventType.MappingStart);
         {{package.CreateTempMembers()}}
-                while (!parser.End && parser.CurrentEventType != ParseEventType.MappingEnd)
+                while (parser.HasMapping)
                 {
-                    if (parser.CurrentEventType != ParseEventType.Scalar)
-                    {
-                        throw new YamlException(parser.CurrentMark, "Custom type deserialization supports only string key");
-                    }
-         
-                    if (!parser.TryGetScalarAsSpan(out var key))
-                    {
-                        throw new YamlException(parser.CurrentMark, "Custom type deserialization supports only string key");
-                    }
-         
-                    switch (key.Length)
-                    {
+                    parser.ValidateScalar(out var key);
         {{MapPropertiesToSwitch(map)}}
-                    default:
-                        parser.Read();
-                        parser.SkipCurrentNode();
-                        continue;
-                     }
                  }
 
                  parser.ReadWithVerify(ParseEventType.MappingEnd);
@@ -92,10 +76,11 @@ internal class DeserializeEmitter
     public StringBuilder MapPropertiesToSwitch(Dictionary<int, List<SymbolInfo>> properties)
     {
         var switchBuilder = new StringBuilder();
+        // AppendSwitchCase(switchBuilder, prop.Key);
+        var isFirstime = true;
         foreach (var prop in properties)
         {
-            AppendSwitchCase(switchBuilder, prop.Key);
-            var isFirstime = true;
+            
             foreach (var propert in prop.Value)
             {
                 string ifelse;
@@ -127,6 +112,9 @@ internal class DeserializeEmitter
                     }
                 }
             }
+        }
+        if (!isFirstime)
+        {
             AppendElseSkip(switchBuilder);
         }
         return switchBuilder;
@@ -140,7 +128,6 @@ internal class DeserializeEmitter
                         parser.Read();
                         parser.SkipCurrentNode();
                     }
-                    continue;
         """);
     }
 }

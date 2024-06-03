@@ -15,10 +15,6 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
     public SerializerRegistry FormatterRegistry { get; set; } = new();
     public static NexYamlSerializerRegistry Instance { get; } = new NexYamlSerializerRegistry();
 
-    internal NexYamlSerializerRegistry()
-    {
-
-    }
     public Type GetAliasType(string alias) => FormatterRegistry.TypeMap[alias];
     public YamlSerializer<T> GetFormatter<T>()
     {
