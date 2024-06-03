@@ -27,8 +27,8 @@ public class YamlSerializationWriter : ISerializationWriter
         }
         if (value is Array)
         {
-            var t = typeof(T).GetElementType();
-            var arrayFormatterType = typeof(ArrayFormatter<>).MakeGenericType(t!);
+            var t = typeof(T).GetElementType()!;
+            var arrayFormatterType = typeof(ArrayFormatter<>).MakeGenericType(t);
             var arrayFormatter = (YamlSerializer)Activator.CreateInstance(arrayFormatterType)!;
 
             arrayFormatter.Serialize(this, value, style);

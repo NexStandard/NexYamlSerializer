@@ -18,7 +18,7 @@ public class ListFormatter<T> : YamlSerializer<List<T>?>
         parser.ReadWithVerify(ParseEventType.SequenceStart);
 
         var list = new List<T>();
-        while (!parser.End && parser.CurrentEventType != ParseEventType.SequenceEnd)
+        while (parser.HasSequence)
         {
             var val = default(T);
             context.DeserializeWithAlias(ref parser, ref val);

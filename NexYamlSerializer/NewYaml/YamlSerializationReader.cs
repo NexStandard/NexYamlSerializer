@@ -36,7 +36,7 @@ internal class YamlSerializationReader(YamlParser parser) : SerializationReader
             value = val;
             return;
         }
-        throw new YamlException(parser.CurrentMark, $"Cannot detect a scalar value as Int32: {parser.CurrentEventType} {parser.currentScalar}");
+        value = default;
     }
 
     public override void Serialize(ref uint value)
@@ -45,7 +45,7 @@ internal class YamlSerializationReader(YamlParser parser) : SerializationReader
         {
             return;
         }
-        throw new YamlException(parser.CurrentMark, $"Cannot detect a scalar value as UInt32 : {parser.CurrentEventType} {parser.currentScalar}");
+        value = default;
     }
 
     public override void Serialize(ref long value)

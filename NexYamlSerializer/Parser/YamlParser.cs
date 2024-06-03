@@ -79,12 +79,11 @@ public partial class YamlParser
     /// <summary>
     /// Indicates if the current <see cref="ParseEventType.MappingEnd"/> or <see cref="ParseEventType.StreamEnd"/> has not happened yet.
     /// </summary>
-    public bool HasMapping => !End && CurrentEventType != ParseEventType.MappingEnd;
+    public bool HasMapping => CurrentEventType is not ParseEventType.StreamEnd and not ParseEventType.MappingEnd;
     /// <summary>
     /// Indicates if the current <see cref="ParseEventType.SequenceEnd"/> or <see cref="ParseEventType.StreamEnd"/> has not happened yet.
     /// </summary>
-    public bool HasSequence => !End && CurrentEventType != ParseEventType.SequenceEnd;
-    public bool End => CurrentEventType == ParseEventType.StreamEnd;
+    public bool HasSequence => CurrentEventType is not ParseEventType.StreamEnd and not ParseEventType.SequenceEnd;
     /// <summary>
     /// Validates the scalar and returns it if succesful.
     /// Else it's an empty scalar and <see cref="YamlException"/> will be thrown

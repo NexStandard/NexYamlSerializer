@@ -1,6 +1,7 @@
 ﻿using NexVYaml.Serialization;
 using NexYaml.Core;
 using Stride.Core;
+using Stride.Core.Serialization.Serializers;
 using System;
 using System.Collections.Generic;
 
@@ -13,17 +14,19 @@ public static class YamlStreamExtensions
         ReadOnlySpan<byte> nullTag = YamlCodes.Null0;
         stream.Serialize(ref nullTag);
     }
-
+    
     public static void Write<T, K>(this ISerializationWriter stream, string key, Dictionary<T, K> value, DataStyle style)
         where T : notnull
     {
         stream.Serialize(ref key);
-        stream.Write(value, style);
+        var ser = new DictionaryFormatter<T, K>();
+        ser.Serialize(stream, value, style);
     }
     public static void Write<T>(this ISerializationWriter stream, string key, List<T> value, DataStyle style)
     {
         stream.Serialize(ref key);
-        stream.Write(value, style);
+        var serializer = new ListFormatter<T>();
+        serializer.Serialize(stream, value, style);
     }
     public static void Write<T>(this ISerializationWriter stream, string key, T value, DataStyle style)
     {
