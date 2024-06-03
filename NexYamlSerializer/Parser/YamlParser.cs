@@ -1,4 +1,5 @@
 #nullable enable
+using Irony.Parsing;
 using NexYaml.Core;
 using System;
 using System.Buffers;
@@ -7,9 +8,6 @@ using System.Runtime.CompilerServices;
 
 namespace NexVYaml.Parser;
 
-public class YamlParserException(in Marker marker, string message) : Exception($"{message} at {marker}")
-{
-}
 
 public enum ParseEventType : byte
 {
@@ -78,9 +76,34 @@ public partial class YamlParser
     {
         get => tokenizer.CurrentMark;
     }
-
+    /// <summary>
+    /// Indicates if the current <see cref="ParseEventType.MappingEnd"/> or <see cref="ParseEventType.StreamEnd"/> has not happened yet.
+    /// </summary>
+    public bool HasMapping => !End && CurrentEventType != ParseEventType.MappingEnd;
+    /// <summary>
+    /// Indicates if the current <see cref="ParseEventType.SequenceEnd"/> or <see cref="ParseEventType.StreamEnd"/> has not happened yet.
+    /// </summary>
+    public bool HasSequence => !End && CurrentEventType != ParseEventType.SequenceEnd;
     public bool End => CurrentEventType == ParseEventType.StreamEnd;
+    /// <summary>
+    /// Validates the scalar and returns it if succesful.
+    /// Else it's an empty scalar and <see cref="YamlException"/> will be thrown
+    /// </summary>
+    /// <param name="key">The <see cref="Scalar"/> Key of the Mapping</param>
+    /// <returns></returns>
+    /// <exception cref="YamlException">Throws when there is no <see cref="ParseEventType.Scalar"/> or if <see cref="TryGetScalarAsSpan(out ReadOnlySpan{byte})"/> doesn't succeed</exception>
+    public void ValidateScalar(out ReadOnlySpan<byte> key)
+    {
+        if (CurrentEventType != ParseEventType.Scalar)
+        {
+            throw new YamlException(CurrentMark, "Custom type deserialization supports only string key");
+        }
 
+        if (!TryGetScalarAsSpan(out key))
+        {
+            throw new YamlException(CurrentMark, "Custom type deserialization supports only string key");
+        }
+    }
     TokenType CurrentTokenType
     {
         get => tokenizer.CurrentTokenType;
@@ -240,7 +263,7 @@ public partial class YamlParser
     public void ReadWithVerify(ParseEventType eventType)
     {
         if (CurrentEventType != eventType)
-            throw new YamlParserException(CurrentMark, $"Did not find expected event : `{eventType}`");
+            throw new YamlException(CurrentMark, $"Did not find expected event : `{eventType}`");
         Read();
     }
 
@@ -420,7 +443,7 @@ public partial class YamlParser
                     CurrentEventType = ParseEventType.Alias;
                     return;
                 }
-                throw new YamlParserException(CurrentMark, "While parsing node, found unknown anchor");
+                throw new YamlException(CurrentMark, "While parsing node, found unknown anchor");
 
             case TokenType.Anchor:
                 {
@@ -547,7 +570,7 @@ public partial class YamlParser
                 break;
 
             default:
-                throw new YamlParserException(CurrentMark,
+                throw new YamlException(CurrentMark,
                     "while parsing a block mapping, did not find expected key");
         }
     }
@@ -608,7 +631,7 @@ public partial class YamlParser
                 break;
 
             default:
-                throw new YamlParserException(CurrentMark,
+                throw new YamlException(CurrentMark,
                     "while parsing a block collection, did not find expected '-' indicator");
         }
     }
@@ -636,7 +659,7 @@ public partial class YamlParser
             default:
                 if (!first)
                 {
-                    throw new YamlParserException(CurrentMark,
+                    throw new YamlException(CurrentMark,
                         "while parsing a flow sequence, expected ',' or ']'");
                 }
                 break;
@@ -686,7 +709,7 @@ public partial class YamlParser
             }
             else
             {
-                throw new YamlParserException(CurrentMark,
+                throw new YamlException(CurrentMark,
                     "While parsing a flow mapping, did not find expected ',' or '}'");
             }
         }
@@ -873,7 +896,7 @@ public partial class YamlParser
     {
         if (CurrentTokenType != expectedTokenType)
         {
-            throw new YamlParserException(tokenizer.CurrentMark,
+            throw new YamlException(tokenizer.CurrentMark,
                 $"Did not find expected token of  `{expectedTokenType}`");
         }
     }

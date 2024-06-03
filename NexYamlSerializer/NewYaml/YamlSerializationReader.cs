@@ -1,4 +1,5 @@
-﻿using NexVYaml.Parser;
+﻿using NexVYaml;
+using NexVYaml.Parser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,7 @@ internal class YamlSerializationReader(YamlParser parser) : SerializationReader
             value = val;
             return;
         }
-        throw new YamlParserException(parser.CurrentMark, $"Cannot detect a scalar value as Int32: {parser.CurrentEventType} {parser.currentScalar}");
+        throw new YamlException(parser.CurrentMark, $"Cannot detect a scalar value as Int32: {parser.CurrentEventType} {parser.currentScalar}");
     }
 
     public override void Serialize(ref uint value)
@@ -44,7 +45,7 @@ internal class YamlSerializationReader(YamlParser parser) : SerializationReader
         {
             return;
         }
-        throw new YamlParserException(parser.CurrentMark, $"Cannot detect a scalar value as UInt32 : {parser.CurrentEventType} {parser.currentScalar}");
+        throw new YamlException(parser.CurrentMark, $"Cannot detect a scalar value as UInt32 : {parser.CurrentEventType} {parser.currentScalar}");
     }
 
     public override void Serialize(ref long value)
@@ -54,7 +55,7 @@ internal class YamlSerializationReader(YamlParser parser) : SerializationReader
             value = val;
             return;
         }
-        throw new YamlParserException(parser.CurrentMark, $"Cannot detect a scalar value as Int64: {parser.CurrentEventType} {parser.currentScalar}");
+        throw new YamlException(parser.CurrentMark, $"Cannot detect a scalar value as Int64: {parser.CurrentEventType} {parser.currentScalar}");
     }
 
     public override void Serialize(ref ulong value)
@@ -63,7 +64,7 @@ internal class YamlSerializationReader(YamlParser parser) : SerializationReader
         {
             return;
         }
-        throw new YamlParserException(parser.CurrentMark, $"Cannot detect a scalar value as UInt64 : {parser.CurrentEventType} ({parser.currentScalar})");
+        throw new YamlException(parser.CurrentMark, $"Cannot detect a scalar value as UInt64 : {parser.CurrentEventType} ({parser.currentScalar})");
     }
 
     public override void Serialize(ref float value)
@@ -72,7 +73,7 @@ internal class YamlSerializationReader(YamlParser parser) : SerializationReader
         {
             return;
         }
-        throw new YamlParserException(parser.CurrentMark, $"Cannot detect scalar value as float : {parser.CurrentEventType} {parser.currentScalar}");
+        throw new YamlException(parser.CurrentMark, $"Cannot detect scalar value as float : {parser.CurrentEventType} {parser.currentScalar}");
     }
 
     public override void Serialize(ref double value)
@@ -81,7 +82,7 @@ internal class YamlSerializationReader(YamlParser parser) : SerializationReader
         {
             return;
         }
-        throw new YamlParserException(parser.CurrentMark, $"Cannot detect a scalar value as double : {parser.CurrentEventType} {parser.currentScalar}");
+        throw new YamlException(parser.CurrentMark, $"Cannot detect a scalar value as double : {parser.CurrentEventType} {parser.currentScalar}");
     }
 
     public override void Serialize(ref short value)

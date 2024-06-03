@@ -35,7 +35,7 @@ public partial class YamlParser
         {
             return value;
         }
-        throw new YamlParserException(CurrentMark, $"Cannot detect a scalar value as bool : {CurrentEventType} {currentScalar}");
+        throw new YamlException(CurrentMark, $"Cannot detect a scalar value as bool : {CurrentEventType} {currentScalar}");
     }
 
     public int GetScalarAsInt32()
@@ -44,7 +44,7 @@ public partial class YamlParser
         {
             return value;
         }
-        throw new YamlParserException(CurrentMark, $"Cannot detect a scalar value as Int32: {CurrentEventType} {currentScalar}");
+        throw new YamlException(CurrentMark, $"Cannot detect a scalar value as Int32: {CurrentEventType} {currentScalar}");
     }
 
     public long GetScalarAsInt64()
@@ -53,7 +53,7 @@ public partial class YamlParser
         {
             return value;
         }
-        throw new YamlParserException(CurrentMark, $"Cannot detect a scalar value as Int64: {CurrentEventType} {currentScalar}");
+        throw new YamlException(CurrentMark, $"Cannot detect a scalar value as Int64: {CurrentEventType} {currentScalar}");
     }
 
     public uint GetScalarAsUInt32()
@@ -62,7 +62,7 @@ public partial class YamlParser
         {
             return value;
         }
-        throw new YamlParserException(CurrentMark, $"Cannot detect a scalar value as UInt32 : {CurrentEventType} {currentScalar}");
+        throw new YamlException(CurrentMark, $"Cannot detect a scalar value as UInt32 : {CurrentEventType} {currentScalar}");
     }
 
     public ulong GetScalarAsUInt64()
@@ -71,7 +71,7 @@ public partial class YamlParser
         {
             return value;
         }
-        throw new YamlParserException(CurrentMark, $"Cannot detect a scalar value as UInt64 : {CurrentEventType} ({currentScalar})");
+        throw new YamlException(CurrentMark, $"Cannot detect a scalar value as UInt64 : {CurrentEventType} ({currentScalar})");
     }
 
     public float GetScalarAsFloat()
@@ -80,7 +80,7 @@ public partial class YamlParser
         {
             return value;
         }
-        throw new YamlParserException(CurrentMark, $"Cannot detect scalar value as float : {CurrentEventType} {currentScalar}");
+        throw new YamlException(CurrentMark, $"Cannot detect scalar value as float : {CurrentEventType} {currentScalar}");
     }
 
     public double GetScalarAsDouble()
@@ -89,7 +89,7 @@ public partial class YamlParser
         {
             return value;
         }
-        throw new YamlParserException(CurrentMark, $"Cannot detect a scalar value as double : {CurrentEventType} {currentScalar}");
+        throw new YamlException(CurrentMark, $"Cannot detect a scalar value as double : {CurrentEventType} {currentScalar}");
     }
 
     public string? ReadScalarAsString()
