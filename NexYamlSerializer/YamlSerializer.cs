@@ -28,8 +28,6 @@ public class YamlException : Exception
 /// </summary>
 public abstract class YamlSerializer
 {
-    static IYamlFormatterResolver? defaultOptions;
-
     /// <summary>
     /// Serializes the specified value to a <see cref="ReadOnlyMemory{T}"/> using YAML format.
     /// </summary>
