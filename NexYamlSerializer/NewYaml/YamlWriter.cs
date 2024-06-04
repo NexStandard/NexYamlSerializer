@@ -8,11 +8,11 @@ using System.Globalization;
 
 namespace NexVYaml;
 
-public class YamlSerializationWriter : ISerializationWriter
+public class YamlWriter : IYamlWriter
 {
     Utf8YamlEmitter Emitter { get; set; }
     YamlSerializationContext SerializeContext { get; init; }
-    internal YamlSerializationWriter(Utf8YamlEmitter emitter, YamlSerializationContext context)
+    internal YamlWriter(Utf8YamlEmitter emitter, YamlSerializationContext context)
     {
         SerializeContext = context;
         Emitter = emitter;

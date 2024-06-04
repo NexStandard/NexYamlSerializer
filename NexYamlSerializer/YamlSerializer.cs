@@ -46,7 +46,7 @@ public abstract class YamlSerializer
         var writer = contextLocal.ArrayBufferWriter;
 
         var emitter = new Utf8YamlEmitter(writer);
-        var stream = new YamlSerializationWriter(emitter, contextLocal);
+        var stream = new YamlWriter(emitter, contextLocal);
         try
         {
             stream.Write(value,style);
@@ -101,7 +101,7 @@ public abstract class YamlSerializer
     /// <param name="emitter">The Utf8YamlEmitter used for serializing the YAML content.</param>
     /// <param name="value">The object to be serialized.</param>
     /// <param name="options">Optional settings for customizing the YAML serialization process.</param>
-    internal static void Serialize<T>(ref Utf8YamlEmitter emitter, T value, DataStyle style = DataStyle.Any, IYamlFormatterResolver? options = null, ISerializationWriter? stream = null)
+    internal static void Serialize<T>(ref Utf8YamlEmitter emitter, T value, DataStyle style = DataStyle.Any, IYamlFormatterResolver? options = null, IYamlWriter? stream = null)
     {
         try
         {
@@ -109,7 +109,7 @@ public abstract class YamlSerializer
             var contextLocal = new YamlSerializationContext(options);
             if(stream is null)
             {
-                stream = new YamlSerializationWriter(emitter, contextLocal);
+                stream = new YamlWriter(emitter, contextLocal);
             }
             stream.Write(value, style);
         }
@@ -233,21 +233,21 @@ public abstract class YamlSerializer
 
 
     protected virtual DataStyle Style { get; } = DataStyle.Any;
-    public abstract void Serialize(ISerializationWriter stream, object value, DataStyle style);
-    public abstract void Serialize(ISerializationWriter stream, object value);
+    public abstract void Serialize(IYamlWriter stream, object value, DataStyle style);
+    public abstract void Serialize(IYamlWriter stream, object value);
     public abstract void Deserialize(YamlParser parser, YamlDeserializationContext context, ref object? value);
 }
 public abstract class YamlSerializer<T> : YamlSerializer
 {
-    public override void Serialize(ISerializationWriter stream, object value)
+    public override void Serialize(IYamlWriter stream, object value)
     {
         Serialize(stream, (T)value, Style);
     }
-    public override void Serialize(ISerializationWriter stream, object value, DataStyle style)
+    public override void Serialize(IYamlWriter stream, object value, DataStyle style)
     {
         Serialize(stream, (T)value, style);
     }
-    public void Serialize(ISerializationWriter stream, T value, DataStyle style)
+    public void Serialize(IYamlWriter stream, T value, DataStyle style)
     {
         if (value is null)
         {
@@ -277,5 +277,5 @@ public abstract class YamlSerializer<T> : YamlSerializer
     protected abstract void Read(YamlParser parser, YamlDeserializationContext context, ref T value);
 
 
-    protected abstract void Write(ISerializationWriter stream, T value, DataStyle style);
+    protected abstract void Write(IYamlWriter stream, T value, DataStyle style);
 }

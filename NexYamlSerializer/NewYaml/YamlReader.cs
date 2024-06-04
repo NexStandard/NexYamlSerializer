@@ -8,9 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NexYamlSerializer.NewYaml;
-internal class YamlSerializationReader(YamlParser parser) : SerializationReader
+internal class YamlReader(YamlParser parser) : IYamlReader
 {
-    public override bool IsNull()
+    public bool IsNull()
     {
         if (parser.IsNullScalar())
         {
@@ -20,7 +20,7 @@ internal class YamlSerializationReader(YamlParser parser) : SerializationReader
         return false;
     }
 
-    public override void Serialize(ref byte value)
+    public void Serialize(ref byte value)
     {
         if(parser.TryGetScalarAsUInt32(out var result))
         {
@@ -28,7 +28,7 @@ internal class YamlSerializationReader(YamlParser parser) : SerializationReader
         }
     }
 
-    public override void Serialize(ref sbyte value)
+    public void Serialize(ref sbyte value)
     {
         if(parser.TryGetScalarAsInt32(out var result))
         {
@@ -36,7 +36,7 @@ internal class YamlSerializationReader(YamlParser parser) : SerializationReader
         }
     }
 
-    public override void Serialize(ref int value)
+    public void Serialize(ref int value)
     {
         if (parser.TryGetScalarAsInt32(out var val))
         {
@@ -45,7 +45,7 @@ internal class YamlSerializationReader(YamlParser parser) : SerializationReader
         }
     }
 
-    public override void Serialize(ref uint value)
+    public void Serialize(ref uint value)
     {
         if (parser.TryGetScalarAsUInt32(out value))
         {
@@ -53,7 +53,7 @@ internal class YamlSerializationReader(YamlParser parser) : SerializationReader
         }
     }
 
-    public override void Serialize(ref long value)
+    public void Serialize(ref long value)
     {
         if (parser.TryGetScalarAsInt64(out var result))
         {
@@ -62,7 +62,7 @@ internal class YamlSerializationReader(YamlParser parser) : SerializationReader
         }
     }
 
-    public override void Serialize(ref ulong value)
+    public void Serialize(ref ulong value)
     {
         if (parser.TryGetScalarAsUInt64(out value))
         {
@@ -70,7 +70,7 @@ internal class YamlSerializationReader(YamlParser parser) : SerializationReader
         }
     }
 
-    public override void Serialize(ref float value)
+    public void Serialize(ref float value)
     {
         if (parser.TryGetScalarAsFloat(out value))
         {
@@ -78,7 +78,7 @@ internal class YamlSerializationReader(YamlParser parser) : SerializationReader
         }
     }
 
-    public override void Serialize(ref double value)
+    public void Serialize(ref double value)
     {
         if (parser.currentScalar is { } scalar && scalar.TryGetDouble(out value))
         {
@@ -86,40 +86,40 @@ internal class YamlSerializationReader(YamlParser parser) : SerializationReader
         }
     }
 
-    public override void Serialize(ref short value)
+    public void Serialize(ref short value)
     {
         var result = parser.GetScalarAsInt32();
         parser.Read();
         value = checked((short)result);
     }
 
-    public override void Serialize(ref ushort value)
+    public void Serialize(ref ushort value)
     {
         var result = parser.GetScalarAsUInt32();
         parser.Read();
         value = checked((ushort)result);
     }
 
-    public override void Serialize(ref char value)
+    public void Serialize(ref char value)
     {
         var result = parser.GetScalarAsUInt32();
         parser.Read();
         value = checked((char)result);
     }
 
-    public override void Serialize(ref bool value)
+    public void Serialize(ref bool value)
     {
         var result = parser.GetScalarAsBool();
         parser.Read();
         value = result;
     }
 
-    public override void Serialize(ref string? value)
+    public void Serialize(ref string? value)
     {
         value = parser.ReadScalarAsString();
     }
 
-    public override void Serialize(ref decimal value)
+    public void Serialize(ref decimal value)
     {
         if (parser.TryGetScalarAsSpan(out var span) &&
                   Utf8Parser.TryParse(span, out decimal val, out var bytesConsumed) &&
@@ -131,7 +131,7 @@ internal class YamlSerializationReader(YamlParser parser) : SerializationReader
         }
     }
 
-    public override void Serialize(ref ReadOnlySpan<byte> value)
+    public void Serialize(ref ReadOnlySpan<byte> value)
     {
         parser.TryGetScalarAsSpan(out value);
         

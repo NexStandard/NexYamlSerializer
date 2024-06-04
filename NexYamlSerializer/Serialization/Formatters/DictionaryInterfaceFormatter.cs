@@ -10,7 +10,7 @@ namespace NexVYaml.Serialization;
 public class DictionaryInterfaceFormatter<TKey, TValue> : YamlSerializer<IDictionary<TKey, TValue>?>
     where TKey : notnull
 {
-    protected override void Write(ISerializationWriter stream, IDictionary<TKey, TValue>? value, DataStyle style)
+    protected override void Write(IYamlWriter stream, IDictionary<TKey, TValue>? value, DataStyle style)
     {
         if (FormatterExtensions.IsPrimitive(typeof(TKey)))
         {

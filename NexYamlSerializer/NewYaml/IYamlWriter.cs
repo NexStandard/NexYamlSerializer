@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 
 namespace NexVYaml;
-public interface ISerializationWriter : ISerializationStream
+public interface IYamlWriter : IYamlStream
 {
     public void WriteTag(string tag);
     public void BeginMapping(DataStyle style);

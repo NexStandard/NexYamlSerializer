@@ -2,7 +2,7 @@
 using System.Linq;
 
 namespace NexYamlSerializer.NewYaml;
-public interface ISerializationStream
+public interface IYamlStream
 {
     void Serialize(ref byte value);
     void Serialize(ref sbyte value);
