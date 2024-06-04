@@ -17,7 +17,7 @@ internal abstract class SerializationReader :  ISerializationStream
     public abstract void Serialize(ref ushort value);
     public abstract void Serialize(ref char value);
     public abstract void Serialize(ref bool value);
-    public abstract void Serialize(ref string value);
+    public abstract void Serialize(ref string? value);
     public abstract void Serialize(ref decimal value);
     public abstract void Serialize(ref ReadOnlySpan<byte> value);
 }

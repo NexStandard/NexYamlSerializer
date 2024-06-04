@@ -190,7 +190,7 @@ public class YamlSerializationWriter : ISerializationWriter
     /// Serializes the specified value as the suggested <see cref="ScalarStyle"/> of <see cref="EmitStringAnalyzer.Analyze(string)"/> string.
     /// </summary>
     /// <param name="value">The value to be Serialized to the Stream.</param>
-    public void Serialize(ref string value)
+    public void Serialize(ref string? value)
     {
         var result = EmitStringAnalyzer.Analyze(value);
         var style = result.SuggestScalarStyle();
