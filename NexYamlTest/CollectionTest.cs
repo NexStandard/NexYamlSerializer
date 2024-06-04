@@ -1,5 +1,6 @@
 ﻿using NexVYaml;
 using NexVYaml.Serialization;
+using NexYamlTest.ComplexCases;
 using NexYamlTest.SimpleClasses;
 using Stride.Core;
 using System.Collections.Generic;
@@ -23,6 +24,52 @@ public class CollectionTest
         var d = YamlSerializer.Deserialize<NullDictionary>(s);
         Assert.NotNull(d);
         Assert.Null(d.dict);
+    }
+
+    [Fact]
+    public void EmitMixedCollection()
+    {
+        var list = new List<GenericAbstract<int, int>>
+        {
+            new GenericAbstractImlementationLessParams<int>(),
+            new GenericAbstractImplementation<int, int>() { TI = 1, TI2 = 3 }
+        };
+        NexYamlSerializerRegistry.Init();
+        var s = YamlSerializer.SerializeToString(list);
+        var d = YamlSerializer.Deserialize<List<GenericAbstract<int, int>>>(s);
+        Assert.NotNull(d);
+        Assert.IsType<GenericAbstractImlementationLessParams<int>>(d[0]);
+        Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
+    }
+    [Fact]
+    public void EmitMixedCollectionCompact()
+    {
+        var list = new List<GenericAbstract<int, int>>
+        {
+            new GenericAbstractImlementationLessParams<int>(),
+            new GenericAbstractImplementation<int, int>() { TI = 1, TI2 = 3 }
+        };
+        NexYamlSerializerRegistry.Init();
+        var s = YamlSerializer.SerializeToString(list, DataStyle.Compact);
+        var d = YamlSerializer.Deserialize<List<GenericAbstract<int, int>>>(s);
+        Assert.NotNull(d);
+        Assert.IsType<GenericAbstractImlementationLessParams<int>>(d[0]);
+        Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
+    }
+    [Fact]
+    public void EmitMixedCollectionCompacWithEmptyType()
+    {
+        var list = new List<GenericAbstract<int, int>>
+        {
+            new GenericAbstractImlementationLessParamsEmpty<int>(),
+            new GenericAbstractImplementation<int, int>() { TI = 1, TI2 = 3 }
+        };
+        NexYamlSerializerRegistry.Init();
+        var s = YamlSerializer.SerializeToString(list, DataStyle.Compact);
+        var d = YamlSerializer.Deserialize<List<GenericAbstract<int, int>>>(s);
+        Assert.NotNull(d);
+        Assert.IsType<GenericAbstractImlementationLessParamsEmpty<int>>(d[0]);
+        Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
     }
     [Fact(Skip ="doesnt assert anything yet")]
     public void Collection()

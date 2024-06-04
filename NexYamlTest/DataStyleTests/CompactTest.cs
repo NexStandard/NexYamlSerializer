@@ -1,5 +1,7 @@
 ﻿using NexVYaml;
 using NexYamlTest.Helper;
+using NexYamlTest.SimpleClasses;
+using Stride.Core;
 using Xunit;
 
 namespace NexYamlTest.DataStyleTests;
@@ -16,7 +18,16 @@ public class CompactTest
         };
         YamlHelper.Run(compact);
     }
-
+    [Fact]
+    public void EmptyCompactClass()
+    {
+        NexYamlSerializerRegistry.Init();
+        var compact = new EmptyClass();
+        var s = YamlSerializer.Serialize(compact, DataStyle.Any);
+        var d = YamlSerializer.Deserialize<EmptyClass>(s);
+        Assert.NotNull(d);
+        Assert.IsType<EmptyClass>(d);
+    }
     [Fact]
     public void Compact_RecordWithMember()
     {

@@ -31,6 +31,7 @@ internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : EmitterSerializer
         {
             var output = emitter.Writer.GetSpan(EmitCodes.FlowSequenceSeparator.Length + EmitCodes.FlowMappingStart.Length);
             var offset = 0;
+
             if (emitter.currentElementCount > 0)
             {
                 EmitCodes.FlowSequenceSeparator.CopyTo(output);
@@ -47,6 +48,7 @@ internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : EmitterSerializer
 
     public override void BeginScalar(Span<byte> output, ref int offset)
     {
+
         if (emitter.IsFirstElement)
         {
             if (emitter.tagStack.TryPop(out var tag))
@@ -55,7 +57,6 @@ internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : EmitterSerializer
                 output[offset++] = YamlCodes.Space;
                 emitter.WriteIndent(output, ref offset);
             }
-
             EmitCodes.FlowMappingStart.CopyTo(output[offset..]);
             offset += EmitCodes.FlowMappingStart.Length;
         }
@@ -72,7 +73,23 @@ internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : EmitterSerializer
         {
             throw new YamlException($"Invalid block mapping end: {emitter.StateStack.Current}");
         }
-
+        var isEmptyMapping = emitter.currentElementCount <= 0;
+        bool writeFlowMapEnd = true;
+        if (isEmptyMapping)
+        {
+            var lineBreak = emitter.StateStack.Current is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
+            if (emitter.tagStack.TryPop(out var tag))
+            {
+                var tagBytes = StringEncoding.Utf8.GetBytes(tag + " "); // TODO:
+                emitter.WriteRaw(tagBytes, EmitCodes.FlowMappingEmpty, false, lineBreak);
+                writeFlowMapEnd = false;
+            }
+            else
+            {
+                emitter.WriteRaw(EmitCodes.FlowMappingEmpty, false, lineBreak);
+                writeFlowMapEnd = false;
+            }
+        }
         emitter.PopState();
 
         var needsLineBreak = false;
@@ -95,15 +112,23 @@ internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : EmitterSerializer
                 emitter.currentElementCount++;
                 break;
         }
+        var suffixLength = 0;
+        if(writeFlowMapEnd)
+        {
+            suffixLength = EmitCodes.FlowMappingEnd.Length;
+        }
 
-        var suffixLength = EmitCodes.FlowMappingEnd.Length;
         if (needsLineBreak) 
             suffixLength++;
 
         var offset = 0;
         var output = emitter.Writer.GetSpan(suffixLength);
-        EmitCodes.FlowMappingEnd.CopyTo(output[offset..]);
-        offset += EmitCodes.FlowMappingEnd.Length;
+        if(writeFlowMapEnd)
+        {
+            EmitCodes.FlowMappingEnd.CopyTo(output[offset..]);
+            offset += EmitCodes.FlowMappingEnd.Length;
+        }
+
         if (needsLineBreak)
         {
             output[offset++] = YamlCodes.Lf;
