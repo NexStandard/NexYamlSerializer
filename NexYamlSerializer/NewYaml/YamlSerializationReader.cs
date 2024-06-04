@@ -1,6 +1,7 @@
 ﻿using NexVYaml;
 using NexVYaml.Parser;
 using System;
+using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,59 +22,60 @@ internal class YamlSerializationReader(YamlParser parser) : SerializationReader
 
     public override void Serialize(ref byte value)
     {
-        throw new NotImplementedException();
+        if(parser.TryGetScalarAsUInt32(out var result))
+        {
+            value = checked((byte)result);
+        }
     }
 
     public override void Serialize(ref sbyte value)
     {
-        throw new NotImplementedException();
+        if(parser.TryGetScalarAsInt32(out var result))
+        {
+            value = checked((sbyte)result);
+        }
     }
 
     public override void Serialize(ref int value)
     {
-        if (parser.currentScalar is { } scalar && scalar.TryGetInt32(out var val))
+        if (parser.TryGetScalarAsInt32(out var val))
         {
             value = val;
             return;
         }
-        value = default;
     }
 
     public override void Serialize(ref uint value)
     {
-        if (parser.currentScalar is { } scalar && scalar.TryGetUInt32(out value))
+        if (parser.TryGetScalarAsUInt32(out value))
         {
             return;
         }
-        value = default;
     }
 
     public override void Serialize(ref long value)
     {
-        if (parser.currentScalar is { } scalar && scalar.TryGetInt64(out var val))
+        if (parser.TryGetScalarAsInt64(out var result))
         {
-            value = val;
+            value = result;
             return;
         }
-        throw new YamlException(parser.CurrentMark, $"Cannot detect a scalar value as Int64: {parser.CurrentEventType} {parser.currentScalar}");
     }
 
     public override void Serialize(ref ulong value)
     {
-        if (parser.currentScalar is { } scalar && scalar.TryGetUInt64(out value))
+        if (parser.TryGetScalarAsUInt64(out value))
         {
             return;
         }
-        throw new YamlException(parser.CurrentMark, $"Cannot detect a scalar value as UInt64 : {parser.CurrentEventType} ({parser.currentScalar})");
     }
 
     public override void Serialize(ref float value)
     {
-        if (parser.currentScalar is { } scalar && scalar.TryGetFloat(out value))
+        if (parser.TryGetScalarAsFloat(out value))
         {
             return;
         }
-        throw new YamlException(parser.CurrentMark, $"Cannot detect scalar value as float : {parser.CurrentEventType} {parser.currentScalar}");
     }
 
     public override void Serialize(ref double value)
@@ -82,41 +84,56 @@ internal class YamlSerializationReader(YamlParser parser) : SerializationReader
         {
             return;
         }
-        throw new YamlException(parser.CurrentMark, $"Cannot detect a scalar value as double : {parser.CurrentEventType} {parser.currentScalar}");
     }
 
     public override void Serialize(ref short value)
     {
-        throw new NotImplementedException();
+        var result = parser.GetScalarAsInt32();
+        parser.Read();
+        value = checked((short)result);
     }
 
     public override void Serialize(ref ushort value)
     {
-        throw new NotImplementedException();
+        var result = parser.GetScalarAsUInt32();
+        parser.Read();
+        value = checked((ushort)result);
     }
 
     public override void Serialize(ref char value)
     {
-        throw new NotImplementedException();
+        var result = parser.GetScalarAsUInt32();
+        parser.Read();
+        value = checked((char)result);
     }
 
     public override void Serialize(ref bool value)
     {
-        throw new NotImplementedException();
+        var result = parser.GetScalarAsBool();
+        parser.Read();
+        value = result;
     }
 
-    public override void Serialize(ref string value)
+    public override void Serialize(ref string? value)
     {
-        throw new NotImplementedException();
+        value = parser.ReadScalarAsString();
     }
 
     public override void Serialize(ref decimal value)
     {
-        throw new NotImplementedException();
+        if (parser.TryGetScalarAsSpan(out var span) &&
+                  Utf8Parser.TryParse(span, out decimal val, out var bytesConsumed) &&
+                  bytesConsumed == span.Length)
+        {
+            parser.Read();
+            value = val;
+            return;
+        }
     }
 
     public override void Serialize(ref ReadOnlySpan<byte> value)
     {
-        throw new NotImplementedException();
+        parser.TryGetScalarAsSpan(out value);
+        
     }
 }

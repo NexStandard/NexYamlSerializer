@@ -8,10 +8,10 @@ using System.Linq;
 namespace NexVYaml;
 public interface ISerializationWriter : ISerializationStream
 {
-    public abstract void WriteTag(string tag);
-    public abstract void BeginMapping(DataStyle style);
-    public abstract void EndMapping();
-    public abstract void BeginSequence(DataStyle style);
-    public abstract void EndSequence();
-    public abstract void Write<T>(T value, DataStyle style = DataStyle.Any);
+    public void WriteTag(string tag);
+    public void BeginMapping(DataStyle style);
+    public void EndMapping();
+    public void BeginSequence(DataStyle style);
+    public void EndSequence();
+    public void Serialize<T>(ref T value, DataStyle style);
 }

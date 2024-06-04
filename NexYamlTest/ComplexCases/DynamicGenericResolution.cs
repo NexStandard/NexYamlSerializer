@@ -36,7 +36,11 @@ class GenericAbstractImplementation<T,K> : GenericAbstract<T, K>
 [DataContract]
 class GenericAbstractImlementationLessParams<T> : GenericAbstract<T, int>
 {
-
+    public int X;
+}
+[DataContract]
+class GenericAbstractImlementationLessParamsEmpty<T> : GenericAbstract<T, int>
+{
 }
 [DataContract]
 class GenericAbstractImlementationLessParamsDataContract<T> : GenericAbstractWithDataContract<T, int>

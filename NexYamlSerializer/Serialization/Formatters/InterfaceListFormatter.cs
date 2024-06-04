@@ -13,7 +13,7 @@ public class InterfaceListFormatter<T> : YamlSerializer<IList<T>>
 
         foreach (var x in value)
         {
-            stream.Write(x);
+            stream.Write(x, style);
         }
         stream.EndSequence();
     }

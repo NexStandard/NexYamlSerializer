@@ -17,7 +17,7 @@ public class YamlSerializationWriter : ISerializationWriter
         SerializeContext = context;
         Emitter = emitter;
     }
-    public void Write<T>(T value, DataStyle style = DataStyle.Any)
+    public void Serialize<T>(ref T value, DataStyle style = DataStyle.Any)
     {
         if (value is null)
         {

@@ -35,7 +35,7 @@ public abstract class YamlSerializer
     /// <param name="value">The value to serialize.</param>
     /// <param name="options">The serializer options (optional).</param>
     /// <returns>A read-only memory containing the serialized value.</returns>
-    public static ReadOnlyMemory<byte> Serialize<T>(T value, IYamlFormatterResolver? options = null)
+    public static ReadOnlyMemory<byte> Serialize<T>(T value, DataStyle style = DataStyle.Any, IYamlFormatterResolver? options = null)
     {
         options ??= IYamlFormatterResolver.Default;
 
@@ -49,7 +49,7 @@ public abstract class YamlSerializer
         var stream = new YamlSerializationWriter(emitter, contextLocal);
         try
         {
-            stream.Write(value);
+            stream.Write(value,style);
             return writer.WrittenMemory;
         }
         finally
@@ -57,13 +57,13 @@ public abstract class YamlSerializer
             emitter.Dispose();
         }
     }
-    public static ReadOnlyMemory<byte> Serialize<T>(T? value, IYamlFormatterResolver? options = null)
+    public static ReadOnlyMemory<byte> Serialize<T>(T? value, DataStyle style = DataStyle.Any, IYamlFormatterResolver? options = null)
         where T : struct
     {
         if (value == null)
             return new ReadOnlyMemory<byte>();
         else
-            return Serialize(value.Value, options);
+            return Serialize(value.Value, style, options);
     }
 
     /// <summary>
@@ -74,9 +74,9 @@ public abstract class YamlSerializer
     /// <param name="value">The object to be serialized.</param>
     /// <param name="stream">The stream to which the YAML representation will be written.</param>
     /// <param name="options">Optional settings for customizing the YAML serialization process.</param>
-    public static void Serialize<T>(T value, Stream stream, IYamlFormatterResolver? options = null)
+    public static void Serialize<T>(T value, Stream stream, DataStyle style = DataStyle.Any, IYamlFormatterResolver? options = null)
     {
-        stream.Write(Serialize(value, options).Span);
+        stream.Write(Serialize(value, style, options).Span);
     }
 
     /// <summary>
@@ -87,10 +87,10 @@ public abstract class YamlSerializer
     /// <param name="writer">The buffer writer used to write the YAML content.</param>
     /// <param name="value">The object to be serialized.</param>
     /// <param name="options">Optional settings for customizing the YAML serialization process.</param>
-    public static void Serialize<T>(IBufferWriter<byte> writer, T value, IYamlFormatterResolver? options = null)
+    public static void Serialize<T>(IBufferWriter<byte> writer, T value, DataStyle style = DataStyle.Any, IYamlFormatterResolver? options = null)
     {
         var emitter = new Utf8YamlEmitter(writer);
-        Serialize(ref emitter, value, options);
+        Serialize(ref emitter, value,style, options);
     }
 
     /// <summary>
@@ -101,7 +101,7 @@ public abstract class YamlSerializer
     /// <param name="emitter">The Utf8YamlEmitter used for serializing the YAML content.</param>
     /// <param name="value">The object to be serialized.</param>
     /// <param name="options">Optional settings for customizing the YAML serialization process.</param>
-    internal static void Serialize<T>(ref Utf8YamlEmitter emitter, T value, IYamlFormatterResolver? options = null, ISerializationWriter? stream = null)
+    internal static void Serialize<T>(ref Utf8YamlEmitter emitter, T value, DataStyle style = DataStyle.Any, IYamlFormatterResolver? options = null, ISerializationWriter? stream = null)
     {
         try
         {
@@ -111,7 +111,7 @@ public abstract class YamlSerializer
             {
                 stream = new YamlSerializationWriter(emitter, contextLocal);
             }
-            stream.Write(value, DataStyle.Any);
+            stream.Write(value, style);
         }
         finally
         {
@@ -128,9 +128,9 @@ public abstract class YamlSerializer
     /// <param name="stream">The stream to which the YAML representation will be written asynchronously.</param>
     /// <param name="options">Optional settings for customizing the YAML serialization process.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    public async static Task SerializeAsync<T>(T value, Stream stream, IYamlFormatterResolver? options = null)
+    public async static Task SerializeAsync<T>(T value, Stream stream, DataStyle style = DataStyle.Any, IYamlFormatterResolver? options = null)
     {
-        await stream.WriteAsync(Serialize(value, options));
+        await stream.WriteAsync(Serialize(value, style, options));
     }
 
     /// <summary>
@@ -141,9 +141,9 @@ public abstract class YamlSerializer
     /// <param name="value">The object to be serialized.</param>
     /// <param name="options">Optional settings for customizing the YAML serialization process.</param>
     /// <returns>A UTF-8 encoded string representing the YAML serialization of the object.</returns>
-    public static string SerializeToString<T>(T value, IYamlFormatterResolver? options = null)
+    public static string SerializeToString<T>(T value, DataStyle style = DataStyle.Any, IYamlFormatterResolver? options = null)
     {
-        var utf8Bytes = Serialize(value, options);
+        var utf8Bytes = Serialize(value, style, options);
         return StringEncoding.Utf8.GetString(utf8Bytes.Span);
     }
 

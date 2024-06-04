@@ -14,7 +14,10 @@ public static class YamlStreamExtensions
         ReadOnlySpan<byte> nullTag = YamlCodes.Null0;
         stream.Serialize(ref nullTag);
     }
-    
+    public static void Write<T>(this ISerializationWriter stream, T value, DataStyle style)
+    {
+        stream.Serialize(ref value, style);
+    }
     public static void Write<T, K>(this ISerializationWriter stream, string key, Dictionary<T, K> value, DataStyle style)
         where T : notnull
     {
@@ -31,7 +34,7 @@ public static class YamlStreamExtensions
     public static void Write<T>(this ISerializationWriter stream, string key, T value, DataStyle style)
     {
         stream.Serialize(ref key);
-        stream.Write(value, style);
+        stream.Serialize(ref value, style);
     }
 
     public static void Write(this ISerializationWriter stream,string key, sbyte value, DataStyle style)
@@ -100,7 +103,7 @@ public static class YamlStreamExtensions
         stream.Serialize(ref value);
     }
 
-    public static void Write(this ISerializationWriter stream,string key, string value, DataStyle style = DataStyle.Any)
+    public static void Write(this ISerializationWriter stream,string key, string? value, DataStyle style = DataStyle.Any)
     {
         stream.Serialize(ref key);
         if (value is null)
