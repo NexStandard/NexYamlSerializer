@@ -61,7 +61,6 @@ public static class EmitStringAnalyzer
                 case '`':
                 case '"':
                 case ' ':
-                case '!':
                 case '\'':
                     needsQuotes = true;
                     break;
