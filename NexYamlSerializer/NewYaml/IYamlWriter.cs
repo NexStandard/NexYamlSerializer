@@ -6,8 +6,12 @@ using System;
 using System.Linq;
 
 namespace NexVYaml;
-public interface IYamlWriter : IYamlStream
+public interface IYamlWriter
 {
+    /// <summary>
+    /// Writes lazy the Yaml Tag to the stream depending on the context of what will be written for that object.
+    /// </summary>
+    /// <param name="tag">The Tag of the class to identify its type</param>
     public void WriteTag(string tag);
     public void BeginMapping(DataStyle style);
     public void EndMapping();
