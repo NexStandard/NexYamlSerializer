@@ -5,6 +5,7 @@ using Stride.Core;
 using System;
 using System.Buffers.Text;
 using System.Globalization;
+using System.Text;
 
 namespace NexVYaml;
 
@@ -63,19 +64,6 @@ public class YamlWriter : IYamlWriter
         Emitter.EndSequence();
     }
 
-    public void Serialize(ref char value)
-    {
-        var scalarStringBuilt = EmitStringAnalyzer.BuildQuotedScalar(value.ToString(), false);
-        Span<char> scalarChars = stackalloc char[scalarStringBuilt.Length];
-        scalarStringBuilt.CopyTo(0, scalarChars, scalarStringBuilt.Length);
-
-        var maxByteCount = StringEncoding.Utf8.GetMaxByteCount(scalarChars.Length);
-        var offset = 0;
-        var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(maxByteCount));
-        Emitter.BeginScalar(output, ref offset);
-        offset += StringEncoding.Utf8.GetBytes(scalarChars, output[offset..]);
-        Emitter.EndScalar(output, ref offset);
-    }
     /// <summary>
     /// Serializes the specified value as the suggested <see cref="ScalarStyle"/> of <see cref="EmitStringAnalyzer.Analyze(string)"/> string.
     /// </summary>
@@ -96,29 +84,15 @@ public class YamlWriter : IYamlWriter
         }
         else if(ScalarStyle.SingleQuoted == style)
         {
-            var scalarStringBuilt = EmitStringAnalyzer.BuildQuotedScalar(value, false);
-            Span<char> scalarChars = stackalloc char[scalarStringBuilt.Length];
-            scalarStringBuilt.CopyTo(0, scalarChars, scalarStringBuilt.Length);
-
-            var maxByteCount = StringEncoding.Utf8.GetMaxByteCount(scalarChars.Length);
-            var offset = 0;
-            var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(maxByteCount));
-            Emitter.BeginScalar(output, ref offset);
-            offset += StringEncoding.Utf8.GetBytes(scalarChars, output[offset..]);
-            Emitter.EndScalar(output, ref offset);
+            throw new InvalidOperationException("Single Quote is reserved for char");
         }
         else if(ScalarStyle.DoubleQuoted == style)
         {
             var scalarStringBuilt = EmitStringAnalyzer.BuildQuotedScalar(value, true);
-            Span<char> scalarChars = stackalloc char[scalarStringBuilt.Length];
-            scalarStringBuilt.CopyTo(0, scalarChars, scalarStringBuilt.Length);
-
-            var maxByteCount = StringEncoding.Utf8.GetMaxByteCount(scalarChars.Length);
-            var offset = 0;
-            var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(maxByteCount));
-            Emitter.BeginScalar(output, ref offset);
-            offset += StringEncoding.Utf8.GetBytes(scalarChars, output[offset..]);
-            Emitter.EndScalar(output, ref offset);
+            var stringConverted = scalarStringBuilt.ToString();
+            Span<byte> span = stackalloc byte[stringConverted.Length];
+            StringEncoding.Utf8.GetBytes(stringConverted, span);
+            Serialize(span);
         }
         else if(ScalarStyle.Literal == style)
         {

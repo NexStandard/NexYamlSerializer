@@ -2,7 +2,9 @@
 using NexVYaml;
 using NexVYaml.Parser;
 using NexVYaml.Serialization;
+using NexYaml.Core;
 using Stride.Core;
+using System;
 
 namespace NexYamlSerializer.Serialization.PrimitiveSerializers;
 
@@ -12,12 +14,16 @@ public class CharFormatter : YamlSerializer<char>
 
     protected override void Write(IYamlWriter stream, char value, DataStyle style)
     {
-        stream.Serialize(ref value);
+        var scalarStringBuilt = EmitStringAnalyzer.BuildQuotedScalar(value.ToString(), false);
+        var stringConverted = scalarStringBuilt.ToString();
+        Span<byte> span = stackalloc byte[stringConverted.Length];
+        StringEncoding.Utf8.GetBytes(stringConverted, span);
+        stream.Serialize(span);
     }
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref char value)
     {
-        var result = parser.ReadScalarAsString();
+        var result = parser.GetScalarAsString();
 
         if (result is not null && result.Length == 1)
         {
@@ -26,5 +32,6 @@ public class CharFormatter : YamlSerializer<char>
                 value = result[0];
             }
         }
+        parser.Read();
     }
 }

@@ -20,7 +20,10 @@ public static class YamlStreamExtensions
     {
         stream.Serialize(ref value, style);
     }
-
+    public static void Write(this IYamlWriter writer, char value, DataStyle style = DataStyle.Any)
+    {
+        CharFormatter.Instance.Serialize(writer, value, style);
+    }
     public static void Write(this IYamlWriter writer, int value, DataStyle style = DataStyle.Any)
     {
         Int32Formatter.Instance.Serialize(writer, value, style);
@@ -172,7 +175,7 @@ public static class YamlStreamExtensions
     public static void Write(this IYamlWriter stream, string key, char value, DataStyle style = DataStyle.Any)
     {
         stream.Serialize(ref key);
-        stream.Serialize(ref value);
+        stream.Write(value);
     }
 
     public static void Write(this IYamlWriter stream,string key, string? value, DataStyle style = DataStyle.Any)
