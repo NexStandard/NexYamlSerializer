@@ -9,16 +9,11 @@ public class ArrayFormatter<T> : YamlSerializer<T[]>
 {
     protected override void Write(IYamlWriter stream, T[] value, DataStyle style)
     {
-        var contentStyle = DataStyle.Any;
-        if (style == DataStyle.Compact)
-        {
-            contentStyle = DataStyle.Compact;
-        }
         stream.BeginSequence(style);
         foreach (var x in value)
         {
             var val = x;
-            stream.Write(val, contentStyle);
+            stream.Write(val, style);
         }
         stream.EndSequence();
     }
