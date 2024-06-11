@@ -22,7 +22,7 @@ public class YamlWriter : IYamlWriter
         if (value is null)
         {
             ReadOnlySpan<byte> buf = YamlCodes.Null0;
-            Serialize(ref buf);
+            Serialize(buf);
             return;
         }
         if (value is Array)
@@ -63,127 +63,17 @@ public class YamlWriter : IYamlWriter
         Emitter.EndSequence();
     }
 
-    public void Serialize(ref int value)
-    {
-        var offset = 0;
-        var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(11)); // -2147483648
-
-        Emitter.BeginScalar(output, ref offset);
-        if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
-        {
-            throw new YamlException($"Failed to emit : {value}");
-        }
-        offset += bytesWritten;
-        Emitter.EndScalar(output, ref offset);
-    }
-
-    public void Serialize(ref uint value)
-    {
-        var offset = 0;
-        var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(10)); // 4294967295
-
-        Emitter.BeginScalar(output, ref offset);
-        if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
-        {
-            throw new YamlException($"Failed to emit : {value}");
-        }
-        offset += bytesWritten;
-        Emitter.EndScalar(output, ref offset);
-    }
-
-    public void Serialize(ref long value)
-    {
-        var offset = 0;
-        var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(20)); // -9223372036854775808
-
-        Emitter.BeginScalar(output, ref offset);
-        if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
-        {
-            throw new YamlException($"Failed to emit : {value}");
-        }
-        offset += bytesWritten;
-        Emitter.EndScalar(output, ref offset);
-    }
-
-    public void Serialize(ref ulong value)
-    {
-        var offset = 0;
-        var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(20)); // 18446744073709551615
-
-        Emitter.BeginScalar(output, ref offset);
-        if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
-        {
-            throw new YamlException($"Failed to emit : {value}");
-        }
-        offset += bytesWritten;
-        Emitter.EndScalar(output, ref offset);
-    }
-
-    public void Serialize(ref double value)
-    {
-        var offset = 0;
-        var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(17));
-
-        Emitter.BeginScalar(output, ref offset);
-        if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
-        {
-            throw new YamlException($"Failed to emit : {value}");
-        }
-        offset += bytesWritten;
-        Emitter.EndScalar(output, ref offset);
-    }
-
-    public void Serialize(ref float value)
-    {
-        var offset = 0;
-        var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(12));
-
-        Emitter.BeginScalar(output, ref offset);
-        if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
-        {
-            throw new YamlException($"Failed to emit : {value}");
-        }
-        offset += bytesWritten;
-        Emitter.EndScalar(output, ref offset);
-    }
-
-    public void Serialize(ref short value)
-    {
-        var offset = 0;
-        var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(11)); // -2147483648
-
-        Emitter.BeginScalar(output, ref offset);
-        if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
-        {
-            throw new YamlException($"Failed to emit : {value}");
-        }
-        offset += bytesWritten;
-        Emitter.EndScalar(output, ref offset);
-    }
-
-    public void Serialize(ref ushort value)
-    {
-        var u = (uint)value;
-        Serialize(ref u);
-    }
-
-    public void Serialize(ref byte value)
-    {
-        var b = (int)value;
-        Serialize(ref b);
-    }
-
     public void Serialize(ref char value)
     {
-        var offset = 0;
-        var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(11)); // -2147483648
+        var scalarStringBuilt = EmitStringAnalyzer.BuildQuotedScalar(value.ToString(), false);
+        Span<char> scalarChars = stackalloc char[scalarStringBuilt.Length];
+        scalarStringBuilt.CopyTo(0, scalarChars, scalarStringBuilt.Length);
 
+        var maxByteCount = StringEncoding.Utf8.GetMaxByteCount(scalarChars.Length);
+        var offset = 0;
+        var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(maxByteCount));
         Emitter.BeginScalar(output, ref offset);
-        if (!Utf8Formatter.TryFormat(value, output[offset..], out var bytesWritten))
-        {
-            throw new YamlException($"Failed to emit : {value}");
-        }
-        offset += bytesWritten;
+        offset += StringEncoding.Utf8.GetBytes(scalarChars, output[offset..]);
         Emitter.EndScalar(output, ref offset);
     }
     /// <summary>
@@ -196,12 +86,9 @@ public class YamlWriter : IYamlWriter
         var style = result.SuggestScalarStyle();
         if(style is ScalarStyle.Plain or ScalarStyle.Any)
         {
-            var stringMaxByteCount = StringEncoding.Utf8.GetMaxByteCount(value.Length);
-            var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(stringMaxByteCount));
-            var offset = 0;
-            Emitter.BeginScalar(output, ref offset);
-            offset += StringEncoding.Utf8.GetBytes(value, output[offset..]);
-            Emitter.EndScalar(output, ref offset);
+            Span<byte> span = stackalloc byte[value.Length];
+            StringEncoding.Utf8.GetBytes(value, span);
+            Serialize(span);
         }
         else if(ScalarStyle.Folded == style)
         {
@@ -209,56 +96,60 @@ public class YamlWriter : IYamlWriter
         }
         else if(ScalarStyle.SingleQuoted == style)
         {
-            var writer = new StringWriter(Emitter);
-            writer.WriteQuotedScalar(value);
+            var scalarStringBuilt = EmitStringAnalyzer.BuildQuotedScalar(value, false);
+            Span<char> scalarChars = stackalloc char[scalarStringBuilt.Length];
+            scalarStringBuilt.CopyTo(0, scalarChars, scalarStringBuilt.Length);
+
+            var maxByteCount = StringEncoding.Utf8.GetMaxByteCount(scalarChars.Length);
+            var offset = 0;
+            var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(maxByteCount));
+            Emitter.BeginScalar(output, ref offset);
+            offset += StringEncoding.Utf8.GetBytes(scalarChars, output[offset..]);
+            Emitter.EndScalar(output, ref offset);
         }
         else if(ScalarStyle.DoubleQuoted == style)
         {
-            var writer = new StringWriter(Emitter);
-            writer.WriteQuotedScalar(value, true);
+            var scalarStringBuilt = EmitStringAnalyzer.BuildQuotedScalar(value, true);
+            Span<char> scalarChars = stackalloc char[scalarStringBuilt.Length];
+            scalarStringBuilt.CopyTo(0, scalarChars, scalarStringBuilt.Length);
+
+            var maxByteCount = StringEncoding.Utf8.GetMaxByteCount(scalarChars.Length);
+            var offset = 0;
+            var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(maxByteCount));
+            Emitter.BeginScalar(output, ref offset);
+            offset += StringEncoding.Utf8.GetBytes(scalarChars, output[offset..]);
+            Emitter.EndScalar(output, ref offset);
         }
         else if(ScalarStyle.Literal == style)
         {
-            var writer = new StringWriter();
-            writer.WriteLiteralScalar(value);
+            var indentCharCount = (Emitter.CurrentIndentLevel + 1) * Utf8YamlEmitter.IndentWidth;
+            var scalarStringBuilt = EmitStringAnalyzer.BuildLiteralScalar(value, indentCharCount);
+            Span<char> scalarChars = stackalloc char[scalarStringBuilt.Length];
+            scalarStringBuilt.CopyTo(0, scalarChars, scalarStringBuilt.Length);
+
+            scalarChars = TryRemoveDuplicateLineBreak(Emitter, scalarChars);
+
+            var maxByteCount = StringEncoding.Utf8.GetMaxByteCount(scalarChars.Length);
+            var offset = 0;
+            var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(maxByteCount));
+            Emitter.BeginScalar(output, ref offset);
+            offset += StringEncoding.Utf8.GetBytes(scalarChars, output[offset..]);
+            Emitter.EndScalar(output, ref offset);
         }
     }
-    public void Serialize(ref bool value)
+    private static Span<char> TryRemoveDuplicateLineBreak(Utf8YamlEmitter emitter, Span<char> scalarChars)
     {
-        Emitter.WriteScalar(value ? YamlCodes.True0 : YamlCodes.False0);
+        if (emitter.StateStack.Current is EmitState.BlockMappingValue or EmitState.BlockSequenceEntry)
+        {
+            scalarChars = scalarChars[..^1];
+        }
+
+        return scalarChars;
     }
 
-    public void Serialize(ref ReadOnlySpan<byte> value)
+    public void Serialize(ReadOnlySpan<byte> value)
     {
         Emitter.WriteScalar(value);
-    }
-
-    public void Serialize(ref decimal value)
-    {
-        Span<byte> buf = stackalloc byte[64];
-
-        if (value.TryFormat(buf, out var bytesWritten, default, CultureInfo.InvariantCulture))
-        {
-            Emitter.WriteScalar(buf[..bytesWritten]);
-        }
-        else
-        {
-            throw new YamlException($"Cannot serialize a value: {value}");
-        }
-    }
-
-    public void Serialize(ref sbyte value)
-    {
-        var offset = 0;
-        var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(11)); // -2147483648
-
-        Emitter.BeginScalar(output, ref offset);
-        if (!value.TryFormat(output[offset..], out var bytesWritten, default, CultureInfo.InvariantCulture))
-        {
-            throw new YamlException($"Failed to emit : {value}");
-        }
-        offset += bytesWritten;
-        Emitter.EndScalar(output, ref offset);
     }
 
     public void WriteTag(string tag)

@@ -1,6 +1,8 @@
 #nullable enable
 using NexVYaml.Parser;
 using Stride.Core;
+using System.Globalization;
+using System;
 
 namespace NexVYaml.Serialization;
 
@@ -10,7 +12,9 @@ public class Int16Formatter : YamlSerializer<short>
 
     protected override void Write(IYamlWriter stream, short value, DataStyle style)
     {
-        stream.Serialize(ref value);
+        Span<byte> span = stackalloc byte[6];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        stream.Serialize(span[..written]);
     }
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref short value)

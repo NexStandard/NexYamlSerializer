@@ -276,6 +276,5 @@ public abstract class YamlSerializer<T> : YamlSerializer
     }
     protected abstract void Read(YamlParser parser, YamlDeserializationContext context, ref T value);
 
-
     protected abstract void Write(IYamlWriter stream, T value, DataStyle style);
 }

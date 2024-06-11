@@ -3,7 +3,9 @@ using NexVYaml;
 using NexVYaml.Parser;
 using NexVYaml.Serialization;
 using Stride.Core;
+using System;
 using System.Buffers.Text;
+using System.Globalization;
 
 namespace NexYamlSerializer.Serialization.PrimitiveSerializers;
 
@@ -13,7 +15,9 @@ public class DecimalFormatter : YamlSerializer<decimal>
 
     protected override void Write(IYamlWriter stream, decimal value, DataStyle style)
     {
-        stream.Serialize(ref value);
+        Span<byte> span = stackalloc byte[64];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        stream.Serialize(span[..written]);
     }
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref decimal value)

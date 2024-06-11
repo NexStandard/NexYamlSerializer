@@ -3,6 +3,8 @@ using NexVYaml;
 using NexVYaml.Parser;
 using NexVYaml.Serialization;
 using Stride.Core;
+using System.Globalization;
+using System;
 
 namespace NexYamlSerializer.Serialization.PrimitiveSerializers;
 
@@ -12,7 +14,9 @@ public class UInt16Formatter : YamlSerializer<ushort>
 
     protected override void Write(IYamlWriter stream, ushort value, DataStyle style)
     {
-        stream.Serialize(ref value);
+        Span<byte> span = stackalloc byte[5];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        stream.Serialize(span[..written]);
     }
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref ushort value)

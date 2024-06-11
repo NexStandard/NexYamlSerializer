@@ -24,7 +24,7 @@ public class DateTimeFormatter : YamlSerializer<DateTime>
         if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten, new StandardFormat('O')))
         {
             ReadOnlySpan<byte> bytes = buf[..bytesWritten];
-            stream.Serialize(ref bytes);
+            stream.Serialize(bytes);
         }
         else
         {

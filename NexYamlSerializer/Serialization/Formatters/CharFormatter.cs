@@ -17,8 +17,14 @@ public class CharFormatter : YamlSerializer<char>
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref char value)
     {
-        var result = parser.GetScalarAsUInt32();
-        parser.Read();
-        value = checked((char)result);
+        var result = parser.ReadScalarAsString();
+
+        if (result is not null && result.Length == 1)
+        {
+            if (result.Length == 1)
+            {
+                value = result[0];
+            }
+        }
     }
 }
