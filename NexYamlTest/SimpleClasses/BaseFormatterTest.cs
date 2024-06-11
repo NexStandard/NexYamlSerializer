@@ -33,6 +33,8 @@ internal class BaseFormatterTest
     public long LongField;
     public ulong ULongField;
 
+    public Guid GuidField = new();
+
     // Properties
     public int IntProperty { get; set; }
 
@@ -62,6 +64,7 @@ internal class BaseFormatterTest
 
     public ulong ULongProperty { get; set; }
 
+    public Guid GuidProperty { get; set; }
     public TimeSpan Time = new();
 }
 [DataContract]

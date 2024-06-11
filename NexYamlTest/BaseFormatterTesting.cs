@@ -170,17 +170,20 @@ public class BaseFormatterTesting
             UShortProperty = 12345,
 
             UIntProperty = 987654321,
-
+            GuidProperty = Guid.NewGuid(),
             LongProperty = 9223372036854775807,
             Time = new TimeSpan(10),
             ULongProperty = 18446744073709551614,
-        //    NullableULongProperty = null,
         };
         NexYamlSerializerRegistry.Init();
         var s = YamlSerializer.SerializeToString(x);
         var d = YamlSerializer.Deserialize<BaseFormatterTest>(s);
         // Assert
         Assert.Equal(x.IntField, d.IntField);
+        
+        Assert.Equal(x.GuidField, d.GuidField);
+
+        Assert.Equal(x.GuidProperty, d.GuidProperty);
 
         Assert.Equal(x.FloatField, d.FloatField);
 

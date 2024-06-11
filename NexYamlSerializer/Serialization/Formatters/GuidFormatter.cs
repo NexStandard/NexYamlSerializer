@@ -33,6 +33,7 @@ public class GuidFormatter : YamlSerializer<Guid>
         {
             parser.Read();
             value = guid;
+            return;
         }
         throw new YamlException($"Cannot detect a scalar value of Guid : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
