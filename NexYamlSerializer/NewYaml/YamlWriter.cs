@@ -35,14 +35,7 @@ public class YamlWriter : IYamlWriter
             arrayFormatter.Serialize(this, value, style);
             return;
         }
-        if (style is DataStyle.Any)
-        {
-            SerializeContext.Serialize(this, value);
-        }
-        else
-        {
-            SerializeContext.Serialize(this, value, style);
-        }
+        SerializeContext.Serialize(this, value, style);
     }
     public void BeginMapping(DataStyle style)
     {
