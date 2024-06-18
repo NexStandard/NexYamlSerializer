@@ -23,15 +23,17 @@ public class CharFormatter : YamlSerializer<char>
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref char value)
     {
-        var result = parser.GetScalarAsString();
-
-        if (result is not null && result.Length == 1)
+        if(parser.TryGetScalarAsString(out var result))
         {
-            if (result.Length == 1)
+            if (result is not null && result.Length == 1)
             {
-                value = result[0];
+                if (result.Length == 1)
+                {
+                    value = result[0];
+                }
             }
         }
+        
         parser.Read();
     }
 }

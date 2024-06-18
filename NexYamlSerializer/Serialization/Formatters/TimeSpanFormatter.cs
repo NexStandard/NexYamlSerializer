@@ -34,6 +34,5 @@ public class TimeSpanFormatter : YamlSerializer<TimeSpan>
             value = timeSpan;
             return;
         }
-        throw new YamlException($"Cannot detect a scalar value of TimeSpan : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 }

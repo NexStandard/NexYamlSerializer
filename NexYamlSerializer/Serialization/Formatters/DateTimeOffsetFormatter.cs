@@ -34,7 +34,5 @@ public class DateTimeOffsetFormatter : YamlSerializer<DateTimeOffset>
             parser.Read();
             value = val;
         }
-
-        throw new YamlException($"Cannot detect a scalar value of DateTimeOffset : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 }

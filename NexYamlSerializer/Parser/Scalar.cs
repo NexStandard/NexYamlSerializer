@@ -128,7 +128,7 @@ class Scalar : ITokenContent, IDisposable
     /// <summary>
     /// </summary>
     /// <remarks>
-    /// null | Null | NULL | ~
+    /// !!null | !!Null | !!NULL | ~
     /// </remarks>
     public bool IsNull()
     {
@@ -136,7 +136,6 @@ class Scalar : ITokenContent, IDisposable
         switch (span.Length)
         {
             case 0:
-            case 1 when span[0] == YamlCodes.NullAlias:
             case 4 when span.SequenceEqual(YamlCodes.Null0) ||
                         span.SequenceEqual(YamlCodes.Null1) ||
                         span.SequenceEqual(YamlCodes.Null2):
@@ -144,217 +143,6 @@ class Scalar : ITokenContent, IDisposable
             default:
                 return false;
         }
-    }
-
-    /// <summary>
-    /// </summary>
-    /// <remarks>
-    /// true|True|TRUE|false|False|FALSE
-    /// </remarks>
-    public bool TryGetBool(out bool value)
-    {
-        var span = AsSpan();
-        switch (span.Length)
-        {
-            case 4 when span.SequenceEqual(YamlCodes.True0) ||
-                        span.SequenceEqual(YamlCodes.True1) ||
-                        span.SequenceEqual(YamlCodes.True2):
-                value = true;
-                return true;
-
-            case 5 when span.SequenceEqual(YamlCodes.False0) ||
-                        span.SequenceEqual(YamlCodes.False1) ||
-                        span.SequenceEqual(YamlCodes.False2):
-                value = false;
-                return true;
-        }
-        value = default;
-        return false;
-    }
-
-    public bool TryGetInt32(out int value)
-    {
-        var span = AsSpan();
-
-        if (int.TryParse(span, CultureInfo.InvariantCulture, out value))
-        {
-            return true;
-        }
-
-        if (TryDetectHex(span, out var hexNumber))
-        {
-            return Utf8Parser.TryParse(hexNumber, out value, out var bytesConsumed1, 'x') &&
-                   bytesConsumed1 == hexNumber.Length;
-        }
-
-        if (TryDetectHexNegative(span, out hexNumber) &&
-            Utf8Parser.TryParse(hexNumber, out value, out var bytesConsumed, 'x') &&
-            bytesConsumed == hexNumber.Length)
-        {
-            value *= -1;
-            return true;
-        }
-        return false;
-    }
-
-    public bool TryGetInt64(out long value)
-    {
-        var span = AsSpan();
-
-        if (long.TryParse(span, CultureInfo.InvariantCulture, out value))
-        {
-            return true;
-        }
-
-        if (span.Length > YamlCodes.HexPrefix.Length && span.StartsWith(YamlCodes.HexPrefix))
-        {
-            var slice = span[YamlCodes.HexPrefix.Length..];
-            return Utf8Parser.TryParse(slice, out value, out var bytesConsumedHex, 'x') &&
-                   bytesConsumedHex == slice.Length;
-        }
-        if (span.Length > YamlCodes.HexPrefixNegative.Length && span.StartsWith(YamlCodes.HexPrefixNegative))
-        {
-            var slice = span[YamlCodes.HexPrefixNegative.Length..];
-            if (Utf8Parser.TryParse(slice, out value, out var bytesConsumedHex, 'x') && bytesConsumedHex == slice.Length)
-            {
-                value = -value;
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public bool TryGetUInt32(out uint value)
-    {
-        var span = AsSpan();
-
-        if (uint.TryParse(span, CultureInfo.InvariantCulture, out value))
-        {
-            return true;
-        }
-
-        if (TryDetectHex(span, out var hexNumber))
-        {
-            return Utf8Parser.TryParse(hexNumber, out value, out var bytesConsumed, 'x') &&
-                   bytesConsumed == hexNumber.Length;
-        }
-        return false;
-    }
-
-    public bool TryGetUInt64(out ulong value)
-    {
-        var span = AsSpan();
-
-        if (ulong.TryParse(span, CultureInfo.InvariantCulture, out value))
-        {
-            return true;
-        }
-
-        if (TryDetectHex(span, out var hexNumber))
-        {
-            return Utf8Parser.TryParse(hexNumber, out value, out var bytesConsumed, 'x') &&
-                   bytesConsumed == hexNumber.Length;
-        }
-        return false;
-    }
-
-    public bool TryGetFloat(out float value)
-    {
-        var span = AsSpan();
-        if (float.TryParse(span, CultureInfo.InvariantCulture, out value))
-        {
-            return true;
-        }
-
-        switch (span.Length)
-        {
-            case 4:
-                if (span.SequenceEqual(YamlCodes.Inf0) ||
-                    span.SequenceEqual(YamlCodes.Inf1) ||
-                    span.SequenceEqual(YamlCodes.Inf2))
-                {
-                    value = float.PositiveInfinity;
-                    return true;
-                }
-
-                if (span.SequenceEqual(YamlCodes.Nan0) ||
-                    span.SequenceEqual(YamlCodes.Nan1) ||
-                    span.SequenceEqual(YamlCodes.Nan2))
-                {
-                    value = float.NaN;
-                    return true;
-                }
-                break;
-            case 5:
-                if (span.SequenceEqual(YamlCodes.Inf3) ||
-                    span.SequenceEqual(YamlCodes.Inf4) ||
-                    span.SequenceEqual(YamlCodes.Inf5))
-                {
-                    value = float.PositiveInfinity;
-                    return true;
-                }
-                if (span.SequenceEqual(YamlCodes.NegInf0) ||
-                    span.SequenceEqual(YamlCodes.NegInf1) ||
-                    span.SequenceEqual(YamlCodes.NegInf2))
-                {
-                    value = float.NegativeInfinity;
-                    return true;
-                }
-                break;
-        }
-        return false;
-    }
-
-    public bool TryGetDouble(out double value)
-    {
-        var span = AsSpan();
-        if (double.TryParse(span, CultureInfo.InvariantCulture, out value))
-        {
-            return true;
-        }
-
-        switch (span.Length)
-        {
-            case 4:
-                if (span.SequenceEqual(YamlCodes.Inf0) ||
-                    span.SequenceEqual(YamlCodes.Inf1) ||
-                    span.SequenceEqual(YamlCodes.Inf2))
-                {
-                    value = double.PositiveInfinity;
-                    return true;
-                }
-
-                if (span.SequenceEqual(YamlCodes.Nan0) ||
-                    span.SequenceEqual(YamlCodes.Nan1) ||
-                    span.SequenceEqual(YamlCodes.Nan2))
-                {
-                    value = double.NaN;
-                    return true;
-                }
-                break;
-            case 5:
-                if (span.SequenceEqual(YamlCodes.Inf3) ||
-                    span.SequenceEqual(YamlCodes.Inf4) ||
-                    span.SequenceEqual(YamlCodes.Inf5))
-                {
-                    value = double.PositiveInfinity;
-                    return true;
-                }
-                if (span.SequenceEqual(YamlCodes.NegInf0) ||
-                    span.SequenceEqual(YamlCodes.NegInf1) ||
-                    span.SequenceEqual(YamlCodes.NegInf2))
-                {
-                    value = double.NegativeInfinity;
-                    return true;
-                }
-                break;
-        }
-        return false;
-    }
-
-    public bool SequenceEqual(Scalar other)
-    {
-        return AsSpan().SequenceEqual(other.AsSpan());
     }
 
     public bool SequenceEqual(ReadOnlySpan<byte> span)
@@ -374,31 +162,6 @@ class Scalar : ITokenContent, IDisposable
             newCapacity = newCapacity * GrowFactor / 100;
         }
         SetCapacity(newCapacity);
-    }
-
-    static bool TryDetectHex(ReadOnlySpan<byte> span, out ReadOnlySpan<byte> slice)
-    {
-        if (span.Length > YamlCodes.HexPrefix.Length && span.StartsWith(YamlCodes.HexPrefix))
-        {
-            slice = span[YamlCodes.HexPrefix.Length..];
-            return true;
-        }
-
-        slice = default;
-        return false;
-    }
-
-    static bool TryDetectHexNegative(ReadOnlySpan<byte> span, out ReadOnlySpan<byte> slice)
-    {
-        if (span.Length > YamlCodes.HexPrefixNegative.Length &&
-            span.StartsWith(YamlCodes.HexPrefixNegative))
-        {
-            slice = span[YamlCodes.HexPrefixNegative.Length..];
-            return true;
-        }
-
-        slice = default;
-        return false;
     }
 
     void Grow()

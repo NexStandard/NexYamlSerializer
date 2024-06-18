@@ -3,6 +3,8 @@ using NexVYaml.Parser;
 using Stride.Core;
 using System.Globalization;
 using System;
+using NexYaml.Core;
+using System.Buffers.Text;
 
 namespace NexVYaml.Serialization;
 
@@ -19,8 +21,31 @@ public class Int64Formatter : YamlSerializer<long>
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref long value)
     {
-        var result = parser.GetScalarAsInt64();
+        if(parser.TryGetScalarAsSpan(out var span))
+        {
+            if (long.TryParse(span, CultureInfo.InvariantCulture, out var temp))
+            {
+                value = temp;
+            }
+
+            else if (span.Length > YamlCodes.HexPrefix.Length && span.StartsWith(YamlCodes.HexPrefix))
+            {
+                var slice = span[YamlCodes.HexPrefix.Length..];
+                if(Utf8Parser.TryParse(slice, out long hexVal, out var bytesConsumedHex, 'x') &&
+                       bytesConsumedHex == slice.Length)
+                {
+                    value = hexVal;
+                }
+            }
+            if (span.Length > YamlCodes.HexPrefixNegative.Length && span.StartsWith(YamlCodes.HexPrefixNegative))
+            {
+                var slice = span[YamlCodes.HexPrefixNegative.Length..];
+                if (Utf8Parser.TryParse(slice, out long negativeHexVal, out var bytesConsumedHex, 'x') && bytesConsumedHex == slice.Length)
+                {
+                    value = -negativeHexVal;
+                }
+            }
+        }
         parser.Read();
-        value = result;
     }
 }

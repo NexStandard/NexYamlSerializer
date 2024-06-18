@@ -19,7 +19,6 @@ public class DateTimeFormatter : YamlSerializer<DateTime>
 
     protected override void Write(IYamlWriter stream, DateTime value, DataStyle style)
     {
-        
         Span<byte> buf = stackalloc byte[FormatOMaxLength];
         if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten, new StandardFormat('O')))
         {
@@ -42,15 +41,17 @@ public class DateTimeFormatter : YamlSerializer<DateTime>
             value = dateTime;
             return;
         }
-
         // fallback
-        if (DateTime.TryParse(parser.GetScalarAsString(), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out dateTime))
+        if (parser.TryGetScalarAsString(out var scalarString))
         {
-            parser.Read();
-            value = dateTime;
-            return;
+            if (DateTime.TryParse(scalarString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out dateTime))
+            {
+                parser.Read();
+                value = dateTime;
+                return;
+            }
         }
-        throw new YamlException($"Cannot detect a scalar value of DateTime : {parser.CurrentEventType} {parser.GetScalarAsString()}");
+        
     }
 }
 

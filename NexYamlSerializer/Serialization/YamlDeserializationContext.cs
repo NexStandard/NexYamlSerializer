@@ -146,10 +146,4 @@ public static class DeserializeExtensions
             context.Resolver.GetFormatter<T>().Deserialize(parser, context, ref value!);
         }
     }
-    public static void DeserializeWithAlias(this YamlDeserializationContext context, ref YamlParser parser, ref int value)
-    {
-        var result = parser.GetScalarAsInt32();
-        parser.Read();
-        value = result;
-    }
 }

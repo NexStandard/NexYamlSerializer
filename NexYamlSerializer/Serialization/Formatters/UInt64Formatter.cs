@@ -5,6 +5,8 @@ using NexVYaml.Serialization;
 using Stride.Core;
 using System.Globalization;
 using System;
+using System.Buffers.Text;
+using NexYamlSerializer.Parser;
 
 namespace NexYamlSerializer.Serialization.PrimitiveSerializers;
 
@@ -22,8 +24,21 @@ public class UInt64Formatter : YamlSerializer<ulong>
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref ulong value)
     {
-        var result = parser.GetScalarAsUInt64();
+        if (parser.TryGetScalarAsSpan(out var span))
+        {
+            if (ulong.TryParse(span, CultureInfo.InvariantCulture, out var temp))
+            {
+                value = temp;
+            }
+            else if (FormatHelper.TryDetectHex(span, out var hexNumber))
+            {
+                if (Utf8Parser.TryParse(hexNumber, out ulong temp2, out var bytesConsumed, 'x') &&
+                       bytesConsumed == hexNumber.Length)
+                {
+                    value = temp2;
+                }
+            }
+        }
         parser.Read();
-        value = result;
     }
 }

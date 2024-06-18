@@ -66,6 +66,7 @@ internal class BaseFormatterTest
 
     public Guid GuidProperty { get; set; }
     public TimeSpan Time = new();
+    public Uri Uri { get; set; } = new Uri("https://www.example.com/path?query=example#fragment");
 }
 [DataContract]
 internal class BaseFormatterNullable

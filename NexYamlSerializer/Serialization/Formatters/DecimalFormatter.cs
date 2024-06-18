@@ -26,10 +26,9 @@ public class DecimalFormatter : YamlSerializer<decimal>
                    Utf8Parser.TryParse(span, out decimal val, out var bytesConsumed) &&
                    bytesConsumed == span.Length)
         {
-            parser.Read();
             value = val;
+            parser.Read();
             return;
         }
-        throw new YamlException($"Cannot detect a scalar value of decimal : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 }

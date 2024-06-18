@@ -16,7 +16,7 @@ public class DictionaryInterfaceFormatter<TKey, TValue> : YamlSerializer<IDictio
         {
             stream.BeginMapping(style);
             {
-                foreach (var x in value)
+                foreach (var x in value!)
                 {
                     stream.Write(x.Key, style);
                     stream.Write(x.Value, style);
@@ -29,7 +29,7 @@ public class DictionaryInterfaceFormatter<TKey, TValue> : YamlSerializer<IDictio
         {
             var kvp = new KeyValuePairFormatter<TKey, TValue>();
             stream.BeginSequence(style);
-            foreach (var x in value)
+            foreach (var x in value!)
             {
                 kvp.Serialize(stream, x);
             }

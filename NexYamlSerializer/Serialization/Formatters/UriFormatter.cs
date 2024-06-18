@@ -23,6 +23,5 @@ public class UriFormatter : YamlSerializer<Uri>
             parser.Read();
             value = uri;
         }
-        throw new YamlException($"Cannot detect a scalar value of Uri : {parser.CurrentEventType} {parser.GetScalarAsString()}");
     }
 }

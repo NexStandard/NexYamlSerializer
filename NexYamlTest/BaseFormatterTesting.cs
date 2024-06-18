@@ -74,7 +74,7 @@ public class BaseFormatterTesting
 
         Assert.Equal(x.DecimalField, d.DecimalField);
         Assert.Equal(x.CharField, d.CharField);
-
+        Assert.Equal(x.Uri, d.Uri);
         Assert.Equal(x.BoolField, d.BoolField);
 
         Assert.Equal(x.ByteField, d.ByteField);

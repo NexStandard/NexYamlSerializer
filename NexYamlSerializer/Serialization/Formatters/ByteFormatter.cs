@@ -3,6 +3,8 @@ using NexVYaml.Parser;
 using Stride.Core;
 using System.Globalization;
 using System;
+using System.Buffers.Text;
+using NexYamlSerializer.Parser;
 
 namespace NexVYaml.Serialization;
 
@@ -19,8 +21,24 @@ public class ByteFormatter : YamlSerializer<byte>
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref byte value)
     {
-        var result = parser.GetScalarAsUInt32();
-        parser.Read();
-        value = checked((byte)result);
+        if(parser.TryGetScalarAsSpan(out var span))
+        {
+            if (uint.TryParse(span, CultureInfo.InvariantCulture, out var result))
+            {
+                value = checked((byte)result);
+                parser.Read();
+                return;
+            }
+            else if (FormatHelper.TryDetectHex(span, out var hexNumber))
+            {
+                if(Utf8Parser.TryParse(hexNumber, out value, out var bytesConsumed, 'x') &&
+                       bytesConsumed == hexNumber.Length)
+                {
+                    value = checked((byte)result);
+                    parser.Read();
+                    return;
+                }
+            }
+        }
     }
 }
