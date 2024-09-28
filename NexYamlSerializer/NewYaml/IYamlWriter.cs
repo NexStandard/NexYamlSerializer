@@ -12,11 +12,11 @@ public interface IYamlWriter
     /// Writes lazy the Yaml Tag to the stream depending on the context of what will be written for that object.
     /// </summary>
     /// <param name="tag">The Tag of the class to identify its type</param>
-    public void WriteTag(string tag);
-    public void BeginMapping(DataStyle style);
-    public void EndMapping();
-    public void BeginSequence(DataStyle style);
-    public void EndSequence();
+    void WriteTag(string tag);
+    void BeginMapping(DataStyle style);
+    void EndMapping();
+    void BeginSequence(DataStyle style);
+    void EndSequence();
     /// <summary>
     /// Serializes the string, in an automated format <see cref="ScalarStyle"/>
     /// Formats are:
@@ -29,5 +29,5 @@ public interface IYamlWriter
     /// <param name="value">The string to write in an auto detection format to the stream.</param>
     void Serialize(ref string? value);
     void Serialize(ReadOnlySpan<byte> value);
-    public void Serialize<T>(ref T value, DataStyle style);
+    void Serialize<T>(ref T value, DataStyle style);
 }

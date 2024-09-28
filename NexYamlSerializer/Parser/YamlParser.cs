@@ -57,7 +57,7 @@ enum ParseState
     End,
 }
 
-public partial class YamlParser
+public partial class YamlParser(ReadOnlySequence<byte> sequence) : IDisposable
 {
     public static YamlParser FromBytes(Memory<byte> bytes)
     {
@@ -70,7 +70,7 @@ public partial class YamlParser
         return new YamlParser(sequence);
     }
 
-    public ParseEventType CurrentEventType { get; private set; }
+    public ParseEventType CurrentEventType { get; private set; } = default;
 
     public Marker CurrentMark
     {
@@ -108,48 +108,21 @@ public partial class YamlParser
         get => tokenizer.CurrentTokenType;
     }
 
-    Utf8YamlTokenizer tokenizer;
-    ParseState currentState;
-    internal Scalar? currentScalar;
-    Tag? currentTag;
-    Anchor? currentAnchor;
-    int lastAnchorId;
+    Utf8YamlTokenizer tokenizer = new Utf8YamlTokenizer(sequence);
+    ParseState currentState = ParseState.StreamStart;
+    internal Scalar? currentScalar = null;
+    Tag? currentTag = null;
+    Anchor? currentAnchor = null;
+    int lastAnchorId = -1;
 
-    readonly Dictionary<string, int> anchors;
-    ExpandBuffer<ParseState> stateStack;
-
-    public YamlParser(ReadOnlySequence<byte> sequence)
-    {
-        tokenizer = new Utf8YamlTokenizer(sequence);
-        currentState = ParseState.StreamStart;
-        CurrentEventType = default;
-        lastAnchorId = -1;
-        anchors = [];
-        stateStack = new ExpandBuffer<ParseState>(16);
-
-        currentScalar = null;
-        currentTag = null;
-        currentAnchor = null;
-    }
-
-    public YamlParser(ref Utf8YamlTokenizer tokenizer)
-    {
-        this.tokenizer = tokenizer;
-        currentState = ParseState.StreamStart;
-        CurrentEventType = default;
-        lastAnchorId = -1;
-        anchors = [];
-        stateStack = new ExpandBuffer<ParseState>(16);
-
-        currentScalar = null;
-        currentTag = null;
-        currentAnchor = null;
-    }
+    readonly Dictionary<string, int> anchors = [];
+    ExpandBuffer<ParseState> stateStack = new ExpandBuffer<ParseState>(16);
 
     public void Dispose()
     {
         tokenizer.Dispose();
         stateStack.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     public bool Read()

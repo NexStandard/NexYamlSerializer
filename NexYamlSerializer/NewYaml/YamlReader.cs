@@ -25,7 +25,7 @@ internal class YamlReader(YamlParser parser) : IYamlReader
     {
 
     }
-    public void Serialize(ReadOnlySpan<byte> value)
+    public void Serialize(ref ReadOnlySpan<byte> value)
     {
         parser.TryGetScalarAsSpan(out value);
     }
