@@ -14,9 +14,7 @@ public class Int16Formatter : YamlSerializer<short>
 
     protected override void Write(IYamlWriter stream, short value, DataStyle style)
     {
-        Span<byte> span = stackalloc byte[6];
-        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
-        stream.Write(span[..written]);
+        stream.Write(value, style);
     }
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref short value)

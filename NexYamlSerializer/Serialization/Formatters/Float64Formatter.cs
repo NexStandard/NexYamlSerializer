@@ -13,9 +13,7 @@ public class Float64Formatter : YamlSerializer<double>
 
     protected override void Write(IYamlWriter stream, double value, DataStyle style)
     {
-        Span<byte> span = stackalloc byte[32];
-        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
-        stream.Write(span[..written]);
+        stream.Write(value, style);
     }
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref double value)

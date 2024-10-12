@@ -16,9 +16,7 @@ public class UInt32Formatter : YamlSerializer<uint>
 
     protected override void Write(IYamlWriter stream, uint value, DataStyle style)
     {
-        Span<byte> span = stackalloc byte[10];
-        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
-        stream.Write(span[..written]);
+        stream.Write(value, style);
     }
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref uint value)

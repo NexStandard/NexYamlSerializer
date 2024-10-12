@@ -154,64 +154,92 @@ public class YamlWriter : IYamlWriter
     }
     public void Write(char value, DataStyle style = DataStyle.Any)
     {
-        CharFormatter.Instance.Serialize(this, value, style);
-    }
-    public void Write(int value, DataStyle style = DataStyle.Any)
-    {
-        Int32Formatter.Instance.Serialize(this, value, style);
-    }
-
-    public void Write(uint value, DataStyle style = DataStyle.Any)
-    {
-        UInt32Formatter.Instance.Serialize(this, value, style);
-    }
-
-    public void Write(long value, DataStyle style = DataStyle.Any)
-    {
-        Int64Formatter.Instance.Serialize(this, value, style);
-    }
-    public void Write(ulong value, DataStyle style = DataStyle.Any)
-    {
-        UInt64Formatter.Instance.Serialize(this, value, style);
-    }
-    public void Write(float value, DataStyle style = DataStyle.Any)
-    {
-        Float32Formatter.Instance.Serialize(this, value, style);
-    }
-
-    public void Write(double value, DataStyle style = DataStyle.Any)
-    {
-        Float64Formatter.Instance.Serialize(this, value, style);
-    }
-
-    public void Write(bool value, DataStyle style = DataStyle.Any)
-    {
-        BooleanFormatter.Instance.Serialize(this, value, style);
+        var scalarStringBuilt = EmitStringAnalyzer.BuildQuotedScalar(value.ToString(), false);
+        var stringConverted = scalarStringBuilt.ToString();
+        Span<byte> span = stackalloc byte[stringConverted.Length];
+        StringEncoding.Utf8.GetBytes(stringConverted, span);
+        Write(span);
     }
 
     public void Write(short value, DataStyle style = DataStyle.Any)
     {
-        Int16Formatter.Instance.Serialize(this, value, style);
+        Span<byte> span = stackalloc byte[6];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        Write(span[..written]);
+    }
+
+    public void Write(int value, DataStyle style = DataStyle.Any)
+    {
+        Span<byte> span = stackalloc byte[11];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        Write(span[..written]);
+    }
+
+    public void Write(uint value, DataStyle style = DataStyle.Any)
+    {
+        Span<byte> span = stackalloc byte[10];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        Write(span[..written]);
+    }
+
+    public void Write(long value, DataStyle style = DataStyle.Any)
+    {
+        Span<byte> span = stackalloc byte[20];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        Write(span[..written]);
+    }
+    public void Write(ulong value, DataStyle style = DataStyle.Any)
+    {
+        Span<byte> span = stackalloc byte[20];
+
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        Write(span[..written]);
+    }
+    public void Write(float value, DataStyle style = DataStyle.Any)
+    {
+        Span<byte> span = stackalloc byte[32];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        Write(span[..written]);
+    }
+
+    public void Write(double value, DataStyle style = DataStyle.Any)
+    {
+        Span<byte> span = stackalloc byte[32];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        Write(span[..written]);
+    }
+
+    public void Write(bool value, DataStyle style = DataStyle.Any)
+    {
+        Write(value ? YamlCodes.True0 : YamlCodes.False0);
     }
 
     public void Write(ushort value, DataStyle style = DataStyle.Any)
     {
-        UInt16Formatter.Instance.Serialize(this, value, style);
+        Span<byte> span = stackalloc byte[5];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        Write(span[..written]);
     }
 
     public void Write(byte value, DataStyle style = DataStyle.Any)
     {
-        ByteFormatter.Instance.Serialize(this, value, style);
+        Span<byte> span = stackalloc byte[3];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        Write(span[..written]);
     }
 
     public void Write(sbyte value, DataStyle style = DataStyle.Any)
     {
-        SByteFormatter.Instance.Serialize(this, value, style);
+        Span<byte> span = stackalloc byte[4];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        Write(span[..written]);
     }
 
     public void Write(decimal value, DataStyle style = DataStyle.Any)
     {
-        DecimalFormatter.Instance.Serialize(this, value, style);
+        Span<byte> span = stackalloc byte[64];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        Write(span[..written]);
     }
     public void WriteTag(string tag)
     {

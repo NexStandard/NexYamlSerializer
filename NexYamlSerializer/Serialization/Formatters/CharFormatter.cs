@@ -14,11 +14,7 @@ public class CharFormatter : YamlSerializer<char>
 
     protected override void Write(IYamlWriter stream, char value, DataStyle style)
     {
-        var scalarStringBuilt = EmitStringAnalyzer.BuildQuotedScalar(value.ToString(), false);
-        var stringConverted = scalarStringBuilt.ToString();
-        Span<byte> span = stackalloc byte[stringConverted.Length];
-        StringEncoding.Utf8.GetBytes(stringConverted, span);
-        stream.Write(span);
+        stream.Write(value, style);
     }
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref char value)

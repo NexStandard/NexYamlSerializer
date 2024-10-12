@@ -11,7 +11,7 @@ public class BooleanFormatter : YamlSerializer<bool>
 
     protected override void Write(IYamlWriter stream, bool value, DataStyle style)
     {
-        stream.Write(value ? YamlCodes.True0 : YamlCodes.False0);
+        stream.Write(value, style);
     }
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref bool value)

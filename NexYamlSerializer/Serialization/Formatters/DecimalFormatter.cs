@@ -15,9 +15,7 @@ public class DecimalFormatter : YamlSerializer<decimal>
 
     protected override void Write(IYamlWriter stream, decimal value, DataStyle style)
     {
-        Span<byte> span = stackalloc byte[64];
-        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
-        stream.Write(span[..written]);
+        stream.Write(value, style);
     }
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref decimal value)
