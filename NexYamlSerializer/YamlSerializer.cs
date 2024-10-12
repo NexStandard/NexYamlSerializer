@@ -230,7 +230,7 @@ public abstract class YamlSerializer<T> : YamlSerializer
     {
         if (value is null)
         {
-            stream.WriteNull();
+            stream.Write(YamlCodes.Null0);
         }
         else
         {

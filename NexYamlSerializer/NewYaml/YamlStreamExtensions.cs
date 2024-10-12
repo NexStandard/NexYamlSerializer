@@ -11,11 +11,6 @@ namespace NexVYaml;
 
 public static class YamlStreamExtensions
 {
-    public static void WriteNull(this IYamlWriter stream)
-    {
-        ReadOnlySpan<byte> nullTag = YamlCodes.Null0;
-        stream.Write(nullTag);
-    }
 
     public static void Write(this IYamlWriter writer, string key, int value, DataStyle style = DataStyle.Any)
     {

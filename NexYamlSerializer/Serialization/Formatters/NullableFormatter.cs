@@ -11,7 +11,7 @@ public class NullableFormatter<T> : YamlSerializer<T?> where T : struct
     {
         if (value is null)
         {
-            stream.WriteNull();
+            stream.Write(YamlCodes.Null0);
         }
         else
         {
@@ -38,7 +38,7 @@ public sealed class StaticNullableFormatter<T>(YamlSerializer<T> underlyingForma
         }
         else
         {
-            stream.WriteNull();
+            stream.Write(YamlCodes.Null0);
         }
     }
 

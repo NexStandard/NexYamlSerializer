@@ -136,9 +136,7 @@ class Scalar : ITokenContent, IDisposable
         switch (span.Length)
         {
             case 0:
-            case 4 when span.SequenceEqual(YamlCodes.Null0) ||
-                        span.SequenceEqual(YamlCodes.Null1) ||
-                        span.SequenceEqual(YamlCodes.Null2):
+            case 4 when span.SequenceEqual(YamlCodes.Null0):
                 return true;
             default:
                 return false;

@@ -15,6 +15,8 @@ namespace NexVYaml;
 
 public class YamlWriter : IYamlWriter
 {
+    bool IsRedirected { get; set; } = false;
+    bool IsFirst { get; set; } = true;
     Utf8YamlEmitter Emitter { get; set; }
     IYamlFormatterResolver Resolver{ get; init; }
     internal YamlWriter(Utf8YamlEmitter emitter, IYamlFormatterResolver resolver)
@@ -22,16 +24,37 @@ public class YamlWriter : IYamlWriter
         Resolver = resolver;
         Emitter = emitter;
     }
-    public bool IsRedirected { get; set; } = false;
-    public bool IsFirst { get; set; } = true;
-    
 
-    public void Serialize<T>(ref T value, DataStyle style = DataStyle.Any)
+    public void BeginMapping(DataStyle style)
+    {
+        Emitter.BeginMapping(style);
+    }
+
+    public void BeginSequence(DataStyle style)
+    {
+        Emitter.BeginSequence(style);
+    }
+
+    public void EndMapping()
+    {
+        Emitter.EndMapping();
+    }
+
+    public void EndSequence()
+    {
+        Emitter.EndSequence();
+    }
+
+    public void Write(ReadOnlySpan<byte> value, DataStyle style = DataStyle.Any)
+    {
+        Emitter.WriteScalar(value);
+    }
+
+    public void Write<T>(T value, DataStyle style)
     {
         if (value is null)
         {
-            ReadOnlySpan<byte> buf = YamlCodes.Null0;
-            Write(buf);
+            Write(YamlCodes.Null0);
             return;
         }
         if (value is Array)
@@ -80,45 +103,6 @@ public class YamlWriter : IYamlWriter
                 Resolver.GetFormatter<T>().Serialize(this, value!, style);
             }
         }
-    }
-    public void BeginMapping(DataStyle style)
-    {
-        Emitter.BeginMapping(style);
-    }
-
-    public void BeginSequence(DataStyle style)
-    {
-        Emitter.BeginSequence(style);
-    }
-
-    public void EndMapping()
-    {
-        Emitter.EndMapping();
-    }
-
-    public void EndSequence()
-    {
-        Emitter.EndSequence();
-    }
-
-    private static Span<char> TryRemoveDuplicateLineBreak(Utf8YamlEmitter emitter, Span<char> scalarChars)
-    {
-        if (emitter.StateStack.Current is EmitState.BlockMappingValue or EmitState.BlockSequenceEntry)
-        {
-            scalarChars = scalarChars[..^1];
-        }
-
-        return scalarChars;
-    }
-
-    public void Write(ReadOnlySpan<byte> value, DataStyle style = DataStyle.Any)
-    {
-        Emitter.WriteScalar(value);
-    }
-
-    public void Write<T>(T value, DataStyle style)
-    {
-        Serialize(ref value, style);
     }
     public void Write(string? value, DataStyle style = DataStyle.Any)
     {
@@ -238,5 +222,15 @@ public class YamlWriter : IYamlWriter
             IsRedirected = false;
             IsFirst = false;
         }
+    }
+
+    private static Span<char> TryRemoveDuplicateLineBreak(Utf8YamlEmitter emitter, Span<char> scalarChars)
+    {
+        if (emitter.StateStack.Current is EmitState.BlockMappingValue or EmitState.BlockSequenceEntry)
+        {
+            scalarChars = scalarChars[..^1];
+        }
+
+        return scalarChars;
     }
 }
