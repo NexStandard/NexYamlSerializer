@@ -19,7 +19,7 @@ public class UInt64Formatter : YamlSerializer<ulong>
         Span<byte> span = stackalloc byte[20];
 
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
-        stream.Serialize(span[..written]);
+        stream.Write(span[..written]);
     }
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref ulong value)

@@ -11,8 +11,7 @@ public class UriFormatter : YamlSerializer<Uri>
 
     protected override void Write(IYamlWriter stream, Uri value, DataStyle style)
     {
-        var s = value.ToString();
-        stream.Serialize(ref s);
+        stream.Write(value.ToString());
     }
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref Uri value)

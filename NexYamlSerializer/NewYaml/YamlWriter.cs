@@ -1,11 +1,14 @@
 ﻿using NexVYaml.Emitter;
 using NexVYaml.Serialization;
 using NexYaml.Core;
+using NexYamlSerializer.Serialization.PrimitiveSerializers;
 using Stride.Core;
 using System;
 using System.Buffers;
 using System.Buffers.Text;
 using System.Globalization;
+using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace NexVYaml;
@@ -28,7 +31,7 @@ public class YamlWriter : IYamlWriter
         if (value is null)
         {
             ReadOnlySpan<byte> buf = YamlCodes.Null0;
-            Serialize(buf);
+            Write(buf);
             return;
         }
         if (value is Array)
@@ -98,37 +101,57 @@ public class YamlWriter : IYamlWriter
         Emitter.EndSequence();
     }
 
-    /// <summary>
-    /// Serializes the specified value as the suggested <see cref="ScalarStyle"/> of <see cref="EmitStringAnalyzer.Analyze(string)"/> string.
-    /// </summary>
-    /// <param name="value">The value to be Serialized to the Stream.</param>
-    public void Serialize(ref string? value)
+    private static Span<char> TryRemoveDuplicateLineBreak(Utf8YamlEmitter emitter, Span<char> scalarChars)
     {
+        if (emitter.StateStack.Current is EmitState.BlockMappingValue or EmitState.BlockSequenceEntry)
+        {
+            scalarChars = scalarChars[..^1];
+        }
+
+        return scalarChars;
+    }
+
+    public void Write(ReadOnlySpan<byte> value, DataStyle style = DataStyle.Any)
+    {
+        Emitter.WriteScalar(value);
+    }
+
+    public void Write<T>(T value, DataStyle style)
+    {
+        Serialize(ref value, style);
+    }
+    public void Write(string? value, DataStyle style = DataStyle.Any)
+    {
+        if(value is null)
+        {
+            Write(YamlCodes.Null0);
+            return;
+        }
         var result = EmitStringAnalyzer.Analyze(value);
-        var style = result.SuggestScalarStyle();
-        if(style is ScalarStyle.Plain or ScalarStyle.Any)
+        var scalarStyle = result.SuggestScalarStyle();
+        if (scalarStyle is ScalarStyle.Plain or ScalarStyle.Any)
         {
             Span<byte> span = stackalloc byte[value.Length];
             StringEncoding.Utf8.GetBytes(value, span);
-            Serialize(span);
+            Write(span);
         }
-        else if(ScalarStyle.Folded == style)
+        else if (ScalarStyle.Folded == scalarStyle)
         {
             throw new NotSupportedException($"The {ScalarStyle.Folded} is not supported.");
         }
-        else if(ScalarStyle.SingleQuoted == style)
+        else if (ScalarStyle.SingleQuoted == scalarStyle)
         {
             throw new InvalidOperationException("Single Quote is reserved for char");
         }
-        else if(ScalarStyle.DoubleQuoted == style)
+        else if (ScalarStyle.DoubleQuoted == scalarStyle)
         {
             var scalarStringBuilt = EmitStringAnalyzer.BuildQuotedScalar(value, true);
             var stringConverted = scalarStringBuilt.ToString();
             Span<byte> span = stackalloc byte[stringConverted.Length];
             StringEncoding.Utf8.GetBytes(stringConverted, span);
-            Serialize(span);
+            Write(span);
         }
-        else if(ScalarStyle.Literal == style)
+        else if (ScalarStyle.Literal == scalarStyle)
         {
             var indentCharCount = (Emitter.CurrentIndentLevel + 1) * Utf8YamlEmitter.IndentWidth;
             var scalarStringBuilt = EmitStringAnalyzer.BuildLiteralScalar(value, indentCharCount);
@@ -145,21 +168,67 @@ public class YamlWriter : IYamlWriter
             Emitter.EndScalar(output, ref offset);
         }
     }
-    private static Span<char> TryRemoveDuplicateLineBreak(Utf8YamlEmitter emitter, Span<char> scalarChars)
+    public void Write(char value, DataStyle style = DataStyle.Any)
     {
-        if (emitter.StateStack.Current is EmitState.BlockMappingValue or EmitState.BlockSequenceEntry)
-        {
-            scalarChars = scalarChars[..^1];
-        }
-
-        return scalarChars;
+        CharFormatter.Instance.Serialize(this, value, style);
+    }
+    public void Write(int value, DataStyle style = DataStyle.Any)
+    {
+        Int32Formatter.Instance.Serialize(this, value, style);
     }
 
-    public void Serialize(ReadOnlySpan<byte> value)
+    public void Write(uint value, DataStyle style = DataStyle.Any)
     {
-        Emitter.WriteScalar(value);
+        UInt32Formatter.Instance.Serialize(this, value, style);
     }
 
+    public void Write(long value, DataStyle style = DataStyle.Any)
+    {
+        Int64Formatter.Instance.Serialize(this, value, style);
+    }
+    public void Write(ulong value, DataStyle style = DataStyle.Any)
+    {
+        UInt64Formatter.Instance.Serialize(this, value, style);
+    }
+    public void Write(float value, DataStyle style = DataStyle.Any)
+    {
+        Float32Formatter.Instance.Serialize(this, value, style);
+    }
+
+    public void Write(double value, DataStyle style = DataStyle.Any)
+    {
+        Float64Formatter.Instance.Serialize(this, value, style);
+    }
+
+    public void Write(bool value, DataStyle style = DataStyle.Any)
+    {
+        BooleanFormatter.Instance.Serialize(this, value, style);
+    }
+
+    public void Write(short value, DataStyle style = DataStyle.Any)
+    {
+        Int16Formatter.Instance.Serialize(this, value, style);
+    }
+
+    public void Write(ushort value, DataStyle style = DataStyle.Any)
+    {
+        UInt16Formatter.Instance.Serialize(this, value, style);
+    }
+
+    public void Write(byte value, DataStyle style = DataStyle.Any)
+    {
+        ByteFormatter.Instance.Serialize(this, value, style);
+    }
+
+    public void Write(sbyte value, DataStyle style = DataStyle.Any)
+    {
+        SByteFormatter.Instance.Serialize(this, value, style);
+    }
+
+    public void Write(decimal value, DataStyle style = DataStyle.Any)
+    {
+        DecimalFormatter.Instance.Serialize(this, value, style);
+    }
     public void WriteTag(string tag)
     {
         if (IsRedirected || IsFirst)

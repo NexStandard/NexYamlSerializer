@@ -17,7 +17,7 @@ public class DecimalFormatter : YamlSerializer<decimal>
     {
         Span<byte> span = stackalloc byte[64];
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
-        stream.Serialize(span[..written]);
+        stream.Write(span[..written]);
     }
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref decimal value)

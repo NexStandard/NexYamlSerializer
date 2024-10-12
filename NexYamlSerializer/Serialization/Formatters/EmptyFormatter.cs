@@ -13,8 +13,7 @@ public class EmptyFormatter<T> : YamlSerializer<T>
 
     protected override void Write(IYamlWriter stream, T value, DataStyle style)
     {
-        ReadOnlySpan<byte> bytes = YamlCodes.Null0;
-        stream.Serialize(bytes);
+        stream.Write(YamlCodes.Null0);
     }
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref T value)

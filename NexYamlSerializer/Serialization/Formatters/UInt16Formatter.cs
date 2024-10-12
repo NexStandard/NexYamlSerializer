@@ -18,7 +18,7 @@ public class UInt16Formatter : YamlSerializer<ushort>
     {
         Span<byte> span = stackalloc byte[5];
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
-        stream.Serialize(span[..written]);
+        stream.Write(span[..written]);
     }
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref ushort value)

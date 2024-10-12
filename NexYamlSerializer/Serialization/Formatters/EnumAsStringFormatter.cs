@@ -66,7 +66,7 @@ public class EnumAsStringFormatter<T> : YamlSerializer<T>
     {
         if (ValueNameMapping.TryGetValue(value, out var name))
         {
-            stream.Serialize(ref name);
+            stream.Write(name);
         }
         else
         {

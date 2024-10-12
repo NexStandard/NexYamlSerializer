@@ -18,7 +18,7 @@ public class SByteFormatter : YamlSerializer<sbyte>
     {
         Span<byte> span = stackalloc byte[4];
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
-        stream.Serialize(span[..written]);
+        stream.Write(span[..written]);
     }
 
     protected override void Read(YamlParser parser, YamlDeserializationContext context, ref sbyte value)

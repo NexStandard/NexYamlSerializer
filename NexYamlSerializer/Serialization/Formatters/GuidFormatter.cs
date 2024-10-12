@@ -16,8 +16,7 @@ public class GuidFormatter : YamlSerializer<Guid>
         Span<byte> buf = stackalloc byte[64];
         if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten))
         {
-            ReadOnlySpan<byte> bytes = buf[..bytesWritten];
-            stream.Serialize(bytes);
+            stream.Write(buf[..bytesWritten]);
         }
         else
         {

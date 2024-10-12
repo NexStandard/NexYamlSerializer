@@ -16,7 +16,7 @@ public class TimeSpanFormatter : YamlSerializer<TimeSpan>
         if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten))
         {
             ReadOnlySpan<byte> bytes = buf[..bytesWritten];
-            stream.Serialize(bytes);
+            stream.Write(bytes);
         }
         else
         {

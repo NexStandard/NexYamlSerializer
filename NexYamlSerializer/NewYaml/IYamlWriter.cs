@@ -27,7 +27,20 @@ public interface IYamlWriter
     /// <see cref="ScalarStyle.SingleQuoted"/> : Is reserved for <see cref="char"/>
     /// </summary>
     /// <param name="value">The string to write in an auto detection format to the stream.</param>
-    void Serialize(ref string? value);
-    void Serialize(ReadOnlySpan<byte> value);
-    void Serialize<T>(ref T value, DataStyle style);
+    void Write(string? value, DataStyle style = DataStyle.Any);
+    void Write(ReadOnlySpan<byte> value, DataStyle style = DataStyle.Any);
+    void Write(char value, DataStyle style = DataStyle.Any);
+    void Write(int value, DataStyle style = DataStyle.Any);
+    void Write(uint value, DataStyle style = DataStyle.Any);
+    void Write(long value, DataStyle style = DataStyle.Any);
+    void Write(ulong value, DataStyle style = DataStyle.Any);
+    void Write(float value, DataStyle style = DataStyle.Any);
+    void Write(double value, DataStyle style = DataStyle.Any);
+    void Write(bool value, DataStyle style = DataStyle.Any);
+    void Write(short value, DataStyle style = DataStyle.Any);
+    void Write(ushort value, DataStyle style = DataStyle.Any);
+    void Write(byte value, DataStyle style = DataStyle.Any);
+    void Write(sbyte value, DataStyle style = DataStyle.Any);
+    void Write(decimal value, DataStyle style = DataStyle.Any);
+    void Write<T>(T value, DataStyle style);
 }
