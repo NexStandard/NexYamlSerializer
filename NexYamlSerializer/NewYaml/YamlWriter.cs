@@ -3,6 +3,7 @@ using NexVYaml.Serialization;
 using NexYaml.Core;
 using Stride.Core;
 using System;
+using System.Buffers;
 using System.Buffers.Text;
 using System.Globalization;
 using System.Text;
@@ -12,12 +13,16 @@ namespace NexVYaml;
 public class YamlWriter : IYamlWriter
 {
     Utf8YamlEmitter Emitter { get; set; }
-    YamlSerializationContext SerializeContext { get; init; }
-    internal YamlWriter(Utf8YamlEmitter emitter, YamlSerializationContext context)
+    IYamlFormatterResolver Resolver{ get; init; }
+    internal YamlWriter(Utf8YamlEmitter emitter, IYamlFormatterResolver resolver)
     {
-        SerializeContext = context;
+        Resolver = resolver;
         Emitter = emitter;
     }
+    public bool IsRedirected { get; set; } = false;
+    public bool IsFirst { get; set; } = true;
+    
+
     public void Serialize<T>(ref T value, DataStyle style = DataStyle.Any)
     {
         if (value is null)
@@ -35,7 +40,43 @@ public class YamlWriter : IYamlWriter
             arrayFormatter.Serialize(this, value, style);
             return;
         }
-        SerializeContext.Serialize(this, value, style);
+        var type = typeof(T);
+
+        if (type.IsValueType || type.IsSealed)
+        {
+            var formatter = Resolver.GetFormatter<T>();
+            formatter.Serialize(this, value, style);
+        }
+        else if (type.IsInterface || type.IsAbstract || type.IsGenericType || type.IsArray)
+        {
+            var valueType = value!.GetType();
+            var formatt = Resolver.GetFormatter(value!.GetType(), typeof(T));
+            if (valueType != type)
+                IsRedirected = true;
+
+            // C# forgets the cast of T when invoking Serialize,
+            // this way we can call the serialize method with the "real type"
+            // that is in the object
+            if (style is DataStyle.Any)
+            {
+                formatt.Serialize(this, value!);
+            }
+            else
+            {
+                formatt.Serialize(this, value!, style);
+            }
+        }
+        else
+        {
+            if (style is DataStyle.Any)
+            {
+                Resolver.GetFormatter<T>().Serialize(this, value!);
+            }
+            else
+            {
+                Resolver.GetFormatter<T>().Serialize(this, value!, style);
+            }
+        }
     }
     public void BeginMapping(DataStyle style)
     {
@@ -121,12 +162,12 @@ public class YamlWriter : IYamlWriter
 
     public void WriteTag(string tag)
     {
-        if (SerializeContext.IsRedirected || SerializeContext.IsFirst)
+        if (IsRedirected || IsFirst)
         {
             var fulTag = $"!{tag}";
             Emitter.Tag(ref fulTag);
-            SerializeContext.IsRedirected = false;
-            SerializeContext.IsFirst = false;
+            IsRedirected = false;
+            IsFirst = false;
         }
     }
 }

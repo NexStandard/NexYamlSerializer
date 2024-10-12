@@ -39,18 +39,12 @@ public abstract class YamlSerializer
     {
         options ??= IYamlFormatterResolver.Default;
 
-        var contextLocal = new YamlSerializationContext(options)
-        {
-        };
-
-        var writer = contextLocal.ArrayBufferWriter;
-
-        var emitter = new Utf8YamlEmitter(writer);
-        var stream = new YamlWriter(emitter, contextLocal);
+        var emitter = new Utf8YamlEmitter();
+        var stream = new YamlWriter(emitter, options);
         try
         {
             stream.Write(value,style);
-            return writer.WrittenMemory;
+            return emitter.Writer.WrittenMemory;
         }
         finally
         {
@@ -81,20 +75,6 @@ public abstract class YamlSerializer
 
     /// <summary>
     /// Serializes the specified object of type <typeparamref name="T"/> or any derived class/interface of type <typeparamref name="T"/> to YAML format 
-    /// and writes it to the provided <paramref name="writer"/> using an <see cref="IBufferWriter{T}"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to be serialized, or any type derived from <typeparamref name="T"/>.</typeparam>
-    /// <param name="writer">The buffer writer used to write the YAML content.</param>
-    /// <param name="value">The object to be serialized.</param>
-    /// <param name="options">Optional settings for customizing the YAML serialization process.</param>
-    public static void Serialize<T>(IBufferWriter<byte> writer, T value, DataStyle style = DataStyle.Any, IYamlFormatterResolver? options = null)
-    {
-        var emitter = new Utf8YamlEmitter(writer);
-        Serialize(ref emitter, value,style, options);
-    }
-
-    /// <summary>
-    /// Serializes the specified object of type <typeparamref name="T"/> or any derived class/interface of type <typeparamref name="T"/> to YAML format 
     /// using the provided <paramref name="emitter"/> and <paramref name="options"/> and disposes the emitter afterward.
     /// </summary>
     /// <typeparam name="T">The type of the object to be serialized, or any type derived from <typeparamref name="T"/>.</typeparam>
@@ -106,10 +86,9 @@ public abstract class YamlSerializer
         try
         {
             options ??= IYamlFormatterResolver.Default;
-            var contextLocal = new YamlSerializationContext(options);
             if(stream is null)
             {
-                stream = new YamlWriter(emitter, contextLocal);
+                stream = new YamlWriter(emitter, options);
             }
             stream.Write(value, style);
         }

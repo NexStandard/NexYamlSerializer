@@ -24,7 +24,8 @@ sealed class Utf8YamlEmitter : IDisposable
 {
     public int CurrentIndentLevel => IndentationManager.CurrentIndentLevel;
     internal ExpandBuffer<EmitState> StateStack { get; }
-    public IBufferWriter<byte> Writer { get; }
+    public ArrayBufferWriter<byte> Writer { get; } = new ArrayBufferWriter<byte>(512);
+
     public const int IndentWidth = 2;
     private EmitterSerializer blockMapKeySerializer;
     private EmitterSerializer flowMapKeySerializer;
@@ -42,9 +43,8 @@ sealed class Utf8YamlEmitter : IDisposable
     internal ExpandBuffer<string> tagStack;
     internal int currentElementCount;
 
-    public Utf8YamlEmitter(IBufferWriter<byte> writer)
+    public Utf8YamlEmitter()
     {
-        Writer = writer;
 
         StateStack = new ExpandBuffer<EmitState>(16);
         elementCountStack = new ExpandBuffer<int>(16);
