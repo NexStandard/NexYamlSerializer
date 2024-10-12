@@ -12,58 +12,58 @@ namespace NexVYaml;
 public static class YamlStreamExtensions
 {
 
-    public static void Write(this IYamlWriter writer, string key, int value, DataStyle style = DataStyle.Any)
+    public static void Write(this IYamlWriter stream, string key, int value, DataStyle style = DataStyle.Any)
     {
-        writer.Write(key);
-        writer.Write(value, style);
+        stream.Write(key);
+        stream.Write(value, style);
     }
 
-    public static void Write(this IYamlWriter writer, string key, uint value, DataStyle style = DataStyle.Any)
+    public static void Write(this IYamlWriter stream, string key, uint value, DataStyle style = DataStyle.Any)
     {
-        writer.Write(key);
-        writer.Write(value, style);
+        stream.Write(key);
+        stream.Write(value, style);
     }
 
-    public static void Write(this IYamlWriter writer, string key, long value, DataStyle style = DataStyle.Any)
+    public static void Write(this IYamlWriter stream, string key, long value, DataStyle style = DataStyle.Any)
     {
-        writer.Write(key);
-        writer.Write(value, style);
+        stream.Write(key);
+        stream.Write(value, style);
     }
 
-    public static void Write(this IYamlWriter writer, string key, float value, DataStyle style = DataStyle.Any)
+    public static void Write(this IYamlWriter stream, string key, float value, DataStyle style = DataStyle.Any)
     {
-        writer.Write(key);
-        writer.Write(value, style);
+        stream.Write(key);
+        stream.Write(value, style);
     }
 
-    public static void Write(this IYamlWriter writer, string key, double value, DataStyle style = DataStyle.Any)
+    public static void Write(this IYamlWriter stream, string key, double value, DataStyle style = DataStyle.Any)
     {
-        writer.Write(key);
-        writer.Write(value, style);
+        stream.Write(key);
+        stream.Write(value, style);
     }
 
-    public static void Write(this IYamlWriter writer, string key, bool value, DataStyle style = DataStyle.Any)
+    public static void Write(this IYamlWriter stream, string key, bool value, DataStyle style = DataStyle.Any)
     {
-        writer.Write(key);
-        writer.Write(value, style);
+        stream.Write(key);
+        stream.Write(value, style);
     }
 
-    public static void Write(this IYamlWriter writer, string key, short value, DataStyle style = DataStyle.Any)
+    public static void Write(this IYamlWriter stream, string key, short value, DataStyle style = DataStyle.Any)
     {
-        writer.Write(key);
-        writer.Write(value, style);
+        stream.Write(key);
+        stream.Write(value, style);
     }
 
-    public static void Write(this IYamlWriter writer, string key, ushort value, DataStyle style = DataStyle.Any)
+    public static void Write(this IYamlWriter stream, string key, ushort value, DataStyle style = DataStyle.Any)
     {
-        writer.Write(key);
-        writer.Write(value, style);
+        stream.Write(key);
+        stream.Write(value, style);
     }
 
-    public static void Write(this IYamlWriter writer, string key, byte value, DataStyle style = DataStyle.Any)
+    public static void Write(this IYamlWriter stream, string key, byte value, DataStyle style = DataStyle.Any)
     {
-        writer.Write(key);
-        writer.Write(value, style);
+        stream.Write(key);
+        stream.Write(value, style);
     }
 
     public static void Write(this IYamlWriter writer, string key, sbyte value, DataStyle style = DataStyle.Any)
