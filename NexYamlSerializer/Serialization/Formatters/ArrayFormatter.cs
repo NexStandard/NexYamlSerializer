@@ -19,7 +19,7 @@ public class ArrayFormatter<T> : YamlSerializer<T[]>
         stream.EndSequence();
     }
 
-    protected override void Read(YamlParser parser,  ref T[] value)
+    protected override void Read(IYamlReader parser,  ref T[] value)
     {
         parser.ReadWithVerify(ParseEventType.SequenceStart);
 
@@ -27,7 +27,7 @@ public class ArrayFormatter<T> : YamlSerializer<T[]>
         while (parser.HasSequence)
         {
             var val = default(T);
-            parser.DeserializeWithAlias(ref parser, ref val);
+            parser.Read(ref val);
             list.Add(val!);
         }
 

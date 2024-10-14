@@ -19,7 +19,7 @@ public class CollectionInterfaceFormatter<T> : YamlSerializer<ICollection<T>?>
         stream.EndSequence();
     }
 
-    protected override void Read(YamlParser parser, ref ICollection<T>? value)
+    protected override void Read(IYamlReader parser, ref ICollection<T>? value)
     {
         parser.ReadWithVerify(ParseEventType.SequenceStart);
 
@@ -27,7 +27,7 @@ public class CollectionInterfaceFormatter<T> : YamlSerializer<ICollection<T>?>
         while (parser.HasSequence)
         {
             var val = default(T);
-            parser.DeserializeWithAlias(ref parser, ref value);
+            parser.Read(ref value);
             list.Add(val);
         }
 

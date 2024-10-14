@@ -16,13 +16,13 @@ public class KeyValuePairFormatter<TKey, TValue> : YamlSerializer<KeyValuePair<T
         stream.EndSequence();
     }
 
-    protected override void Read(YamlParser parser, ref KeyValuePair<TKey, TValue> value)
+    protected override void Read(IYamlReader parser, ref KeyValuePair<TKey, TValue> value)
     {
         parser.ReadWithVerify(ParseEventType.SequenceStart);
         var key = default(TKey);
         var val = default(TValue);
-        parser.DeserializeWithAlias(ref parser, ref key);
-        parser.DeserializeWithAlias(ref parser, ref val);
+        parser.Read(ref key);
+        parser.Read(ref val);
         parser.ReadWithVerify(ParseEventType.SequenceEnd);
         value = new KeyValuePair<TKey, TValue>(key!, val!);
     }

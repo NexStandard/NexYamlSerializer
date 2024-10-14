@@ -11,7 +11,7 @@ internal class DeserializeEmitter
         var objectCreation = new StringBuilder();
         var map = MapPropertiesToLength(package.MemberSymbols);
         package.MemberSymbols.ForEach(member => objectCreation.Append(member.Name + "=__TEMP__" + member.Name + ","));
-        string ifstatement = "\t\t\t\tparser.SkipRead();";
+        string ifstatement = "\t\t\t\tstream.SkipRead();";
 
         if(map.Count > 0)
         {
@@ -20,20 +20,20 @@ internal class DeserializeEmitter
             {{MapPropertiesToSwitch(map)}}
                         ) 
                         {
-                            parser.SkipRead(); 
+                            stream.SkipRead(); 
                         }
             
             """;
         }
         return $$"""
-                parser.ReadWithVerify(ParseEventType.MappingStart);
+                stream.ReadWithVerify(ParseEventType.MappingStart);
         {{package.CreateTempMembers()}}
-                while (parser.HasMapping(out var key))
+                while (stream.HasMapping(out var key))
                 {
         {{ifstatement}}
                 }
 
-                parser.ReadWithVerify(ParseEventType.MappingEnd);
+                stream.ReadWithVerify(ParseEventType.MappingEnd);
                 var __TEMP__RESULT = new {{info.NameDefinition}}
                 {
                     {{objectCreation.ToString().Trim(',')}}
@@ -62,7 +62,7 @@ internal class DeserializeEmitter
 
     void AppendMember(SymbolInfo symbol, StringBuilder switchBuilder)
     {
-        switchBuilder.AppendLine($"\t\t\t\t!parser.TryDeserialize(ref __TEMP__{symbol.Name}, ref key,{"UTF8" + symbol.Name}) &&");
+        switchBuilder.AppendLine($"\t\t\t\t!stream.TryRead(ref __TEMP__{symbol.Name}, ref key,{"UTF8" + symbol.Name}) &&");
     }
     public string MapPropertiesToSwitch(Dictionary<int, List<SymbolInfo>> properties)
     {

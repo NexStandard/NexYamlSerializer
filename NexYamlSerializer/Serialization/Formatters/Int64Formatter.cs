@@ -17,7 +17,7 @@ public class Int64Formatter : YamlSerializer<long>
         stream.Write(value, style);
     }
 
-    protected override void Read(YamlParser parser, ref long value)
+    protected override void Read(IYamlReader parser, ref long value)
     {
         if(parser.TryGetScalarAsSpan(out var span))
         {

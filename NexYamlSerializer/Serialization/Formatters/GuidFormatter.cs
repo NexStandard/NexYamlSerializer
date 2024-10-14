@@ -24,7 +24,7 @@ public class GuidFormatter : YamlSerializer<Guid>
         }
     }
 
-    protected override void Read(YamlParser parser, ref Guid value)
+    protected override void Read(IYamlReader parser, ref Guid value)
     {
         if (parser.TryGetScalarAsSpan(out var span) &&
               Utf8Parser.TryParse(span, out Guid guid, out var bytesConsumed) &&

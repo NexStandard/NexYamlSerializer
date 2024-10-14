@@ -64,7 +64,7 @@ public class DictionaryReadonlyInterfaceFormatter<TKey, TValue> : YamlSerializer
         }
     }
 
-    protected override void Read(YamlParser parser,  ref IReadOnlyDictionary<TKey, TValue> value)
+    protected override void Read(IYamlReader parser,  ref IReadOnlyDictionary<TKey, TValue> value)
     {
         var map = new Dictionary<TKey, TValue>();
         if (FormatterExtensions.IsPrimitive(typeof(TKey)))
@@ -74,9 +74,9 @@ public class DictionaryReadonlyInterfaceFormatter<TKey, TValue> : YamlSerializer
             while (parser.HasKeyMapping)
             {
                 var key = default(TKey);
-                parser.DeserializeWithAlias(ref parser, ref key);
+                parser.Read(ref key);
                 var val = default(TValue);
-                parser.DeserializeWithAlias(ref parser, ref value);
+                parser.Read(ref value);
                 map.Add(key!, val!);
             }
 
@@ -88,7 +88,7 @@ public class DictionaryReadonlyInterfaceFormatter<TKey, TValue> : YamlSerializer
         {
             var listFormatter = new ListFormatter<KeyValuePair<TKey, TValue>>();
             var keyValuePairs = default(List<KeyValuePair<TKey, TValue>>);
-            parser.DeserializeWithAlias(listFormatter, ref parser, ref keyValuePairs);
+            listFormatter.Deserialize(parser, ref keyValuePairs);
 
             value = keyValuePairs?.ToDictionary() ?? [];
         }

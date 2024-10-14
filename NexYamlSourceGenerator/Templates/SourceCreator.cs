@@ -37,7 +37,7 @@ using NexYamlSerializer.Serialization.Formatters;
 
 namespace NexVYaml;
 [System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]
-public sealed class {info.GeneratorName + "Helper" } : IYamlFormatterHelper
+public struct {info.GeneratorName + "Helper" } : IYamlFormatterHelper
 {{
     public void Register(IYamlFormatterResolver resolver)
     {{
@@ -61,7 +61,7 @@ file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSeria
         stream.EndMapping();
     }}
 
-    protected override void Read(YamlParser parser, ref {info.NameDefinition} value)
+    protected override void Read(IYamlReader stream, ref {info.NameDefinition} value)
     {{
 {package.CreateDeserialize()}
     }}
