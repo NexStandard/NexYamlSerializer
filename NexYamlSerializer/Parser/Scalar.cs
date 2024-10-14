@@ -5,6 +5,7 @@ using System.Buffers;
 using System.Buffers.Text;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace NexVYaml.Parser;
 
@@ -34,18 +35,17 @@ readonly struct ScalarPool(int capacity) : IDisposable
         }
     }
 }
-
-class Scalar : ITokenContent, IDisposable
+public class Scalar : ITokenContent, IDisposable
 {
-    const int MinimumGrow = 4;
-    const int GrowFactor = 200;
+    private const int GrowFactor = 200;
+    private const int MinimumGrow = 4;
+
+    private byte[] buffer;
+    public int Length { get; private set; }
 
     public static readonly Scalar Null = new(0);
 
-    public int Length { get; private set; }
-    byte[] buffer;
-
-    public Scalar(int capacity)
+    public Scalar(int capacity = MinimumGrow)
     {
         buffer = ArrayPool<byte>.Shared.Rent(capacity);
     }
@@ -62,11 +62,7 @@ class Scalar : ITokenContent, IDisposable
 
     public void Write(byte code)
     {
-        if (Length == buffer.Length)
-        {
-            Grow();
-        }
-
+        EnsureCapacity(Length + 1);
         buffer[Length++] = code;
     }
 
@@ -93,14 +89,15 @@ class Scalar : ITokenContent, IDisposable
 
     public void Write(ReadOnlySpan<byte> codes)
     {
-        Grow(Length + codes.Length);
-        codes.CopyTo(buffer.AsSpan(Length, codes.Length));
+        EnsureCapacity(Length + codes.Length);
+        codes.CopyTo(buffer.AsSpan(Length));
         Length += codes.Length;
     }
 
     public void WriteUnicodeCodepoint(int codepoint)
     {
-        Span<char> chars = [(char)codepoint];
+        Span<char> chars = stackalloc char[1];
+        chars[0] = (char)codepoint;
         var utf8ByteCount = StringEncoding.Utf8.GetByteCount(chars);
         Span<byte> utf8Bytes = stackalloc byte[utf8ByteCount];
         StringEncoding.Utf8.GetBytes(chars, utf8Bytes);
@@ -114,10 +111,12 @@ class Scalar : ITokenContent, IDisposable
 
     public void Dispose()
     {
-        if (Length < 0) 
-            return;
-        ArrayPool<byte>.Shared.Return(buffer);
-        Length = -1;
+        if (buffer != null)
+        {
+            ArrayPool<byte>.Shared.Return(buffer);
+            buffer = null!;
+        }
+        Length = -1; // Mark as disposed
     }
 
     public override string ToString()
@@ -125,22 +124,10 @@ class Scalar : ITokenContent, IDisposable
         return StringEncoding.Utf8.GetString(AsSpan());
     }
 
-    /// <summary>
-    /// </summary>
-    /// <remarks>
-    /// !!null | !!Null | !!NULL | ~
-    /// </remarks>
     public bool IsNull()
     {
         var span = AsSpan();
-        switch (span.Length)
-        {
-            case 0:
-            case 4 when span.SequenceEqual(YamlCodes.Null0):
-                return true;
-            default:
-                return false;
-        }
+        return span.Length == 0 || span.SequenceEqual(YamlCodes.Null0);
     }
 
     public bool SequenceEqual(ReadOnlySpan<byte> span)
@@ -148,39 +135,23 @@ class Scalar : ITokenContent, IDisposable
         return AsSpan().SequenceEqual(span);
     }
 
-    public void Grow(int sizeHint)
+    private void EnsureCapacity(int sizeHint)
     {
         if (sizeHint <= buffer.Length)
-        {
             return;
-        }
-        var newCapacity = buffer.Length * GrowFactor / 100;
-        while (newCapacity < sizeHint)
-        {
-            newCapacity = newCapacity * GrowFactor / 100;
-        }
+
+        int newCapacity = buffer.Length * GrowFactor / 100;
+        if (newCapacity < sizeHint)
+            newCapacity = sizeHint;
+
         SetCapacity(newCapacity);
     }
 
-    void Grow()
+    private void SetCapacity(int newCapacity)
     {
-        var newCapacity = buffer.Length * GrowFactor / 100;
-        if (newCapacity < buffer.Length + MinimumGrow)
-        {
-            newCapacity = buffer.Length + MinimumGrow;
-        }
-        SetCapacity(newCapacity);
-    }
-
-    void SetCapacity(int newCapacity)
-    {
-        if (buffer.Length >= newCapacity) 
-            return;
-
         var newBuffer = ArrayPool<byte>.Shared.Rent(newCapacity);
-        Array.Copy(buffer, 0, newBuffer, 0, Length);
+        buffer.AsSpan(0, Length).CopyTo(newBuffer);
         ArrayPool<byte>.Shared.Return(buffer);
         buffer = newBuffer;
     }
 }
-

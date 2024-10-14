@@ -17,7 +17,7 @@ public class CharFormatter : YamlSerializer<char>
         stream.Write(value, style);
     }
 
-    protected override void Read(YamlParser parser, ref char value)
+    protected override void Read(IYamlReader parser, ref char value)
     {
         if(parser.TryGetScalarAsString(out var result))
         {
@@ -30,6 +30,6 @@ public class CharFormatter : YamlSerializer<char>
             }
         }
         
-        parser.Read();
+        parser.ReadWithVerify(ParseEventType.Scalar);
     }
 }

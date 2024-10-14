@@ -17,7 +17,7 @@ public class Int16Formatter : YamlSerializer<short>
         stream.Write(value, style);
     }
 
-    protected override void Read(YamlParser parser, ref short value)
+    protected override void Read(IYamlReader parser, ref short value)
     {
         if(parser.TryGetScalarAsSpan(out var span))
         {

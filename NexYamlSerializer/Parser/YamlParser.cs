@@ -58,9 +58,9 @@ enum ParseState
     End,
 }
 
-public partial class YamlParser(ReadOnlySequence<byte> sequence,  IYamlFormatterResolver resolver) : IDisposable
+public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterResolver resolver) : IDisposable
 {
-    IYamlFormatterResolver Resolver =>  resolver;
+    IYamlFormatterResolver Resolver => resolver;
     public static YamlParser FromBytes(Memory<byte> bytes, IYamlFormatterResolver resolver)
     {
         var sequence = new ReadOnlySequence<byte>(bytes);
@@ -71,7 +71,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence,  IYamlFormatter
     {
         return new YamlParser(sequence, resolver);
     }
-    
+
     public ParseEventType CurrentEventType { get; private set; } = default;
 
     public Marker CurrentMark
@@ -80,7 +80,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence,  IYamlFormatter
     }
     public bool HasMapping(out ReadOnlySpan<byte> mappingKey)
     {
-        if(HasKeyMapping)
+        if (HasKeyMapping)
         {
             ValidateScalar(out mappingKey);
             return true;
@@ -103,7 +103,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence,  IYamlFormatter
     /// <param name="key">The <see cref="Scalar"/> Key of the Mapping</param>
     /// <returns></returns>
     /// <exception cref="YamlException">Throws when there is no <see cref="ParseEventType.Scalar"/> or if <see cref="TryGetScalarAsSpan(out ReadOnlySpan{byte})"/> doesn't succeed</exception>
-    public void ValidateScalar(out ReadOnlySpan<byte> key)
+    void ValidateScalar(out ReadOnlySpan<byte> key)
     {
         if (CurrentEventType != ParseEventType.Scalar)
         {
@@ -869,7 +869,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence,  IYamlFormatter
         }
     }
 
-    int RegisterAnchor(string anchorName)
+    public int RegisterAnchor(string anchorName)
     {
         var newId = ++lastAnchorId;
         anchors[anchorName] = newId;

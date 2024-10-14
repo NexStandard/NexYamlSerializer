@@ -16,7 +16,7 @@ public class Float64Formatter : YamlSerializer<double>
         stream.Write(value, style);
     }
 
-    protected override void Read(YamlParser parser, ref double value)
+    protected override void Read(IYamlReader parser, ref double value)
     {
         if(parser.TryGetScalarAsSpan(out var span))
         {

@@ -13,7 +13,7 @@ public class ListFormatter<T> : YamlSerializer<List<T>?>
         ListFormatterHelper.Serialize(stream, value!, style);
     }
 
-    protected override void Read(YamlParser parser, ref List<T>? value)
+    protected override void Read(IYamlReader parser, ref List<T>? value)
     {
         parser.ReadWithVerify(ParseEventType.SequenceStart);
 
@@ -21,7 +21,7 @@ public class ListFormatter<T> : YamlSerializer<List<T>?>
         while (parser.HasSequence)
         {
             var val = default(T);
-            parser.DeserializeWithAlias(ref parser, ref val);
+            parser.Read(ref val);
             list.Add(val!);
         }
 

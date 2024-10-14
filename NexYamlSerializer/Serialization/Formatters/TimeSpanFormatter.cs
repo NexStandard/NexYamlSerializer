@@ -24,7 +24,7 @@ public class TimeSpanFormatter : YamlSerializer<TimeSpan>
         }
     }
 
-    protected override void Read(YamlParser parser, ref TimeSpan value)
+    protected override void Read(IYamlReader parser, ref TimeSpan value)
     {
         if (parser.TryGetScalarAsSpan(out var span) &&
                Utf8Parser.TryParse(span, out TimeSpan timeSpan, out var bytesConsumed) &&

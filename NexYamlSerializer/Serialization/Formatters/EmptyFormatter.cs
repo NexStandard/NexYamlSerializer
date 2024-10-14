@@ -16,7 +16,7 @@ public class EmptyFormatter<T> : YamlSerializer<T>
         stream.Write(YamlCodes.Null0);
     }
 
-    protected override void Read(YamlParser parser, ref T value)
+    protected override void Read(IYamlReader parser, ref T value)
     {
         value = default!;
     }
