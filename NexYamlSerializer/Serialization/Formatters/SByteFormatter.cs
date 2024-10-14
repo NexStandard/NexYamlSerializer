@@ -19,7 +19,7 @@ public class SByteFormatter : YamlSerializer<sbyte>
         stream.Write(value, style);
     }
 
-    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref sbyte value)
+    protected override void Read(YamlParser parser, ref sbyte value)
     {
         if (parser.TryGetScalarAsSpan(out var span))
         {

@@ -25,7 +25,7 @@ public class DateTimeOffsetFormatter : YamlSerializer<DateTimeOffset>
         }
     }
 
-    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref DateTimeOffset value)
+    protected override void Read(YamlParser parser, ref DateTimeOffset value)
     {
         if (parser.TryGetScalarAsSpan(out var span) &&
              Utf8Parser.TryParse(span, out DateTimeOffset val, out var bytesConsumed) &&

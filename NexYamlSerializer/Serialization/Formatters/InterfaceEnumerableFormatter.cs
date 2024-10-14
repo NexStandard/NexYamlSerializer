@@ -20,7 +20,7 @@ public class InterfaceEnumerableFormatter<T> : YamlSerializer<IEnumerable<T>?>
         stream.EndSequence();
     }
 
-    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref IEnumerable<T>? value)
+    protected override void Read(YamlParser parser, ref IEnumerable<T>? value)
     {
         var list = new List<T>();
         parser.ReadWithVerify(ParseEventType.SequenceStart);
@@ -28,7 +28,7 @@ public class InterfaceEnumerableFormatter<T> : YamlSerializer<IEnumerable<T>?>
         while (parser.HasSequence)
         {
             T? val = default;
-            context.DeserializeWithAlias(ref parser, ref val);
+            parser.DeserializeWithAlias(ref parser, ref val);
             list.Add(val!);
         }
         parser.ReadWithVerify(ParseEventType.SequenceEnd);

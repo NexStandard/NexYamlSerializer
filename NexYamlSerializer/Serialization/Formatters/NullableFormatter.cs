@@ -19,10 +19,10 @@ public class NullableFormatter<T> : YamlSerializer<T?> where T : struct
         }
     }
 
-    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref T? value)
+    protected override void Read(YamlParser parser, ref T? value)
     {
         var val = default(T);
-        context.DeserializeWithAlias(ref parser, ref val);
+        parser.DeserializeWithAlias(ref parser, ref val);
         value =  new T?(val);
     }
 }
@@ -42,10 +42,10 @@ public sealed class StaticNullableFormatter<T>(YamlSerializer<T> underlyingForma
         }
     }
 
-    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref T? value)
+    protected override void Read(YamlParser parser, ref T? value)
     {
         var val = default(T);
-        context.DeserializeWithAlias(ref parser, ref val);
+        parser.DeserializeWithAlias(ref parser, ref val);
         value = val;
     }
 }

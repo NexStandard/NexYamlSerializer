@@ -16,20 +16,20 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
         DictionaryFormatterHelper.Serialize(stream, value!, style);
     }
 
-    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref Dictionary<TKey, TValue>? value)
+    protected override void Read(YamlParser parser,  ref Dictionary<TKey, TValue>? value)
     {
         var map = new Dictionary<TKey, TValue>();
         if (FormatterExtensions.IsPrimitive(typeof(TKey)))
         {
-            var keyFormatter = context.Resolver.GetFormatter<TKey>();
+            var keyFormatter = parser.Resolver.GetFormatter<TKey>();
             parser.ReadWithVerify(ParseEventType.MappingStart);
 
-            while (parser.HasMapping)
+            while (parser.HasKeyMapping)
             {
                 var key = default(TKey);
-                context.DeserializeWithAlias(keyFormatter, ref parser, ref key);
+                parser.DeserializeWithAlias(keyFormatter, ref parser, ref key);
                 var val = default(TValue);
-                context.DeserializeWithAlias(ref parser, ref val);
+                parser.DeserializeWithAlias(ref parser, ref val);
                 map.Add(key, val!);
             }
 
@@ -40,7 +40,7 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
         {
             var listFormatter = new ListFormatter<KeyValuePair<TKey, TValue>>();
             var keyValuePairs = default(List<KeyValuePair<TKey, TValue>>);
-            context.DeserializeWithAlias(listFormatter, ref parser, ref keyValuePairs);
+            parser.DeserializeWithAlias(listFormatter, ref parser, ref keyValuePairs);
 
             value = keyValuePairs?.ToDictionary() ?? [];
         }

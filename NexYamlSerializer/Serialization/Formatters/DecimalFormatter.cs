@@ -18,7 +18,7 @@ public class DecimalFormatter : YamlSerializer<decimal>
         stream.Write(value, style);
     }
 
-    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref decimal value)
+    protected override void Read(YamlParser parser, ref decimal value)
     {
         if (parser.TryGetScalarAsSpan(out var span) &&
                    Utf8Parser.TryParse(span, out decimal val, out var bytesConsumed) &&

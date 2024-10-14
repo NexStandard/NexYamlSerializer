@@ -74,7 +74,7 @@ public class EnumAsStringFormatter<T> : YamlSerializer<T>
         }
     }
 
-    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref T value)
+    protected override void Read(YamlParser parser, ref T value)
     {
         if(parser.TryGetScalarAsString(out var scalar))
         {

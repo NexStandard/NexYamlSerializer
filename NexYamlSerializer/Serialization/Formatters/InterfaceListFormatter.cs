@@ -18,7 +18,7 @@ public class InterfaceListFormatter<T> : YamlSerializer<IList<T>>
         stream.EndSequence();
     }
 
-    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref IList<T> value)
+    protected override void Read(YamlParser parser, ref IList<T> value)
     {
         parser.ReadWithVerify(ParseEventType.SequenceStart);
 
@@ -26,7 +26,7 @@ public class InterfaceListFormatter<T> : YamlSerializer<IList<T>>
         while (parser.HasSequence)
         {
             var val = default(T);
-            context.DeserializeWithAlias(ref parser, ref val);
+            parser.DeserializeWithAlias(ref parser, ref val);
             list.Add(val!);
         }
 

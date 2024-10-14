@@ -19,7 +19,7 @@ public class InterfaceReadOnlyCollectionFormatter<T> : YamlSerializer<IReadOnlyC
         stream.EndSequence();
     }
 
-    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref IReadOnlyCollection<T>? value)
+    protected override void Read(YamlParser parser, ref IReadOnlyCollection<T>? value)
     {
         parser.ReadWithVerify(ParseEventType.SequenceStart);
 
@@ -27,7 +27,7 @@ public class InterfaceReadOnlyCollectionFormatter<T> : YamlSerializer<IReadOnlyC
         while (parser.HasSequence)
         {
             var val = default(T);
-            context.DeserializeWithAlias(ref parser, ref val);
+            parser.DeserializeWithAlias(ref parser, ref val);
             list.Add(val!);
         }
 

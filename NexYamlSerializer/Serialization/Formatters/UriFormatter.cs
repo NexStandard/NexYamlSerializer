@@ -14,7 +14,7 @@ public class UriFormatter : YamlSerializer<Uri>
         stream.Write(value.ToString());
     }
 
-    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref Uri value)
+    protected override void Read(YamlParser parser, ref Uri value)
     {
         if (parser.TryGetScalarAsString(out var scalar) && scalar != null)
         {

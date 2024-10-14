@@ -12,7 +12,7 @@ public class NullableStringFormatter : YamlSerializer<string?>
         stream.Write(value!);
     }
 
-    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref string? value)
+    protected override void Read(YamlParser parser, ref string? value)
     {
         value = parser.ReadScalarAsString();
     }

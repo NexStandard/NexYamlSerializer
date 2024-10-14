@@ -31,7 +31,7 @@ public class DateTimeFormatter : YamlSerializer<DateTime>
         }
     }
 
-    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref DateTime value)
+    protected override void Read(YamlParser parser, ref DateTime value)
     {
         if (parser.TryGetScalarAsSpan(out var span) &&
       Utf8Parser.TryParse(span, out DateTime dateTime, out var bytesConsumed, 'O') &&

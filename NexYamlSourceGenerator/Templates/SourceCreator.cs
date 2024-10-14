@@ -61,7 +61,7 @@ file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSeria
         stream.EndMapping();
     }}
 
-    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref {info.NameDefinition} value)
+    protected override void Read(YamlParser parser, ref {info.NameDefinition} value)
     {{
 {package.CreateDeserialize()}
     }}

@@ -14,7 +14,7 @@ public class BooleanFormatter : YamlSerializer<bool>
         stream.Write(value, style);
     }
 
-    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref bool value)
+    protected override void Read(YamlParser parser, ref bool value)
     {
         if(parser.TryGetScalarAsSpan(out var span))
         {

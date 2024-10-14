@@ -17,7 +17,7 @@ public class ByteFormatter : YamlSerializer<byte>
         stream.Write(value, style);
     }
 
-    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref byte value)
+    protected override void Read(YamlParser parser, ref byte value)
     {
         if(parser.TryGetScalarAsSpan(out var span))
         {

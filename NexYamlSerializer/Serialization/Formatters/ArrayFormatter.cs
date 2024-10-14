@@ -1,6 +1,7 @@
 #nullable enable
 using NexVYaml.Parser;
 using Stride.Core;
+using System;
 using System.Collections.Generic;
 
 namespace NexVYaml.Serialization;
@@ -18,7 +19,7 @@ public class ArrayFormatter<T> : YamlSerializer<T[]>
         stream.EndSequence();
     }
 
-    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref T[] value)
+    protected override void Read(YamlParser parser,  ref T[] value)
     {
         parser.ReadWithVerify(ParseEventType.SequenceStart);
 
@@ -26,7 +27,7 @@ public class ArrayFormatter<T> : YamlSerializer<T[]>
         while (parser.HasSequence)
         {
             var val = default(T);
-            context.DeserializeWithAlias(ref parser, ref val);
+            parser.DeserializeWithAlias(ref parser, ref val);
             list.Add(val!);
         }
 

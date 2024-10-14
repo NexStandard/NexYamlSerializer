@@ -135,7 +135,7 @@ public abstract class YamlSerializer
     /// <returns>An object of type <typeparamref name="T"/> representing the deserialized YAML content.</returns>
     public static T? Deserialize<T>(ReadOnlyMemory<byte> memory, IYamlFormatterResolver? options = null)
     {
-        var parser = YamlParser.FromSequence(new ReadOnlySequence<byte>(memory));
+        var parser = YamlParser.FromSequence(new ReadOnlySequence<byte>(memory), options ?? IYamlFormatterResolver.Default);
         return Deserialize<T?>(ref parser, options);
     }
 
@@ -160,7 +160,7 @@ public abstract class YamlSerializer
     /// <returns>An object of type <typeparamref name="T"/> representing the deserialized YAML content.</returns>
     public static T? Deserialize<T>(in ReadOnlySequence<byte> sequence, IYamlFormatterResolver? options = null)
     {
-        var parser = YamlParser.FromSequence(sequence);
+        var parser = YamlParser.FromSequence(sequence, options ?? IYamlFormatterResolver.Default);
         return Deserialize<T?>(ref parser, options);
     }
 
@@ -176,11 +176,10 @@ public abstract class YamlSerializer
         try
         {
             options ??= IYamlFormatterResolver.Default;
-            var contextLocal = new YamlDeserializationContext(options);
 
             parser.SkipAfter(ParseEventType.DocumentStart);
             var value = default(T);
-            contextLocal.DeserializeWithAlias(ref parser, ref value);
+            parser.DeserializeWithAlias(ref parser, ref value);
             return value;
         }
         finally
@@ -214,7 +213,7 @@ public abstract class YamlSerializer
     protected virtual DataStyle Style { get; } = DataStyle.Any;
     public abstract void Serialize(IYamlWriter stream, object value, DataStyle style);
     public abstract void Serialize(IYamlWriter stream, object value);
-    public abstract void Deserialize(YamlParser parser, YamlDeserializationContext context, ref object? value);
+    public abstract void Deserialize(YamlParser parser, ref object? value);
 }
 public abstract class YamlSerializer<T> : YamlSerializer
 {
@@ -237,13 +236,13 @@ public abstract class YamlSerializer<T> : YamlSerializer
             Write(stream, value, style);
         }
     }
-    public override void Deserialize(YamlParser parser, YamlDeserializationContext context, ref object? value)
+    public override void Deserialize(YamlParser parser, ref object? value)
     {
         var val = (T)value!;
-        Deserialize(parser, context, ref val);
+        Deserialize(parser, ref val);
         value = val;
     }
-    public void Deserialize(YamlParser parser, YamlDeserializationContext context, [MaybeNull] ref T value)
+    public void Deserialize(YamlParser parser, [MaybeNull] ref T value)
     {
         if (parser.IsNullScalar())
         {
@@ -251,9 +250,9 @@ public abstract class YamlSerializer<T> : YamlSerializer
             value = default;
             return;
         }
-        Read(parser, context, ref value);
+        Read(parser, ref value);
     }
-    protected abstract void Read(YamlParser parser, YamlDeserializationContext context, ref T value);
+    protected abstract void Read(YamlParser parser, ref T value);
 
     protected abstract void Write(IYamlWriter stream, T value, DataStyle style);
 }

@@ -1,5 +1,6 @@
 #nullable enable
 using Irony.Parsing;
+using NexVYaml.Serialization;
 using NexYaml.Core;
 using System;
 using System.Buffers;
@@ -57,29 +58,40 @@ enum ParseState
     End,
 }
 
-public partial class YamlParser(ReadOnlySequence<byte> sequence) : IDisposable
+public partial class YamlParser(ReadOnlySequence<byte> sequence,  IYamlFormatterResolver resolver) : IDisposable
 {
-    public static YamlParser FromBytes(Memory<byte> bytes)
+    public IYamlFormatterResolver Resolver =>  resolver;
+    public static YamlParser FromBytes(Memory<byte> bytes, IYamlFormatterResolver resolver)
     {
         var sequence = new ReadOnlySequence<byte>(bytes);
-        return new YamlParser(sequence);
+        return new YamlParser(sequence, resolver);
     }
 
-    public static YamlParser FromSequence(in ReadOnlySequence<byte> sequence)
+    public static YamlParser FromSequence(in ReadOnlySequence<byte> sequence, IYamlFormatterResolver resolver)
     {
-        return new YamlParser(sequence);
+        return new YamlParser(sequence, resolver);
     }
-
+    
     public ParseEventType CurrentEventType { get; private set; } = default;
 
     public Marker CurrentMark
     {
         get => tokenizer.CurrentMark;
     }
+    public bool HasMapping(out ReadOnlySpan<byte> mappingKey)
+    {
+        if(HasKeyMapping)
+        {
+            ValidateScalar(out mappingKey);
+            return true;
+        }
+        mappingKey = default;
+        return false;
+    }
     /// <summary>
     /// Indicates if the current <see cref="ParseEventType.MappingEnd"/> or <see cref="ParseEventType.StreamEnd"/> has not happened yet.
     /// </summary>
-    public bool HasMapping => CurrentEventType is not ParseEventType.StreamEnd and not ParseEventType.MappingEnd;
+    public bool HasKeyMapping => CurrentEventType is not ParseEventType.StreamEnd and not ParseEventType.MappingEnd;
     /// <summary>
     /// Indicates if the current <see cref="ParseEventType.SequenceEnd"/> or <see cref="ParseEventType.StreamEnd"/> has not happened yet.
     /// </summary>

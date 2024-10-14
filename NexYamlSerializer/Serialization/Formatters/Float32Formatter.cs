@@ -16,7 +16,7 @@ public class Float32Formatter : YamlSerializer<float>
         stream.Write(value,style);
     }
 
-    protected override void Read(YamlParser parser, YamlDeserializationContext context, ref float value)
+    protected override void Read(YamlParser parser, ref float value)
     {
         if(parser.TryGetScalarAsSpan(out var span))
         {

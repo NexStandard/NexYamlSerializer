@@ -11,21 +11,33 @@ internal class DeserializeEmitter
         var objectCreation = new StringBuilder();
         var map = MapPropertiesToLength(package.MemberSymbols);
         package.MemberSymbols.ForEach(member => objectCreation.Append(member.Name + "=__TEMP__" + member.Name + ","));
+        string ifstatement = "\t\t\t\tparser.SkipRead();";
 
+        if(map.Count > 0)
+        {
+            ifstatement = $$"""
+                        if(
+            {{MapPropertiesToSwitch(map)}}
+                        ) 
+                        {
+                            parser.SkipRead(); 
+                        }
+            
+            """;
+        }
         return $$"""
                 parser.ReadWithVerify(ParseEventType.MappingStart);
         {{package.CreateTempMembers()}}
-                while (parser.HasMapping)
+                while (parser.HasMapping(out var key))
                 {
-                    parser.ValidateScalar(out var key);
-        {{MapPropertiesToSwitch(map)}}
-                 }
+        {{ifstatement}}
+                }
 
-                 parser.ReadWithVerify(ParseEventType.MappingEnd);
-                 var __TEMP__RESULT = new {{info.NameDefinition}}
-                 {
-                     {{objectCreation.ToString().Trim(',')}}
-                 };
+                parser.ReadWithVerify(ParseEventType.MappingEnd);
+                var __TEMP__RESULT = new {{info.NameDefinition}}
+                {
+                    {{objectCreation.ToString().Trim(',')}}
+                };
              
                  value = __TEMP__RESULT;
         """;
@@ -47,87 +59,24 @@ internal class DeserializeEmitter
         }
         return map;
     }
-    static void AppendSwitchCase(StringBuilder switchFinder, int propertyLength)
-    {
-        switchFinder.AppendLine("\t\t\tcase " + propertyLength + ":");
-    }
-    void AppendArray(string start, SymbolInfo symbol, StringBuilder switchBuilder)
-    {
-        var serializeString = $"context.DeserializeArray<{symbol.Type}>(ref parser);";
 
-        switchBuilder.AppendLine($$"""
-                    {{start}} (key.SequenceEqual({{"UTF8" + symbol.Name}}))
-                    {
-                        parser.Read();
-                        __TEMP__{{symbol.Name}} = {{serializeString}}
-                    }
-        """);
-    }
-    void AppendMember(string start, SymbolInfo symbol, StringBuilder switchBuilder)
+    void AppendMember(SymbolInfo symbol, StringBuilder switchBuilder)
     {
-        switchBuilder.AppendLine($$"""
-                    {{start}} (key.SequenceEqual({{"UTF8" + symbol.Name}}))
-                    {
-                        parser.Read();
-                        context.DeserializeWithAlias(ref parser, ref __TEMP__{{symbol.Name}});
-                    }
-        """);
+        switchBuilder.AppendLine($"\t\t\t\t!parser.TryDeserialize(ref __TEMP__{symbol.Name}, ref key,{"UTF8" + symbol.Name}) &&");
     }
-    public StringBuilder MapPropertiesToSwitch(Dictionary<int, List<SymbolInfo>> properties)
+    public string MapPropertiesToSwitch(Dictionary<int, List<SymbolInfo>> properties)
     {
         var switchBuilder = new StringBuilder();
-        // AppendSwitchCase(switchBuilder, prop.Key);
-        var isFirstime = true;
         foreach (var prop in properties)
         {
-            
             foreach (var propert in prop.Value)
             {
-                string ifelse;
-                if (isFirstime)
-                    ifelse = "if";
-                else
-                    ifelse = "else if";
-                if (isFirstime)
-                {
-                    if (propert.IsArray)
-                    {
-                        AppendArray(ifelse, propert, switchBuilder);
-                    }
-                    else
-                    {
-                        AppendMember(ifelse, propert, switchBuilder);
-                    }
-                    isFirstime = false;
-                }
-                else
-                {
-                    if (propert.IsArray)
-                    {
-                        AppendArray(ifelse, propert, switchBuilder);
-                    }
-                    else
-                    {
-                        AppendMember(ifelse, propert, switchBuilder);
-                    }
-                }
+                AppendMember(propert, switchBuilder);
             }
         }
-        if (!isFirstime)
-        {
-            AppendElseSkip(switchBuilder);
-        }
-        return switchBuilder;
-    }
-
-    void AppendElseSkip(StringBuilder switchBuilder)
-    {
-        switchBuilder.AppendLine("""
-                    else
-                    {
-                        parser.Read();
-                        parser.SkipCurrentNode();
-                    }
-        """);
+        var result = switchBuilder.ToString();
+        result = result.TrimEnd('\r', '\n');
+        result = result.TrimEnd('&');
+        return result;
     }
 }
