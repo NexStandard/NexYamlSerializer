@@ -60,7 +60,7 @@ enum ParseState
 
 public partial class YamlParser(ReadOnlySequence<byte> sequence,  IYamlFormatterResolver resolver) : IDisposable
 {
-    public IYamlFormatterResolver Resolver =>  resolver;
+    IYamlFormatterResolver Resolver =>  resolver;
     public static YamlParser FromBytes(Memory<byte> bytes, IYamlFormatterResolver resolver)
     {
         var sequence = new ReadOnlySequence<byte>(bytes);

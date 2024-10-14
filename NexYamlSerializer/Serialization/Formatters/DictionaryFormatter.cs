@@ -21,16 +21,15 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
         var map = new Dictionary<TKey, TValue>();
         if (FormatterExtensions.IsPrimitive(typeof(TKey)))
         {
-            var keyFormatter = parser.Resolver.GetFormatter<TKey>();
             parser.ReadWithVerify(ParseEventType.MappingStart);
 
             while (parser.HasKeyMapping)
             {
                 var key = default(TKey);
-                parser.DeserializeWithAlias(keyFormatter, ref parser, ref key);
+                parser.DeserializeWithAlias(ref parser, ref key);
                 var val = default(TValue);
                 parser.DeserializeWithAlias(ref parser, ref val);
-                map.Add(key, val!);
+                map.Add(key!, val!);
             }
 
             parser.ReadWithVerify(ParseEventType.MappingEnd);
