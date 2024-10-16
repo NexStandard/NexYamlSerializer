@@ -11,20 +11,17 @@ public interface IYamlReader
     bool HasSequence { get; }
 
     void Read(ref ReadOnlySpan<byte> span);
-    void Read(ref string? value);
-    void Read(ref int value);
-    void Read(ref float value);
     void Read<T>(ref T? value);
 
     void Dispose();
     bool HasMapping(out ReadOnlySpan<byte> mappingKey);
     bool IsNullScalar();
-    bool Read();
+    bool Move();
     void ReadWithVerify(ParseEventType eventType);
     void Reset();
     void SkipAfter(ParseEventType eventType);
-    void SkipCurrentNode();
     void SkipRead();
     bool TryGetScalarAsSpan([MaybeNullWhen(false)] out ReadOnlySpan<byte> span);
     bool TryGetScalarAsString(out string? value);
+    public bool TryRead<T>(ref T? target, ref ReadOnlySpan<byte> key, byte[] mappingKey);
 }

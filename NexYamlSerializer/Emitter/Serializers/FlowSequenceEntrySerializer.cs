@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace NexYamlSerializer.Emitter.Serializers;
-internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : EmitterSerializer
+internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : IEmitter
 {
-    public override EmitState State { get; } = EmitState.FlowSequenceEntry;
+    public EmitState State { get; } = EmitState.FlowSequenceEntry;
 
-    public override void Begin()
+    public void Begin()
     {
         switch (emitter.StateStack.Current)
         {
@@ -60,7 +60,7 @@ internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : EmitterSer
         emitter.PushState(State);
     }
 
-    public override void BeginScalar(Span<byte> output, ref int offset)
+    public void BeginScalar(Span<byte> output, ref int offset)
     {
         if (emitter.IsFirstElement)
         {
@@ -77,7 +77,7 @@ internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : EmitterSer
         }
     }
 
-    public override void End()
+    public void End()
     {
         emitter.PopState();
 
@@ -116,7 +116,7 @@ internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : EmitterSer
         emitter.Writer.Advance(offset);
     }
 
-    public override void EndScalar(Span<byte> output, ref int offset)
+    public void EndScalar(Span<byte> output, ref int offset)
     {
         emitter.currentElementCount++;
     }

@@ -31,7 +31,7 @@ public class DateTimeOffsetFormatter : YamlSerializer<DateTimeOffset>
              Utf8Parser.TryParse(span, out DateTimeOffset val, out var bytesConsumed) &&
              bytesConsumed == span.Length)
         {
-            parser.Read();
+            parser.Move();
             value = val;
         }
     }

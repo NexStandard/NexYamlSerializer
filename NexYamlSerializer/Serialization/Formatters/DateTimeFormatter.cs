@@ -37,7 +37,7 @@ public class DateTimeFormatter : YamlSerializer<DateTime>
       Utf8Parser.TryParse(span, out DateTime dateTime, out var bytesConsumed, 'O') &&
       bytesConsumed == span.Length)
         {
-            parser.Read();
+            parser.Move();
             value = dateTime;
             return;
         }
@@ -46,7 +46,7 @@ public class DateTimeFormatter : YamlSerializer<DateTime>
         {
             if (DateTime.TryParse(scalarString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out dateTime))
             {
-                parser.Read();
+                parser.Move();
                 value = dateTime;
                 return;
             }

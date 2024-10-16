@@ -2,7 +2,7 @@
 using System.Linq;
 
 namespace NexYamlSerializer.Emitter;
-internal class IndentationManager
+public class IndentationManager
 {
     public int CurrentIndentLevel { get; private set; }
 

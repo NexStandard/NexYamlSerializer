@@ -25,7 +25,7 @@ public class DecimalFormatter : YamlSerializer<decimal>
                    bytesConsumed == span.Length)
         {
             value = val;
-            parser.Read();
+            parser.Move();
             return;
         }
     }

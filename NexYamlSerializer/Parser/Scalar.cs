@@ -4,6 +4,7 @@ using System;
 using System.Buffers;
 using System.Buffers.Text;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -17,7 +18,7 @@ readonly struct ScalarPool(int capacity) : IDisposable
     {
         return queue.TryPop(out var scalar)
             ? scalar
-            : new Scalar(32);
+            : new Scalar();
     }
 
     public readonly void Return(Scalar scalar)
@@ -56,9 +57,9 @@ public class Scalar : ITokenContent, IDisposable
         Write(content);
     }
 
-    public Span<byte> AsSpan() => buffer.AsSpan(0, Length);
+    public ReadOnlySpan<byte> AsSpan() => buffer.AsSpan(0, Length);
 
-    public Span<byte> AsSpan(int start, int length) => buffer.AsSpan(start, length);
+    public ReadOnlySpan<byte> AsSpan(int start, int length) => buffer.AsSpan(start, length);
 
     public void Write(byte code)
     {
@@ -126,8 +127,7 @@ public class Scalar : ITokenContent, IDisposable
 
     public bool IsNull()
     {
-        var span = AsSpan();
-        return span.Length == 0 || span.SequenceEqual(YamlCodes.Null0);
+        return buffer.Length == 0 || buffer.SequenceEqual(YamlCodes.Null0);
     }
 
     public bool SequenceEqual(ReadOnlySpan<byte> span)

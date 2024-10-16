@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace NexYamlSerializer.Emitter.Serializers;
-internal class BlockSequenceEntrySerializer(Utf8YamlEmitter emitter) : EmitterSerializer
+internal class BlockSequenceEntrySerializer(Utf8YamlEmitter emitter) : IEmitter
 {
-    public override EmitState State { get; } = EmitState.BlockSequenceEntry;
+    public EmitState State { get; } = EmitState.BlockSequenceEntry;
 
-    public override void Begin()
+    public void Begin()
     {
         switch (emitter.StateStack.Current)
         {
@@ -32,7 +32,7 @@ internal class BlockSequenceEntrySerializer(Utf8YamlEmitter emitter) : EmitterSe
         emitter.PushState(State);
     }
 
-    public override void BeginScalar(Span<byte> output, ref int offset)
+    public void BeginScalar(Span<byte> output, ref int offset)
     {
         // first nested element
         if (emitter.IsFirstElement)
@@ -67,7 +67,7 @@ internal class BlockSequenceEntrySerializer(Utf8YamlEmitter emitter) : EmitterSe
         }
     }
 
-    public override void End()
+    public void End()
     {
         var isEmptySequence = emitter.currentElementCount == 0;
         emitter.PopState();
@@ -103,7 +103,7 @@ internal class BlockSequenceEntrySerializer(Utf8YamlEmitter emitter) : EmitterSe
         }
     }
 
-    public override void EndScalar(Span<byte> output, ref int offset)
+    public void EndScalar(Span<byte> output, ref int offset)
     {
         output[offset++] = YamlCodes.Lf;
         emitter.currentElementCount++;

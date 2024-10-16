@@ -14,6 +14,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NexYaml.Core", "NexYaml.Cor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NexYaml.Framework", "NexYaml.Framework\NexYaml.Framework.csproj", "{69CF8CFE-B87A-4036-8268-50F03CD4FA3E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{289B982C-12C0-4A65-9213-E70B53027EE9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{69CF8CFE-B87A-4036-8268-50F03CD4FA3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69CF8CFE-B87A-4036-8268-50F03CD4FA3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69CF8CFE-B87A-4036-8268-50F03CD4FA3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{289B982C-12C0-4A65-9213-E70B53027EE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{289B982C-12C0-4A65-9213-E70B53027EE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{289B982C-12C0-4A65-9213-E70B53027EE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{289B982C-12C0-4A65-9213-E70B53027EE9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

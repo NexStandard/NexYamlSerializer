@@ -37,27 +37,7 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
         parser.TryGetScalarAsSpan(out span);
     }
 
-    public void Read(ref string? value)
-    {
-        if (parser.TryGetScalarAsSpan(out var span))
-        {
-            value = StringEncoding.Utf8.GetString(span);
-            parser.ReadWithVerify(ParseEventType.Scalar);
-            return;
-        }
-        value = null;
-    }
-
-    public void Read(ref int value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Read(ref float value)
-    {
-        throw new NotImplementedException();
-    }
-    public bool Read()
+    public bool Move()
     {
         return parser.Read();
     }
@@ -161,15 +141,19 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
     {
         parser.Reset();
     }
-
+    public bool TryRead<T>(ref T? target, ref ReadOnlySpan<byte> key, byte[] mappingKey)
+    {
+        if (key.SequenceEqual(mappingKey))
+        {
+            Move();
+            Read(ref target);
+            return true;
+        }
+        return false;
+    }
     public void SkipAfter(ParseEventType eventType)
     {
         parser.SkipAfter(eventType);
-    }
-
-    public void SkipCurrentNode()
-    {
-        parser.SkipCurrentNode();
     }
 
     public void SkipRead()

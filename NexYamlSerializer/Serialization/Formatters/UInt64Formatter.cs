@@ -36,6 +36,6 @@ public class UInt64Formatter : YamlSerializer<ulong>
                 }
             }
         }
-        parser.Read();
+        parser.Move();
     }
 }

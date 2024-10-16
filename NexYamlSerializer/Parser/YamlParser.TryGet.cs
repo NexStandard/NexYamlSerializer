@@ -20,7 +20,7 @@ public partial class YamlParser
                (currentScalar == null ||
                 currentScalar.IsNull());
     }
-    public readonly Dictionary<Anchor, object?> aliases = [];
+    readonly Dictionary<Anchor, object?> aliases = [];
 
     public void Reset()
     {
@@ -76,9 +76,9 @@ public partial class YamlParser
 
     public bool TryGetScalarAsString(out string? value)
     {
-        if (currentScalar is { } scalar)
+        if (currentScalar is not null)
         {
-            value = scalar.IsNull() ? null : scalar.ToString();
+            value = currentScalar.IsNull() ? null : currentScalar.ToString();
             return true;
         }
         value = default;

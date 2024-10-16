@@ -30,7 +30,7 @@ public class TimeSpanFormatter : YamlSerializer<TimeSpan>
                Utf8Parser.TryParse(span, out TimeSpan timeSpan, out var bytesConsumed) &&
                bytesConsumed == span.Length)
         {
-            parser.Read();
+            parser.Move();
             value = timeSpan;
             return;
         }

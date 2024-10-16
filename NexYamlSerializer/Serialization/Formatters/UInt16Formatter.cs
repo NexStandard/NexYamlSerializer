@@ -36,6 +36,6 @@ public class UInt16Formatter : YamlSerializer<ushort>
                 }
             }
         }
-        parser.Read();
+        parser.Move();
     }
 }

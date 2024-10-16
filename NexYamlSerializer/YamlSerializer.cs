@@ -248,7 +248,7 @@ public abstract class YamlSerializer<T> : YamlSerializer
     {
         if (parser.IsNullScalar())
         {
-            parser.Read();
+            parser.Move();
             value = default;
             return;
         }

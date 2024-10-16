@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace NexYamlSerializer.Emitter.Serializers;
-internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : EmitterSerializer
+internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
 {
-    public override EmitState State { get; } = EmitState.FlowMappingKey;
+    public EmitState State { get; } = EmitState.FlowMappingKey;
 
-    public override void Begin()
+    public void Begin()
     {
         var current = emitter.StateStack.Current;
         if (current is EmitState.BlockSequenceEntry)
@@ -46,7 +46,7 @@ internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : EmitterSerializer
         emitter.PushState(State);
     }
 
-    public override void BeginScalar(Span<byte> output, ref int offset)
+    public void BeginScalar(Span<byte> output, ref int offset)
     {
 
         if (emitter.IsFirstElement)
@@ -67,7 +67,7 @@ internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : EmitterSerializer
         }
     }
 
-    public override void End()
+    public void End()
     {
         if (emitter.StateStack.Current is not EmitState.BlockMappingKey and not EmitState.FlowMappingKey)
         {
@@ -136,7 +136,7 @@ internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : EmitterSerializer
         emitter.Writer.Advance(offset);
     }
 
-    public override void EndScalar(Span<byte> output, ref int offset)
+    public void EndScalar(Span<byte> output, ref int offset)
     {
         EmitCodes.MappingKeyFooter.CopyTo(output[offset..]);
         offset += EmitCodes.MappingKeyFooter.Length;

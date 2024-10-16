@@ -4,11 +4,11 @@ using NexYaml.Core;
 using System;
 
 namespace NexYamlSerializer.Emitter.Serializers;
-internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : EmitterSerializer
+internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
 {
-    public override EmitState State { get; } = EmitState.BlockMappingKey;
+    public EmitState State { get; } = EmitState.BlockMappingKey;
 
-    public override void Begin()
+    public void Begin()
     {
         switch (emitter.StateStack.Current)
         {
@@ -28,7 +28,7 @@ internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : EmitterSerialize
         emitter.PushState(State);
 
     }
-    public override void BeginScalar(Span<byte> output, ref int offset)
+    public void BeginScalar(Span<byte> output, ref int offset)
     {
         if (emitter.IsFirstElement)
         {
@@ -83,14 +83,14 @@ internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : EmitterSerialize
         }
     }
 
-    public override void EndScalar(Span<byte> output, ref int offset)
+    public void EndScalar(Span<byte> output, ref int offset)
     {
          EmitCodes.MappingKeyFooter.CopyTo(output[offset..]);
          offset += EmitCodes.MappingKeyFooter.Length;
         emitter.StateStack.Current = EmitState.BlockMappingValue;
     }
 
-    public override void End()
+    public void End()
     {
         var isEmptyMapping = emitter.currentElementCount <= 0;
         emitter.PopState();

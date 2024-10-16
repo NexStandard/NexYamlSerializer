@@ -19,7 +19,7 @@ public class UriFormatter : YamlSerializer<Uri>
         if (parser.TryGetScalarAsString(out var scalar) && scalar != null)
         {
             var uri = new Uri(scalar, UriKind.RelativeOrAbsolute);
-            parser.Read();
+            parser.Move();
             value = uri;
         }
     }

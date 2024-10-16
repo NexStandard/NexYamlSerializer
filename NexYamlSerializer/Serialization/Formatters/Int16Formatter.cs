@@ -24,7 +24,7 @@ public class Int16Formatter : YamlSerializer<short>
             if (int.TryParse(span, CultureInfo.InvariantCulture, out var temp))
             {
                 value = checked((short)temp);
-                parser.Read();
+                parser.Move();
                 return;
             }
 
@@ -34,7 +34,7 @@ public class Int16Formatter : YamlSerializer<short>
                        bytesConsumed1 == hexNumber.Length)
                 {
                     value = checked((short)hexTemp);
-                    parser.Read();
+                    parser.Move();
                     return;
                 }
             }
@@ -45,7 +45,7 @@ public class Int16Formatter : YamlSerializer<short>
             {
                 value = checked((short)negativeHexTemp);
                 value *= -1;
-                parser.Read();
+                parser.Move();
                 return;
             }
         }

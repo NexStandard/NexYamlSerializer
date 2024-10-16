@@ -36,6 +36,6 @@ public class UInt32Formatter : YamlSerializer<uint>
                 }
             }
         }
-        parser.Read();
+        parser.Move();
     }
 }

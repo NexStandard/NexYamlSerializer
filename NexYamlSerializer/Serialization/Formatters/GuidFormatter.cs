@@ -30,7 +30,7 @@ public class GuidFormatter : YamlSerializer<Guid>
               Utf8Parser.TryParse(span, out Guid guid, out var bytesConsumed) &&
               bytesConsumed == span.Length)
         {
-            parser.Read();
+            parser.Move();
             value = guid;
             return;
         }

@@ -33,6 +33,6 @@ public class BooleanFormatter : YamlSerializer<bool>
                     break;
             }
         }
-        parser.Read();
+        parser.Move();
     }
 }

@@ -77,19 +77,7 @@ public static class YamlStreamExtensions
         writer.Write(key);
         writer.Write(value, style);
     }
-    public static void Write<T, K>(this IYamlWriter stream, string key, Dictionary<T, K> value, DataStyle style)
-        where T : notnull
-    {
-        stream.Write(key);
-        var ser = new DictionaryFormatter<T, K>();
-        ser.Serialize(stream, value, style);
-    }
-    public static void Write<T>(this IYamlWriter stream, string key, List<T> value, DataStyle style)
-    {
-        stream.Write(key);
-        var serializer = new ListFormatter<T>();
-        serializer.Serialize(stream, value, style);
-    }
+
     public static void Write<T>(this IYamlWriter stream, string key, T value, DataStyle style)
     {
         stream.Write(key);

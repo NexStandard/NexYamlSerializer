@@ -44,6 +44,6 @@ public class Int64Formatter : YamlSerializer<long>
                 }
             }
         }
-        parser.Read();
+        parser.Move();
     }
 }

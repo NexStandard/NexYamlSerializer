@@ -17,9 +17,9 @@ public class YamlWriter : IYamlWriter
 {
     bool IsRedirected { get; set; } = false;
     bool IsFirst { get; set; } = true;
-    Utf8YamlEmitter Emitter { get; set; }
+    IUtf8YamlEmitter Emitter { get; set; }
     IYamlFormatterResolver Resolver{ get; init; }
-    internal YamlWriter(Utf8YamlEmitter emitter, IYamlFormatterResolver resolver)
+    internal YamlWriter(IUtf8YamlEmitter emitter, IYamlFormatterResolver resolver)
     {
         Resolver = resolver;
         Emitter = emitter;
@@ -49,7 +49,6 @@ public class YamlWriter : IYamlWriter
     {
         Emitter.WriteScalar(value);
     }
-
     public void Write<T>(T value, DataStyle style)
     {
         if (value is null)
@@ -142,7 +141,7 @@ public class YamlWriter : IYamlWriter
             Span<char> scalarChars = stackalloc char[scalarStringBuilt.Length];
             scalarStringBuilt.CopyTo(0, scalarChars, scalarStringBuilt.Length);
 
-            scalarChars = TryRemoveDuplicateLineBreak(Emitter, scalarChars);
+            scalarChars = Emitter.TryRemoveDuplicateLineBreak(scalarChars);
 
             var maxByteCount = StringEncoding.Utf8.GetMaxByteCount(scalarChars.Length);
             var offset = 0;
@@ -252,13 +251,5 @@ public class YamlWriter : IYamlWriter
         }
     }
 
-    private static Span<char> TryRemoveDuplicateLineBreak(Utf8YamlEmitter emitter, Span<char> scalarChars)
-    {
-        if (emitter.StateStack.Current is EmitState.BlockMappingValue or EmitState.BlockSequenceEntry)
-        {
-            scalarChars = scalarChars[..^1];
-        }
 
-        return scalarChars;
-    }
 }

@@ -20,18 +20,25 @@ enum EmitState
     FlowMappingKey,
     FlowMappingValue,
 }
-sealed class Utf8YamlEmitter : IDisposable
+sealed class Utf8YamlEmitter : IUtf8YamlEmitter
 {
     public int CurrentIndentLevel => IndentationManager.CurrentIndentLevel;
-    internal ExpandBuffer<EmitState> StateStack { get; }
-    internal ArrayBufferWriter<byte> Writer { get; } = new ArrayBufferWriter<byte>(512);
+    internal ExpandBuffer<EmitState> StateStack { get; private set; }
+    public ArrayBufferWriter<byte> Writer { get; } = new ArrayBufferWriter<byte>(512);
 
     public const int IndentWidth = 2;
-    private EmitterSerializer blockMapKeySerializer;
-    private EmitterSerializer flowMapKeySerializer;
-    private EmitterSerializer blockSequenceEntrySerializer;
-    private EmitterSerializer flowSequenceEntrySerializer;
-    private EmitterSerializer emptySerializer;
+    private IEmitter blockMapKeySerializer;
+    private IEmitter flowMapKeySerializer;
+    private IEmitter blockSequenceEntrySerializer;
+    private IEmitter flowSequenceEntrySerializer;
+    private IEmitter emptySerializer;
+    byte[] whiteSpaces =
+    [
+            (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ',
+            (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ',
+            (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ',
+            (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ',
+    ];
     StyleEnforcer enforcer = new();
     internal bool IsFirstElement
     {
@@ -45,7 +52,19 @@ sealed class Utf8YamlEmitter : IDisposable
 
     public Utf8YamlEmitter()
     {
+        Reset();
+    }
+    public Span<char> TryRemoveDuplicateLineBreak(Span<char> scalarChars)
+    {
+        if (StateStack.Current is EmitState.BlockMappingValue or EmitState.BlockSequenceEntry)
+        {
+            scalarChars = scalarChars[..^1];
+        }
 
+        return scalarChars;
+    }
+    public void Reset()
+    {
         StateStack = new ExpandBuffer<EmitState>(16);
         elementCountStack = new ExpandBuffer<int>(16);
         StateStack.Add(EmitState.None);
@@ -54,7 +73,7 @@ sealed class Utf8YamlEmitter : IDisposable
         flowMapKeySerializer = new FlowMapKeySerializer(this);
         blockSequenceEntrySerializer = new BlockSequenceEntrySerializer(this);
         flowSequenceEntrySerializer = new FlowSequenceEntrySerializer(this);
-        emptySerializer = EmptySerializer.Instance;
+        emptySerializer = new EmptySerializer();
         tagStack = new ExpandBuffer<string>(4);
     }
 
@@ -190,14 +209,8 @@ sealed class Utf8YamlEmitter : IDisposable
         }
         Writer.Advance(offset);
     }
-    #region Writes
-    byte[] whiteSpaces =
-[
-        (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ',
-            (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ',
-            (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ',
-            (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ',
-    ];
+
+
 
     public void WriteScalar(ReadOnlySpan<byte> value)
     {
@@ -330,5 +343,4 @@ sealed class Utf8YamlEmitter : IDisposable
     {
         tagStack.Add(value);
     }
-    #endregion
 }
