@@ -210,7 +210,7 @@ public class YamlWriter : IYamlWriter
 
     public void Write(bool value, DataStyle style = DataStyle.Any)
     {
-        Write(value ? YamlCodes.True0 : YamlCodes.False0);
+        Write(value ? [(byte)'t', (byte)'r', (byte)'u', (byte)'e'] : stackalloc[] {(byte)'f', (byte)'a', (byte)'l', (byte)'s', (byte)'e'});
     }
 
     public void Write(ushort value, DataStyle style = DataStyle.Any)
