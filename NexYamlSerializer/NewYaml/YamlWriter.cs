@@ -153,6 +153,7 @@ public class YamlWriter : IYamlWriter
     }
     public void Write(char value, DataStyle style = DataStyle.Any)
     {
+        
         var scalarStringBuilt = EmitStringAnalyzer.BuildQuotedScalar(value.ToString(), false);
         var stringConverted = scalarStringBuilt.ToString();
         Span<byte> span = stackalloc byte[stringConverted.Length];

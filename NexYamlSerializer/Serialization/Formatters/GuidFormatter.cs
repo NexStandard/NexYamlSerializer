@@ -3,6 +3,7 @@ using NexVYaml.Parser;
 using Stride.Core;
 using System;
 using System.Buffers.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace NexVYaml.Serialization;
 

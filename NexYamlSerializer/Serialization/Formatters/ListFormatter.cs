@@ -3,6 +3,7 @@ using NexVYaml.Parser;
 using Stride.Core;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace NexVYaml.Serialization;
 
@@ -15,17 +16,15 @@ public class ListFormatter<T> : YamlSerializer<List<T>?>
 
     protected override void Read(IYamlReader parser, ref List<T>? value)
     {
-        parser.ReadWithVerify(ParseEventType.SequenceStart);
-
         var list = new List<T>();
-        while (parser.HasSequence)
+
+        parser.ReadSequence(() =>
         {
             var val = default(T);
             parser.Read(ref val);
             list.Add(val!);
-        }
+        });
 
-        parser.ReadWithVerify(ParseEventType.SequenceEnd);
         value = list;
     }
 }

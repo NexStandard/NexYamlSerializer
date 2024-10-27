@@ -17,7 +17,13 @@ public static class YamlStreamExtensions
         stream.Write(key);
         stream.Write(value, style);
     }
-
+    public static void WriteMapping(this IYamlWriter stream, DataStyle style, Action action)
+    {
+        stream.BeginMapping(style);
+        action();
+        stream.EndMapping();
+    }
+    
     public static void Write(this IYamlWriter stream, string key, uint value, DataStyle style = DataStyle.Any)
     {
         stream.Write(key);

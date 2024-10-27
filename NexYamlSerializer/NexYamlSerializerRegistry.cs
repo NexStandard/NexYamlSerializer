@@ -137,6 +137,7 @@ public class SerializerRegistry
         [typeof(IDictionary<,>)] = typeof(DictionaryInterfaceFormatter<,>),
         [typeof(IReadOnlyDictionary<,>)] = typeof(DictionaryReadonlyInterfaceFormatter<,>),
         [typeof(KeyValuePair<,>)] = typeof(KeyValuePairFormatter<,>),
+        [typeof(Action)] = typeof(DelegateFormatter<Action>),
         [typeof(Tuple<>)] = typeof(TupleFormatter<>),
         [typeof(Tuple<,>)] = typeof(TupleFormatter<,>),
         [typeof(Tuple<,,>)] = typeof(TupleFormatter<,,>),
@@ -146,7 +147,10 @@ public class SerializerRegistry
         [typeof(Tuple<,,,,,,>)] = typeof(TupleFormatter<,,,,,,>),
         [typeof(Tuple<,,,,,,,>)] = typeof(TupleFormatter<,,,,,,,>)
     };
-    internal Dictionary<string, Type> TypeMap { get; } = [];
+    internal Dictionary<string, Type> TypeMap { get; } = new()
+    {
+        ["!!del"] = typeof(Action)
+    };
     internal Dictionary<Type, YamlSerializer> DefinedFormatters { get; } = new Dictionary<Type, YamlSerializer>()
     {
             // Primitive
@@ -163,7 +167,7 @@ public class SerializerRegistry
             { typeof(sbyte), SByteFormatter.Instance },
             { typeof(DateTime), DateTimeFormatter.Instance },
             { typeof(char), CharFormatter.Instance },
-
+            { typeof(Action) , new DelegateFormatter<Action>() },
             // StandardClassLibraryFormatter
             { typeof(string), NullableStringFormatter.Instance },
             { typeof(decimal), DecimalFormatter.Instance },

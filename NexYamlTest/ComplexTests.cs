@@ -2,6 +2,7 @@
 using NexVYaml.Serialization;
 using NexYamlTest.ComplexCases;
 using NexYamlTest.SimpleClasses;
+using System;
 using Xunit;
 namespace NexYamlTest;
 public class ComplexTests
@@ -27,6 +28,17 @@ public class ComplexTests
         {
             Assert.Equal(list[i], deserialized[i] );
         }
+    }
+
+    [Fact]
+    public void Delegates()
+    {
+        Setup();
+        var g = new Delegates();
+        var x = YamlSerializer.SerializeToString(g);
+        var t = YamlSerializer.Deserialize<Delegates>(x);
+        throw new Exception(x);
+        throw new Exception (t.Action.ToString());
     }
 
     [Fact]
