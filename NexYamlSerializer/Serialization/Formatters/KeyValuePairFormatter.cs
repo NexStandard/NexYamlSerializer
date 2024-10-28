@@ -10,20 +10,22 @@ public class KeyValuePairFormatter<TKey, TValue> : YamlSerializer<KeyValuePair<T
 {
     protected override void Write(IYamlWriter stream, KeyValuePair<TKey, TValue> value, DataStyle style)
     {
-        stream.BeginSequence(style);
-        stream.Write(value.Key, style);
-        stream.Write(value.Value, style);
-        stream.EndSequence();
+        stream.WriteSequence(style, () =>
+        {
+            stream.Write(value.Key, style);
+            stream.Write(value.Value, style);
+        });
     }
 
-    protected override void Read(IYamlReader parser, ref KeyValuePair<TKey, TValue> value)
+    protected override void Read(IYamlReader stream, ref KeyValuePair<TKey, TValue> value)
     {
-        parser.ReadWithVerify(ParseEventType.SequenceStart);
         var key = default(TKey);
         var val = default(TValue);
-        parser.Read(ref key);
-        parser.Read(ref val);
-        parser.ReadWithVerify(ParseEventType.SequenceEnd);
+        stream.ReadSequence(() =>
+        {
+            stream.Read(ref key);
+            stream.Read(ref val);
+        });
         value = new KeyValuePair<TKey, TValue>(key!, val!);
     }
 }

@@ -16,30 +16,30 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
         DictionaryFormatterHelper.Serialize(stream, value!, style);
     }
 
-    protected override void Read(IYamlReader parser,  ref Dictionary<TKey, TValue>? value)
+    protected override void Read(IYamlReader stream,  ref Dictionary<TKey, TValue>? value)
     {
         var map = new Dictionary<TKey, TValue>();
         if (FormatterExtensions.IsPrimitive(typeof(TKey)))
         {
-            parser.ReadWithVerify(ParseEventType.MappingStart);
+            stream.ReadWithVerify(ParseEventType.MappingStart);
 
-            while (parser.HasKeyMapping)
+            while (stream.HasKeyMapping)
             {
                 var key = default(TKey);
-                parser.Read(ref key);
+                stream.Read(ref key);
                 var val = default(TValue);
-                parser.Read(ref val);
+                stream.Read(ref val);
                 map.Add(key!, val!);
             }
 
-            parser.ReadWithVerify(ParseEventType.MappingEnd);
+            stream.ReadWithVerify(ParseEventType.MappingEnd);
             value = map;
         }
         else
         {
             var listFormatter = new ListFormatter<KeyValuePair<TKey, TValue>>();
             var keyValuePairs = default(List<KeyValuePair<TKey, TValue>>);
-            listFormatter.Deserialize(parser, ref keyValuePairs);
+            listFormatter.Deserialize(stream, ref keyValuePairs);
 
             value = keyValuePairs?.ToDictionary() ?? [];
         }
@@ -52,26 +52,26 @@ internal class DictionaryFormatterHelper : IYamlFormatterHelper
     {
         if (FormatterExtensions.IsPrimitive(typeof(TKey)))
         {
-            stream.BeginMapping(style);
+            stream.WriteMapping(style, () =>
             {
                 foreach (var x in value)
                 {
                     stream.Write(x.Key, style);
                     stream.Write(x.Value, style);
                 }
-            }
-            stream.EndMapping();
+            });
             return;
         }
         else
         {
             var kvp = new KeyValuePairFormatter<TKey, TValue>();
-            stream.BeginSequence(style);
-            foreach (var x in value)
+            stream.WriteSequence(style, () =>
             {
-                kvp.Serialize(stream, x);
-            }
-            stream.EndSequence();
+                foreach (var x in value)
+                {
+                    kvp.Serialize(stream, x);
+                }
+            });
         }
     }
 

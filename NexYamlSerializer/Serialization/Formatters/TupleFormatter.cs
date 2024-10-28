@@ -2,6 +2,7 @@
 using NexVYaml.Parser;
 using Stride.Core;
 using System;
+using System.IO;
 
 namespace NexVYaml.Serialization;
 
@@ -9,17 +10,19 @@ public class TupleFormatter<T1> : YamlSerializer<Tuple<T1>?>
 {
     protected override void Write(IYamlWriter stream, Tuple<T1>? value, DataStyle style)
     {
-        stream.BeginSequence(DataStyle.Compact);
-        stream.Write(value!.Item1, style);
-        stream.EndSequence();
+        stream.WriteSequence(DataStyle.Compact, () =>
+        {
+            stream.Write(value!.Item1, DataStyle.Compact);
+        });
     }
 
-    protected override void Read(IYamlReader parser, ref Tuple<T1>? value)
+    protected override void Read(IYamlReader stream, ref Tuple<T1>? value)
     {
-        parser.ReadWithVerify(ParseEventType.SequenceStart);
         var item1 = default(T1);
-        parser.Read(ref item1);
-        parser.ReadWithVerify(ParseEventType.SequenceEnd);
+        stream.ReadSequence(() =>
+        {
+            stream.Read(ref item1);
+        });
         value = new Tuple<T1>(item1!);
     }
 }
@@ -28,20 +31,22 @@ public class TupleFormatter<T1, T2> : YamlSerializer<Tuple<T1, T2>?>
 {
     protected override void Write(IYamlWriter stream, Tuple<T1, T2>? value, DataStyle style)
     {
-        stream.BeginSequence(DataStyle.Compact);
-        stream.Write(value!.Item1, style);
-        stream.Write(value.Item2, style);
-        stream.EndSequence();
+        stream.WriteSequence(DataStyle.Compact, () =>
+        {
+            stream.Write(value!.Item1, DataStyle.Compact);
+            stream.Write(value.Item2, DataStyle.Compact);
+        });
     }
 
-    protected override void Read(IYamlReader parser, ref Tuple<T1, T2>? value)
+    protected override void Read(IYamlReader stream, ref Tuple<T1, T2>? value)
     {
-        parser.ReadWithVerify(ParseEventType.SequenceStart);
         var item1 = default(T1);
-        parser.Read(ref item1);
         var item2 = default(T2);
-        parser.Read(ref item2);
-        parser.ReadWithVerify(ParseEventType.SequenceEnd);
+        stream.ReadSequence(() =>
+        {
+            stream.Read(ref item1);
+            stream.Read(ref item2);
+        });
         value = new Tuple<T1, T2>(item1!, item2!);
     }
 }
@@ -50,23 +55,25 @@ public class TupleFormatter<T1, T2, T3> : YamlSerializer<Tuple<T1, T2, T3>?>
 {
     protected override void Write(IYamlWriter stream, Tuple<T1, T2, T3>? value, DataStyle style)
     {
-        stream.BeginSequence(DataStyle.Compact);
-        stream.Write(value!.Item1, style);
-        stream.Write(value.Item2, style);
-        stream.Write(value.Item3, style);
-        stream.EndSequence();
+        stream.WriteSequence(DataStyle.Compact, () =>
+        {
+            stream.Write(value!.Item1, DataStyle.Compact);
+            stream.Write(value.Item2, DataStyle.Compact);
+            stream.Write(value.Item3, DataStyle.Compact);
+        });
     }
 
-    protected override void Read(IYamlReader parser, ref Tuple<T1, T2, T3>? value)
+    protected override void Read(IYamlReader stream, ref Tuple<T1, T2, T3>? value)
     {
-        parser.ReadWithVerify(ParseEventType.SequenceStart);
         var item1 = default(T1);
-        parser.Read(ref item1);
         var item2 = default(T2);
-        parser.Read(ref item2);
         var item3 = default(T3);
-        parser.Read(ref item3);
-        parser.ReadWithVerify(ParseEventType.SequenceEnd);
+        stream.ReadSequence(() =>
+        {
+            stream.Read(ref item1);
+            stream.Read(ref item2);
+            stream.Read(ref item3);
+        });
         value = new Tuple<T1, T2, T3>(item1, item2, item3);
     }
 }
@@ -75,26 +82,28 @@ public class TupleFormatter<T1, T2, T3, T4> : YamlSerializer<Tuple<T1, T2, T3, T
 {
     protected override void Write(IYamlWriter stream, Tuple<T1, T2, T3, T4>? value, DataStyle style)
     {
-        stream.BeginSequence(DataStyle.Compact);
-        stream.Write(value!.Item1, style);
-        stream.Write(value.Item2, style);
-        stream.Write(value.Item3, style);
-        stream.Write(value.Item4, style);
-        stream.EndSequence();
+        stream.WriteSequence(DataStyle.Compact, () =>
+        {
+            stream.Write(value!.Item1, DataStyle.Compact);
+            stream.Write(value.Item2, DataStyle.Compact);
+            stream.Write(value.Item3, DataStyle.Compact);
+            stream.Write(value.Item4, DataStyle.Compact);
+        });
     }
 
-    protected override void Read(IYamlReader parser, ref Tuple<T1, T2, T3, T4>? value)
+    protected override void Read(IYamlReader stream, ref Tuple<T1, T2, T3, T4>? value)
     {
-        parser.ReadWithVerify(ParseEventType.SequenceStart);
         var item1 = default(T1);
-        parser.Read(ref item1);
         var item2 = default(T2);
-        parser.Read(ref item2);
         var item3 = default(T3);
-        parser.Read(ref item3);
         var item4 = default(T4);
-        parser.Read(ref item4);
-        parser.ReadWithVerify(ParseEventType.SequenceEnd);
+        stream.ReadSequence(() =>
+        {
+            stream.Read(ref item1);
+            stream.Read(ref item2);
+            stream.Read(ref item3);
+            stream.Read(ref item4);
+        });
         value = new Tuple<T1, T2, T3, T4>(item1, item2, item3, item4);
     }
 }
@@ -103,30 +112,31 @@ public class TupleFormatter<T1, T2, T3, T4, T5> : YamlSerializer<Tuple<T1, T2, T
 {
     protected override void Write(IYamlWriter stream, Tuple<T1, T2, T3, T4, T5>? value, DataStyle style)
     {
-        stream.BeginSequence(DataStyle.Compact);
-        stream.Write(value!.Item1, style);
-        stream.Write(value.Item2, style);
-        stream.Write(value.Item3, style);
-        stream.Write(value.Item4, style);
-        stream.Write(value.Item5, style);
-        stream.EndSequence();
+        stream.WriteSequence(DataStyle.Compact, () =>
+        {
+            stream.Write(value!.Item1, DataStyle.Compact);
+            stream.Write(value.Item2, DataStyle.Compact);
+            stream.Write(value.Item3, DataStyle.Compact);
+            stream.Write(value.Item4, DataStyle.Compact);
+            stream.Write(value.Item5, DataStyle.Compact);
+        });
     }
 
-    protected override void Read(IYamlReader parser, ref Tuple<T1, T2, T3, T4, T5>? value)
+    protected override void Read(IYamlReader stream, ref Tuple<T1, T2, T3, T4, T5>? value)
     {
-        parser.ReadWithVerify(ParseEventType.SequenceStart);
-        parser.ReadWithVerify(ParseEventType.SequenceStart);
         var item1 = default(T1);
-        parser.Read(ref item1);
         var item2 = default(T2);
-        parser.Read(ref item2);
         var item3 = default(T3);
-        parser.Read(ref item3);
         var item4 = default(T4);
-        parser.Read(ref item4);
         var item5 = default(T5);
-        parser.Read(ref item5);
-        parser.ReadWithVerify(ParseEventType.SequenceEnd);
+        stream.ReadSequence(() =>
+        {
+            stream.Read(ref item1);
+            stream.Read(ref item2);
+            stream.Read(ref item3);
+            stream.Read(ref item4);
+            stream.Read(ref item5);
+        });
         value = new Tuple<T1, T2, T3, T4, T5>(item1, item2, item3, item4, item5);
     }
 }
@@ -135,32 +145,34 @@ public class TupleFormatter<T1, T2, T3, T4, T5, T6> : YamlSerializer<Tuple<T1, T
 {
     protected override void Write(IYamlWriter stream, Tuple<T1, T2, T3, T4, T5, T6>? value, DataStyle style)
     {
-        stream.BeginSequence(DataStyle.Compact);
-        stream.Write(value!.Item1, style);
-        stream.Write(value.Item2, style);
-        stream.Write(value.Item3, style);
-        stream.Write(value.Item4, style);
-        stream.Write(value.Item5, style);
-        stream.Write(value.Item6, style);
-        stream.EndSequence();
+        stream.WriteSequence(DataStyle.Compact, () =>
+        {
+            stream.Write(value!.Item1, DataStyle.Compact);
+            stream.Write(value.Item2, DataStyle.Compact);
+            stream.Write(value.Item3, DataStyle.Compact);
+            stream.Write(value.Item4, DataStyle.Compact);
+            stream.Write(value.Item5, DataStyle.Compact);
+            stream.Write(value.Item6, DataStyle.Compact);
+        });
     }
 
-    protected override void Read(IYamlReader parser, ref Tuple<T1, T2, T3, T4, T5, T6>? value)
+    protected override void Read(IYamlReader stream, ref Tuple<T1, T2, T3, T4, T5, T6>? value)
     {
-        parser.ReadWithVerify(ParseEventType.SequenceStart);
         var item1 = default(T1);
-        parser.Read(ref item1);
         var item2 = default(T2);
-        parser.Read(ref item2);
         var item3 = default(T3);
-        parser.Read(ref item3);
         var item4 = default(T4);
-        parser.Read(ref item4);
         var item5 = default(T5);
-        parser.Read(ref item5);
         var item6 = default(T6);
-        parser.Read(ref item6);
-        parser.ReadWithVerify(ParseEventType.SequenceEnd);
+        stream.ReadSequence(() =>
+        {
+            stream.Read(ref item1);
+            stream.Read(ref item2);
+            stream.Read(ref item3);
+            stream.Read(ref item4);
+            stream.Read(ref item5);
+            stream.Read(ref item6);
+        });
         value = new Tuple<T1, T2, T3, T4, T5, T6>(item1, item2, item3, item4, item5, item6);
     }
 }
@@ -169,35 +181,37 @@ public class TupleFormatter<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<Tuple<T
 {
     protected override void Write(IYamlWriter stream, Tuple<T1, T2, T3, T4, T5, T6, T7>? value, DataStyle style)
     {
-        stream.BeginSequence(DataStyle.Compact);
-        stream.Write(value!.Item1, style);
-        stream.Write(value.Item2, style);
-        stream.Write(value.Item3, style);
-        stream.Write(value.Item4, style);
-        stream.Write(value.Item5, style);
-        stream.Write(value.Item6, style);
-        stream.Write(value.Item7, style);
-        stream.EndSequence();
+        stream.WriteSequence(DataStyle.Compact, () =>
+        {
+            stream.Write(value!.Item1, DataStyle.Compact);
+            stream.Write(value.Item2, DataStyle.Compact);
+            stream.Write(value.Item3, DataStyle.Compact);
+            stream.Write(value.Item4, DataStyle.Compact);
+            stream.Write(value.Item5, DataStyle.Compact);
+            stream.Write(value.Item6, DataStyle.Compact);
+            stream.Write(value.Item7, DataStyle.Compact);
+        });
     }
 
-    protected override void Read(IYamlReader parser, ref Tuple<T1, T2, T3, T4, T5, T6, T7>? value)
+    protected override void Read(IYamlReader stream, ref Tuple<T1, T2, T3, T4, T5, T6, T7>? value)
     {
-        parser.ReadWithVerify(ParseEventType.SequenceStart);
         var item1 = default(T1);
-        parser.Read(ref item1);
         var item2 = default(T2);
-        parser.Read(ref item2);
         var item3 = default(T3);
-        parser.Read(ref item3);
         var item4 = default(T4);
-        parser.Read(ref item4);
         var item5 = default(T5);
-        parser.Read(ref item5);
         var item6 = default(T6);
-        parser.Read(ref item6);
         var item7 = default(T7);
-        parser.Read(ref item7);
-        parser.ReadWithVerify(ParseEventType.SequenceEnd);
+        stream.ReadSequence(() =>
+        {
+            stream.Read(ref item1);
+            stream.Read(ref item2);
+            stream.Read(ref item3);
+            stream.Read(ref item4);
+            stream.Read(ref item5);
+            stream.Read(ref item6);
+            stream.Read(ref item7);
+        });
         value = new Tuple<T1, T2, T3, T4, T5, T6, T7>(item1, item2, item3, item4, item5, item6, item7);
     }
 }
@@ -207,38 +221,40 @@ public class TupleFormatter<T1, T2, T3, T4, T5, T6, T7, T8> : YamlSerializer<Tup
 {
     protected override void Write(IYamlWriter stream, Tuple<T1, T2, T3, T4, T5, T6, T7, T8>? value, DataStyle style)
     {
-        stream.BeginSequence(DataStyle.Compact);
-        stream.Write(value.Item1, style);
-        stream.Write(value.Item2, style);
-        stream.Write(value.Item3, style);
-        stream.Write(value.Item4, style);
-        stream.Write(value.Item5, style);
-        stream.Write(value.Item6, style);
-        stream.Write(value.Item7, style);
-        stream.Write(value.Rest, style);
-        stream.EndSequence();
+        stream.WriteSequence(DataStyle.Compact, () =>
+        {
+            stream.Write(value!.Item1, DataStyle.Compact);
+            stream.Write(value.Item2, DataStyle.Compact);
+            stream.Write(value.Item3, DataStyle.Compact);
+            stream.Write(value.Item4, DataStyle.Compact);
+            stream.Write(value.Item5, DataStyle.Compact);
+            stream.Write(value.Item6, DataStyle.Compact);
+            stream.Write(value.Item7, DataStyle.Compact);
+            stream.Write(value.Rest, DataStyle.Compact);
+        });
     }
 
-    protected override void Read(IYamlReader parser, ref Tuple<T1, T2, T3, T4, T5, T6, T7, T8>? value)
+    protected override void Read(IYamlReader stream, ref Tuple<T1, T2, T3, T4, T5, T6, T7, T8>? value)
     {
-        parser.ReadWithVerify(ParseEventType.SequenceStart);
         var item1 = default(T1);
-        parser.Read(ref item1);
         var item2 = default(T2);
-        parser.Read(ref item2);
         var item3 = default(T3);
-        parser.Read(ref item3);
         var item4 = default(T4);
-        parser.Read(ref item4);
         var item5 = default(T5);
-        parser.Read(ref item5);
         var item6 = default(T6);
-        parser.Read(ref item6);
         var item7 = default(T7);
-        parser.Read(ref item7);
         var item8 = default(T8);
-        parser.Read(ref item8);
-        parser.ReadWithVerify(ParseEventType.SequenceEnd);
+        stream.ReadSequence(() =>
+        {
+            stream.Read(ref item1);
+            stream.Read(ref item2);
+            stream.Read(ref item3);
+            stream.Read(ref item4);
+            stream.Read(ref item5);
+            stream.Read(ref item6);
+            stream.Read(ref item7);
+            stream.Read(ref item8);
+        });
         value = new Tuple<T1, T2, T3, T4, T5, T6, T7, T8>(item1, item2, item3, item4, item5, item6, item7, item8);
     }
 }

@@ -23,7 +23,12 @@ public static class YamlStreamExtensions
         action();
         stream.EndMapping();
     }
-    
+    public static void WriteSequence(this IYamlWriter stream, DataStyle style, Action action)
+    {
+        stream.BeginSequence(style);
+        action();
+        stream.EndSequence();
+    }
     public static void Write(this IYamlWriter stream, string key, uint value, DataStyle style = DataStyle.Any)
     {
         stream.Write(key);

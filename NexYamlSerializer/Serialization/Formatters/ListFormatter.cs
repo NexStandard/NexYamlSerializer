@@ -11,17 +11,23 @@ public class ListFormatter<T> : YamlSerializer<List<T>?>
 {
     protected override void Write(IYamlWriter stream, List<T>? value, DataStyle style)
     {
-        ListFormatterHelper.Serialize(stream, value!, style);
+        stream.WriteSequence(style, () =>
+        {
+            foreach (var x in value)
+            {
+                stream.Write(x, style);
+            }
+        });
     }
 
-    protected override void Read(IYamlReader parser, ref List<T>? value)
+    protected override void Read(IYamlReader stream, ref List<T>? value)
     {
         var list = new List<T>();
 
-        parser.ReadSequence(() =>
+        stream.ReadSequence(() =>
         {
             var val = default(T);
-            parser.Read(ref val);
+            stream.Read(ref val);
             list.Add(val!);
         });
 
@@ -30,15 +36,6 @@ public class ListFormatter<T> : YamlSerializer<List<T>?>
 }
 internal class ListFormatterHelper : IYamlFormatterHelper
 {
-    public static void Serialize<T>(IYamlWriter stream, List<T> value, DataStyle style)
-    {
-        stream.BeginSequence(style);
-        foreach (var x in value)
-        {
-            stream.Write(x, style);
-        }
-        stream.EndSequence();
-    }
     public void Register(IYamlFormatterResolver resolver)
     {
         resolver.Register(this, typeof(List<>), typeof(List<>));

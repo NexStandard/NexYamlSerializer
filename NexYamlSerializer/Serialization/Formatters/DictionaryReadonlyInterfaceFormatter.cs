@@ -12,55 +12,28 @@ public class DictionaryReadonlyInterfaceFormatter<TKey, TValue> : YamlSerializer
 {
     protected override void Write(IYamlWriter stream, IReadOnlyDictionary<TKey, TValue> value, DataStyle style)
     {
-
-        YamlSerializer<TKey>? keyFormatter = null;
-        YamlSerializer<TValue>? valueFormatter = null;
-        
         if (FormatterExtensions.IsPrimitive(typeof(TKey)))
         {
-            keyFormatter = NexYamlSerializerRegistry.Instance.GetFormatter<TKey>();
-        }
-
-        if (FormatterExtensions.IsPrimitive(typeof(TValue)))
-        {
-            valueFormatter = NexYamlSerializerRegistry.Instance.GetFormatter<TValue>();
-        }
-
-        if (keyFormatter == null)
-        {
-            stream.BeginSequence(style);
-
-            var elementFormatter = new KeyValuePairFormatter<TKey, TValue>();
-            foreach (var x in value)
+            stream.WriteMapping(style, () =>
             {
-                elementFormatter.Serialize(stream, x);
-            }
-
-            stream.EndSequence();
-        }
-        else if (valueFormatter == null)
-        {
-            stream.BeginMapping(style);
-
-            foreach (var x in value)
-            {
-                keyFormatter.Serialize(stream, x.Key, style);
-                stream.Write(x.Value, style);
-            }
-
-            stream.EndMapping();
+                foreach (var x in value)
+                {
+                    stream.Write(x.Key, style);
+                    stream.Write(x.Value, style);
+                }
+            });
+            return;
         }
         else
         {
-            stream.BeginMapping(style);
-
-            foreach (var x in value)
+            var kvp = new KeyValuePairFormatter<TKey, TValue>();
+            stream.WriteSequence(style, () =>
             {
-                keyFormatter.Serialize(stream, x.Key, style);
-                valueFormatter.Serialize(stream, x.Value, style);
-            }
-
-            stream.EndMapping();
+                foreach (var x in value)
+                {
+                    kvp.Serialize(stream, x);
+                }
+            });
         }
     }
 

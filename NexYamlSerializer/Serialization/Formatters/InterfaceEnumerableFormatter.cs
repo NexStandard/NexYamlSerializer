@@ -2,6 +2,7 @@
 using NexVYaml.Parser;
 using Stride.Core;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace NexVYaml.Serialization;
@@ -10,28 +11,25 @@ public class InterfaceEnumerableFormatter<T> : YamlSerializer<IEnumerable<T>?>
 {
     protected override void Write(IYamlWriter stream, IEnumerable<T>? value, DataStyle style)
     {
-        stream.BeginSequence(style);
-
-        foreach (var x in value!)
+        stream.WriteSequence(style, () =>
         {
-            stream.Write(x, style);
-        }
-
-        stream.EndSequence();
+            foreach (var x in value!)
+            {
+                stream.Write(x, style);
+            }
+        });
     }
 
-    protected override void Read(IYamlReader parser, ref IEnumerable<T>? value)
+    protected override void Read(IYamlReader stream, ref IEnumerable<T>? value)
     {
         var list = new List<T>();
-        parser.ReadWithVerify(ParseEventType.SequenceStart);
 
-        while (parser.HasSequence)
+        stream.ReadSequence(() =>
         {
             T? val = default;
-            parser.Read(ref val);
+            stream.Read(ref val);
             list.Add(val!);
-        }
-        parser.ReadWithVerify(ParseEventType.SequenceEnd);
+        });
         value = list;
     }
 }

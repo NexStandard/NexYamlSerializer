@@ -14,26 +14,26 @@ public class DictionaryInterfaceFormatter<TKey, TValue> : YamlSerializer<IDictio
     {
         if (FormatterExtensions.IsPrimitive(typeof(TKey)))
         {
-            stream.BeginMapping(style);
+            stream.WriteMapping(style, () =>
             {
-                foreach (var x in value!)
+                foreach (var x in value)
                 {
                     stream.Write(x.Key, style);
                     stream.Write(x.Value, style);
                 }
-            }
-            stream.EndMapping();
+            });
             return;
         }
         else
         {
             var kvp = new KeyValuePairFormatter<TKey, TValue>();
-            stream.BeginSequence(style);
-            foreach (var x in value!)
+            stream.WriteSequence(style, () =>
             {
-                kvp.Serialize(stream, x);
-            }
-            stream.EndSequence();
+                foreach (var x in value)
+                {
+                    kvp.Serialize(stream, x);
+                }
+            });
         }
     }
 

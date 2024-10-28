@@ -10,28 +10,25 @@ public class ArrayFormatter<T> : YamlSerializer<T[]>
 {
     protected override void Write(IYamlWriter stream, T[] value, DataStyle style)
     {
-        stream.BeginSequence(style);
-        foreach (var x in value)
+        stream.WriteSequence(style,() =>
         {
-            var val = x;
-            stream.Write(val, style);
-        }
-        stream.EndSequence();
+            foreach (var x in value)
+            {
+                var val = x;
+                stream.Write(val, style);
+            }
+        });
     }
 
-    protected override void Read(IYamlReader parser,  ref T[] value)
+    protected override void Read(IYamlReader stream,  ref T[] value)
     {
-        parser.ReadWithVerify(ParseEventType.SequenceStart);
-
         var list = new List<T>();
-        while (parser.HasSequence)
+        stream.ReadSequence(() =>
         {
             var val = default(T);
-            parser.Read(ref val);
+            stream.Read(ref val);
             list.Add(val!);
-        }
-
-        parser.ReadWithVerify(ParseEventType.SequenceEnd);
+        });
         value = [.. list];
     }
 }

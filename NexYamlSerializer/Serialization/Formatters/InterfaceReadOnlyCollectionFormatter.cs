@@ -2,6 +2,7 @@
 using NexVYaml.Parser;
 using Stride.Core;
 using System.Collections.Generic;
+using System.IO;
 
 namespace NexVYaml.Serialization;
 
@@ -9,29 +10,24 @@ public class InterfaceReadOnlyCollectionFormatter<T> : YamlSerializer<IReadOnlyC
 {
     protected override void Write(IYamlWriter stream, IReadOnlyCollection<T>? value, DataStyle style)
     {
-        stream.BeginSequence(style);
-
-        foreach (var x in value!)
+        stream.WriteSequence(style, () =>
         {
-            stream.Write(x, style);
-        }
-
-        stream.EndSequence();
+            foreach (var x in value)
+            {
+                stream.Write(x, style);
+            }
+        });
     }
 
     protected override void Read(IYamlReader parser, ref IReadOnlyCollection<T>? value)
     {
-        parser.ReadWithVerify(ParseEventType.SequenceStart);
-
         var list = new List<T>();
-        while (parser.HasSequence)
+        stream.ReadSequence(() =>
         {
             var val = default(T);
-            parser.Read(ref val);
+            stream.Read(ref val);
             list.Add(val!);
-        }
-
-        parser.ReadWithVerify(ParseEventType.SequenceEnd);
+        });
         value = list!;
     }
 }

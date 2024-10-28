@@ -5,23 +5,6 @@ namespace NexYamlSourceGenerator.Templates;
 
 internal static class EmitExtensions
 {
-    public static string CreateSerializationEmit(this ClassPackage package)
-    {
-        var sb = new StringBuilder();
-        foreach (var member in package.MemberSymbols)
-        {
-            var serializeString = ".Serialize";
-            if (member.IsArray)
-                serializeString = ".SerializeArray";
-            var dataStyle = member.DataStyle == "" ? "" : $", {member.DataStyle}";
-                sb.AppendLine($$"""
-                        emitter.WriteString("{{member.Name}}", NexVYaml.Emitter.ScalarStyle.Plain);
-                        context{{serializeString}}(ref emitter, value.{{member.Name}}{{dataStyle}});
-                """);
-            
-        }
-        return sb.ToString();
-    }
     public static string CreateNewSerializationEmit(this ClassPackage package)
     {
         var sb = new StringBuilder();
@@ -35,13 +18,6 @@ internal static class EmitExtensions
         }
         return sb.ToString();
     }
-    /// <summary>
-    /// Flow Mapping isn't supported currently
-    /// </summary>
-    /// <param name="package"></param>
-    /// <returns></returns>
-    public static string BeginMappingStyle(this ClassPackage package) => "BeginMapping(style)";
-
     public static string CreateTempMembers(this ClassPackage package)
     {
         var defaultValues = new StringBuilder();
@@ -70,11 +46,4 @@ internal static class EmitExtensions
     {
         return new DeserializeEmitter().Create(package);
     }
-    public static string NullCheck(this ClassPackage package) => package.ClassInfo.TypeKind == Microsoft.CodeAnalysis.TypeKind.Struct ? "": @"
-        if (value is null)
-        {
-            emitter.WriteNull();
-            return;
-        }
-";
 }

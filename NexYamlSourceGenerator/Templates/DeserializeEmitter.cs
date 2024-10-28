@@ -26,14 +26,11 @@ internal class DeserializeEmitter
             """;
         }
         return $$"""
-                stream.ReadWithVerify(ParseEventType.MappingStart);
         {{package.CreateTempMembers()}}
-                while (stream.HasMapping(out var key))
-                {
+                stream.ReadMapping((key) => {
         {{ifstatement}}
-                }
 
-                stream.ReadWithVerify(ParseEventType.MappingEnd);
+                });
                 var __TEMP__RESULT = new {{info.NameDefinition}}
                 {
                     {{objectCreation.ToString().Trim(',')}}
