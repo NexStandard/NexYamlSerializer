@@ -39,7 +39,7 @@ public abstract class YamlSerializer
     {
         options ??= IYamlFormatterResolver.Default;
 
-        var emitter = new Utf8YamlEmitter();
+        var emitter = new UTF8Stream();
         var stream = new YamlWriter(emitter, options);
         try
         {
@@ -81,7 +81,7 @@ public abstract class YamlSerializer
     /// <param name="emitter">The Utf8YamlEmitter used for serializing the YAML content.</param>
     /// <param name="value">The object to be serialized.</param>
     /// <param name="options">Optional settings for customizing the YAML serialization process.</param>
-    internal static void Serialize<T>(ref Utf8YamlEmitter emitter, T value, DataStyle style = DataStyle.Any, IYamlFormatterResolver? options = null, IYamlWriter? stream = null)
+    internal static void Serialize<T>(ref UTF8Stream emitter, T value, DataStyle style = DataStyle.Any, IYamlFormatterResolver? options = null, IYamlWriter? stream = null)
     {
         try
         {

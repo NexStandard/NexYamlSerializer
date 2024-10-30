@@ -6,16 +6,16 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace NexYamlSerializer.Emitter.Serializers;
-internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
+internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
 {
     public EmitState State { get; } = EmitState.FlowMappingKey;
 
     public void Begin()
     {
-        var current = emitter.StateStack.Current;
+        var current = emitter.Current.State;
         if (current is EmitState.BlockSequenceEntry)
         {
-            var output = emitter.Writer.GetSpan((emitter.CurrentIndentLevel * Utf8YamlEmitter.IndentWidth) + EmitCodes.BlockSequenceEntryHeader.Length + EmitCodes.FlowMappingStart.Length);
+            var output = emitter.Writer.GetSpan((emitter.CurrentIndentLevel * UTF8Stream.IndentWidth) + EmitCodes.BlockSequenceEntryHeader.Length + EmitCodes.FlowMappingStart.Length);
             var offset = 0;
             emitter.WriteIndent(output, ref offset);
 
@@ -43,7 +43,7 @@ internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
         {
             throw new InvalidOperationException($"To start flow-mapping in the {current} is not supported");
         }
-        emitter.PushState(State);
+        emitter.Next = emitter.Map(State);
     }
 
     public void BeginScalar(Span<byte> output, ref int offset)
@@ -69,7 +69,7 @@ internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
 
     public void End()
     {
-        if (emitter.StateStack.Current is not EmitState.BlockMappingKey and not EmitState.FlowMappingKey)
+        if (emitter.Current.State is not EmitState.BlockMappingKey and not EmitState.FlowMappingKey)
         {
             throw new YamlException($"Invalid block mapping end: {emitter.StateStack.Current}");
         }
@@ -77,7 +77,7 @@ internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
         bool writeFlowMapEnd = true;
         if (isEmptyMapping)
         {
-            var lineBreak = emitter.StateStack.Current is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
+            var lineBreak = emitter.Current.State is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
             if (emitter.tagStack.TryPop(out var tag))
             {
                 var tagBytes = StringEncoding.Utf8.GetBytes(tag + " "); // TODO:
@@ -93,14 +93,14 @@ internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
         emitter.PopState();
 
         var needsLineBreak = false;
-        switch (emitter.StateStack.Current)
+        switch (emitter.Current.State)
         {
             case EmitState.BlockSequenceEntry:
                 needsLineBreak = true;
                 emitter.currentElementCount++;
                 break;
             case EmitState.BlockMappingValue:
-                emitter.StateStack.Current = EmitState.BlockMappingKey; // end mapping value
+                emitter.Current = emitter.Map(EmitState.BlockMappingKey);
                 needsLineBreak = true;
                 emitter.currentElementCount++;
                 break;
@@ -108,7 +108,7 @@ internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
                 emitter.currentElementCount++;
                 break;
             case EmitState.FlowMappingValue:
-                emitter.StateStack.Current = EmitState.FlowMappingKey;
+                emitter.Current = emitter.Map(EmitState.FlowMappingKey);
                 emitter.currentElementCount++;
                 break;
         }
@@ -140,6 +140,6 @@ internal class FlowMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
     {
         EmitCodes.MappingKeyFooter.CopyTo(output[offset..]);
         offset += EmitCodes.MappingKeyFooter.Length;
-        emitter.StateStack.Current = EmitState.FlowMappingValue;
+        emitter.Current = emitter.Map(EmitState.FlowMappingValue);
     }
 }

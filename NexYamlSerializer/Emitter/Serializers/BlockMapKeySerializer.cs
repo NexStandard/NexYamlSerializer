@@ -4,13 +4,13 @@ using NexYaml.Core;
 using System;
 
 namespace NexYamlSerializer.Emitter.Serializers;
-internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
+internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
 {
     public EmitState State { get; } = EmitState.BlockMappingKey;
 
     public void Begin()
     {
-        switch (emitter.StateStack.Current)
+        switch (emitter.Current.State)
         {
             case EmitState.BlockMappingKey:
                 throw new YamlException("To start block-mapping in the mapping key is not supported.");
@@ -25,14 +25,14 @@ internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
                     break;
                 }
         }
-        emitter.PushState(State);
+        emitter.Next = emitter.Map(State);
 
     }
     public void BeginScalar(Span<byte> output, ref int offset)
     {
         if (emitter.IsFirstElement)
         {
-            switch (emitter.StateStack.Previous)
+            switch (emitter.Previous.State)
             {
                 case EmitState.BlockSequenceEntry:
                     {
@@ -47,7 +47,7 @@ internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
                         }
                         else
                         {
-                            emitter.WriteIndent(output, ref offset, Utf8YamlEmitter.IndentWidth - 2);
+                            emitter.WriteIndent(output, ref offset, UTF8Stream.IndentWidth - 2);
                         }
                         // The first key in block-sequence is like so that: "- key: .."
                         break;
@@ -85,9 +85,9 @@ internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
 
     public void EndScalar(Span<byte> output, ref int offset)
     {
-         EmitCodes.MappingKeyFooter.CopyTo(output[offset..]);
-         offset += EmitCodes.MappingKeyFooter.Length;
-        emitter.StateStack.Current = EmitState.BlockMappingValue;
+        EmitCodes.MappingKeyFooter.CopyTo(output[offset..]);
+        offset += EmitCodes.MappingKeyFooter.Length;
+        emitter.Current = emitter.Map(EmitState.BlockMappingValue);
     }
 
     public void End()
@@ -97,7 +97,7 @@ internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
 
         if (isEmptyMapping)
         {
-            var lineBreak = emitter.StateStack.Current is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
+            var lineBreak = emitter.Current.State is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
             if (emitter.tagStack.TryPop(out var tag))
             {
                 var tagBytes = StringEncoding.Utf8.GetBytes(tag + " "); // TODO:
@@ -109,7 +109,7 @@ internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
             }
         }
 
-        switch (emitter.StateStack.Current)
+        switch (emitter.Current.State)
         {
             case EmitState.BlockSequenceEntry:
                 if (!isEmptyMapping)
@@ -124,7 +124,7 @@ internal class BlockMapKeySerializer(Utf8YamlEmitter emitter) : IEmitter
                 {
                     emitter.IndentationManager.DecreaseIndent();
                 }
-                emitter.StateStack.Current = EmitState.BlockMappingKey;
+                emitter.Current = emitter.Map(EmitState.BlockMappingKey);
                 emitter.currentElementCount++;
                 break;
             case EmitState.FlowMappingValue:

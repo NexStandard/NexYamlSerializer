@@ -6,13 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace NexYamlSerializer.Emitter.Serializers;
-internal class BlockSequenceEntrySerializer(Utf8YamlEmitter emitter) : IEmitter
+internal class BlockSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
 {
     public EmitState State { get; } = EmitState.BlockSequenceEntry;
 
     public void Begin()
     {
-        switch (emitter.StateStack.Current)
+        switch (emitter.Current.State)
         {
             case EmitState.BlockSequenceEntry:
                 emitter.WriteBlockSequenceEntryHeader();
@@ -29,7 +29,7 @@ internal class BlockSequenceEntrySerializer(Utf8YamlEmitter emitter) : IEmitter
                     "To start block-sequence in the mapping key is not supported.");
         }
 
-        emitter.PushState(State);
+        emitter.Next = emitter.Map(State);
     }
 
     public void BeginScalar(Span<byte> output, ref int offset)
@@ -37,13 +37,8 @@ internal class BlockSequenceEntrySerializer(Utf8YamlEmitter emitter) : IEmitter
         // first nested element
         if (emitter.IsFirstElement)
         {
-            var output2 = emitter.Writer.GetSpan(EmitCodes.FlowSequenceSeparator.Length + 1);
-            var offset2 = 0;
-            EmitCodes.FlowSequenceSeparator.CopyTo(output2);
-            offset2 += EmitCodes.FlowSequenceSeparator.Length;
-            output2[offset2 + 1] = YamlCodes.FlowSequenceStart;
             emitter.Writer.Advance(offset);
-            switch (emitter.StateStack.Previous)
+            switch (emitter.Previous.State)
             {
                 case EmitState.BlockSequenceEntry:
                     emitter.IndentationManager.IncreaseIndent();
@@ -75,11 +70,11 @@ internal class BlockSequenceEntrySerializer(Utf8YamlEmitter emitter) : IEmitter
         // Empty sequence
         if (isEmptySequence)
         {
-            var lineBreak = emitter.StateStack.Current is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
+            var lineBreak = emitter.Current.State is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
             emitter.WriteRaw(EmitCodes.FlowSequenceEmpty, false, lineBreak);
         }
 
-        switch (emitter.StateStack.Current)
+        switch (emitter.Current.State)
         {
             case EmitState.BlockSequenceEntry:
                 if (!isEmptySequence)
@@ -93,7 +88,7 @@ internal class BlockSequenceEntrySerializer(Utf8YamlEmitter emitter) : IEmitter
                 throw new YamlException("Complex key is not supported.");
 
             case EmitState.BlockMappingValue:
-                emitter.StateStack.Current = EmitState.BlockMappingKey;
+                emitter.Current = emitter.Map(EmitState.BlockMappingKey);
                 emitter.currentElementCount++;
                 break;
 

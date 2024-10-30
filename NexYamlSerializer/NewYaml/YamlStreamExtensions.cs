@@ -1,4 +1,5 @@
-﻿using NexVYaml.Serialization;
+﻿using NexVYaml.Emitter;
+using NexVYaml.Serialization;
 using NexYaml.Core;
 using NexYamlSerializer.Serialization.PrimitiveSerializers;
 using Stride.Core;
@@ -6,6 +7,7 @@ using Stride.Core.Serialization.Serializers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 
 namespace NexVYaml;
 

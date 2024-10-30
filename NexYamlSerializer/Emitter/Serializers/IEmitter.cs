@@ -1,9 +1,10 @@
 ﻿using NexVYaml.Emitter;
+using NexYaml.Core;
 using System;
 using System.Linq;
 
 namespace NexYamlSerializer.Emitter.Serializers;
-interface IEmitter
+public interface IEmitter
 {
     EmitState State { get; }
     void End();
@@ -12,3 +13,7 @@ interface IEmitter
     void EndScalar(Span<byte> output, ref int offset);
 }
 
+public static class IEmitterExtensions
+{
+
+}

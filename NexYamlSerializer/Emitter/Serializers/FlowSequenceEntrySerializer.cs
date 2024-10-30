@@ -6,19 +6,19 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace NexYamlSerializer.Emitter.Serializers;
-internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : IEmitter
+internal class FlowSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
 {
     public EmitState State { get; } = EmitState.FlowSequenceEntry;
 
     public void Begin()
     {
-        switch (emitter.StateStack.Current)
+        switch (emitter.Current.State)
         {
             case EmitState.BlockMappingKey:
                 throw new YamlException("To start block-mapping in the mapping key is not supported.");
             case EmitState.BlockSequenceEntry:
                 {
-                    var output = emitter.Writer.GetSpan((emitter.CurrentIndentLevel * Utf8YamlEmitter.IndentWidth) + EmitCodes.BlockSequenceEntryHeader.Length + 1);
+                    var output = emitter.Writer.GetSpan((emitter.CurrentIndentLevel * UTF8Stream.IndentWidth) + EmitCodes.BlockSequenceEntryHeader.Length + 1);
                     var offset = 0;
                     emitter.WriteIndent(output, ref offset);
                     EmitCodes.BlockSequenceEntryHeader.CopyTo(output[offset..]);
@@ -57,7 +57,7 @@ internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : IEmitter
                 emitter.WriteRaw(YamlCodes.FlowSequenceStart);
                 break;
         }
-        emitter.PushState(State);
+        emitter.Next = emitter.Map(State);
     }
 
     public void BeginScalar(Span<byte> output, ref int offset)
@@ -82,19 +82,19 @@ internal class FlowSequenceEntrySerializer(Utf8YamlEmitter emitter) : IEmitter
         emitter.PopState();
 
         var needsLineBreak = false;
-        switch (emitter.StateStack.Current)
+        switch (emitter.Current.State)
         {
             case EmitState.BlockSequenceEntry:
                 needsLineBreak = true;
                 emitter.currentElementCount++;
                 break;
             case EmitState.BlockMappingValue:
-                emitter.StateStack.Current = EmitState.BlockMappingKey; // end mapping value
+                emitter.Current = emitter.Map(EmitState.BlockMappingKey);
                 needsLineBreak = true;
                 emitter.currentElementCount++;
                 break;
             case EmitState.FlowMappingValue:
-                emitter.StateStack.Current = EmitState.FlowMappingKey;
+                emitter.Current = emitter.Map(EmitState.FlowMappingKey);
                 emitter.currentElementCount++;
                 break;
             case EmitState.FlowSequenceEntry:

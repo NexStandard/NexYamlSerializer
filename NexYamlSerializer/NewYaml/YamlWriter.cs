@@ -1,6 +1,8 @@
 ﻿using NexVYaml.Emitter;
 using NexVYaml.Serialization;
 using NexYaml.Core;
+using NexYamlSerializer.Emitter;
+using NexYamlSerializer.Emitter.Serializers;
 using NexYamlSerializer.Serialization.PrimitiveSerializers;
 using Stride.Core;
 using System;
@@ -17,37 +19,56 @@ public class YamlWriter : IYamlWriter
 {
     bool IsRedirected { get; set; } = false;
     bool IsFirst { get; set; } = true;
-    IUtf8YamlEmitter Emitter { get; set; }
+    IUTF8Stream stream { get; set; }
     IYamlFormatterResolver Resolver{ get; init; }
-    internal YamlWriter(IUtf8YamlEmitter emitter, IYamlFormatterResolver resolver)
+    StyleEnforcer enforcer = new();
+    internal YamlWriter(IUTF8Stream stream, IYamlFormatterResolver resolver)
     {
         Resolver = resolver;
-        Emitter = emitter;
+        this.stream = stream;
     }
 
     public void BeginMapping(DataStyle style)
     {
-        Emitter.BeginMapping(style);
+        enforcer.Begin(ref style);
+        stream.EmitterFactory.BeginNodeMap(style, false).Begin();
     }
 
     public void BeginSequence(DataStyle style)
     {
-        Emitter.BeginSequence(style);
+        enforcer.Begin(ref style);
+        stream.EmitterFactory.BeginNodeMap(style, true).Begin();
     }
 
     public void EndMapping()
     {
-        Emitter.EndMapping();
+        if (stream.Current.State is EmitState.BlockMappingKey or EmitState.FlowMappingKey)
+        {
+            stream.Current.End();
+            enforcer.End();
+        }
+        else
+        {
+            throw new YamlException($"Invalid mapping end: {stream.Current}");
+        }
     }
 
     public void EndSequence()
     {
-        Emitter.EndSequence();
+        if (stream.Current.State is EmitState.BlockSequenceEntry or EmitState.FlowSequenceEntry)
+        {
+            stream.Current.End();
+            enforcer.End();
+        }
+        else
+        {
+            throw new YamlException($"Current state is not sequence: {stream.Current}");
+        }
     }
 
     public void Write(ReadOnlySpan<byte> value, DataStyle style = DataStyle.Any)
     {
-        Emitter.WriteScalar(value);
+        stream.WriteScalar(value);
     }
     public void Write<T>(T value, DataStyle style)
     {
@@ -136,19 +157,19 @@ public class YamlWriter : IYamlWriter
         }
         else if (ScalarStyle.Literal == scalarStyle)
         {
-            var indentCharCount = (Emitter.CurrentIndentLevel + 1) * Utf8YamlEmitter.IndentWidth;
+            var indentCharCount = (stream.CurrentIndentLevel + 1) * UTF8Stream.IndentWidth;
             var scalarStringBuilt = EmitStringAnalyzer.BuildLiteralScalar(value, indentCharCount);
             Span<char> scalarChars = stackalloc char[scalarStringBuilt.Length];
             scalarStringBuilt.CopyTo(0, scalarChars, scalarStringBuilt.Length);
 
-            scalarChars = Emitter.TryRemoveDuplicateLineBreak(scalarChars);
+            scalarChars = stream.TryRemoveDuplicateLineBreak(scalarChars);
 
             var maxByteCount = StringEncoding.Utf8.GetMaxByteCount(scalarChars.Length);
             var offset = 0;
-            var output = Emitter.Writer.GetSpan(Emitter.CalculateMaxScalarBufferLength(maxByteCount));
-            Emitter.BeginScalar(output, ref offset);
+            var output = stream.Writer.GetSpan(stream.CalculateMaxScalarBufferLength(maxByteCount));
+            stream.BeginScalar(output, ref offset);
             offset += StringEncoding.Utf8.GetBytes(scalarChars, output[offset..]);
-            Emitter.EndScalar(output, ref offset);
+            stream.EndScalar(output, ref offset);
         }
     }
     public void Write(char value, DataStyle style = DataStyle.Any)
@@ -246,11 +267,9 @@ public class YamlWriter : IYamlWriter
         if (IsRedirected || IsFirst)
         {
             var fulTag = $"!{tag}";
-            Emitter.Tag(ref fulTag);
+            stream.Tag(ref fulTag);
             IsRedirected = false;
             IsFirst = false;
         }
     }
-
-
 }

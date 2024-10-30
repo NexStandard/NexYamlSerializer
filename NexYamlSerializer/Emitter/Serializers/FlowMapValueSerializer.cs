@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 
 namespace NexYamlSerializer.Emitter.Serializers;
-internal class FlowMapValueSerializer(Utf8YamlEmitter emitter) : IEmitter
+internal class FlowMapValueSerializer(UTF8Stream emitter) : IEmitter
 {
     public EmitState State { get; } = EmitState.FlowMappingValue;
 
@@ -24,7 +24,7 @@ internal class FlowMapValueSerializer(Utf8YamlEmitter emitter) : IEmitter
 
     public void EndScalar(Span<byte> output, ref int offset)
     {
-        emitter.StateStack.Current = EmitState.FlowMappingKey;
+        emitter.Current = emitter.Map(EmitState.FlowMappingKey);
         emitter.currentElementCount++;
     }
 }
