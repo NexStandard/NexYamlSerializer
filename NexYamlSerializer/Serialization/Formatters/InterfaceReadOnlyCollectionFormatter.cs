@@ -19,7 +19,7 @@ public class InterfaceReadOnlyCollectionFormatter<T> : YamlSerializer<IReadOnlyC
         });
     }
 
-    protected override void Read(IYamlReader parser, ref IReadOnlyCollection<T>? value)
+    protected override void Read(IYamlReader stream, ref IReadOnlyCollection<T>? value)
     {
         var list = new List<T>();
         stream.ReadSequence(() =>
