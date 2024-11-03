@@ -12,7 +12,7 @@ public class ReferenceFormatter<T> : YamlSerializer<T>
     where T : IIdentifiable
 {
     const string refPrefix = "!!ref ";
-    protected override void Read(IYamlReader stream, ref T value)
+    public override void Read(IYamlReader stream, ref T value)
     {
         if(stream.TryGetScalarAsString(out var reference))
         {
@@ -23,7 +23,7 @@ public class ReferenceFormatter<T> : YamlSerializer<T>
         }
     }
 
-    protected override void Write(IYamlWriter stream, T value, DataStyle style)
+    public override void Write(IYamlWriter stream, T value, DataStyle style)
     {
         stream.Write("!!ref " + value.Id);
     }

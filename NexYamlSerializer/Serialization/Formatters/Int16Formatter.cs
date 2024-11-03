@@ -12,12 +12,12 @@ public class Int16Formatter : YamlSerializer<short>
 {
     public static readonly Int16Formatter Instance = new();
 
-    protected override void Write(IYamlWriter stream, short value, DataStyle style)
+    public override void Write(IYamlWriter stream, short value, DataStyle style)
     {
         stream.Write(value, style);
     }
 
-    protected override void Read(IYamlReader parser, ref short value)
+    public override void Read(IYamlReader parser, ref short value)
     {
         if(parser.TryGetScalarAsSpan(out var span))
         {

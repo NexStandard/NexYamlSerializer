@@ -14,12 +14,12 @@ public class SByteFormatter : YamlSerializer<sbyte>
 {
     public static readonly SByteFormatter Instance = new();
 
-    protected override void Write(IYamlWriter stream, sbyte value, DataStyle style)
+    public override void Write(IYamlWriter stream, sbyte value, DataStyle style)
     {
         stream.Write(value, style);
     }
 
-    protected override void Read(IYamlReader parser, ref sbyte value)
+    public override void Read(IYamlReader parser, ref sbyte value)
     {
         if (parser.TryGetScalarAsSpan(out var span))
         {

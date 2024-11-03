@@ -11,12 +11,12 @@ namespace NexVYaml.Serialization;
 public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey, TValue>?>
     where TKey : notnull
 {
-    protected override void Write(IYamlWriter stream, Dictionary<TKey, TValue>? value, DataStyle style = DataStyle.Normal)
+    public override void Write(IYamlWriter stream, Dictionary<TKey, TValue>? value, DataStyle style = DataStyle.Normal)
     {
         DictionaryFormatterHelper.Serialize(stream, value!, style);
     }
 
-    protected override void Read(IYamlReader stream,  ref Dictionary<TKey, TValue>? value)
+    public override void Read(IYamlReader stream,  ref Dictionary<TKey, TValue>? value)
     {
         var map = new Dictionary<TKey, TValue>();
         if (FormatterExtensions.IsPrimitive(typeof(TKey)))
@@ -39,7 +39,7 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
         {
             var listFormatter = new ListFormatter<KeyValuePair<TKey, TValue>>();
             var keyValuePairs = default(List<KeyValuePair<TKey, TValue>>);
-            listFormatter.Deserialize(stream, ref keyValuePairs);
+            listFormatter.Read(stream, ref keyValuePairs);
 
             value = keyValuePairs?.ToDictionary() ?? [];
         }
@@ -69,7 +69,7 @@ internal class DictionaryFormatterHelper : IYamlFormatterHelper
             {
                 foreach (var x in value)
                 {
-                    kvp.Serialize(stream, x);
+                    kvp.Write(stream, x);
                 }
             });
         }

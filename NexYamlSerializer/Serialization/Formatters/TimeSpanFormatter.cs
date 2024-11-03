@@ -10,7 +10,7 @@ public class TimeSpanFormatter : YamlSerializer<TimeSpan>
 {
     public static readonly TimeSpanFormatter Instance = new();
 
-    protected override void Write(IYamlWriter stream, TimeSpan value, DataStyle style)
+    public override void Write(IYamlWriter stream, TimeSpan value, DataStyle style)
     {
         Span<byte> buf = stackalloc byte[32];
         if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten))
@@ -24,7 +24,7 @@ public class TimeSpanFormatter : YamlSerializer<TimeSpan>
         }
     }
 
-    protected override void Read(IYamlReader parser, ref TimeSpan value)
+    public override void Read(IYamlReader parser, ref TimeSpan value)
     {
         if (parser.TryGetScalarAsSpan(out var span) &&
                Utf8Parser.TryParse(span, out TimeSpan timeSpan, out var bytesConsumed) &&

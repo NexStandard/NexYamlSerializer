@@ -8,7 +8,7 @@ namespace NexVYaml.Serialization;
 
 public class KeyValuePairFormatter<TKey, TValue> : YamlSerializer<KeyValuePair<TKey, TValue>>
 {
-    protected override void Write(IYamlWriter stream, KeyValuePair<TKey, TValue> value, DataStyle style)
+    public override void Write(IYamlWriter stream, KeyValuePair<TKey, TValue> value, DataStyle style)
     {
         stream.WriteSequence(style, () =>
         {
@@ -17,7 +17,7 @@ public class KeyValuePairFormatter<TKey, TValue> : YamlSerializer<KeyValuePair<T
         });
     }
 
-    protected override void Read(IYamlReader stream, ref KeyValuePair<TKey, TValue> value)
+    public override void Read(IYamlReader stream, ref KeyValuePair<TKey, TValue> value)
     {
         var key = default(TKey);
         var val = default(TValue);

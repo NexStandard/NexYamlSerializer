@@ -8,12 +8,12 @@ namespace NexVYaml.Serialization;
 public class NullableStringFormatter : YamlSerializer<string?>
 {
     public static readonly NullableStringFormatter Instance = new ();
-    protected override void Write(IYamlWriter stream, string? value, DataStyle style)
+    public override void Write(IYamlWriter stream, string? value, DataStyle style)
     {
         stream.Write(value!);
     }
 
-    protected override void Read(IYamlReader parser, ref string? value)
+    public override void Read(IYamlReader parser, ref string? value)
     {
         if(parser.TryGetScalarAsSpan(out var span))
         {

@@ -9,12 +9,12 @@ public class BooleanFormatter : YamlSerializer<bool>
 {
     public static readonly BooleanFormatter Instance = new();
 
-    protected override void Write(IYamlWriter stream, bool value, DataStyle style)
+    public override void Write(IYamlWriter stream, bool value, DataStyle style)
     {
         stream.Write(value, style);
     }
 
-    protected override void Read(IYamlReader parser, ref bool value)
+    public override void Read(IYamlReader parser, ref bool value)
     {
         if(parser.TryGetScalarAsSpan(out var span))
         {

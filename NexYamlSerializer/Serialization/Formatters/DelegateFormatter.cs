@@ -15,7 +15,7 @@ namespace NexYamlSerializer.Serialization.Formatters;
 internal class DelegateFormatter<T> : YamlSerializer<T>
     where T : System.Delegate
 {
-    protected override void Read(IYamlReader stream, ref T value)
+    public override void Read(IYamlReader stream, ref T value)
     {
         
         stream.ReadSequence(() =>
@@ -29,7 +29,7 @@ internal class DelegateFormatter<T> : YamlSerializer<T>
         value = null;
     }
 
-    protected override void Write(IYamlWriter stream, T value, DataStyle style)
+    public override void Write(IYamlWriter stream, T value, DataStyle style)
     {
         var invocations = value.GetInvocationList();
         stream.BeginSequence(style);

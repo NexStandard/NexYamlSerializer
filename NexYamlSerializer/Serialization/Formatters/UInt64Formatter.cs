@@ -14,12 +14,12 @@ public class UInt64Formatter : YamlSerializer<ulong>
 {
     public static readonly UInt64Formatter Instance = new();
 
-    protected override void Write(IYamlWriter stream, ulong value, DataStyle style)
+    public override void Write(IYamlWriter stream, ulong value, DataStyle style)
     {
         stream.Write(value, style);
     }
 
-    protected override void Read(IYamlReader parser, ref ulong value)
+    public override void Read(IYamlReader parser, ref ulong value)
     {
         if (parser.TryGetScalarAsSpan(out var span))
         {

@@ -212,12 +212,6 @@ sealed class UTF8Stream : IUTF8Stream
         return length;
     }
 
-    internal void PushState(EmitState state)
-    {
-        StateStack.Add(EmitterFactory.Map(state));
-        elementCountStack.Add(currentElementCount);
-        currentElementCount = 0;
-    }
     public IEmitter Current
     {
         get
@@ -239,7 +233,7 @@ sealed class UTF8Stream : IUTF8Stream
         }
     }
     public IEmitter Previous { get { return StateStack.Previous; } }
-    internal void PopState()
+    public void PopState()
     {
         StateStack.Pop();
         currentElementCount = elementCountStack.Length > 0 ? elementCountStack.Pop() : 0;

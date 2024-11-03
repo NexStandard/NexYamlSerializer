@@ -83,7 +83,7 @@ public class YamlWriter : IYamlWriter
             var arrayFormatterType = typeof(ArrayFormatter<>).MakeGenericType(t);
             var arrayFormatter = (YamlSerializer)Activator.CreateInstance(arrayFormatterType)!;
 
-            arrayFormatter.Serialize(this, value, style);
+            arrayFormatter.Write(this, value, style);
             return;
         }
         var type = typeof(T);
@@ -91,7 +91,7 @@ public class YamlWriter : IYamlWriter
         if (type.IsValueType || type.IsSealed)
         {
             var formatter = Resolver.GetFormatter<T>();
-            formatter.Serialize(this, value, style);
+            formatter.Write(this, value, style);
         }
         else if (type.IsInterface || type.IsAbstract || type.IsGenericType || type.IsArray)
         {
@@ -105,22 +105,22 @@ public class YamlWriter : IYamlWriter
             // that is in the object
             if (style is DataStyle.Any)
             {
-                formatt.Serialize(this, value!);
+                formatt.Write(this, value!);
             }
             else
             {
-                formatt.Serialize(this, value!, style);
+                formatt.Write(this, value!, style);
             }
         }
         else
         {
             if (style is DataStyle.Any)
             {
-                Resolver.GetFormatter<T>().Serialize(this, value!);
+                Resolver.GetFormatter<T>().Write(this, value!);
             }
             else
             {
-                Resolver.GetFormatter<T>().Serialize(this, value!, style);
+                Resolver.GetFormatter<T>().Write(this, value!, style);
             }
         }
     }

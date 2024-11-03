@@ -13,12 +13,12 @@ public class DecimalFormatter : YamlSerializer<decimal>
 {
     public static readonly DecimalFormatter Instance = new();
 
-    protected override void Write(IYamlWriter stream, decimal value, DataStyle style)
+    public override void Write(IYamlWriter stream, decimal value, DataStyle style)
     {
         stream.Write(value, style);
     }
 
-    protected override void Read(IYamlReader parser, ref decimal value)
+    public override void Read(IYamlReader parser, ref decimal value)
     {
         if (parser.TryGetScalarAsSpan(out var span) &&
                    Utf8Parser.TryParse(span, out decimal val, out var bytesConsumed) &&

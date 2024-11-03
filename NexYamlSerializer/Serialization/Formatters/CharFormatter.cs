@@ -12,12 +12,12 @@ public class CharFormatter : YamlSerializer<char>
 {
     public static readonly CharFormatter Instance = new();
 
-    protected override void Write(IYamlWriter stream, char value, DataStyle style)
+    public override void Write(IYamlWriter stream, char value, DataStyle style)
     {
         stream.Write(value, style);
     }
 
-    protected override void Read(IYamlReader parser, ref char value)
+    public override void Read(IYamlReader parser, ref char value)
     {
         if(parser.TryGetScalarAsString(out var result))
         {

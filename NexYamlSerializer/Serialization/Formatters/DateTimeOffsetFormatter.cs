@@ -11,7 +11,7 @@ public class DateTimeOffsetFormatter : YamlSerializer<DateTimeOffset>
 {
     public static readonly DateTimeOffsetFormatter Instance = new();
 
-    protected override void Write(IYamlWriter stream, DateTimeOffset value, DataStyle style)
+    public override void Write(IYamlWriter stream, DateTimeOffset value, DataStyle style)
     {
         Span<byte> buf = stackalloc byte[64];
         if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten, new StandardFormat('O')))
@@ -25,7 +25,7 @@ public class DateTimeOffsetFormatter : YamlSerializer<DateTimeOffset>
         }
     }
 
-    protected override void Read(IYamlReader parser, ref DateTimeOffset value)
+    public override void Read(IYamlReader parser, ref DateTimeOffset value)
     {
         if (parser.TryGetScalarAsSpan(out var span) &&
              Utf8Parser.TryParse(span, out DateTimeOffset val, out var bytesConsumed) &&

@@ -17,7 +17,7 @@ public class DateTimeFormatter : YamlSerializer<DateTime>
     /// </summary>
     private const int FormatOMaxLength = 33;
 
-    protected override void Write(IYamlWriter stream, DateTime value, DataStyle style)
+    public override void Write(IYamlWriter stream, DateTime value, DataStyle style)
     {
         Span<byte> buf = stackalloc byte[FormatOMaxLength];
         if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten, new StandardFormat('O')))
@@ -31,7 +31,7 @@ public class DateTimeFormatter : YamlSerializer<DateTime>
         }
     }
 
-    protected override void Read(IYamlReader parser, ref DateTime value)
+    public override void Read(IYamlReader parser, ref DateTime value)
     {
         if (parser.TryGetScalarAsSpan(out var span) &&
       Utf8Parser.TryParse(span, out DateTime dateTime, out var bytesConsumed, 'O') &&

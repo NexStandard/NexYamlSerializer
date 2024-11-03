@@ -16,4 +16,5 @@ public class IndentationManager
         if (CurrentIndentLevel > 0)
             CurrentIndentLevel--;
     }
+
 }

@@ -8,7 +8,7 @@ namespace NexVYaml.Serialization;
 
 public class ValueTupleFormatter<T1> : YamlSerializer<ValueTuple<T1>>
 {
-    protected override void Write(IYamlWriter stream, ValueTuple<T1> value, DataStyle style)
+    public override void Write(IYamlWriter stream, ValueTuple<T1> value, DataStyle style)
     {
         stream.WriteSequence(DataStyle.Compact, () =>
         {
@@ -16,7 +16,7 @@ public class ValueTupleFormatter<T1> : YamlSerializer<ValueTuple<T1>>
         });
     }
 
-    protected override void Read(IYamlReader stream, ref ValueTuple<T1> value)
+    public override void Read(IYamlReader stream, ref ValueTuple<T1> value)
     {
         var item1 = default(T1);
         stream.ReadSequence(() =>
@@ -29,7 +29,7 @@ public class ValueTupleFormatter<T1> : YamlSerializer<ValueTuple<T1>>
 
 public class ValueTupleFormatter<T1, T2> : YamlSerializer<ValueTuple<T1, T2>>
 {
-    protected override void Write(IYamlWriter stream, (T1, T2) value, DataStyle style)
+    public override void Write(IYamlWriter stream, (T1, T2) value, DataStyle style)
     {
         stream.WriteSequence(DataStyle.Compact, () =>
         {
@@ -38,7 +38,7 @@ public class ValueTupleFormatter<T1, T2> : YamlSerializer<ValueTuple<T1, T2>>
         });
     }
 
-    protected override void Read(IYamlReader stream, ref (T1, T2) value)
+    public override void Read(IYamlReader stream, ref (T1, T2) value)
     {
         var item1 = default(T1);
         var item2 = default(T2);
@@ -53,7 +53,7 @@ public class ValueTupleFormatter<T1, T2> : YamlSerializer<ValueTuple<T1, T2>>
 
 public class ValueTupleFormatter<T1, T2, T3> : YamlSerializer<ValueTuple<T1, T2, T3>>
 {
-    protected override void Write(IYamlWriter stream, (T1, T2, T3) value, DataStyle style)
+    public override void Write(IYamlWriter stream, (T1, T2, T3) value, DataStyle style)
     {
         stream.WriteSequence(DataStyle.Compact, () =>
         {
@@ -63,7 +63,7 @@ public class ValueTupleFormatter<T1, T2, T3> : YamlSerializer<ValueTuple<T1, T2,
         });
     }
 
-    protected override void Read(IYamlReader stream, ref (T1, T2, T3) value)
+    public override void Read(IYamlReader stream, ref (T1, T2, T3) value)
     {
         var item1 = default(T1);
         var item2 = default(T2);
@@ -80,7 +80,7 @@ public class ValueTupleFormatter<T1, T2, T3> : YamlSerializer<ValueTuple<T1, T2,
 
 public class ValueTupleFormatter<T1, T2, T3, T4> : YamlSerializer<ValueTuple<T1, T2, T3, T4>>
 {
-    protected override void Write(IYamlWriter stream, (T1, T2, T3, T4) value, DataStyle style)
+    public override void Write(IYamlWriter stream, (T1, T2, T3, T4) value, DataStyle style)
     {
         stream.WriteSequence(DataStyle.Compact, () =>
         {
@@ -91,7 +91,7 @@ public class ValueTupleFormatter<T1, T2, T3, T4> : YamlSerializer<ValueTuple<T1,
         });
     }
 
-    protected override void Read(IYamlReader stream, ref (T1, T2, T3, T4) value)
+    public override void Read(IYamlReader stream, ref (T1, T2, T3, T4) value)
     {
         var item1 = default(T1);
         var item2 = default(T2);
@@ -110,7 +110,7 @@ public class ValueTupleFormatter<T1, T2, T3, T4> : YamlSerializer<ValueTuple<T1,
 
 public class ValueTupleFormatter<T1, T2, T3, T4, T5> : YamlSerializer<ValueTuple<T1, T2, T3, T4, T5>>
 {
-    protected override void Write(IYamlWriter stream, (T1, T2, T3, T4, T5) value, DataStyle style)
+    public override void Write(IYamlWriter stream, (T1, T2, T3, T4, T5) value, DataStyle style)
     {
         stream.WriteSequence(DataStyle.Compact, () =>
         {
@@ -122,7 +122,7 @@ public class ValueTupleFormatter<T1, T2, T3, T4, T5> : YamlSerializer<ValueTuple
         });
     }
 
-    protected override void Read(IYamlReader stream, ref (T1, T2, T3, T4, T5) value)
+    public override void Read(IYamlReader stream, ref (T1, T2, T3, T4, T5) value)
     {
         var item1 = default(T1);
         var item2 = default(T2);
@@ -143,7 +143,7 @@ public class ValueTupleFormatter<T1, T2, T3, T4, T5> : YamlSerializer<ValueTuple
 
 public class ValueTupleFormatter<T1, T2, T3, T4, T5, T6> : YamlSerializer<ValueTuple<T1, T2, T3, T4, T5, T6>>
 {
-    protected override void Write(IYamlWriter stream, (T1, T2, T3, T4, T5, T6) value, DataStyle style)
+    public override void Write(IYamlWriter stream, (T1, T2, T3, T4, T5, T6) value, DataStyle style)
     {
         stream.WriteSequence(DataStyle.Compact, () =>
         {
@@ -156,7 +156,7 @@ public class ValueTupleFormatter<T1, T2, T3, T4, T5, T6> : YamlSerializer<ValueT
         });
     }
 
-    protected override void Read(IYamlReader stream, ref (T1, T2, T3, T4, T5, T6) value)
+    public override void Read(IYamlReader stream, ref (T1, T2, T3, T4, T5, T6) value)
     {
         var item1 = default(T1);
         var item2 = default(T2);
@@ -179,7 +179,7 @@ public class ValueTupleFormatter<T1, T2, T3, T4, T5, T6> : YamlSerializer<ValueT
 
 public class ValueTupleFormatter<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<ValueTuple<T1, T2, T3, T4, T5, T6, T7>>
 {
-    protected override void Write(IYamlWriter stream, (T1, T2, T3, T4, T5, T6, T7) value, DataStyle style)
+    public override void Write(IYamlWriter stream, (T1, T2, T3, T4, T5, T6, T7) value, DataStyle style)
     {
         stream.WriteSequence(DataStyle.Compact, () =>
         {
@@ -193,7 +193,7 @@ public class ValueTupleFormatter<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<Va
         });
     }
 
-    protected override void Read(IYamlReader stream, ref (T1, T2, T3, T4, T5, T6, T7) value)
+    public override void Read(IYamlReader stream, ref (T1, T2, T3, T4, T5, T6, T7) value)
     {
         var item1 = default(T1);
         var item2 = default(T2);
@@ -219,7 +219,7 @@ public class ValueTupleFormatter<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<Va
 public class ValueTupleFormatter<T1, T2, T3, T4, T5, T6, T7, TRest> : YamlSerializer<ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest>>
     where TRest : struct
 {
-    protected override void Write(IYamlWriter stream, ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest> value, DataStyle style)
+    public override void Write(IYamlWriter stream, ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest> value, DataStyle style)
     {
         stream.WriteSequence(DataStyle.Compact, () =>
         {
@@ -234,7 +234,7 @@ public class ValueTupleFormatter<T1, T2, T3, T4, T5, T6, T7, TRest> : YamlSerial
         });
     }
 
-    protected override void Read(IYamlReader stream, ref ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest> value)
+    public override void Read(IYamlReader stream, ref ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest> value)
     {
         var item1 = default(T1);
         var item2 = default(T2);

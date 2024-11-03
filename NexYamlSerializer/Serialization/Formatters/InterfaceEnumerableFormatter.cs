@@ -9,7 +9,7 @@ namespace NexVYaml.Serialization;
 
 public class InterfaceEnumerableFormatter<T> : YamlSerializer<IEnumerable<T>?>
 {
-    protected override void Write(IYamlWriter stream, IEnumerable<T>? value, DataStyle style)
+    public override void Write(IYamlWriter stream, IEnumerable<T>? value, DataStyle style)
     {
         stream.WriteSequence(style, () =>
         {
@@ -20,7 +20,7 @@ public class InterfaceEnumerableFormatter<T> : YamlSerializer<IEnumerable<T>?>
         });
     }
 
-    protected override void Read(IYamlReader stream, ref IEnumerable<T>? value)
+    public override void Read(IYamlReader stream, ref IEnumerable<T>? value)
     {
         var list = new List<T>();
 

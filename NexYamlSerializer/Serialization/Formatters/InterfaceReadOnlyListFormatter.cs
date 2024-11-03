@@ -10,7 +10,7 @@ namespace NexVYaml.Serialization;
 
 public class InterfaceReadOnlyListFormatter<T> : YamlSerializer<IReadOnlyList<T>?>
 {
-    protected override void Write(IYamlWriter stream, IReadOnlyList<T>? value, DataStyle style)
+    public override void Write(IYamlWriter stream, IReadOnlyList<T>? value, DataStyle style)
     {
         stream.WriteSequence(style, () =>
         {
@@ -21,7 +21,7 @@ public class InterfaceReadOnlyListFormatter<T> : YamlSerializer<IReadOnlyList<T>
         });
     }
 
-    protected override void Read(IYamlReader stream, ref IReadOnlyList<T>? value)
+    public override void Read(IYamlReader stream, ref IReadOnlyList<T>? value)
     {
         var list = new List<T>();
         stream.ReadSequence(() =>

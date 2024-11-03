@@ -213,48 +213,26 @@ public abstract class YamlSerializer
 
 
     protected virtual DataStyle Style { get; } = DataStyle.Any;
-    public abstract void Serialize(IYamlWriter stream, object value, DataStyle style);
-    public abstract void Serialize(IYamlWriter stream, object value);
-    public abstract void Deserialize(IYamlReader parser, ref object? value);
+    public abstract void Write(IYamlWriter stream, object value, DataStyle style);
+    public abstract void Write(IYamlWriter stream, object value);
+    public abstract void Read(IYamlReader parser, ref object? value);
 }
 public abstract class YamlSerializer<T> : YamlSerializer
 {
-    public override void Serialize(IYamlWriter stream, object value)
+    public override void Write(IYamlWriter stream, object value)
     {
-        Serialize(stream, (T)value, Style);
+        Write(stream, (T)value, Style);
     }
-    public override void Serialize(IYamlWriter stream, object value, DataStyle style)
+    public override void Write(IYamlWriter stream, object value, DataStyle style)
     {
-        Serialize(stream, (T)value, style);
+        Write(stream, (T)value, style);
     }
-    public void Serialize(IYamlWriter stream, T value, DataStyle style)
-    {
-        if (value is null)
-        {
-            stream.Write(YamlCodes.Null0);
-        }
-        else
-        {
-            Write(stream, value, style);
-        }
-    }
-    public override void Deserialize(IYamlReader parser, ref object? value)
+    public override void Read(IYamlReader parser, ref object? value)
     {
         var val = (T)value!;
-        Deserialize(parser, ref val);
+        Read(parser, ref val);
         value = val;
     }
-    public void Deserialize(IYamlReader parser, [MaybeNull] ref T value)
-    {
-        if (parser.IsNullScalar())
-        {
-            parser.Move();
-            value = default;
-            return;
-        }
-        Read(parser, ref value);
-    }
-    protected abstract void Read(IYamlReader parser, ref T value);
-
-    protected abstract void Write(IYamlWriter stream, T value, DataStyle style);
+    public abstract void Write(IYamlWriter stream, T value, DataStyle style);
+    public abstract void Read(IYamlReader parser, [MaybeNull] ref T value);
 }

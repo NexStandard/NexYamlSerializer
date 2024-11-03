@@ -11,12 +11,12 @@ public class EmptyFormatter<T> : YamlSerializer<T>
 {
     public static YamlSerializer<T> EmptyS() => new EmptyFormatter<T>();
 
-    protected override void Write(IYamlWriter stream, T value, DataStyle style)
+    public override void Write(IYamlWriter stream, T value, DataStyle style)
     {
-        stream.Write(YamlCodes.Null0);
+        stream.Write([(byte)'!', (byte)'!', (byte)'n', (byte)'u', (byte)'l', (byte)'l']);
     }
 
-    protected override void Read(IYamlReader parser, ref T value)
+    public override void Read(IYamlReader parser, ref T value)
     {
         value = default!;
     }

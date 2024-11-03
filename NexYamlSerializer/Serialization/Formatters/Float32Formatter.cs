@@ -11,12 +11,12 @@ public class Float32Formatter : YamlSerializer<float>
 {
     public static readonly Float32Formatter Instance = new();
 
-    protected override void Write(IYamlWriter stream, float value, DataStyle style)
+    public override void Write(IYamlWriter stream, float value, DataStyle style)
     {
         stream.Write(value,style);
     }
 
-    protected override void Read(IYamlReader parser, ref float value)
+    public override void Read(IYamlReader parser, ref float value)
     {
         if(parser.TryGetScalarAsSpan(out var span))
         {

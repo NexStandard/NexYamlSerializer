@@ -7,7 +7,7 @@ namespace NexVYaml.Serialization;
 
 public class NullableFormatter<T> : YamlSerializer<T?> where T : struct
 {
-    protected override void Write(IYamlWriter stream, T? value, DataStyle style)
+    public override void Write(IYamlWriter stream, T? value, DataStyle style)
     {
         if (value is null)
         {
@@ -19,7 +19,7 @@ public class NullableFormatter<T> : YamlSerializer<T?> where T : struct
         }
     }
 
-    protected override void Read(IYamlReader parser, ref T? value)
+    public override void Read(IYamlReader parser, ref T? value)
     {
         var val = default(T);
         parser.Read(ref val);
@@ -30,11 +30,11 @@ public sealed class StaticNullableFormatter<T>(YamlSerializer<T> underlyingForma
 {
     readonly YamlSerializer<T> underlyingSerializer = underlyingFormatter;
 
-    protected override void Write(IYamlWriter stream, T? value, DataStyle style)
+    public override void Write(IYamlWriter stream, T? value, DataStyle style)
     {
         if (value.HasValue)
         {
-            underlyingSerializer.Serialize(stream, value.Value, style);
+            underlyingSerializer.Write(stream, value.Value, style);
         }
         else
         {
@@ -42,7 +42,7 @@ public sealed class StaticNullableFormatter<T>(YamlSerializer<T> underlyingForma
         }
     }
 
-    protected override void Read(IYamlReader parser, ref T? value)
+    public override void Read(IYamlReader parser, ref T? value)
     {
         var val = default(T);
         parser.Read(ref val);
