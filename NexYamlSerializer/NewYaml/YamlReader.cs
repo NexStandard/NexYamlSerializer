@@ -45,6 +45,12 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
 
     public void Read<T>(ref T? value)
     {
+        if (parser.IsNullScalar())
+        {
+            value = default;
+            Move();
+            return;
+        }
         if (typeof(T).IsArray)
         {
             var t = typeof(T).GetElementType()!;
@@ -52,7 +58,7 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
             var arrayFormatterType = typeof(ArrayFormatter<>).MakeGenericType(t);
             var arrayFormatter = (YamlSerializer)Activator.CreateInstance(arrayFormatterType)!;
 
-            arrayFormatter.Deserialize(this, ref val);
+            arrayFormatter.Read(this, ref val);
             value = (T)val!;
             return;
         }
@@ -62,7 +68,7 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
             var genericFilledFormatter = NullableFormatter.MakeGenericType(underlyingType);
             // TODO : Nullable makes sense?
             var f = (YamlSerializer<T?>?)Activator.CreateInstance(genericFilledFormatter)!;
-            f.Deserialize(this, ref value);
+            f.Read(this, ref value);
             return;
         }
         else if (type.IsInterface || type.IsAbstract || type.IsGenericType)
@@ -105,12 +111,12 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
                 return;
             }
             var valueObject = (object)value;
-            formatter.Deserialize(this, ref valueObject);
+            formatter.Read(this, ref valueObject);
             value = (T?)valueObject;
         }
         else
         {
-            Resolver.GetFormatter<T>().Deserialize(this, ref value!);
+            Resolver.GetFormatter<T>().Read(this, ref value!);
         }
     }
     void Read<T>(YamlSerializer<T> innerFormatter, ref YamlParser parser, ref T value)
@@ -123,7 +129,7 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
 
         var withAnchor = parser.TryGetCurrentAnchor(out var anchor);
 
-        innerFormatter.Deserialize(this, ref value);
+        innerFormatter.Read(this, ref value);
 
         if (withAnchor)
         {
