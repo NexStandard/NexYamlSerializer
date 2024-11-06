@@ -98,9 +98,9 @@ internal class BlockSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
         }
     }
 
-    public void EndScalar(Span<byte> output, ref int offset)
+    public void EndScalar()
     {
-        output[offset++] = YamlCodes.Lf;
+        emitter.WriteRaw(YamlCodes.Lf);
         emitter.currentElementCount++;
     }
 }

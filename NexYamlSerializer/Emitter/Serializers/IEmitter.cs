@@ -10,7 +10,7 @@ public interface IEmitter
     void End();
     void Begin();
     void BeginScalar(Span<byte> output, ref int offset);
-    void EndScalar(Span<byte> output, ref int offset);
+    void EndScalar();
 }
 
 public static class IEmitterExtensions

@@ -83,10 +83,9 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
         }
     }
 
-    public void EndScalar(Span<byte> output, ref int offset)
+    public void EndScalar()
     {
-        EmitCodes.MappingKeyFooter.CopyTo(output[offset..]);
-        offset += EmitCodes.MappingKeyFooter.Length;
+        emitter.WriteRaw(EmitCodes.MappingKeyFooter);
         emitter.Current = emitter.Map(EmitState.BlockMappingValue);
     }
 

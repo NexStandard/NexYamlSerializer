@@ -116,7 +116,7 @@ internal class FlowSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
         emitter.Writer.Advance(offset);
     }
 
-    public void EndScalar(Span<byte> output, ref int offset)
+    public void EndScalar()
     {
         emitter.currentElementCount++;
     }

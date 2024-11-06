@@ -136,10 +136,9 @@ internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
         emitter.Writer.Advance(offset);
     }
 
-    public void EndScalar(Span<byte> output, ref int offset)
+    public void EndScalar()
     {
-        EmitCodes.MappingKeyFooter.CopyTo(output[offset..]);
-        offset += EmitCodes.MappingKeyFooter.Length;
+        emitter.WriteRaw(EmitCodes.MappingKeyFooter);
         emitter.Current = emitter.Map(EmitState.FlowMappingValue);
     }
 }

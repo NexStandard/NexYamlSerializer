@@ -22,7 +22,7 @@ internal class FlowMapValueSerializer(UTF8Stream emitter) : IEmitter
         throw new NotImplementedException();
     }
 
-    public void EndScalar(Span<byte> output, ref int offset)
+    public void EndScalar()
     {
         emitter.Current = emitter.Map(EmitState.FlowMappingKey);
         emitter.currentElementCount++;

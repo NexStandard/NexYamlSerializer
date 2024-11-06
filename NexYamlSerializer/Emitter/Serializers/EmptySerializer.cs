@@ -19,7 +19,7 @@ internal class EmptySerializer : IEmitter
     {
     }
 
-    public void EndScalar(Span<byte> output, ref int offset)
+    public void EndScalar()
     {
     }
 }

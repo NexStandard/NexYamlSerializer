@@ -26,9 +26,9 @@ internal class BlockMapValueSerializer(UTF8Stream emitter) : IEmitter
         // Do nothing
     }
 
-    public void EndScalar(Span<byte> output, ref int offset)
+    public void EndScalar()
     {
-        output[offset++] = YamlCodes.Lf;
+        emitter.WriteRaw(YamlCodes.Lf);
         emitter.Current = emitter.Map(EmitState.BlockMappingKey);
         emitter.currentElementCount++;
     }
