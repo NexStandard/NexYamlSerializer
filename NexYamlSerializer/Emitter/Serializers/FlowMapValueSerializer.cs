@@ -12,7 +12,7 @@ internal class FlowMapValueSerializer(UTF8Stream emitter) : IEmitter
         throw new InvalidOperationException($"Can't start a {State} as Mapping");
     }
 
-    public void BeginScalar(Span<byte> output, ref int offset)
+    public void BeginScalar(Span<byte> output)
     {
         // Do Nothing
     }

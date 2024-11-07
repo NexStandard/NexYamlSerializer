@@ -167,9 +167,10 @@ public class YamlWriter : IYamlWriter
             var maxByteCount = StringEncoding.Utf8.GetMaxByteCount(scalarChars.Length);
             var offset = 0;
             var output = stream.Writer.GetSpan(stream.CalculateMaxScalarBufferLength(maxByteCount));
-            stream.BeginScalar(output, ref offset);
-            offset += StringEncoding.Utf8.GetBytes(scalarChars, output[offset..]);
-            stream.EndScalar(output, ref offset);
+            
+            stream.BeginScalar(output);
+            StringEncoding.Utf8.GetBytes(scalarChars, stream.Writer);
+            stream.EndScalar();
         }
     }
     public void Write(char value, DataStyle style = DataStyle.Any)

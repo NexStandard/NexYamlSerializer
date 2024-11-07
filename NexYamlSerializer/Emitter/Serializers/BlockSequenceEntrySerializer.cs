@@ -2,8 +2,10 @@
 using NexVYaml.Emitter;
 using NexYaml.Core;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace NexYamlSerializer.Emitter.Serializers;
 internal class BlockSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
@@ -32,33 +34,32 @@ internal class BlockSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
         emitter.Next = emitter.Map(State);
     }
 
-    public void BeginScalar(Span<byte> output, ref int offset)
+    public void BeginScalar(Span<byte> output)
     {
         // first nested element
         if (emitter.IsFirstElement)
         {
-            emitter.Writer.Advance(offset);
             switch (emitter.Previous.State)
             {
                 case EmitState.BlockSequenceEntry:
                     emitter.IndentationManager.IncreaseIndent();
-                    output[offset++] = YamlCodes.Lf;
+                    emitter.Writer.Write([YamlCodes.Lf]);
                     break;
                 case EmitState.BlockMappingValue:
-                    output[offset++] = YamlCodes.Lf;
+                    emitter.Writer.Write([YamlCodes.Lf]);
                     break;
             }
         }
-        emitter.WriteIndent(output, ref offset);
-        EmitCodes.BlockSequenceEntryHeader.CopyTo(output[offset..]);
-        offset += EmitCodes.BlockSequenceEntryHeader.Length;
+
+        emitter.WriteIndent();
+        emitter.WriteRaw(EmitCodes.BlockSequenceEntryHeader);
 
         // Write tag
         if (emitter.tagStack.TryPop(out var tag))
         {
-            offset += StringEncoding.Utf8.GetBytes(tag, output[offset..]);
-            output[offset++] = YamlCodes.Lf;
-            emitter.WriteIndent(output, ref offset);
+            emitter.WriteRaw(tag);
+            emitter.WriteRaw(YamlCodes.Lf);
+            emitter.WriteIndent();
         }
     }
 

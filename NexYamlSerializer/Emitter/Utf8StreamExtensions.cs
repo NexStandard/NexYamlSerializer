@@ -1,4 +1,6 @@
 ﻿using NexVYaml.Emitter;
+using NexVYaml.Parser;
+using NexYaml.Core;
 using NexYamlSerializer.Emitter.Serializers;
 using System;
 using System.Collections.Generic;
@@ -17,5 +19,9 @@ public static class Utf8StreamExtensions
     public static IEmitter Map(this IUTF8Stream stream, EmitState state)
     {
         return stream.EmitterFactory.Map(state);
+    }
+    public static void WriteRaw(this IUTF8Stream stream, string? value)
+    {
+        StringEncoding.Utf8.GetBytes(value, stream.Writer);
     }
 }

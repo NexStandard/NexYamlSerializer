@@ -16,7 +16,7 @@ internal class BlockMapValueSerializer(UTF8Stream emitter) : IEmitter
         throw new NotImplementedException();
     }
 
-    public void BeginScalar(Span<byte> output, ref int offset)
+    public void BeginScalar(Span<byte> output)
     {
         // Do nothing
     }

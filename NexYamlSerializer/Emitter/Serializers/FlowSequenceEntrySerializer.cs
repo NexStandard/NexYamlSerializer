@@ -2,8 +2,10 @@
 using NexVYaml.Emitter;
 using NexYaml.Core;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace NexYamlSerializer.Emitter.Serializers;
 internal class FlowSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
@@ -18,39 +20,27 @@ internal class FlowSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
                 throw new YamlException("To start block-mapping in the mapping key is not supported.");
             case EmitState.BlockSequenceEntry:
                 {
-                    var output = emitter.Writer.GetSpan((emitter.CurrentIndentLevel * UTF8Stream.IndentWidth) + EmitCodes.BlockSequenceEntryHeader.Length + 1);
-                    var offset = 0;
-                    emitter.WriteIndent(output, ref offset);
-                    EmitCodes.BlockSequenceEntryHeader.CopyTo(output[offset..]);
-                    offset += EmitCodes.BlockSequenceEntryHeader.Length;
-                    output[offset++] = YamlCodes.FlowSequenceStart;
-                    emitter.Writer.Advance(offset);
+                    emitter.WriteIndent();
+                    emitter.WriteRaw(EmitCodes.BlockSequenceEntryHeader);
+                    emitter.WriteRaw(YamlCodes.FlowSequenceStart);
                     break;
                 }
             case EmitState.FlowSequenceEntry:
                 {
-                    var output = emitter.Writer.GetSpan(EmitCodes.FlowSequenceSeparator.Length + 1);
-                    var offset = 0;
                     if (emitter.currentElementCount > 0)
                     {
-                        EmitCodes.FlowSequenceSeparator.CopyTo(output);
-                        offset += EmitCodes.FlowSequenceSeparator.Length;
+                        emitter.WriteRaw(EmitCodes.FlowSequenceSeparator);
                     }
-                    output[offset++] = YamlCodes.FlowSequenceStart;
-                    emitter.Writer.Advance(offset);
+                    emitter.WriteRaw(YamlCodes.FlowSequenceStart);
                     break;
                 }
             case EmitState.BlockMappingValue:
                 {
-                    var output = emitter.Writer.GetSpan(EmitCodes.FlowSequenceSeparator.Length + 1);
-                    var offset = 0;
                     if (emitter.currentElementCount > 0)
                     {
-                        EmitCodes.FlowSequenceSeparator.CopyTo(output);
-                        offset += EmitCodes.FlowSequenceSeparator.Length;
+                        emitter.WriteRaw(EmitCodes.FlowSequenceSeparator);
                     }
-                    output[offset++] = YamlCodes.FlowSequenceStart;
-                    emitter.Writer.Advance(offset);
+                    emitter.WriteRaw(YamlCodes.FlowSequenceStart);
                 }
                 break;
             default:
@@ -60,20 +50,19 @@ internal class FlowSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
         emitter.Next = emitter.Map(State);
     }
 
-    public void BeginScalar(Span<byte> output, ref int offset)
+    public void BeginScalar(Span<byte> output)
     {
         if (emitter.IsFirstElement)
         {
             if (emitter.tagStack.TryPop(out var tag))
             {
-                offset += StringEncoding.Utf8.GetBytes(tag, output[offset..]);
-                output[offset++] = YamlCodes.Space;
+                StringEncoding.Utf8.GetBytes(tag.AsSpan(), emitter.Writer);
+                emitter.Writer.Write([ YamlCodes.Space ]);
             }
         }
         else
         {
-            EmitCodes.FlowSequenceSeparator.CopyTo(output[offset..]);
-            offset += EmitCodes.FlowSequenceSeparator.Length;
+            emitter.Writer.Write(EmitCodes.FlowSequenceSeparator);
         }
     }
 
@@ -102,18 +91,11 @@ internal class FlowSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
                 break;
         }
 
-        var suffixLength = 1;
-        if (needsLineBreak) 
-            suffixLength++;
-
-        var offset = 0;
-        var output = emitter.Writer.GetSpan(suffixLength);
-        output[offset++] = YamlCodes.FlowSequenceEnd;
+        emitter.WriteRaw(YamlCodes.FlowSequenceEnd);
         if (needsLineBreak)
         {
-            output[offset++] = YamlCodes.Lf;
+            emitter.WriteRaw(YamlCodes.Lf);
         }
-        emitter.Writer.Advance(offset);
     }
 
     public void EndScalar()

@@ -77,28 +77,50 @@ sealed class UTF8Stream : IUTF8Stream
         tagStack.Dispose();
     }
 
-    public void BeginScalar(Span<byte> output, ref int offset)
+    public void BeginScalar(Span<byte> output)
     {
-        StateStack.Current.BeginScalar(output, ref offset);
+        StateStack.Current.BeginScalar(output);
     }
 
-    public void EndScalar(Span<byte> output, ref int offset)
+    public void EndScalar()
     {
-        StateStack.Current.EndScalar(output, ref offset);
-        Writer.Advance(offset);
+
+        StateStack.Current.EndScalar();
     }
 
     public void WriteScalar(ReadOnlySpan<byte> value)
     {
-        var offset = 0;
+        
         var output = Writer.GetSpan(CalculateMaxScalarBufferLength(value.Length));
 
-        BeginScalar(output, ref offset);
-        value.CopyTo(output[offset..]);
-        offset += value.Length;
-        EndScalar(output, ref offset);
+        BeginScalar(output);
+        Writer.Write(value);
+        EndScalar();
     }
+    public void WriteIndent(int forceWidth= -1)
+    {
+        int length;
+        if (forceWidth > -1)
+        {
+            if (forceWidth <= 0)
+                return;
+            length = forceWidth;
+        }
+        else if (CurrentIndentLevel > 0)
+        {
+            length = CurrentIndentLevel * IndentWidth;
+        }
+        else
+        {
+            return;
+        }
 
+        if (length > whiteSpaces.Length)
+        {
+            whiteSpaces = Enumerable.Repeat(YamlCodes.Space, length * 2).ToArray();
+        }
+        Writer.Write(whiteSpaces.AsSpan(0, length));
+    }
     public void WriteIndent(Span<byte> output, ref int offset, int forceWidth = -1)
     {
         int length;
@@ -128,17 +150,11 @@ sealed class UTF8Stream : IUTF8Stream
 
     public void WriteRaw(ReadOnlySpan<byte> value)
     {
-        var length = value.Length;
-        var output = Writer.GetSpan(length);
-
-        // Copy `value` to the start of `output`
-        value.CopyTo(output);
-        // Advance the writer by the length of the data written
-        Writer.Advance(length);
+        Writer.Write(value);
     }
     internal void WriteRaw(byte value)
     {
-        WriteRaw([value]);
+        Writer.Write([value]);
     }
 
     internal void WriteRaw(ReadOnlySpan<byte> value, bool indent, bool lineBreak)
@@ -151,7 +167,7 @@ sealed class UTF8Stream : IUTF8Stream
         var output = Writer.GetSpan(length);
         if (indent)
         {
-            WriteIndent(output, ref offset);
+            WriteIndent();
         }
         value.CopyTo(output[offset..]);
         if (lineBreak)
@@ -170,7 +186,7 @@ sealed class UTF8Stream : IUTF8Stream
         var output = Writer.GetSpan(length);
         if (indent)
         {
-            WriteIndent(output, ref offset);
+            WriteIndent();
         }
 
         value1.CopyTo(output[offset..]);

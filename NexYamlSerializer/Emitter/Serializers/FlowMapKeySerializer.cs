@@ -2,8 +2,10 @@
 using NexVYaml.Emitter;
 using NexYaml.Core;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace NexYamlSerializer.Emitter.Serializers;
 internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
@@ -15,29 +17,17 @@ internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
         var current = emitter.Current.State;
         if (current is EmitState.BlockSequenceEntry)
         {
-            var output = emitter.Writer.GetSpan((emitter.CurrentIndentLevel * UTF8Stream.IndentWidth) + EmitCodes.BlockSequenceEntryHeader.Length + EmitCodes.FlowMappingStart.Length);
-            var offset = 0;
-            emitter.WriteIndent(output, ref offset);
-
-            EmitCodes.BlockSequenceEntryHeader.CopyTo(output[offset..]);
-            offset += EmitCodes.BlockSequenceEntryHeader.Length;
-
-            EmitCodes.FlowMappingStart.CopyTo(output[offset..]);
-            offset += EmitCodes.FlowMappingStart.Length;
-            emitter.Writer.Advance(offset);
+            emitter.WriteIndent();
+            emitter.WriteRaw(EmitCodes.BlockSequenceEntryHeader);
+            emitter.WriteRaw(EmitCodes.FlowMappingStart);
             emitter.WriteBlockSequenceEntryHeader();
         }
         else if (current is EmitState.FlowSequenceEntry)
         {
-            var output = emitter.Writer.GetSpan(EmitCodes.FlowSequenceSeparator.Length + EmitCodes.FlowMappingStart.Length);
-            var offset = 0;
-
             if (emitter.currentElementCount > 0)
             {
-                EmitCodes.FlowSequenceSeparator.CopyTo(output);
-                offset += EmitCodes.FlowSequenceSeparator.Length;
+                emitter.WriteRaw(EmitCodes.FlowSequenceSeparator);
             }
-            emitter.Writer.Advance(offset);
         }
         else if (current is EmitState.BlockMappingKey)
         {
@@ -46,24 +36,21 @@ internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
         emitter.Next = emitter.Map(State);
     }
 
-    public void BeginScalar(Span<byte> output, ref int offset)
+    public void BeginScalar(Span<byte> output)
     {
-
         if (emitter.IsFirstElement)
         {
             if (emitter.tagStack.TryPop(out var tag))
             {
-                offset += StringEncoding.Utf8.GetBytes(tag, output[offset..]);
-                output[offset++] = YamlCodes.Space;
-                emitter.WriteIndent(output, ref offset);
+                emitter.WriteRaw(tag);
+                emitter.WriteRaw(EmitCodes.Space);
+                emitter.WriteIndent();
             }
-            EmitCodes.FlowMappingStart.CopyTo(output[offset..]);
-            offset += EmitCodes.FlowMappingStart.Length;
+            emitter.WriteRaw(EmitCodes.FlowMappingStart);
         }
         if (!emitter.IsFirstElement)
         {
-            EmitCodes.FlowSequenceSeparator.CopyTo(output[offset..]);
-            offset += EmitCodes.FlowSequenceSeparator.Length;
+            emitter.WriteRaw(EmitCodes.FlowSequenceSeparator);
         }
     }
 
@@ -77,16 +64,18 @@ internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
         bool writeFlowMapEnd = true;
         if (isEmptyMapping)
         {
-            var lineBreak = emitter.Current.State is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
             if (emitter.tagStack.TryPop(out var tag))
             {
-                var tagBytes = StringEncoding.Utf8.GetBytes(tag + " "); // TODO:
-                emitter.WriteRaw(tagBytes, EmitCodes.FlowMappingEmpty, false, lineBreak);
+                emitter.WriteRaw(tag);
+                emitter.WriteRaw(" ");
+                emitter.WriteRaw(EmitCodes.FlowMappingEmpty);
+                emitter.WriteRaw(YamlCodes.Lf);
                 writeFlowMapEnd = false;
             }
             else
             {
-                emitter.WriteRaw(EmitCodes.FlowMappingEmpty, false, lineBreak);
+                emitter.WriteRaw(EmitCodes.FlowMappingEmpty);
+                emitter.WriteRaw(YamlCodes.Lf);
                 writeFlowMapEnd = false;
             }
         }
@@ -112,28 +101,16 @@ internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
                 emitter.currentElementCount++;
                 break;
         }
-        var suffixLength = 0;
+
         if(writeFlowMapEnd)
         {
-            suffixLength = EmitCodes.FlowMappingEnd.Length;
+            emitter.WriteRaw(EmitCodes.FlowMappingEnd);
         }
-
-        if (needsLineBreak) 
-            suffixLength++;
-
-        var offset = 0;
-        var output = emitter.Writer.GetSpan(suffixLength);
-        if(writeFlowMapEnd)
-        {
-            EmitCodes.FlowMappingEnd.CopyTo(output[offset..]);
-            offset += EmitCodes.FlowMappingEnd.Length;
-        }
-
+        
         if (needsLineBreak)
         {
-            output[offset++] = YamlCodes.Lf;
+            emitter.WriteRaw(YamlCodes.Lf);
         }
-        emitter.Writer.Advance(offset);
     }
 
     public void EndScalar()

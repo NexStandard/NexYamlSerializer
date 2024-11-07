@@ -9,7 +9,7 @@ public interface IEmitter
     EmitState State { get; }
     void End();
     void Begin();
-    void BeginScalar(Span<byte> output, ref int offset);
+    void BeginScalar(Span<byte> output);
     void EndScalar();
 }
 

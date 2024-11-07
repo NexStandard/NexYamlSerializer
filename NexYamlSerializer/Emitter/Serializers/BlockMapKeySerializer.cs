@@ -1,7 +1,10 @@
 ﻿using NexVYaml;
 using NexVYaml.Emitter;
+using NexVYaml.Parser;
 using NexYaml.Core;
 using System;
+using System.Buffers;
+using System.Text;
 
 namespace NexYamlSerializer.Emitter.Serializers;
 internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
@@ -28,7 +31,7 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
         emitter.Next = emitter.Map(State);
 
     }
-    public void BeginScalar(Span<byte> output, ref int offset)
+    public void BeginScalar(Span<byte> output)
     {
         if (emitter.IsFirstElement)
         {
@@ -37,17 +40,17 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
                 case EmitState.BlockSequenceEntry:
                     {
                         emitter.IndentationManager.IncreaseIndent();
-
+                        
                         // Try write tag
                         if (emitter.tagStack.TryPop(out var tag))
                         {
-                            offset += StringEncoding.Utf8.GetBytes(tag, output[offset..]);
-                            output[offset++] = YamlCodes.Lf;
-                            emitter.WriteIndent(output, ref offset);
+                            emitter.WriteRaw(tag);
+                            emitter.WriteRaw([YamlCodes.Lf]);
+                            emitter.WriteIndent();
                         }
                         else
                         {
-                            emitter.WriteIndent(output, ref offset, UTF8Stream.IndentWidth - 2);
+                            emitter.WriteIndent(UTF8Stream.IndentWidth - 2);
                         }
                         // The first key in block-sequence is like so that: "- key: .."
                         break;
@@ -58,28 +61,28 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
                         // Try write tag
                         if (emitter.tagStack.TryPop(out var tag))
                         {
-                            offset += StringEncoding.Utf8.GetBytes(tag, output[offset..]);
+                            emitter.WriteRaw(tag);
                         }
-                        output[offset++] = YamlCodes.Lf;
-                        emitter.WriteIndent(output, ref offset);
+                        emitter.WriteRaw(YamlCodes.Lf);
+                        emitter.WriteIndent();
                         break;
                     }
                 default:
-                    emitter.WriteIndent(output, ref offset);
+                    emitter.WriteIndent();
                     break;
             }
 
             // Write tag
             if (emitter.tagStack.TryPop(out var tag2))
             {
-                offset += StringEncoding.Utf8.GetBytes(tag2, output[offset..]);
-                output[offset++] = YamlCodes.Lf;
-                emitter.WriteIndent(output, ref offset);
+                emitter.WriteRaw(tag2);
+                emitter.WriteRaw(YamlCodes.Lf);
+                emitter.WriteIndent();
             }
         }
         else
         {
-            emitter.WriteIndent(output, ref offset);
+            emitter.WriteIndent();
         }
     }
 

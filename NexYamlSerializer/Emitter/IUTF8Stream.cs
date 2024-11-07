@@ -15,8 +15,8 @@ public interface IUTF8Stream : IDisposable
     IEmitter Next { set; }
     void Tag(ref string value);
     void WriteScalar(ReadOnlySpan<byte> value);
-    void BeginScalar(Span<byte> output, ref int offset);
-    void EndScalar(Span<byte> output, ref int offset);
+    void BeginScalar(Span<byte> output);
+    void EndScalar();
     int CalculateMaxScalarBufferLength(int length);
     void Reset();
     Span<char> TryRemoveDuplicateLineBreak(Span<char> scalarChars);

@@ -199,6 +199,10 @@ public abstract class YamlSerializer
     /// <returns>A ValueTask representing the asynchronous operation, with the result being an object of type <typeparamref name="T"/> representing the deserialized YAML content.</returns>
     public static async ValueTask<T?> DeserializeAsync<T>(Stream stream, IYamlFormatterResolver? options = null)
     {
+        YamlSerializer<int> x = null;
+        IYamlWriter writer = null;
+        await Task.Run(() => x.Write(writer, 10, DataStyle.Compact));
+
         var byteSequenceBuilder = await StreamHelper.ReadAsSequenceAsync(stream);
         try
         {

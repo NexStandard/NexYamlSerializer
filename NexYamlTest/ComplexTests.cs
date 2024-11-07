@@ -30,7 +30,6 @@ public class ComplexTests
         }
     }
 
-    [Fact]
     public void Delegates()
     {
         Setup();

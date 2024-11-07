@@ -26,7 +26,7 @@ static class StreamHelper
                 return builder;
             }
 
-            var buffer = ArrayPool<byte>.Shared.Rent(65536); // initial 64K
+            var buffer = ArrayPool<byte>.Shared.Rent(256); // initial 64K
             var offset = 0;
             do
             {
