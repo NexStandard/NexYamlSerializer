@@ -40,7 +40,6 @@ internal record DataMemberContext
         return context;
     }
     public DataMemberContextState State { get; private set; }
-    public MemberMode Mode { get; set; }
-    public int Order { get; set; }
-    public bool IsHidden { get; set; }
+    public MemberMode Mode { get; private set; }
+    public int Order { get; private set; }
 }

@@ -18,7 +18,7 @@ internal class HiddenVisibleFieldToSerializer(IMemberSymbolAnalyzer<IFieldSymbol
     public override bool AppliesTo(MemberData<IFieldSymbol> context)
     {
         if(context.DataMemberContext.State == DataMemberContextState.Included)
-            return context.DataMemberContext.IsHidden = context.Symbol.DeclaredAccessibility.IsHiddenVisibleToEditor(context.DataMemberContext);
+            return context.Symbol.DeclaredAccessibility.IsHiddenVisibleToEditor(context.DataMemberContext);
         return false;
     }
 }
