@@ -20,8 +20,6 @@ public readonly struct EmitStringInfo(int lines, bool needsQuotes, bool isReserv
 
 public static class EmitStringAnalyzer
 {
-    [ThreadStatic]
-    static StringBuilder? stringBuilderThreadStatic;
 
     static char[] whiteSpaces =
     [
@@ -91,7 +89,7 @@ public static class EmitStringAnalyzer
             chompHint = '-';
         }
 
-        var stringBuilder = (stringBuilderThreadStatic ??= new StringBuilder(1024)).Clear();
+        var stringBuilder = new StringBuilder();
         stringBuilder.Append('|');
         if (chompHint > 0)
             stringBuilder.Append(chompHint);
@@ -108,146 +106,6 @@ public static class EmitStringAnalyzer
 
         if (chompHint == '-')
             stringBuilder.Append('\n');
-        return stringBuilder;
-    }
-
-    public static StringBuilder BuildQuotedScalar(ReadOnlySpan<char> originalValue, bool doubleQuote = true)
-    {
-        var stringBuilder = GetStringBuilder();
-
-        var quoteChar = doubleQuote ? '"' : '\'';
-        stringBuilder.Append(quoteChar);
-
-        foreach (var ch in originalValue)
-        {
-            switch (ch)
-            {
-                case '"' when doubleQuote:
-                    stringBuilder.Append("\\\"");
-                    break;
-                case '\'' when !doubleQuote:
-                    stringBuilder.Append("\\'");
-                    break;
-                case '\0':
-                    stringBuilder.Append("\\0");
-                    break;
-                case '\x1':
-                    stringBuilder.Append("\\1");
-                    break;
-                case '\x2':
-                    stringBuilder.Append("\\2");
-                    break;
-                case '\x3':
-                    stringBuilder.Append("\\3");
-                    break;
-                case '\x4':
-                    stringBuilder.Append("\\4");
-                    break;
-                case '\x5':
-                    stringBuilder.Append("\\5");
-                    break;
-                case '\x6':
-                    stringBuilder.Append("\\6");
-                    break;
-                case '\x7':
-                    stringBuilder.Append("\\a");
-                    break;
-                case '\x8':
-                    stringBuilder.Append("\\b");
-                    break;
-                case '\x9':
-                    stringBuilder.Append("\\t");
-                    break;
-                case '\xA':
-                    stringBuilder.Append("\\n");
-                    break;
-                case '\xB':
-                    stringBuilder.Append("\\v");
-                    break;
-                case '\xC':
-                    stringBuilder.Append("\\f");
-                    break;
-                case '\xD':
-                    stringBuilder.Append("\\r");
-                    break;
-                case '\xE':
-                    stringBuilder.Append("\\r");
-                    break;
-                case '\x5C':
-                    stringBuilder.Append("\\\\");
-                    break;
-                case '\x85':
-                    stringBuilder.Append("\\N");
-                    break;
-                case '\xA0':
-                    stringBuilder.Append("\\_");
-                    break;
-                case '\x2028':
-                    stringBuilder.Append("\\L");
-                    break;
-                case '\x2029':
-                    stringBuilder.Append("\\P");
-                    break;
-                case '\xF':
-                    stringBuilder.Append("\\u000f");
-                    break;
-                case '\x10':
-                    stringBuilder.Append("\\u0010");
-                    break;
-                case '\x11':
-                    stringBuilder.Append("\\u0011");
-                    break;
-                case '\x12':
-                    stringBuilder.Append("\\u0012");
-                    break;
-                case '\x13':
-                    stringBuilder.Append("\\u0013");
-                    break;
-                case '\x14':
-                    stringBuilder.Append("\\u0014");
-                    break;
-                case '\x15':
-                    stringBuilder.Append("\\u0015");
-                    break;
-                case '\x16':
-                    stringBuilder.Append("\\u0016");
-                    break;
-                case '\x17':
-                    stringBuilder.Append("\\u0017");
-                    break;
-                case '\x18':
-                    stringBuilder.Append("\\u0018");
-                    break;
-                case '\x19':
-                    stringBuilder.Append("\\u0019");
-                    break;
-                case '\x1A':
-                    stringBuilder.Append("\\u001a");
-                    break;
-                case '\x1B':
-                    stringBuilder.Append("\\u001b");
-                    break;
-                case '\x1C':
-                    stringBuilder.Append("\\u001c");
-                    break;
-                case '\x1D':
-                    stringBuilder.Append("\\u001d");
-                    break;
-                case '\x1E':
-                    stringBuilder.Append("\\u001e");
-                    break;
-                case '\x1F':
-                    stringBuilder.Append("\\u001f");
-                    break;
-                case '\x7F':
-                    stringBuilder.Append("\\u007F");
-                    break;
-                default:
-                    stringBuilder.Append(ch);
-                    break;
-            }
-        }
-        stringBuilder.Append(quoteChar);
         return stringBuilder;
     }
 
@@ -270,9 +128,6 @@ public static class EmitStringAnalyzer
         }
         return false;
     }
-
-    static StringBuilder GetStringBuilder() =>
-        (stringBuilderThreadStatic ??= new StringBuilder(128)).Clear();
 
     static void AppendWhiteSpace(StringBuilder stringBuilder, int length)
     {

@@ -35,7 +35,7 @@ public abstract class YamlSerializer
     /// <param name="value">The value to serialize.</param>
     /// <param name="options">The serializer options (optional).</param>
     /// <returns>A read-only memory containing the serialized value.</returns>
-    public static ReadOnlyMemory<byte> Serialize<T>(T value, DataStyle style = DataStyle.Any, IYamlFormatterResolver? options = null)
+    public static ReadOnlyMemory<char> Serialize<T>(T value, DataStyle style = DataStyle.Any, IYamlFormatterResolver? options = null)
     {
         options ??= IYamlFormatterResolver.Default;
 
@@ -44,33 +44,20 @@ public abstract class YamlSerializer
         try
         {
             stream.Write(value,style);
-            return emitter.Writer.WrittenMemory;
+            return emitter.GetBytes();
         }
         finally
         {
             emitter.Dispose();
         }
     }
-    public static ReadOnlyMemory<byte> Serialize<T>(T? value, DataStyle style = DataStyle.Any, IYamlFormatterResolver? options = null)
+    public static ReadOnlyMemory<char> Serialize<T>(T? value, DataStyle style = DataStyle.Any, IYamlFormatterResolver? options = null)
         where T : struct
     {
         if (value == null)
-            return new ReadOnlyMemory<byte>();
+            return new ReadOnlyMemory<char>();
         else
             return Serialize(value.Value, style, options);
-    }
-
-    /// <summary>
-    /// Serializes the specified object of type <typeparamref name="T"/> or any derived class/interface of type <typeparamref name="T"/> to YAML format 
-    /// and writes it to the given <paramref name="stream"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to be serialized, or any type derived from <typeparamref name="T"/>.</typeparam>
-    /// <param name="value">The object to be serialized.</param>
-    /// <param name="stream">The stream to which the YAML representation will be written.</param>
-    /// <param name="options">Optional settings for customizing the YAML serialization process.</param>
-    public static void Serialize<T>(T value, Stream stream, DataStyle style = DataStyle.Any, IYamlFormatterResolver? options = null)
-    {
-        stream.Write(Serialize(value, style, options).Span);
     }
 
     /// <summary>
@@ -99,20 +86,6 @@ public abstract class YamlSerializer
     }
 
     /// <summary>
-    /// Asynchronously serializes the specified object of type <typeparamref name="T"/> or any derived class/interface of type <typeparamref name="T"/> to YAML format 
-    /// and writes it to the given <paramref name="stream"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to be serialized, or any type derived from <typeparamref name="T"/>.</typeparam>
-    /// <param name="value">The object to be serialized.</param>
-    /// <param name="stream">The stream to which the YAML representation will be written asynchronously.</param>
-    /// <param name="options">Optional settings for customizing the YAML serialization process.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    public async static Task SerializeAsync<T>(T value, Stream stream, DataStyle style = DataStyle.Any, IYamlFormatterResolver? options = null)
-    {
-        await stream.WriteAsync(Serialize(value, style, options));
-    }
-
-    /// <summary>
     /// Serializes the specified object of type <typeparamref name="T"/> or any derived class/interface of type <typeparamref name="T"/> to YAML format 
     /// and returns the serialized content as a UTF-8 encoded string.
     /// </summary>
@@ -123,7 +96,12 @@ public abstract class YamlSerializer
     public static string SerializeToString<T>(T value, DataStyle style = DataStyle.Any, IYamlFormatterResolver? options = null)
     {
         var utf8Bytes = Serialize(value, style, options);
-        return StringEncoding.Utf8.GetString(utf8Bytes.Span);
+        return utf8Bytes.ToString();
+    }
+
+    public static T? Deserialize<T>(ReadOnlyMemory<char> memory, IYamlFormatterResolver? options = null)
+    {
+        return Deserialize<T>(StringEncoding.Utf8.GetBytes(memory.Span.ToArray()), options);
     }
 
     /// <summary>
@@ -199,10 +177,6 @@ public abstract class YamlSerializer
     /// <returns>A ValueTask representing the asynchronous operation, with the result being an object of type <typeparamref name="T"/> representing the deserialized YAML content.</returns>
     public static async ValueTask<T?> DeserializeAsync<T>(Stream stream, IYamlFormatterResolver? options = null)
     {
-        YamlSerializer<int> x = null;
-        IYamlWriter writer = null;
-        await Task.Run(() => x.Write(writer, 10, DataStyle.Compact));
-
         var byteSequenceBuilder = await StreamHelper.ReadAsSequenceAsync(stream);
         try
         {

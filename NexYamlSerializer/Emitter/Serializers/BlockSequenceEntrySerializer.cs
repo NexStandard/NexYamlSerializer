@@ -34,7 +34,7 @@ internal class BlockSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
         emitter.Next = emitter.Map(State);
     }
 
-    public void BeginScalar(Span<byte> output)
+    public void WriteScalar(ReadOnlySpan<char> output)
     {
         // first nested element
         if (emitter.IsFirstElement)
@@ -43,24 +43,28 @@ internal class BlockSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
             {
                 case EmitState.BlockSequenceEntry:
                     emitter.IndentationManager.IncreaseIndent();
-                    emitter.Writer.Write([YamlCodes.Lf]);
+                    emitter.WriteNewLine();
                     break;
                 case EmitState.BlockMappingValue:
-                    emitter.Writer.Write([YamlCodes.Lf]);
+                    emitter.WriteNewLine();
                     break;
             }
         }
 
-        emitter.WriteIndent();
-        emitter.WriteRaw(EmitCodes.BlockSequenceEntryHeader);
+        emitter.WriteIndent()
+            .WriteSequenceSeparator();
 
         // Write tag
         if (emitter.tagStack.TryPop(out var tag))
         {
-            emitter.WriteRaw(tag);
-            emitter.WriteRaw(YamlCodes.Lf);
-            emitter.WriteIndent();
+            emitter.WriteRaw(tag)
+                .WriteNewLine()
+                .WriteIndent();
         }
+        emitter.WriteRaw(output)
+            .WriteNewLine();
+
+        emitter.currentElementCount++;
     }
 
     public void End()
@@ -71,8 +75,12 @@ internal class BlockSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
         // Empty sequence
         if (isEmptySequence)
         {
+            emitter.WriteEmptyFlowSequence();
             var lineBreak = emitter.Current.State is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
-            emitter.WriteRaw(EmitCodes.FlowSequenceEmpty, false, lineBreak);
+            if (lineBreak)
+            {
+                emitter.WriteNewLine();
+            }
         }
 
         switch (emitter.Current.State)
@@ -97,11 +105,5 @@ internal class BlockSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
                 emitter.currentElementCount++;
                 break;
         }
-    }
-
-    public void EndScalar()
-    {
-        emitter.WriteRaw(YamlCodes.Lf);
-        emitter.currentElementCount++;
     }
 }

@@ -8,16 +8,18 @@ namespace NexVYaml.Emitter;
 public interface IUTF8Stream : IDisposable
 {
     int CurrentIndentLevel { get; }
-    ArrayBufferWriter<byte> Writer { get; }
     IEmitterFactory EmitterFactory { get; }
     IEmitter Current { get; set; }
     IEmitter Previous { get; }
     IEmitter Next { set; }
-    void Tag(ref string value);
-    void WriteScalar(ReadOnlySpan<byte> value);
-    void BeginScalar(Span<byte> output);
-    void EndScalar();
-    int CalculateMaxScalarBufferLength(int length);
+    IUTF8Stream Tag(ref string value);
+    IUTF8Stream WriteScalar(ReadOnlySpan<byte> value);
+    IUTF8Stream WriteScalar(ReadOnlySpan<char> value);
+    IUTF8Stream WriteScalar(string value);
+    IUTF8Stream WriteRaw(ReadOnlySpan<byte> value);
+    IUTF8Stream WriteRaw(ReadOnlySpan<char> value);
+    IUTF8Stream WriteRaw(string value);
+    IUTF8Stream WriteIndent(int forceWidth = -1);
     void Reset();
     Span<char> TryRemoveDuplicateLineBreak(Span<char> scalarChars);
 }

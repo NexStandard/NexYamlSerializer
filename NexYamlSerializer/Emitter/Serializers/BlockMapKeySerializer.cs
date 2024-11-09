@@ -31,7 +31,7 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
         emitter.Next = emitter.Map(State);
 
     }
-    public void BeginScalar(Span<byte> output)
+    public void WriteScalar(ReadOnlySpan<char> output)
     {
         if (emitter.IsFirstElement)
         {
@@ -45,7 +45,7 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
                         if (emitter.tagStack.TryPop(out var tag))
                         {
                             emitter.WriteRaw(tag);
-                            emitter.WriteRaw([YamlCodes.Lf]);
+                            emitter.WriteNewLine();
                             emitter.WriteIndent();
                         }
                         else
@@ -63,7 +63,7 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
                         {
                             emitter.WriteRaw(tag);
                         }
-                        emitter.WriteRaw(YamlCodes.Lf);
+                        emitter.WriteNewLine();
                         emitter.WriteIndent();
                         break;
                     }
@@ -76,7 +76,7 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
             if (emitter.tagStack.TryPop(out var tag2))
             {
                 emitter.WriteRaw(tag2);
-                emitter.WriteRaw(YamlCodes.Lf);
+                emitter.WriteNewLine();
                 emitter.WriteIndent();
             }
         }
@@ -84,11 +84,8 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
         {
             emitter.WriteIndent();
         }
-    }
-
-    public void EndScalar()
-    {
-        emitter.WriteRaw(EmitCodes.MappingKeyFooter);
+        emitter.WriteRaw(output);
+        emitter.WriteMappingKeyFooter();
         emitter.Current = emitter.Map(EmitState.BlockMappingValue);
     }
 
@@ -102,12 +99,13 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
             var lineBreak = emitter.Current.State is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
             if (emitter.tagStack.TryPop(out var tag))
             {
-                var tagBytes = StringEncoding.Utf8.GetBytes(tag + " "); // TODO:
-                emitter.WriteRaw(tagBytes, EmitCodes.FlowMappingEmpty, false, lineBreak);
+                emitter.WriteRaw(tag);
+                emitter.WriteRaw(" ");
             }
-            else
+            emitter.WriteEmptyFlowMapping();
+            if (lineBreak)
             {
-                emitter.WriteRaw(EmitCodes.FlowMappingEmpty, false, lineBreak);
+                emitter.WriteNewLine();
             }
         }
 

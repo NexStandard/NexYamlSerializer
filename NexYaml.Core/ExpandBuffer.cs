@@ -1,3 +1,4 @@
+using Silk.NET.OpenXR;
 using System.Buffers;
 
 namespace NexYaml.Core;
@@ -7,7 +8,7 @@ public sealed class ExpandBuffer<T>(int capacity) : IDisposable
     const int MinimumGrow = 4;
     const int GrowFactor = 200;
 
-    T[] buffer = ArrayPool<T>.Shared.Rent(capacity);
+    T[] buffer = new T[capacity];
 
     public ref T this[int index]
     {
@@ -32,7 +33,6 @@ public sealed class ExpandBuffer<T>(int capacity) : IDisposable
     {
         if (Length < 0) 
             return;
-        ArrayPool<T>.Shared.Return(buffer);
         Length = -1;
     }
 
@@ -83,9 +83,8 @@ public sealed class ExpandBuffer<T>(int capacity) : IDisposable
         if (buffer.Length >= newCapacity) 
             return;
 
-        var newBuffer = ArrayPool<T>.Shared.Rent(newCapacity);
+        var newBuffer = new T[newCapacity];
         Array.Copy(buffer, 0, newBuffer, 0, Length);
-        ArrayPool<T>.Shared.Return(buffer);
         buffer = newBuffer;
     }
 

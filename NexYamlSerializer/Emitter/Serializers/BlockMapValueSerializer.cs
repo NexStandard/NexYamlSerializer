@@ -16,20 +16,16 @@ internal class BlockMapValueSerializer(UTF8Stream emitter) : IEmitter
         throw new NotImplementedException();
     }
 
-    public void BeginScalar(Span<byte> output)
+    public void WriteScalar(ReadOnlySpan<char> output)
     {
-        // Do nothing
+        emitter.WriteRaw(output);
+        emitter.WriteNewLine();
+        emitter.Current = emitter.Map(EmitState.BlockMappingKey);
+        emitter.currentElementCount++;
     }
 
     public void End()
     {
         // Do nothing
-    }
-
-    public void EndScalar()
-    {
-        emitter.WriteRaw(YamlCodes.Lf);
-        emitter.Current = emitter.Map(EmitState.BlockMappingKey);
-        emitter.currentElementCount++;
     }
 }

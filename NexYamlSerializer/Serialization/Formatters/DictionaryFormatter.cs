@@ -52,14 +52,13 @@ internal class DictionaryFormatterHelper : IYamlFormatterHelper
     {
         if (FormatterExtensions.IsPrimitive(typeof(TKey)))
         {
-            stream.WriteMapping(style, () =>
+            stream.BeginMapping(style);
+            foreach (var x in value)
             {
-                foreach (var x in value)
-                {
-                    stream.Write(x.Key, style);
-                    stream.Write(x.Value, style);
-                }
-            });
+                stream.Write(x.Key, style);
+                stream.Write(x.Value, style);
+            }
+            stream.EndMapping();
             return;
         }
         else

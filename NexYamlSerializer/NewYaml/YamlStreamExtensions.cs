@@ -19,17 +19,108 @@ public static class YamlStreamExtensions
         stream.Write(key);
         stream.Write(value, style);
     }
-    public static void WriteMapping(this IYamlWriter stream, DataStyle style, Action action)
+
+    public static void Write(this IYamlWriter stream, ReadOnlySpan<byte> value, DataStyle style = DataStyle.Any)
     {
-        stream.BeginMapping(style);
-        action();
-        stream.EndMapping();
+        stream.WriteScalar(value);
     }
-    public static void WriteSequence(this IYamlWriter stream, DataStyle style, Action action)
+
+    public static void Write<T>(this IYamlWriter stream, T value, DataStyle style)
     {
-        stream.BeginSequence(style);
-        action();
-        stream.EndSequence();
+        stream.WriteType(value, style);
+    }
+    public static void Write(this IYamlWriter stream, ReadOnlySpan<char> value, DataStyle style = DataStyle.Any)
+    {
+        stream.WriteScalar(value);
+    }
+    public static void Write(this IYamlWriter stream, string? value, DataStyle style = DataStyle.Any)
+    {
+        stream.WriteString(value, style);
+    }
+    public static void Write(this IYamlWriter stream, char value, DataStyle style = DataStyle.Any)
+    {
+        stream.Write(['\'',value,'\''],style);
+    }
+
+    public static void Write(this IYamlWriter stream, short value, DataStyle style = DataStyle.Any)
+    {
+        Span<byte> span = stackalloc byte[6];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        stream.Write(span[..written]);
+    }
+
+    public static void Write(this IYamlWriter stream, int value, DataStyle style = DataStyle.Any)
+    {
+        Span<byte> span = stackalloc byte[11];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        stream.Write(span[..written]);
+    }
+
+    public static void Write(this IYamlWriter stream, uint value, DataStyle style = DataStyle.Any)
+    {
+        Span<byte> span = stackalloc byte[10];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        stream.Write(span[..written]);
+    }
+
+    public static void Write(this IYamlWriter stream, long value, DataStyle style = DataStyle.Any)
+    {
+        Span<byte> span = stackalloc byte[20];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        stream.Write(span[..written]);
+    }
+    public static void Write(this IYamlWriter stream, ulong value, DataStyle style = DataStyle.Any)
+    {
+        Span<byte> span = stackalloc byte[20];
+
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        stream.Write(span[..written]);
+    }
+    public static void Write(this IYamlWriter stream, float value, DataStyle style = DataStyle.Any)
+    {
+        Span<byte> span = stackalloc byte[32];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        stream.Write(span[..written]);
+    }
+
+    public static void Write(this IYamlWriter stream, double value, DataStyle style = DataStyle.Any)
+    {
+        Span<byte> span = stackalloc byte[32];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        stream.Write(span[..written]);
+    }
+
+    public static void Write(this IYamlWriter stream, bool value, DataStyle style = DataStyle.Any)
+    {
+        stream.Write(value ? [(byte)'t', (byte)'r', (byte)'u', (byte)'e'] : stackalloc[] { (byte)'f', (byte)'a', (byte)'l', (byte)'s', (byte)'e' });
+    }
+
+    public static void Write(this IYamlWriter stream, ushort value, DataStyle style = DataStyle.Any)
+    {
+        Span<byte> span = stackalloc byte[5];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        stream.Write(span[..written]);
+    }
+
+    public static void Write(this IYamlWriter stream, byte value, DataStyle style = DataStyle.Any)
+    {
+        Span<byte> span = stackalloc byte[3];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        stream.Write(span[..written]);
+    }
+
+    public static void Write(this IYamlWriter stream, sbyte value, DataStyle style = DataStyle.Any)
+    {
+        Span<byte> span = stackalloc byte[4];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        stream.Write(span[..written]);
+    }
+
+    public static void Write(this IYamlWriter stream, decimal value, DataStyle style = DataStyle.Any)
+    {
+        Span<byte> span = stackalloc byte[64];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        stream.Write(span[..written]);
     }
     public static void Write(this IYamlWriter stream, string key, uint value, DataStyle style = DataStyle.Any)
     {

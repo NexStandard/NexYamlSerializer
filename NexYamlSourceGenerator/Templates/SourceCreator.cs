@@ -55,10 +55,10 @@ file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSeria
 
     public override void Write(IYamlWriter stream, {info.NameDefinition} value, DataStyle style = {info.DataStyle})
     {{
-        stream.WriteMapping(style, () => {{
-            stream.WriteTag(""{tag}"");
+        stream.BeginMapping(style);
+        stream.WriteTag(""!{tag}"");
 {package.CreateNewSerializationEmit()}
-        }});
+        stream.EndMapping();
     }}
 
     public override void Read(IYamlReader stream, ref {info.NameDefinition} value)

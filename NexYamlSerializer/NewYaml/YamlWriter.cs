@@ -20,24 +20,17 @@ public class YamlWriter : IYamlWriter
     bool IsRedirected { get; set; } = false;
     bool IsFirst { get; set; } = true;
     IUTF8Stream stream { get; set; }
-    IYamlFormatterResolver Resolver{ get; init; }
+    public IYamlFormatterResolver Resolver{ get; init; }
     StyleEnforcer enforcer = new();
     internal YamlWriter(IUTF8Stream stream, IYamlFormatterResolver resolver)
     {
         Resolver = resolver;
         this.stream = stream;
     }
-
     public void BeginMapping(DataStyle style)
     {
         enforcer.Begin(ref style);
         stream.EmitterFactory.BeginNodeMap(style, false).Begin();
-    }
-
-    public void BeginSequence(DataStyle style)
-    {
-        enforcer.Begin(ref style);
-        stream.EmitterFactory.BeginNodeMap(style, true).Begin();
     }
 
     public void EndMapping()
@@ -52,7 +45,18 @@ public class YamlWriter : IYamlWriter
             throw new YamlException($"Invalid mapping end: {stream.Current}");
         }
     }
+    public void WriteMapping(DataStyle style, Action action)
+    {
+        BeginMapping(style);
+        action();
+        EndMapping();
+    }
+    public void BeginSequence(DataStyle style)
+    {
+        enforcer.Begin(ref style);
+        stream.EmitterFactory.BeginNodeMap(style, true).Begin();
 
+    }
     public void EndSequence()
     {
         if (stream.Current.State is EmitState.BlockSequenceEntry or EmitState.FlowSequenceEntry)
@@ -65,16 +69,57 @@ public class YamlWriter : IYamlWriter
             throw new YamlException($"Current state is not sequence: {stream.Current}");
         }
     }
-
-    public void Write(ReadOnlySpan<byte> value, DataStyle style = DataStyle.Any)
+    public void WriteSequence(DataStyle style, Action action)
+    {
+        BeginSequence(style);
+        action();
+        EndSequence();
+    }
+    public void WriteScalar(ReadOnlySpan<byte> value)
     {
         stream.WriteScalar(value);
     }
-    public void Write<T>(T value, DataStyle style)
+    public void WriteScalar(ReadOnlySpan<char> value)
+    {
+        stream.WriteScalar(value);
+    }
+    public void WriteString(string? value, DataStyle style)
     {
         if (value is null)
         {
-            Write(YamlCodes.Null0);
+            WriteScalar(['!','!','n','u','l']);
+            return;
+        }
+        var result = EmitStringAnalyzer.Analyze(value);
+        var scalarStyle = result.SuggestScalarStyle();
+        if (scalarStyle is ScalarStyle.Plain or ScalarStyle.Any)
+        {
+            WriteScalar(value);
+        }
+        else if (ScalarStyle.Folded == scalarStyle)
+        {
+            throw new NotSupportedException($"The {ScalarStyle.Folded} is not supported.");
+        }
+        else if (ScalarStyle.SingleQuoted == scalarStyle)
+        {
+            throw new InvalidOperationException("Single Quote is reserved for char");
+        }
+        else if (ScalarStyle.DoubleQuoted == scalarStyle)
+        {
+            stream.WriteScalar("\"" + value + "\"");
+        }
+        else if (ScalarStyle.Literal == scalarStyle)
+        {
+            var indentCharCount = (stream.CurrentIndentLevel + 1) * UTF8Stream.IndentWidth;
+            var scalarStringBuilt = EmitStringAnalyzer.BuildLiteralScalar(value, indentCharCount);
+            stream.WriteScalar(scalarStringBuilt.ToString());
+        }
+    }
+    public void WriteType<T>(T value, DataStyle style)
+    {
+        if (value is null)
+        {
+            WriteScalar(YamlCodes.Null0);
             return;
         }
         if (value is Array)
@@ -124,150 +169,11 @@ public class YamlWriter : IYamlWriter
             }
         }
     }
-    public void Write(string? value, DataStyle style = DataStyle.Any)
-    {
-        if(value is null)
-        {
-            Write(YamlCodes.Null0);
-            return;
-        }
-        var result = EmitStringAnalyzer.Analyze(value);
-        var scalarStyle = result.SuggestScalarStyle();
-        if (scalarStyle is ScalarStyle.Plain or ScalarStyle.Any)
-        {
-            Span<byte> span = stackalloc byte[value.Length];
-            StringEncoding.Utf8.GetBytes(value, span);
-            Write(span);
-        }
-        else if (ScalarStyle.Folded == scalarStyle)
-        {
-            throw new NotSupportedException($"The {ScalarStyle.Folded} is not supported.");
-        }
-        else if (ScalarStyle.SingleQuoted == scalarStyle)
-        {
-            throw new InvalidOperationException("Single Quote is reserved for char");
-        }
-        else if (ScalarStyle.DoubleQuoted == scalarStyle)
-        {
-            var scalarStringBuilt = EmitStringAnalyzer.BuildQuotedScalar(value, true);
-            var stringConverted = scalarStringBuilt.ToString();
-            Span<byte> span = stackalloc byte[stringConverted.Length];
-            StringEncoding.Utf8.GetBytes(stringConverted, span);
-            Write(span);
-        }
-        else if (ScalarStyle.Literal == scalarStyle)
-        {
-            var indentCharCount = (stream.CurrentIndentLevel + 1) * UTF8Stream.IndentWidth;
-            var scalarStringBuilt = EmitStringAnalyzer.BuildLiteralScalar(value, indentCharCount);
-            Span<char> scalarChars = stackalloc char[scalarStringBuilt.Length];
-            scalarStringBuilt.CopyTo(0, scalarChars, scalarStringBuilt.Length);
-
-            scalarChars = stream.TryRemoveDuplicateLineBreak(scalarChars);
-
-            var maxByteCount = StringEncoding.Utf8.GetMaxByteCount(scalarChars.Length);
-            var offset = 0;
-            var output = stream.Writer.GetSpan(stream.CalculateMaxScalarBufferLength(maxByteCount));
-            
-            stream.BeginScalar(output);
-            StringEncoding.Utf8.GetBytes(scalarChars, stream.Writer);
-            stream.EndScalar();
-        }
-    }
-    public void Write(char value, DataStyle style = DataStyle.Any)
-    {
-        
-        var scalarStringBuilt = EmitStringAnalyzer.BuildQuotedScalar(value.ToString(), false);
-        var stringConverted = scalarStringBuilt.ToString();
-        Span<byte> span = stackalloc byte[stringConverted.Length];
-        StringEncoding.Utf8.GetBytes(stringConverted, span);
-        Write(span);
-    }
-
-    public void Write(short value, DataStyle style = DataStyle.Any)
-    {
-        Span<byte> span = stackalloc byte[6];
-        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
-        Write(span[..written]);
-    }
-
-    public void Write(int value, DataStyle style = DataStyle.Any)
-    {
-        Span<byte> span = stackalloc byte[11];
-        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
-        Write(span[..written]);
-    }
-
-    public void Write(uint value, DataStyle style = DataStyle.Any)
-    {
-        Span<byte> span = stackalloc byte[10];
-        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
-        Write(span[..written]);
-    }
-
-    public void Write(long value, DataStyle style = DataStyle.Any)
-    {
-        Span<byte> span = stackalloc byte[20];
-        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
-        Write(span[..written]);
-    }
-    public void Write(ulong value, DataStyle style = DataStyle.Any)
-    {
-        Span<byte> span = stackalloc byte[20];
-
-        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
-        Write(span[..written]);
-    }
-    public void Write(float value, DataStyle style = DataStyle.Any)
-    {
-        Span<byte> span = stackalloc byte[32];
-        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
-        Write(span[..written]);
-    }
-
-    public void Write(double value, DataStyle style = DataStyle.Any)
-    {
-        Span<byte> span = stackalloc byte[32];
-        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
-        Write(span[..written]);
-    }
-
-    public void Write(bool value, DataStyle style = DataStyle.Any)
-    {
-        Write(value ? [(byte)'t', (byte)'r', (byte)'u', (byte)'e'] : stackalloc[] {(byte)'f', (byte)'a', (byte)'l', (byte)'s', (byte)'e'});
-    }
-
-    public void Write(ushort value, DataStyle style = DataStyle.Any)
-    {
-        Span<byte> span = stackalloc byte[5];
-        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
-        Write(span[..written]);
-    }
-
-    public void Write(byte value, DataStyle style = DataStyle.Any)
-    {
-        Span<byte> span = stackalloc byte[3];
-        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
-        Write(span[..written]);
-    }
-
-    public void Write(sbyte value, DataStyle style = DataStyle.Any)
-    {
-        Span<byte> span = stackalloc byte[4];
-        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
-        Write(span[..written]);
-    }
-
-    public void Write(decimal value, DataStyle style = DataStyle.Any)
-    {
-        Span<byte> span = stackalloc byte[64];
-        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
-        Write(span[..written]);
-    }
     public void WriteTag(string tag)
     {
         if (IsRedirected || IsFirst)
         {
-            var fulTag = $"!{tag}";
+            var fulTag = tag;
             stream.Tag(ref fulTag);
             IsRedirected = false;
             IsFirst = false;

@@ -11,15 +11,11 @@ internal class EmptySerializer : IEmitter
     {
     }
 
-    public void BeginScalar(Span<byte> output)
+    public void WriteScalar(ReadOnlySpan<char> output)
     {
     }
 
     public void End()
-    {
-    }
-
-    public void EndScalar()
     {
     }
 }

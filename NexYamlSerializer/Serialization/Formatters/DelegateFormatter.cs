@@ -32,15 +32,16 @@ internal class DelegateFormatter<T> : YamlSerializer<T>
     public override void Write(IYamlWriter stream, T value, DataStyle style)
     {
         var invocations = value.GetInvocationList();
-        stream.BeginSequence(style);
-        foreach (var invocation in invocations)
+        stream.WriteSequence(style, () =>
         {
-            var target = invocation.Target;
-            if (target is IIdentifiable id)
+            foreach (var invocation in invocations)
             {
-                stream.Write(UTF8Encoding.UTF8.GetBytes(("!!del "+id.Id.ToString()+"#"+invocation.Method.Name)));
+                var target = invocation.Target;
+                if (target is IIdentifiable id)
+                {
+                    stream.Write(UTF8Encoding.UTF8.GetBytes(("!!del " + id.Id.ToString() + "#" + invocation.Method.Name)));
+                }
             }
-        }
-        stream.EndSequence();
+        });
     }
 }

@@ -2,6 +2,7 @@
 using NexYaml.Core;
 using Stride.Core;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace NexVYaml;
@@ -12,10 +13,17 @@ public interface IYamlWriter
     /// </summary>
     /// <param name="tag">The Tag of the class to identify its type</param>
     void WriteTag(string tag);
-    void BeginMapping(DataStyle style);
-    void EndMapping();
-    void BeginSequence(DataStyle style);
-    void EndSequence();
+    public IYamlFormatterResolver Resolver { get; }
+    void WriteMapping(DataStyle style, Action action);
+    public void BeginSequence(DataStyle style);
+    public void EndSequence();
+
+    public void BeginMapping(DataStyle style);
+    public void EndMapping();
+    void WriteSequence(DataStyle style, Action action);
+    void WriteType<T>(T value, DataStyle style);
+    void WriteScalar(ReadOnlySpan<byte> bytes);
+    void WriteScalar(ReadOnlySpan<char> bytes);
     /// <summary>
     /// Serializes the string, in an automated format <see cref="ScalarStyle"/>
     /// Formats are:
@@ -26,20 +34,5 @@ public interface IYamlWriter
     /// <see cref="ScalarStyle.SingleQuoted"/> : Is reserved for <see cref="char"/>
     /// </summary>
     /// <param name="value">The string to write in an auto detection format to the stream.</param>
-    void Write(string? value, DataStyle style = DataStyle.Any);
-    void Write(ReadOnlySpan<byte> value, DataStyle style = DataStyle.Any);
-    void Write(char value, DataStyle style = DataStyle.Any);
-    void Write(int value, DataStyle style = DataStyle.Any);
-    void Write(uint value, DataStyle style = DataStyle.Any);
-    void Write(long value, DataStyle style = DataStyle.Any);
-    void Write(ulong value, DataStyle style = DataStyle.Any);
-    void Write(float value, DataStyle style = DataStyle.Any);
-    void Write(double value, DataStyle style = DataStyle.Any);
-    void Write(bool value, DataStyle style = DataStyle.Any);
-    void Write(short value, DataStyle style = DataStyle.Any);
-    void Write(ushort value, DataStyle style = DataStyle.Any);
-    void Write(byte value, DataStyle style = DataStyle.Any);
-    void Write(sbyte value, DataStyle style = DataStyle.Any);
-    void Write(decimal value, DataStyle style = DataStyle.Any);
-    void Write<T>(T value, DataStyle style);
+    void WriteString(string? value, DataStyle style);
 }

@@ -9,11 +9,5 @@ public interface IEmitter
     EmitState State { get; }
     void End();
     void Begin();
-    void BeginScalar(Span<byte> output);
-    void EndScalar();
-}
-
-public static class IEmitterExtensions
-{
-
+    void WriteScalar(ReadOnlySpan<char> value);
 }

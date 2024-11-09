@@ -11,13 +11,12 @@ public class ListFormatter<T> : YamlSerializer<List<T>?>
 {
     public override void Write(IYamlWriter stream, List<T>? value, DataStyle style)
     {
-        stream.WriteSequence(style, () =>
+        stream.BeginSequence(style);
+        foreach (var x in value)
         {
-            foreach (var x in value)
-            {
-                stream.Write(x, style);
-            }
-        });
+            stream.Write(x, style);
+        }
+        stream.EndSequence();
     }
 
     public override void Read(IYamlReader stream, ref List<T>? value)

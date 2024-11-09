@@ -6,9 +6,13 @@ using NexYamlSerializer.Emitter.Serializers;
 using Stride.Core;
 using System;
 using System.Buffers;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
+using SharpDX.DXGI;
+using System.Runtime.InteropServices;
 namespace NexVYaml.Emitter;
 
 public enum EmitState
@@ -25,17 +29,11 @@ sealed class UTF8Stream : IUTF8Stream
 {
     public int CurrentIndentLevel => IndentationManager.CurrentIndentLevel;
     internal ExpandBuffer<IEmitter> StateStack { get; private set; }
-    public ArrayBufferWriter<byte> Writer { get; } = new ArrayBufferWriter<byte>(512);
+    public ArrayBufferWriter<char> Writer2 { get; } = new ArrayBufferWriter<char>();
 
     public const int IndentWidth = 2;
     public IEmitterFactory EmitterFactory { get; private set; }
-    byte[] whiteSpaces =
-    [
-            (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ',
-            (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ',
-            (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ',
-            (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ',
-    ];
+
 
     internal bool IsFirstElement
     {
@@ -62,8 +60,8 @@ sealed class UTF8Stream : IUTF8Stream
     }
     public void Reset()
     {
-        StateStack = new ExpandBuffer<IEmitter>(16);
-        elementCountStack = new ExpandBuffer<int>(16);
+        StateStack = new ExpandBuffer<IEmitter>(4);
+        elementCountStack = new ExpandBuffer<int>(4);
         EmitterFactory = new EmitterFactory(this);
         currentElementCount = 0;
         StateStack.Add(EmitterFactory.Map(EmitState.None));
@@ -77,33 +75,28 @@ sealed class UTF8Stream : IUTF8Stream
         tagStack.Dispose();
     }
 
-    public void BeginScalar(Span<byte> output)
+    public IUTF8Stream WriteScalar(ReadOnlySpan<byte> value)
     {
-        StateStack.Current.BeginScalar(output);
-    }
+        // Create a span with enough capacity
+        Span<char> span = stackalloc char[Encoding.UTF8.GetCharCount(value)];
 
-    public void EndScalar()
+        Encoding.UTF8.GetChars(value, span);
+        StateStack.Current.WriteScalar(span);
+        return this;
+    }
+    public IUTF8Stream WriteScalar(string value)
     {
-
-        StateStack.Current.EndScalar();
+        StateStack.Current.WriteScalar(value);
+        return this;
     }
-
-    public void WriteScalar(ReadOnlySpan<byte> value)
-    {
-        
-        var output = Writer.GetSpan(CalculateMaxScalarBufferLength(value.Length));
-
-        BeginScalar(output);
-        Writer.Write(value);
-        EndScalar();
-    }
-    public void WriteIndent(int forceWidth= -1)
+    public IUTF8Stream WriteIndent(int forceWidth= -1)
     {
         int length;
+
         if (forceWidth > -1)
         {
             if (forceWidth <= 0)
-                return;
+                return this;
             length = forceWidth;
         }
         else if (CurrentIndentLevel > 0)
@@ -112,92 +105,38 @@ sealed class UTF8Stream : IUTF8Stream
         }
         else
         {
-            return;
+            return this;
         }
+        Span<char> whiteSpaces = stackalloc char[]
+        {
+            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '
+        };
 
         if (length > whiteSpaces.Length)
         {
-            whiteSpaces = Enumerable.Repeat(YamlCodes.Space, length * 2).ToArray();
+            whiteSpaces = Enumerable.Repeat(' ', length * 2).ToArray();
         }
-        Writer.Write(whiteSpaces.AsSpan(0, length));
+        Writer2.Write(whiteSpaces.Slice(0, length));
+        return this;
     }
-    public void WriteIndent(Span<byte> output, ref int offset, int forceWidth = -1)
+    public IUTF8Stream WriteRaw(string? value)
     {
-        int length;
-        if (forceWidth > -1)
-        {
-            if (forceWidth <= 0)
-                return;
-            length = forceWidth;
-        }
-        else if (CurrentIndentLevel > 0)
-        {
-            length = CurrentIndentLevel * IndentWidth;
-        }
-        else
-        {
-            return;
-        }
-
-        if (length > whiteSpaces.Length)
-        {
-            whiteSpaces = Enumerable.Repeat(YamlCodes.Space, length * 2).ToArray();
-        }
-
-        whiteSpaces.AsSpan(0, length).CopyTo(output[offset..]);
-        offset += length;
+        Writer2.Write(value);
+        return this;
+    }
+    public IUTF8Stream WriteRaw(ReadOnlySpan<byte> value)
+    {
+        StringEncoding.Utf8.GetChars(value, Writer2);
+        return this;
     }
 
-    public void WriteRaw(ReadOnlySpan<byte> value)
+    internal IUTF8Stream WriteRaw(byte value)
     {
-        Writer.Write(value);
-    }
-    internal void WriteRaw(byte value)
-    {
-        Writer.Write([value]);
-    }
-
-    internal void WriteRaw(ReadOnlySpan<byte> value, bool indent, bool lineBreak)
-    {
-        var length = value.Length +
-                     (indent ? CurrentIndentLevel * IndentWidth : 0) +
-                     (lineBreak ? 1 : 0);
-
-        var offset = 0;
-        var output = Writer.GetSpan(length);
-        if (indent)
-        {
-            WriteIndent();
-        }
-        value.CopyTo(output[offset..]);
-        if (lineBreak)
-        {
-            output[length - 1] = YamlCodes.Lf;
-        }
-        Writer.Advance(length);
-    }
-
-    internal void WriteRaw(ReadOnlySpan<byte> value1, ReadOnlySpan<byte> value2, bool indent, bool lineBreak)
-    {
-        var length = value1.Length + value2.Length +
-                     (indent ? CurrentIndentLevel * IndentWidth : 0) +
-                     (lineBreak ? 1 : 0);
-        var offset = 0;
-        var output = Writer.GetSpan(length);
-        if (indent)
-        {
-            WriteIndent();
-        }
-
-        value1.CopyTo(output[offset..]);
-        offset += value1.Length;
-
-        value2.CopyTo(output[offset..]);
-        if (lineBreak)
-        {
-            output[length - 1] = YamlCodes.Lf;
-        }
-        Writer.Advance(length);
+        StringEncoding.Utf8.GetChars([value],Writer2);
+        return this;
     }
 
     internal void WriteBlockSequenceEntryHeader()
@@ -215,17 +154,8 @@ sealed class UTF8Stream : IUTF8Stream
                     break;
             }
         }
-        WriteRaw([(byte)'-', (byte)' '], true, false);
-    }
-
-    public int CalculateMaxScalarBufferLength(int length)
-    {
-        var around = ((CurrentIndentLevel + 1) * IndentWidth) + 3;
-        if (tagStack.Length > 0)
-        {
-            length += StringEncoding.Utf8.GetMaxByteCount(tagStack.Peek().Length) + around;
-        }
-        return length;
+        WriteRaw([(byte)'-', (byte)' ']);
+        WriteIndent();
     }
 
     public IEmitter Current
@@ -254,8 +184,26 @@ sealed class UTF8Stream : IUTF8Stream
         StateStack.Pop();
         currentElementCount = elementCountStack.Length > 0 ? elementCountStack.Pop() : 0;
     }
-    public void Tag(ref string value)
+    public IUTF8Stream Tag(ref string value)
     {
         tagStack.Add(value);
+        return this;
+    }
+
+    internal ReadOnlyMemory<char> GetBytes()
+    {
+        return Writer2.WrittenMemory;
+    }
+
+    public IUTF8Stream WriteRaw(ReadOnlySpan<char> value)
+    {
+        Writer2.Write(value);
+        return this;
+    }
+
+    public IUTF8Stream WriteScalar(ReadOnlySpan<char> value)
+    {
+        StateStack.Current.WriteScalar(value);
+        return this;
     }
 }

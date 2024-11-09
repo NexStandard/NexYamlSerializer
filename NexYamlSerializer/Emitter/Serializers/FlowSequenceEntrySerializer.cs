@@ -21,49 +21,51 @@ internal class FlowSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
             case EmitState.BlockSequenceEntry:
                 {
                     emitter.WriteIndent();
-                    emitter.WriteRaw(EmitCodes.BlockSequenceEntryHeader);
-                    emitter.WriteRaw(YamlCodes.FlowSequenceStart);
+                    emitter.WriteSequenceSeparator();
+                    emitter.WriteFlowMappingStart();
                     break;
                 }
             case EmitState.FlowSequenceEntry:
                 {
                     if (emitter.currentElementCount > 0)
                     {
-                        emitter.WriteRaw(EmitCodes.FlowSequenceSeparator);
+                        emitter.WriteFlowSequenceSeparator();
                     }
-                    emitter.WriteRaw(YamlCodes.FlowSequenceStart);
+                    emitter.WriteFlowSequenceStart();
                     break;
                 }
             case EmitState.BlockMappingValue:
                 {
                     if (emitter.currentElementCount > 0)
                     {
-                        emitter.WriteRaw(EmitCodes.FlowSequenceSeparator);
+                        emitter.WriteFlowSequenceSeparator();
                     }
-                    emitter.WriteRaw(YamlCodes.FlowSequenceStart);
+                    emitter.WriteFlowSequenceStart();
                 }
                 break;
             default:
-                emitter.WriteRaw(YamlCodes.FlowSequenceStart);
+                emitter.WriteFlowSequenceStart();
                 break;
         }
         emitter.Next = emitter.Map(State);
     }
 
-    public void BeginScalar(Span<byte> output)
+    public void WriteScalar(ReadOnlySpan<char> value)
     {
         if (emitter.IsFirstElement)
         {
             if (emitter.tagStack.TryPop(out var tag))
             {
-                StringEncoding.Utf8.GetBytes(tag.AsSpan(), emitter.Writer);
-                emitter.Writer.Write([ YamlCodes.Space ]);
+                emitter.WriteRaw(tag);
+                emitter.WriteSpace();
             }
         }
         else
         {
-            emitter.Writer.Write(EmitCodes.FlowSequenceSeparator);
+            emitter.WriteFlowSequenceSeparator();
         }
+        emitter.WriteRaw(value);
+        emitter.currentElementCount++;
     }
 
     public void End()
@@ -91,15 +93,10 @@ internal class FlowSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
                 break;
         }
 
-        emitter.WriteRaw(YamlCodes.FlowSequenceEnd);
+        emitter.WriteFlowSequenceEnd();
         if (needsLineBreak)
         {
-            emitter.WriteRaw(YamlCodes.Lf);
+            emitter.WriteNewLine();
         }
-    }
-
-    public void EndScalar()
-    {
-        emitter.currentElementCount++;
     }
 }

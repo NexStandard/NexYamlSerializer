@@ -17,16 +17,16 @@ internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
         var current = emitter.Current.State;
         if (current is EmitState.BlockSequenceEntry)
         {
-            emitter.WriteIndent();
-            emitter.WriteRaw(EmitCodes.BlockSequenceEntryHeader);
-            emitter.WriteRaw(EmitCodes.FlowMappingStart);
+            emitter.WriteIndent()
+                .WriteSequenceSeparator()
+                .WriteFlowMappingStart();
             emitter.WriteBlockSequenceEntryHeader();
         }
         else if (current is EmitState.FlowSequenceEntry)
         {
             if (emitter.currentElementCount > 0)
             {
-                emitter.WriteRaw(EmitCodes.FlowSequenceSeparator);
+                emitter.WriteFlowSequenceSeparator();
             }
         }
         else if (current is EmitState.BlockMappingKey)
@@ -36,22 +36,25 @@ internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
         emitter.Next = emitter.Map(State);
     }
 
-    public void BeginScalar(Span<byte> output)
+    public void WriteScalar(ReadOnlySpan<char> value)
     {
         if (emitter.IsFirstElement)
         {
             if (emitter.tagStack.TryPop(out var tag))
             {
-                emitter.WriteRaw(tag);
-                emitter.WriteRaw(EmitCodes.Space);
-                emitter.WriteIndent();
+                emitter.WriteRaw(tag)
+                    .WriteSpace()
+                    .WriteIndent();
             }
-            emitter.WriteRaw(EmitCodes.FlowMappingStart);
+            emitter.WriteFlowMappingStart();
         }
         if (!emitter.IsFirstElement)
         {
-            emitter.WriteRaw(EmitCodes.FlowSequenceSeparator);
+            emitter.WriteFlowSequenceSeparator();
         }
+        emitter.WriteRaw(value);
+        emitter.WriteMappingKeyFooter();
+        emitter.Current = emitter.Map(EmitState.FlowMappingValue);
     }
 
     public void End()
@@ -66,16 +69,16 @@ internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
         {
             if (emitter.tagStack.TryPop(out var tag))
             {
-                emitter.WriteRaw(tag);
-                emitter.WriteRaw(" ");
-                emitter.WriteRaw(EmitCodes.FlowMappingEmpty);
-                emitter.WriteRaw(YamlCodes.Lf);
+                emitter.WriteRaw(tag)
+                    .WriteSpace()
+                    .WriteEmptyFlowMapping()
+                    .WriteNewLine();
                 writeFlowMapEnd = false;
             }
             else
             {
-                emitter.WriteRaw(EmitCodes.FlowMappingEmpty);
-                emitter.WriteRaw(YamlCodes.Lf);
+                emitter.WriteEmptyFlowMapping()
+                    .WriteNewLine();
                 writeFlowMapEnd = false;
             }
         }
@@ -104,18 +107,12 @@ internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
 
         if(writeFlowMapEnd)
         {
-            emitter.WriteRaw(EmitCodes.FlowMappingEnd);
+            emitter.WriteFlowMappingEnd();
         }
         
         if (needsLineBreak)
         {
-            emitter.WriteRaw(YamlCodes.Lf);
+            emitter.WriteNewLine();
         }
-    }
-
-    public void EndScalar()
-    {
-        emitter.WriteRaw(EmitCodes.MappingKeyFooter);
-        emitter.Current = emitter.Map(EmitState.FlowMappingValue);
     }
 }
