@@ -197,6 +197,6 @@ internal static class Extensionss
 
         var datacontract = attributes.First(a => a.AttributeClass.Equals(package.DataContractAttribute, SymbolEqualityComparer.Default));
 
-        return new ClassPackage(ClassInfo.CreateFrom(namedTypeSymbol, datacontract, package), memberList);
+        return new ClassPackage(ClassInfo.CreateFrom(namedTypeSymbol, datacontract, package), memberList.ToEquatableReadOnlyList());
     }
 }
