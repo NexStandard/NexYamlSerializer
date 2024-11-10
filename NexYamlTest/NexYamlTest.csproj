@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NexYamlSerializer\NexYamlSerializer.csproj" />
-    <ProjectReference Include="..\NexYamlSourceGenerator\NexYamlSourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\NexYaml.SourceGenerator\NexYaml.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\NexYaml\NexYaml.csproj" />
 	  <PackageReference Include="Stride.Engine" Version="4.2.0.2067" />
   </ItemGroup>
 

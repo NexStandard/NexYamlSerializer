@@ -2,15 +2,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 16.0.0.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NexYamlSerializer", "NexYamlSerializer\NexYamlSerializer.csproj", "{458918A0-942E-4CF9-A4B6-EA9B3E0F697B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NexYamlSourceGenerator", "NexYamlSourceGenerator\NexYamlSourceGenerator.csproj", "{34E30BA7-3207-4D23-86E7-701B902D56BA}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NexVYaml", "NexVYaml\NexVYaml.csproj", "{261CF6FC-4A06-4422-B791-640DA3423E54}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NexYamlTest", "NexYamlTest\NexYamlTest.csproj", "{1DCCD97B-943A-4299-8CD4-530FFFDD2886}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NexYaml.Core", "NexYaml.Core\NexYaml.Core.csproj", "{E09E40F9-80B4-4582-ADB5-EE39B09C1B54}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NexYaml.Serialization", "NexYaml.Serialization\NexYaml.Serialization.csproj", "{FBF712A0-C612-465A-91D9-A7E34AB67102}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NexYaml", "NexYaml\NexYaml.csproj", "{F64E92C1-E19C-4B3A-BA4B-415D3624B708}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NexYaml.SourceGenerator", "NexYaml.SourceGenerator\NexYaml.SourceGenerator.csproj", "{389D2965-9E23-4F60-B18D-858E4F36A2A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,14 +20,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{458918A0-942E-4CF9-A4B6-EA9B3E0F697B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{458918A0-942E-4CF9-A4B6-EA9B3E0F697B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{458918A0-942E-4CF9-A4B6-EA9B3E0F697B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{458918A0-942E-4CF9-A4B6-EA9B3E0F697B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{34E30BA7-3207-4D23-86E7-701B902D56BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{34E30BA7-3207-4D23-86E7-701B902D56BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{34E30BA7-3207-4D23-86E7-701B902D56BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{34E30BA7-3207-4D23-86E7-701B902D56BA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{261CF6FC-4A06-4422-B791-640DA3423E54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{261CF6FC-4A06-4422-B791-640DA3423E54}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{261CF6FC-4A06-4422-B791-640DA3423E54}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -38,6 +32,18 @@ Global
 		{E09E40F9-80B4-4582-ADB5-EE39B09C1B54}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E09E40F9-80B4-4582-ADB5-EE39B09C1B54}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E09E40F9-80B4-4582-ADB5-EE39B09C1B54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBF712A0-C612-465A-91D9-A7E34AB67102}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBF712A0-C612-465A-91D9-A7E34AB67102}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBF712A0-C612-465A-91D9-A7E34AB67102}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBF712A0-C612-465A-91D9-A7E34AB67102}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F64E92C1-E19C-4B3A-BA4B-415D3624B708}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F64E92C1-E19C-4B3A-BA4B-415D3624B708}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F64E92C1-E19C-4B3A-BA4B-415D3624B708}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F64E92C1-E19C-4B3A-BA4B-415D3624B708}.Release|Any CPU.Build.0 = Release|Any CPU
+		{389D2965-9E23-4F60-B18D-858E4F36A2A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{389D2965-9E23-4F60-B18D-858E4F36A2A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{389D2965-9E23-4F60-B18D-858E4F36A2A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{389D2965-9E23-4F60-B18D-858E4F36A2A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

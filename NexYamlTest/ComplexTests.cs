@@ -1,4 +1,4 @@
-﻿using NexVYaml;
+﻿using NexYaml;
 using NexYamlTest.ComplexCases;
 using NexYamlTest.SimpleClasses;
 using System;
@@ -33,7 +33,7 @@ public class ComplexTests
     {
         Setup();
         var g = new Delegates();
-        var x = YamlSerializer.SerializeToString(g);
+        var x = YamlSerializer.SerializeToString(g,Stride.Core.DataStyle.Compact);
         var t = YamlSerializer.Deserialize<Delegates>(x);
         throw new Exception(x);
         throw new Exception(t.Action.ToString());

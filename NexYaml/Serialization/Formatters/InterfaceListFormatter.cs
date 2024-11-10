@@ -1,0 +1,29 @@
+using Stride.Core;
+using System.Collections.Generic;
+
+namespace NexYaml.Serialization.Formatters;
+
+public class InterfaceListFormatter<T> : YamlSerializer<IList<T>>
+{
+    public override void Write(IYamlWriter stream, IList<T> value, DataStyle style)
+    {
+        stream.BeginSequence(style);
+        foreach (var x in value)
+        {
+            stream.Write(x, style);
+        }
+        stream.EndSequence();
+    }
+
+    public override void Read(IYamlReader stream, ref IList<T> value)
+    {
+        var list = new List<T>();
+        stream.ReadSequence(() =>
+        {
+            var val = default(T);
+            stream.Read(ref val);
+            list.Add(val!);
+        });
+        value = list!;
+    }
+}

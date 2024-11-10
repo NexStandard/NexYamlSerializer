@@ -1,4 +1,4 @@
-﻿using NexVYaml;
+﻿using NexYaml;
 using Stride.Core;
 using Xunit;
 

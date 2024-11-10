@@ -1,4 +1,4 @@
-﻿using NexVYaml;
+﻿using NexYaml;
 using NexYamlTest.Helper;
 using NexYamlTest.SimpleClasses;
 using Stride.Core;

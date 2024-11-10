@@ -14,18 +14,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="NexYamlSerializer">
-      <HintPath>..\NexYamlSerializer\bin\$(Configuration)\net8.0\NexYamlSerializer.dll</HintPath>
+    <Reference Include="NexYaml">
+      <HintPath>..\NexYaml\bin\$(Configuration)\net8.0\NexYaml.dll</HintPath>
     </Reference>
     <Reference Include="NexYamlSourceGenerator">
-      <HintPath>..\NexYamlSourceGenerator\bin\$(Configuration)\netstandard2.0\NexYamlSourceGenerator.dll</HintPath>
+      <HintPath>..\NexYaml.SourceGenerator\bin\$(Configuration)\netstandard2.0\NexYaml.SourceGenerator.dll</HintPath>
     </Reference>
 	<Reference Include="NexYamlSourceGenerator">
       <HintPath>..\NexYaml.Core\bin\$(Configuration)\net8.0\NexYaml.Core.dll</HintPath>
     </Reference>
-	  <None Include="$(OutputPath)\NexYamlSerializer.dll" Pack="true" PackagePath="lib\net8.0" Visible="true" />
+	  <None Include="$(OutputPath)\NexYaml.dll" Pack="true" PackagePath="lib\net8.0" Visible="true" />
 	  <None Include="$(OutputPath)\NexYaml.Core.dll" Pack="true" PackagePath="lib\net8.0" Visible="true" />
-	<None Include="$(OutputPath)\NexYamlSourceGenerator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+	  <None Include="$(OutputPath)\NexYaml.Serialization.dll" Pack="true" PackagePath="lib\net8.0" Visible="true" />
+	<None Include="$(OutputPath)\NexYaml.SourceGenerator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
 
   <ItemGroup>

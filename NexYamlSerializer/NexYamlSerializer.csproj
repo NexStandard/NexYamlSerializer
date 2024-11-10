@@ -12,5 +12,6 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\NexYaml.Core\NexYaml.Core.csproj" />
+	  <ProjectReference Include="..\NexYaml.Serialization\NexYaml.Serialization.csproj" />
 	</ItemGroup>
 </Project>

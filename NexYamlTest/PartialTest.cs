@@ -1,4 +1,4 @@
-﻿using NexVYaml;
+﻿using NexYaml;
 using NexYamlTest.SimpleClasses;
 using Xunit;
 
