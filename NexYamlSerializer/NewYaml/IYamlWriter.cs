@@ -1,7 +1,9 @@
 ﻿using NexVYaml.Serialization;
 using NexYaml.Core;
+using NexYamlSerializer;
 using Stride.Core;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -13,6 +15,8 @@ public interface IYamlWriter
     /// </summary>
     /// <param name="tag">The Tag of the class to identify its type</param>
     void WriteTag(string tag);
+    SyntaxSettings Settings { get; }
+    public HashSet<Guid> References { get; }
     public IYamlFormatterResolver Resolver { get; }
     void WriteMapping(DataStyle style, Action action);
     public void BeginSequence(DataStyle style);

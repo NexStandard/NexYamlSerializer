@@ -1,13 +1,17 @@
 ﻿using NexVYaml.Emitter;
 using NexVYaml.Serialization;
 using NexYaml.Core;
+using NexYamlSerializer;
 using NexYamlSerializer.Emitter;
 using NexYamlSerializer.Emitter.Serializers;
+using NexYamlSerializer.Serialization.Formatters;
 using NexYamlSerializer.Serialization.PrimitiveSerializers;
 using Stride.Core;
+using Stride.Core.Serialization.Contents;
 using System;
 using System.Buffers;
 using System.Buffers.Text;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -22,9 +26,10 @@ public class YamlWriter : IYamlWriter
     private bool IsFirst { get; set; } = true;
     private IUTF8Stream stream { get; set; }
     public IYamlFormatterResolver Resolver{ get; init; }
-    StyleEnforcer enforcer = new();
+    public SyntaxSettings Settings { get; init; } = new SyntaxSettings();
 
     private StyleEnforcer enforcer = new();
+    public YamlWriter(IUTF8Stream stream, IYamlFormatterResolver resolver)
     {
         Resolver = resolver;
         this.stream = stream;
@@ -117,12 +122,19 @@ public class YamlWriter : IYamlWriter
             stream.WriteScalar(scalarStringBuilt.ToString());
         }
     }
+
+    private YamlSerializer<IIdentifiable> ReferenceSerializer = new ReferenceFormatter<IIdentifiable>();
     public void WriteType<T>(T value, DataStyle style)
     {
         if (value is null)
         {
             WriteScalar(YamlCodes.Null0);
             return;
+        }
+        var type = typeof(T);
+        if(type is IIdentifiable identifiable && References.Contains(identifiable.Id))
+        {
+            ReferenceSerializer.Write(this, value);
         }
         if (value is Array)
         {
@@ -133,7 +145,6 @@ public class YamlWriter : IYamlWriter
             arrayFormatter.Write(this, value, style);
             return;
         }
-        var type = typeof(T);
 
         if (type.IsValueType || type.IsSealed)
         {
