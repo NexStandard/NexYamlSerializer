@@ -1,4 +1,3 @@
-#nullable enable
 namespace NexVYaml.Parser;
 
 internal readonly struct VersionDirective(int major, int minor) : ITokenContent

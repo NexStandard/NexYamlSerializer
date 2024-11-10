@@ -8,7 +8,7 @@ internal class Generics<T>
 }
 [DataContract]
 internal class GenericWithRestriction<T>
-    where T : class,new()
+    where T : class, new()
 {
     public required T Value { get; set; }
 }

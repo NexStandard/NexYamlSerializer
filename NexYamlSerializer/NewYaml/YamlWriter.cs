@@ -2,20 +2,10 @@
 using NexVYaml.Serialization;
 using NexYaml.Core;
 using NexYamlSerializer;
-using NexYamlSerializer.Emitter;
-using NexYamlSerializer.Emitter.Serializers;
 using NexYamlSerializer.Serialization.Formatters;
-using NexYamlSerializer.Serialization.PrimitiveSerializers;
 using Stride.Core;
-using Stride.Core.Serialization.Contents;
 using System;
-using System.Buffers;
-using System.Buffers.Text;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace NexVYaml;
 
@@ -25,7 +15,7 @@ public class YamlWriter : IYamlWriter
     public HashSet<Guid> References { get; } = new();
     private bool IsFirst { get; set; } = true;
     private IUTF8Stream stream { get; set; }
-    public IYamlFormatterResolver Resolver{ get; init; }
+    public IYamlFormatterResolver Resolver { get; init; }
     public SyntaxSettings Settings { get; init; } = new SyntaxSettings();
 
     private StyleEnforcer enforcer = new();
@@ -94,7 +84,7 @@ public class YamlWriter : IYamlWriter
     {
         if (value is null)
         {
-            WriteScalar(['!','!','n','u','l']);
+            WriteScalar(['!', '!', 'n', 'u', 'l']);
             return;
         }
         var result = EmitStringAnalyzer.Analyze(value);
@@ -132,7 +122,7 @@ public class YamlWriter : IYamlWriter
             return;
         }
         var type = typeof(T);
-        if(type is IIdentifiable identifiable && References.Contains(identifiable.Id))
+        if (type is IIdentifiable identifiable && References.Contains(identifiable.Id))
         {
             ReferenceSerializer.Write(this, value);
         }

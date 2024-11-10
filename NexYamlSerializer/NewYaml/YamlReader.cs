@@ -1,15 +1,7 @@
-﻿using NexVYaml;
-using NexVYaml.Parser;
-using NexVYaml.Serialization;
-using NexYaml.Core;
-using Stride.Core;
+﻿using NexVYaml.Serialization;
 using System;
-using System.Buffers.Text;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NexVYaml.Parser;
 internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : IYamlReader
@@ -28,7 +20,7 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
     }
 
     public bool IsNullScalar()
-    { 
+    {
         return parser.IsNullScalar();
     }
 

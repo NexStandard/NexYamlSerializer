@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace NexYamlTest.ComplexCases;
 
 [DataContract]
-internal struct TempList<T,K>
+internal struct TempList<T, K>
 { }
 [DataContract]
 internal class DoubleInheritedList : ListWithOnEditCallback<int>

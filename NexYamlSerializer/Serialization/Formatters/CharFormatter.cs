@@ -1,10 +1,6 @@
-#nullable enable
 using NexVYaml;
 using NexVYaml.Parser;
-using NexVYaml.Serialization;
-using NexYaml.Core;
 using Stride.Core;
-using System;
 
 namespace NexYamlSerializer.Serialization.PrimitiveSerializers;
 
@@ -19,7 +15,7 @@ public class CharFormatter : YamlSerializer<char>
 
     public override void Read(IYamlReader parser, ref char value)
     {
-        if(parser.TryGetScalarAsString(out var result))
+        if (parser.TryGetScalarAsString(out var result))
         {
             if (result is not null && result.Length == 1)
             {
@@ -29,7 +25,7 @@ public class CharFormatter : YamlSerializer<char>
                 }
             }
         }
-        
+
         parser.ReadWithVerify(ParseEventType.Scalar);
     }
 }

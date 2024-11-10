@@ -1,18 +1,10 @@
-#nullable enable
-using NexVYaml.Serialization;
 using NexYaml.Core;
 using NexYamlSerializer.Emitter;
 using NexYamlSerializer.Emitter.Serializers;
-using Stride.Core;
 using System;
 using System.Buffers;
-using System.IO;
 using System.Linq;
 using System.Text;
-using System.Reflection.Metadata;
-using System.Runtime.CompilerServices;
-using SharpDX.DXGI;
-using System.Runtime.InteropServices;
 namespace NexVYaml.Emitter;
 
 public enum EmitState
@@ -36,10 +28,7 @@ internal sealed class UTF8Stream : IUTF8Stream
     public IEmitterFactory EmitterFactory { get; private set; }
 
 
-    internal bool IsFirstElement
-    {
-        get => currentElementCount <= 0;
-    }
+    internal bool IsFirstElement => currentElementCount <= 0;
 
     internal IndentationManager IndentationManager { get; } = new();
 
@@ -91,7 +80,7 @@ internal sealed class UTF8Stream : IUTF8Stream
         StateStack.Current.WriteScalar(value);
         return this;
     }
-    public IUTF8Stream WriteIndent(int forceWidth= -1)
+    public IUTF8Stream WriteIndent(int forceWidth = -1)
     {
         int length;
 
@@ -137,7 +126,7 @@ internal sealed class UTF8Stream : IUTF8Stream
 
     internal IUTF8Stream WriteRaw(byte value)
     {
-        StringEncoding.Utf8.GetChars([value],Writer2);
+        StringEncoding.Utf8.GetChars([value], Writer2);
         return this;
     }
 
@@ -162,14 +151,8 @@ internal sealed class UTF8Stream : IUTF8Stream
 
     public IEmitter Current
     {
-        get
-        {
-            return StateStack.Current;
-        }
-        set
-        {
-            StateStack.Current = value;
-        }
+        get => StateStack.Current;
+        set => StateStack.Current = value;
     }
     public IEmitter Next
     {
@@ -180,7 +163,7 @@ internal sealed class UTF8Stream : IUTF8Stream
             currentElementCount = 0;
         }
     }
-    public IEmitter Previous { get { return StateStack.Previous; } }
+    public IEmitter Previous => StateStack.Previous;
     public void PopState()
     {
         StateStack.Pop();

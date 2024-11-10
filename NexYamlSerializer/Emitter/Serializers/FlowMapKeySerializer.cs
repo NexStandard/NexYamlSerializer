@@ -1,11 +1,6 @@
 ﻿using NexVYaml;
 using NexVYaml.Emitter;
-using NexYaml.Core;
 using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace NexYamlSerializer.Emitter.Serializers;
 internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
@@ -64,7 +59,7 @@ internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
             throw new YamlException($"Invalid block mapping end: {emitter.StateStack.Current}");
         }
         var isEmptyMapping = emitter.currentElementCount <= 0;
-        bool writeFlowMapEnd = true;
+        var writeFlowMapEnd = true;
         if (isEmptyMapping)
         {
             if (emitter.tagStack.TryPop(out var tag))
@@ -105,11 +100,11 @@ internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
                 break;
         }
 
-        if(writeFlowMapEnd)
+        if (writeFlowMapEnd)
         {
             emitter.WriteFlowMappingEnd();
         }
-        
+
         if (needsLineBreak)
         {
             emitter.WriteNewLine();

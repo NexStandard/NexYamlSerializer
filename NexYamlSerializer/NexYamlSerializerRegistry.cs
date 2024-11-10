@@ -15,7 +15,11 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
     public SerializerRegistry FormatterRegistry { get; set; } = new();
     public static NexYamlSerializerRegistry Instance { get; } = new NexYamlSerializerRegistry();
 
-    public Type GetAliasType(string alias) => FormatterRegistry.TypeMap[alias];
+    public Type GetAliasType(string alias)
+    {
+        return FormatterRegistry.TypeMap[alias];
+    }
+
     public YamlSerializer<T> GetFormatter<T>()
     {
         if (FormatterRegistry.DefinedFormatters.TryGetValue(typeof(T), out var formatter))
@@ -60,7 +64,7 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
         if (FormatterRegistry.FormatterFactories.TryGetValue(origin, out var formatter))
         {
             formatter.TryGetValue(type, out var t);
-            if(t is not null)
+            if (t is not null)
             {
                 return t.Instantiate(origin);
             }

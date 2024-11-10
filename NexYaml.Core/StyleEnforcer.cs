@@ -1,7 +1,4 @@
-#nullable enable
 using Stride.Core;
-using System;
-using System.Buffers;
 
 namespace NexVYaml.Serialization;
 
@@ -13,7 +10,7 @@ public class StyleEnforcer
     private int count;
     public void Begin(ref DataStyle style)
     {
-        if(style is DataStyle.Compact || count > 0)
+        if (style is DataStyle.Compact || count > 0)
         {
             style = DataStyle.Compact;
             count++;
@@ -21,7 +18,7 @@ public class StyleEnforcer
     }
     public void End()
     {
-        if(count > 0)
+        if (count > 0)
         {
             count--;
         }

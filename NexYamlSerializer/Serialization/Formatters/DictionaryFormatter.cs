@@ -1,4 +1,3 @@
-#nullable enable
 using NexVYaml.Parser;
 using NexYamlSerializer;
 using Stride.Core;
@@ -16,7 +15,7 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
         DictionaryFormatterHelper.Serialize(stream, value!, style);
     }
 
-    public override void Read(IYamlReader stream,  ref Dictionary<TKey, TValue>? value)
+    public override void Read(IYamlReader stream, ref Dictionary<TKey, TValue>? value)
     {
         var map = new Dictionary<TKey, TValue>();
         if (FormatterExtensions.IsPrimitive(typeof(TKey)))
@@ -47,7 +46,7 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
 }
 internal class DictionaryFormatterHelper : IYamlFormatterHelper
 {
-    public static void Serialize<TKey,TValue>(IYamlWriter stream, Dictionary<TKey, TValue> value, DataStyle style = DataStyle.Normal)
+    public static void Serialize<TKey, TValue>(IYamlWriter stream, Dictionary<TKey, TValue> value, DataStyle style = DataStyle.Normal)
         where TKey : notnull
     {
         if (FormatterExtensions.IsPrimitive(typeof(TKey)))

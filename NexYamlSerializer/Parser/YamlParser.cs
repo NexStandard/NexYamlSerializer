@@ -1,11 +1,8 @@
-#nullable enable
-using Irony.Parsing;
 using NexVYaml.Serialization;
 using NexYaml.Core;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace NexVYaml.Parser;
 
@@ -68,10 +65,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
 
     public ParseEventType CurrentEventType { get; private set; } = default;
 
-    public Marker CurrentMark
-    {
-        get => tokenizer.CurrentMark;
-    }
+    public Marker CurrentMark => tokenizer.CurrentMark;
     public bool HasMapping(out ReadOnlySpan<byte> mappingKey)
     {
         if (HasKeyMapping)
@@ -111,10 +105,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
         }
     }
 
-    private TokenType CurrentTokenType
-    {
-        get => tokenizer.CurrentTokenType;
-    }
+    private TokenType CurrentTokenType => tokenizer.CurrentTokenType;
 
     private Utf8YamlTokenizer tokenizer = new Utf8YamlTokenizer(sequence);
     private ParseState currentState = ParseState.StreamStart;
@@ -271,39 +262,39 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
                 break;
 
             case ParseEventType.SequenceStart:
+            {
+                var depth = 1;
+                while (Read())
                 {
-                    var depth = 1;
-                    while (Read())
+                    switch (CurrentEventType)
                     {
-                        switch (CurrentEventType)
-                        {
-                            case ParseEventType.SequenceStart:
-                                ++depth;
-                                break;
-                            case ParseEventType.SequenceEnd when --depth <= 0:
-                                Read();
-                                return;
-                        }
+                        case ParseEventType.SequenceStart:
+                            ++depth;
+                            break;
+                        case ParseEventType.SequenceEnd when --depth <= 0:
+                            Read();
+                            return;
                     }
-                    break;
                 }
+                break;
+            }
             case ParseEventType.MappingStart:
+            {
+                var depth = 1;
+                while (Read())
                 {
-                    var depth = 1;
-                    while (Read())
+                    switch (CurrentEventType)
                     {
-                        switch (CurrentEventType)
-                        {
-                            case ParseEventType.MappingStart:
-                                ++depth;
-                                break;
-                            case ParseEventType.MappingEnd when --depth <= 0:
-                                Read();
-                                return;
-                        }
+                        case ParseEventType.MappingStart:
+                            ++depth;
+                            break;
+                        case ParseEventType.MappingEnd when --depth <= 0:
+                            Read();
+                            return;
                     }
-                    break;
                 }
+                break;
+            }
             default:
                 throw new ArgumentOutOfRangeException($"The {nameof(CurrentEventType)} is {CurrentEventType} and it's out of range");
         }
@@ -425,31 +416,31 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
                 throw new YamlException(CurrentMark, "While parsing node, found unknown anchor");
 
             case TokenType.Anchor:
-                {
-                    var anchorName = tokenizer.TakeCurrentTokenContent<Scalar>().ToString(); // TODO: Avoid `ToString`
-                    var anchorId = RegisterAnchor(anchorName);
-                    currentAnchor = new Anchor(anchorName, anchorId);
-                    tokenizer.Read();
-                    if (CurrentTokenType == TokenType.Tag)
-                    {
-                        currentTag = tokenizer.TakeCurrentTokenContent<Tag>();
-                        tokenizer.Read();
-                    }
-                    break;
-                }
-            case TokenType.Tag:
+            {
+                var anchorName = tokenizer.TakeCurrentTokenContent<Scalar>().ToString(); // TODO: Avoid `ToString`
+                var anchorId = RegisterAnchor(anchorName);
+                currentAnchor = new Anchor(anchorName, anchorId);
+                tokenizer.Read();
+                if (CurrentTokenType == TokenType.Tag)
                 {
                     currentTag = tokenizer.TakeCurrentTokenContent<Tag>();
                     tokenizer.Read();
-                    if (CurrentTokenType == TokenType.Anchor)
-                    {
-                        var anchorName = tokenizer.TakeCurrentTokenContent<Scalar>().ToString();
-                        var anchorId = RegisterAnchor(anchorName);
-                        currentAnchor = new Anchor(anchorName, anchorId);
-                        tokenizer.Read();
-                    }
-                    break;
                 }
+                break;
+            }
+            case TokenType.Tag:
+            {
+                currentTag = tokenizer.TakeCurrentTokenContent<Tag>();
+                tokenizer.Read();
+                if (CurrentTokenType == TokenType.Anchor)
+                {
+                    var anchorName = tokenizer.TakeCurrentTokenContent<Scalar>().ToString();
+                    var anchorId = RegisterAnchor(anchorName);
+                    currentAnchor = new Anchor(anchorName, anchorId);
+                    tokenizer.Read();
+                }
+                break;
+            }
         }
 
         switch (CurrentTokenType)
@@ -503,10 +494,10 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
                 break;
 
             default:
-                {
-                    throw new YamlTokenizerException(tokenizer.CurrentMark,
-                        "while parsing a node, did not find expected node content");
-                }
+            {
+                throw new YamlTokenizerException(tokenizer.CurrentMark,
+                    "while parsing a node, did not find expected node content");
+            }
         }
     }
 

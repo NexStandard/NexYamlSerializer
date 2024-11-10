@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace NexYamlSourceGenerator.Templates;
+﻿namespace NexYamlSourceGenerator.Templates;
 
 internal static class Constants
 {

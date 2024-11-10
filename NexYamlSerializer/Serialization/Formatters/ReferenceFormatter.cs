@@ -1,11 +1,6 @@
 ﻿using NexVYaml;
 using NexVYaml.Parser;
 using Stride.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NexYamlSerializer.Serialization.Formatters;
 public class ReferenceFormatter<T> : YamlSerializer<T>
@@ -14,7 +9,7 @@ public class ReferenceFormatter<T> : YamlSerializer<T>
     private const string refPrefix = "!!ref ";
     public override void Read(IYamlReader stream, ref T value)
     {
-        if(stream.TryGetScalarAsString(out var reference))
+        if (stream.TryGetScalarAsString(out var reference))
         {
             if (reference == null)
                 value = default;

@@ -1,10 +1,8 @@
-#nullable enable
 using NexVYaml.Parser;
-using Stride.Core;
-using System.Globalization;
-using System;
-using System.Buffers.Text;
 using NexYamlSerializer.Parser;
+using Stride.Core;
+using System.Buffers.Text;
+using System.Globalization;
 
 namespace NexVYaml.Serialization;
 
@@ -19,7 +17,7 @@ public class Int16Formatter : YamlSerializer<short>
 
     public override void Read(IYamlReader parser, ref short value)
     {
-        if(parser.TryGetScalarAsSpan(out var span))
+        if (parser.TryGetScalarAsSpan(out var span))
         {
             if (int.TryParse(span, CultureInfo.InvariantCulture, out var temp))
             {
@@ -30,7 +28,7 @@ public class Int16Formatter : YamlSerializer<short>
 
             if (FormatHelper.TryDetectHex(span, out var hexNumber))
             {
-                if(Utf8Parser.TryParse(hexNumber, out int hexTemp, out var bytesConsumed1, 'x') &&
+                if (Utf8Parser.TryParse(hexNumber, out int hexTemp, out var bytesConsumed1, 'x') &&
                        bytesConsumed1 == hexNumber.Length)
                 {
                     value = checked((short)hexTemp);
@@ -40,7 +38,7 @@ public class Int16Formatter : YamlSerializer<short>
             }
 
             if (FormatHelper.TryDetectHexNegative(span, out hexNumber) &&
-                Utf8Parser.TryParse(hexNumber,  out int negativeHexTemp, out var bytesConsumed, 'x') &&
+                Utf8Parser.TryParse(hexNumber, out int negativeHexTemp, out var bytesConsumed, 'x') &&
                 bytesConsumed == hexNumber.Length)
             {
                 value = checked((short)negativeHexTemp);

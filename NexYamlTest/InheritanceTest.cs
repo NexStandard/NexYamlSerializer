@@ -5,7 +5,11 @@ using Xunit;
 namespace NexYamlTest;
 public class InheritanceTest
 {
-    private static void Setup() => NexYamlSerializerRegistry.Init();
+    private static void Setup()
+    {
+        NexYamlSerializerRegistry.Init();
+    }
+
     [Fact]
     public void Inheritance_NormalClass_NoOverride()
     {
@@ -15,7 +19,7 @@ public class InheritanceTest
             Test = 100,
             Name = "Bob"
         };
-        
+
         var s = YamlSerializer.SerializeToString(inherited);
         var deserialized = YamlSerializer.Deserialize<InheritedNormalClass>(s);
         Assert.NotNull(deserialized);

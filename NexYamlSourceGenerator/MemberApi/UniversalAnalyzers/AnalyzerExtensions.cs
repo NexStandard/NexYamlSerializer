@@ -15,8 +15,8 @@ internal static class AnalyzerExtensions
     {
         if (context.State == DataMemberContextState.Included)
         {
-            return accessibility is 
-                Accessibility.NotApplicable or 
+            return accessibility is
+                Accessibility.NotApplicable or
                 Accessibility.Private or
                 Accessibility.Protected;
         }
@@ -24,13 +24,22 @@ internal static class AnalyzerExtensions
     }
     internal static IMemberSymbolAnalyzer<T> WhenNot<T>(this IMemberSymbolAnalyzer<T> memberAnalyzer, Func<IMemberSymbolAnalyzer<T>, IMemberSymbolAnalyzer<T>> analyzerTarget)
         where T : ISymbol
-        => new WhenNot<T>(memberAnalyzer, analyzerTarget);
+    {
+        return new WhenNot<T>(memberAnalyzer, analyzerTarget);
+    }
+
     internal static IMemberSymbolAnalyzer<T> IsNonStatic<T>(this IMemberSymbolAnalyzer<T> memberAnalyzer)
-    where T : ISymbol
-        => new IsNonStatic<T>(memberAnalyzer);
-    internal static IMemberSymbolAnalyzer<T> HasMemberMode<T>(this IMemberSymbolAnalyzer<T> memberAnalyzer,MemberMode mode)
         where T : ISymbol
-        => new ValidatorMemberMode<T>(memberAnalyzer,mode);
+    {
+        return new IsNonStatic<T>(memberAnalyzer);
+    }
+
+    internal static IMemberSymbolAnalyzer<T> HasMemberMode<T>(this IMemberSymbolAnalyzer<T> memberAnalyzer, MemberMode mode)
+            where T : ISymbol
+    {
+        return new ValidatorMemberMode<T>(memberAnalyzer, mode);
+    }
+
     public static SymbolInfo Analyze<T>(this IEnumerable<IMemberSymbolAnalyzer<T>> symbols, MemberData<T> member)
     where T : ISymbol
     {
@@ -39,6 +48,6 @@ internal static class AnalyzerExtensions
     public static IMemberSymbolAnalyzer<T> HasAttribute<T>(this IMemberSymbolAnalyzer<T> memberAnalyzer, INamedTypeSymbol attribute)
         where T : ISymbol
     {
-        return new HasAttribute<T>(memberAnalyzer,attribute);
+        return new HasAttribute<T>(memberAnalyzer, attribute);
     }
 }

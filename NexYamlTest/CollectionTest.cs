@@ -1,5 +1,4 @@
 ﻿using NexVYaml;
-using NexVYaml.Serialization;
 using NexYamlTest.ComplexCases;
 using NexYamlTest.SimpleClasses;
 using Stride.Core;
@@ -14,7 +13,7 @@ public class CollectionTest
     {
         public Dictionary<int, int>? dict = null;
     }
-    
+
     [Fact]
     public void NullCollections()
     {
@@ -71,7 +70,7 @@ public class CollectionTest
         Assert.IsType<GenericAbstractImlementationLessParamsEmpty<int>>(d[0]);
         Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
     }
-    [Fact(Skip ="doesnt assert anything yet")]
+    [Fact(Skip = "doesnt assert anything yet")]
     public void Collection()
     {
         // Creating test data

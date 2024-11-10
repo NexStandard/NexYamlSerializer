@@ -1,14 +1,6 @@
 ﻿using NexVYaml.Emitter;
-using NexVYaml.Parser;
-using NexYaml.Core;
 using NexYamlSerializer.Emitter.Serializers;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NexYamlSerializer.Emitter;
 public static class Utf8StreamExtensions
@@ -27,7 +19,7 @@ public static class Utf8StreamExtensions
         stream.WriteRaw([value]);
         return stream;
     }
-    public static IUTF8Stream WriteRaw(this IUTF8Stream stream,ReadOnlySpan<byte> value, bool lineBreak)
+    public static IUTF8Stream WriteRaw(this IUTF8Stream stream, ReadOnlySpan<byte> value, bool lineBreak)
     {
         stream.WriteRaw(value);
         if (lineBreak)

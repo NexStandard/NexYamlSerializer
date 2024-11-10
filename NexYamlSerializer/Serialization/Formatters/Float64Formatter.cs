@@ -1,9 +1,8 @@
-#nullable enable
 using NexVYaml.Parser;
-using Stride.Core;
-using System.Globalization;
-using System;
 using NexYaml.Core;
+using Stride.Core;
+using System;
+using System.Globalization;
 
 namespace NexVYaml.Serialization;
 
@@ -18,7 +17,7 @@ public class Float64Formatter : YamlSerializer<double>
 
     public override void Read(IYamlReader parser, ref double value)
     {
-        if(parser.TryGetScalarAsSpan(out var span))
+        if (parser.TryGetScalarAsSpan(out var span))
         {
             if (double.TryParse(span, CultureInfo.InvariantCulture, out value))
             {

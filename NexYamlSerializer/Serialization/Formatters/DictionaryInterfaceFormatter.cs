@@ -1,4 +1,3 @@
-#nullable enable
 using NexVYaml.Parser;
 using NexYamlSerializer;
 using Stride.Core;

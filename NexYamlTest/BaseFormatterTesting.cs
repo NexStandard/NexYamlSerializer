@@ -60,7 +60,7 @@ public class BaseFormatterTesting
             LongProperty = 9223372036854775807,
             Time = new TimeSpan(10),
             ULongProperty = 18446744073709551614,
-        //    NullableULongProperty = null,
+            //    NullableULongProperty = null,
         };
         NexYamlSerializerRegistry.Init();
         var s = YamlSerializer.SerializeToString(x);
@@ -119,7 +119,7 @@ public class BaseFormatterTesting
         Assert.Equal(x.ULongProperty, d.ULongProperty);
         Assert.Equal(x.Time, d.Time);
 
-    }    
+    }
     [Fact]
     public void BaseFormatterNullable()
     {
@@ -180,7 +180,7 @@ public class BaseFormatterTesting
         var d = YamlSerializer.Deserialize<BaseFormatterTest>(s);
         // Assert
         Assert.Equal(x.IntField, d.IntField);
-        
+
         Assert.Equal(x.GuidField, d.GuidField);
 
         Assert.Equal(x.GuidProperty, d.GuidProperty);

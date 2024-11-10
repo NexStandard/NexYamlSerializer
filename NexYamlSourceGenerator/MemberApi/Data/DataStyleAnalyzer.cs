@@ -1,8 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 using NexYamlSourceGenerator.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace NexYamlSourceGenerator.MemberApi.Data;
 internal class DataStyleAnalyzer(ISymbol namedType, ReferencePackage package)
@@ -20,12 +17,15 @@ internal class DataStyleAnalyzer(ISymbol namedType, ReferencePackage package)
         }
         return dataStyle;
     }
-    private static string GetDataStyle(int style) => style switch
+    private static string GetDataStyle(int style)
     {
-        // DataStyle.Any
-        0 => "DataStyle.Any",
-        1 => "DataStyle.Normal",
-        2 => "DataStyle.Compact",
-        _ => "DataStyle.Any"
-    };
+        return style switch
+        {
+            // DataStyle.Any
+            0 => "DataStyle.Any",
+            1 => "DataStyle.Normal",
+            2 => "DataStyle.Compact",
+            _ => "DataStyle.Any"
+        };
+    }
 }

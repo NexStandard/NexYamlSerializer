@@ -1,4 +1,3 @@
-#nullable enable
 using NexVYaml.Parser;
 using Stride.Core;
 using System;
@@ -76,9 +75,9 @@ public class EnumAsStringFormatter<T> : YamlSerializer<T>
 
     public override void Read(IYamlReader parser, ref T value)
     {
-        if(parser.TryGetScalarAsString(out var scalar))
+        if (parser.TryGetScalarAsString(out var scalar))
         {
-            if(scalar == null)
+            if (scalar == null)
             {
                 value = default;
             }
@@ -87,7 +86,7 @@ public class EnumAsStringFormatter<T> : YamlSerializer<T>
                 value = val;
             }
         }
-        
+
         throw new YamlException($"Cannot detect a scalar value of {typeof(T)}");
     }
 }

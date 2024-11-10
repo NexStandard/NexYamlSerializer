@@ -1,15 +1,14 @@
 ﻿using NexVYaml;
 using NexVYaml.Parser;
-using NexVYaml.Serialization;
-using NexYaml.Core;
 using Stride.Core;
-using System;
-using System.Linq;
 
 namespace NexYamlSerializer.Serialization.Formatters;
 public class EmptyFormatter<T> : YamlSerializer<T>
 {
-    public static YamlSerializer<T> EmptyS() => new EmptyFormatter<T>();
+    public static YamlSerializer<T> EmptyS()
+    {
+        return new EmptyFormatter<T>();
+    }
 
     public override void Write(IYamlWriter stream, T value, DataStyle style)
     {

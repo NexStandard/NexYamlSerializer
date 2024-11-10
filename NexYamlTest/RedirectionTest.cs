@@ -6,7 +6,11 @@ using Xunit;
 namespace NexYamlTest;
 public class RedirectionTest
 {
-    private static void Setup() => NexYamlSerializerRegistry.Init();
+    private static void Setup()
+    {
+        NexYamlSerializerRegistry.Init();
+    }
+
     [Fact]
     public void InterfaceTester()
     {
@@ -72,10 +76,10 @@ public class RedirectionTest
     public void InheritanceTest()
     {
         Setup();
-            var generic = new Inherited()
-            {
-                T = 123,
-                X = 1234
+        var generic = new Inherited()
+        {
+            T = 123,
+            X = 1234
         };
         var s = YamlSerializer.Serialize<Base>(generic);
         var deserialized = YamlSerializer.Deserialize<Base>(s);

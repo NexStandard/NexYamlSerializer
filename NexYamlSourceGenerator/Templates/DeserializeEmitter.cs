@@ -11,13 +11,13 @@ internal class DeserializeEmitter
         var objectCreation = new StringBuilder();
         var map = MapPropertiesToLength(package.MemberSymbols);
 
-        foreach( var symbol in package.MemberSymbols)
+        foreach (var symbol in package.MemberSymbols)
         {
             objectCreation.Append(symbol.Name + "=__TEMP__" + symbol.Name + ",");
         }
         var ifstatement = "\t\t\t\tstream.SkipRead();";
 
-        if(map.Count > 0)
+        if (map.Count > 0)
         {
             ifstatement = $$"""
                         if(

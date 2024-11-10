@@ -1,10 +1,10 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NexYamlSourceGenerator.Core;
-using NexYamlSourceGenerator.Templates;
 using NexYamlSourceGenerator.MemberApi;
 using NexYamlSourceGenerator.MemberApi.Data;
+using NexYamlSourceGenerator.Templates;
 
 namespace NexYamlSourceGenerator.NexIncremental;
 

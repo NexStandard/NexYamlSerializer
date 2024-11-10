@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Stride.Core;
+using System;
 using System.Collections.Generic;
-using Stride.Core;
 namespace NexYamlTest.DataStyleTests;
 
 [DataStyle(DataStyle.Compact)]

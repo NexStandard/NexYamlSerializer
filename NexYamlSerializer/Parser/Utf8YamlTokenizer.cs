@@ -1,8 +1,6 @@
-#nullable enable
 using NexYaml.Core;
 using System;
 using System.Buffers;
-using System.Runtime.CompilerServices;
 
 namespace NexVYaml.Parser;
 
@@ -20,15 +18,9 @@ internal struct SimpleKeyState
 
 public class Utf8YamlTokenizer
 {
-    public TokenType CurrentTokenType
-    {
-        get => currentToken.Type;
-    }
+    public TokenType CurrentTokenType => currentToken.Type;
 
-    public Marker CurrentMark
-    {
-        get => mark;
-    }
+    public Marker CurrentMark => mark;
 
     private ReadOnlySequence<byte> data;
     private Marker mark;
@@ -899,7 +891,7 @@ public class Utf8YamlTokenizer
                 Advance(1, ref reader);
             }
             // break on EOF
-            if (reader.End) 
+            if (reader.End)
                 break;
 
             leadingBreak = ConsumeLineBreaks(ref reader);
@@ -1372,7 +1364,7 @@ public class Utf8YamlTokenizer
                 case YamlCodes.Lf:
                 case YamlCodes.Cr:
                     ConsumeLineBreaks(ref reader);
-                    if (flowLevel == 0) 
+                    if (flowLevel == 0)
                         simpleKeyAllowed = true;
                     break;
                 case YamlCodes.Comment:
@@ -1520,7 +1512,7 @@ public class Utf8YamlTokenizer
 
     private void DecreaseFlowLevel()
     {
-        if (flowLevel <= 0) 
+        if (flowLevel <= 0)
             return;
         flowLevel--;
         simpleKeyCandidates.Pop();

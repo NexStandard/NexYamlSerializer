@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-namespace NexYamlSerializer.Emitter;
+﻿namespace NexYamlSerializer.Emitter;
 public class IndentationManager
 {
     public int CurrentIndentLevel { get; private set; }
@@ -16,5 +13,4 @@ public class IndentationManager
         if (CurrentIndentLevel > 0)
             CurrentIndentLevel--;
     }
-
 }

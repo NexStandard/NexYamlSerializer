@@ -1,6 +1,4 @@
-#nullable enable
 using NexVYaml.Parser;
-using NexYaml.Core;
 using Stride.Core;
 
 namespace NexVYaml.Serialization;
@@ -23,7 +21,7 @@ public class NullableFormatter<T> : YamlSerializer<T?> where T : struct
     {
         var val = default(T);
         parser.Read(ref val);
-        value =  new T?(val);
+        value = new T?(val);
     }
 }
 public sealed class StaticNullableFormatter<T>(YamlSerializer<T> underlyingFormatter) : YamlSerializer<T?> where T : struct

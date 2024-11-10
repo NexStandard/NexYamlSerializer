@@ -1,5 +1,4 @@
 ﻿using NexVYaml;
-using NexVYaml.Serialization;
 using NexYamlTest.ComplexCases;
 using NexYamlTest.SimpleClasses;
 using System;
@@ -23,10 +22,10 @@ public class ComplexTests
         var s = YamlSerializer.SerializeToString(list);
         var deserialized = YamlSerializer.Deserialize<DoubleInheritedList>(s);
         Assert.Null(s);
-        Assert.Equal(list.Count,deserialized!.Count);
-        for ( var i = 0; i < list.Count; i++ )
+        Assert.Equal(list.Count, deserialized!.Count);
+        for (var i = 0; i < list.Count; i++)
         {
-            Assert.Equal(list[i], deserialized[i] );
+            Assert.Equal(list[i], deserialized[i]);
         }
     }
 
@@ -37,7 +36,7 @@ public class ComplexTests
         var x = YamlSerializer.SerializeToString(g);
         var t = YamlSerializer.Deserialize<Delegates>(x);
         throw new Exception(x);
-        throw new Exception (t.Action.ToString());
+        throw new Exception(t.Action.ToString());
     }
 
     [Fact]
@@ -52,7 +51,7 @@ public class ComplexTests
         var s = YamlSerializer.SerializeToString(genericInterface);
         var deserialized = YamlSerializer.Deserialize<IGenericInterface<int, int>>(s);
         Assert.Equal(genericInterface.Generic, deserialized.Generic);
-        Assert.Equal(genericInterface.Generic2 , deserialized.Generic2);
+        Assert.Equal(genericInterface.Generic2, deserialized.Generic2);
     }
     [Fact]
     public void LessGenericsThanRoot()
@@ -72,7 +71,7 @@ public class ComplexTests
     public void NestedDynamicGenerics()
     {
         Setup();
-        IGenericInterface<IGenericInterface<int,int>, int> genericInterface = new GenericImplementedClassWithLessParams<IGenericInterface<int, int>>()
+        IGenericInterface<IGenericInterface<int, int>, int> genericInterface = new GenericImplementedClassWithLessParams<IGenericInterface<int, int>>()
         {
             Generic2 = 1,
             Generic = new GenericImplementedClassWithLessParams<int>()
@@ -87,11 +86,12 @@ public class ComplexTests
         Assert.Equal(genericInterface.Generic.Generic, deserialized.Generic.Generic);
         Assert.Equal(genericInterface.Generic.Generic2, deserialized.Generic.Generic2);
         Assert.Equal(genericInterface.Generic2, deserialized.Generic2);
-    }    [Fact]
+    }
+    [Fact]
     public void NoParamsImplementation()
     {
         Setup();
-        IGenericInterface<int,int> genericInterface = new GenericImplementedClassWithNoParams()
+        IGenericInterface<int, int> genericInterface = new GenericImplementedClassWithNoParams()
         {
             Generic2 = 1,
             Generic = 10
@@ -106,7 +106,7 @@ public class ComplexTests
     public void InheritedSameGenerics()
     {
         Setup();
-        GenericAbstract<int, int> genericInterface = new GenericAbstractImplementation<int,int>()
+        GenericAbstract<int, int> genericInterface = new GenericAbstractImplementation<int, int>()
         {
             TI = 1,
             TI2 = 10

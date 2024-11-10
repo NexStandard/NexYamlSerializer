@@ -1,9 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 using NexYamlSourceGenerator.Core;
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Text;
 
 namespace NexYamlSourceGenerator.MemberApi.Data;
 

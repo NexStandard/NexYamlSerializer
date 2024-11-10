@@ -1,7 +1,6 @@
 using Microsoft.CodeAnalysis;
 using NexYamlSourceGenerator.Core;
 using NexYamlSourceGenerator.MemberApi.UniversalAnalyzers;
-using System.Runtime.Serialization;
 
 namespace NexYamlSourceGenerator.MemberApi.Data;
 
@@ -20,7 +19,7 @@ internal record DataMemberContext
         if (symbol.TryGetAttribute(references.DataMemberAttribute, out var attributeData1))
         {
             context.State = DataMemberContextState.Included;
-            if(attributeData1 is { AttributeConstructor.Parameters: [ .. ,{ Name: "mode" } ], ConstructorArguments: [.. , { Value: int mode }] })
+            if (attributeData1 is { AttributeConstructor.Parameters: [.., { Name: "mode" }], ConstructorArguments: [.., { Value: int mode }] })
             {
                 context.Mode = (MemberMode)mode;
                 if (context.Mode == MemberMode.Never)

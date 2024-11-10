@@ -1,6 +1,3 @@
-#nullable enable
-using System.Runtime.CompilerServices;
-
 namespace NexYaml.Core;
 
 public static class YamlCodes
@@ -84,40 +81,70 @@ public static class YamlCodes
     public const byte FlowSequenceStart = (byte)'[';
     public const byte FlowSequenceEnd = (byte)']';
 
-    public static bool IsAlphaNumericDashOrUnderscore(byte code) => code is
+    public static bool IsAlphaNumericDashOrUnderscore(byte code)
+    {
+        return code is
         >= (byte)'0' and <= (byte)'9' or
         >= (byte)'A' and <= (byte)'Z' or
         >= (byte)'a' and <= (byte)'z' or
         (byte)'_' or
         (byte)'-';
+    }
 
-    public static bool IsAscii(byte code) => code <= '\x7F';
+    public static bool IsAscii(byte code)
+    {
+        return code <= '\x7F';
+    }
 
-    public static bool IsNumber(byte code) => code is >= (byte)'0' and <= (byte)'9';
+    public static bool IsNumber(byte code)
+    {
+        return code is >= (byte)'0' and <= (byte)'9';
+    }
 
-    public static bool IsEmpty(byte code) => code is Space or Tab or Lf or Cr;
+    public static bool IsEmpty(byte code)
+    {
+        return code is Space or Tab or Lf or Cr;
+    }
 
-    public static bool IsLineBreak(byte code) => code is Lf or Cr;
+    public static bool IsLineBreak(byte code)
+    {
+        return code is Lf or Cr;
+    }
 
-    public static bool IsBlank(byte code) => code is Space or Tab;
+    public static bool IsBlank(byte code)
+    {
+        return code is Space or Tab;
+    }
 
-    public static bool IsNumberRepresentation(byte code) => code is
+    public static bool IsNumberRepresentation(byte code)
+    {
+        return code is
         >= (byte)'0' and <= (byte)'9' or
         (byte)'+' or (byte)'-' or (byte)'.';
+    }
 
-    public static bool IsHex(byte code) => code is
+    public static bool IsHex(byte code)
+    {
+        return code is
         >= (byte)'0' and <= (byte)'9' or
         >= (byte)'A' and <= (byte)'F' or
         >= (byte)'a' and <= (byte)'f';
+    }
 
-    public static bool IsAnyFlowSymbol(byte code) => code is
-        (byte)',' or (byte)'[' or (byte)']' or (byte)'{' or (byte)'}';
-
-    public static byte AsHex(byte code) => code switch
+    public static bool IsAnyFlowSymbol(byte code)
     {
-        >= (byte)'0' and <= (byte)'9' => (byte)(code - (byte)'0'),
-        >= (byte)'a' and <= (byte)'f' => (byte)(code - (byte)'a' + 10),
-        >= (byte)'A' and <= (byte)'F' => (byte)(code - (byte)'A' + 10),
-        _ => throw new InvalidOperationException()
-    };
+        return code is
+        (byte)',' or (byte)'[' or (byte)']' or (byte)'{' or (byte)'}';
+    }
+
+    public static byte AsHex(byte code)
+    {
+        return code switch
+        {
+            >= (byte)'0' and <= (byte)'9' => (byte)(code - (byte)'0'),
+            >= (byte)'a' and <= (byte)'f' => (byte)(code - (byte)'a' + 10),
+            >= (byte)'A' and <= (byte)'F' => (byte)(code - (byte)'A' + 10),
+            _ => throw new InvalidOperationException()
+        };
+    }
 }

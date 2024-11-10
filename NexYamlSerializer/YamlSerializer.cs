@@ -1,4 +1,3 @@
-#nullable enable
 using NexVYaml.Emitter;
 using NexVYaml.Internal;
 using NexVYaml.Parser;
@@ -43,7 +42,7 @@ public abstract class YamlSerializer
         var stream = new YamlWriter(emitter, options);
         try
         {
-            stream.Write(value,style);
+            stream.Write(value, style);
             return emitter.GetBytes();
         }
         finally
@@ -73,7 +72,7 @@ public abstract class YamlSerializer
         try
         {
             options ??= IYamlFormatterResolver.Default;
-            if(stream is null)
+            if (stream is null)
             {
                 stream = new YamlWriter(emitter, options);
             }

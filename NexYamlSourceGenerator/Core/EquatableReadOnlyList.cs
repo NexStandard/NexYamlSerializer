@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 namespace NexYamlSourceGenerator.Core;
 
 public static class EquatableReadOnlyList
 {
     public static EquatableReadOnlyList<T> ToEquatableReadOnlyList<T>(this IEnumerable<T> enumerable)
-        => new(enumerable.ToArray());
+    {
+        return new(enumerable.ToArray());
+    }
 }
 
 /// <summary>
@@ -19,10 +20,14 @@ public readonly struct EquatableReadOnlyList<T>(
     private IReadOnlyList<T> Collection => collection ?? [];
 
     public bool Equals(EquatableReadOnlyList<T> other)
-        => this.SequenceEqual(other);
+    {
+        return this.SequenceEqual(other);
+    }
 
     public override bool Equals(object? obj)
-        => obj is EquatableReadOnlyList<T> other && Equals(other);
+    {
+        return obj is EquatableReadOnlyList<T> other && Equals(other);
+    }
 
     public override int GetHashCode()
     {
@@ -35,17 +40,25 @@ public readonly struct EquatableReadOnlyList<T>(
     }
 
     IEnumerator<T> IEnumerable<T>.GetEnumerator()
-        => Collection.GetEnumerator();
+    {
+        return Collection.GetEnumerator();
+    }
 
     IEnumerator IEnumerable.GetEnumerator()
-        => Collection.GetEnumerator();
+    {
+        return Collection.GetEnumerator();
+    }
 
     public int Count => Collection.Count;
     public T this[int index] => Collection[index];
 
     public static bool operator ==(EquatableReadOnlyList<T> left, EquatableReadOnlyList<T> right)
-        => left.Equals(right);
+    {
+        return left.Equals(right);
+    }
 
     public static bool operator !=(EquatableReadOnlyList<T> left, EquatableReadOnlyList<T> right)
-        => !left.Equals(right);
+    {
+        return !left.Equals(right);
+    }
 }

@@ -1,12 +1,7 @@
-#nullable enable
 using NexYaml.Core;
 using System;
 using System.Buffers;
-using System.Buffers.Text;
-using System.Globalization;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace NexVYaml.Parser;
 
@@ -57,9 +52,15 @@ public class Scalar : ITokenContent, IDisposable
         Write(content);
     }
 
-    public ReadOnlySpan<byte> AsSpan() => buffer.AsSpan(0, Length);
+    public ReadOnlySpan<byte> AsSpan()
+    {
+        return buffer.AsSpan(0, Length);
+    }
 
-    public ReadOnlySpan<byte> AsSpan(int start, int length) => buffer.AsSpan(start, length);
+    public ReadOnlySpan<byte> AsSpan(int start, int length)
+    {
+        return buffer.AsSpan(start, length);
+    }
 
     public void Write(byte code)
     {
@@ -140,7 +141,7 @@ public class Scalar : ITokenContent, IDisposable
         if (sizeHint <= buffer.Length)
             return;
 
-        int newCapacity = buffer.Length * GrowFactor / 100;
+        var newCapacity = buffer.Length * GrowFactor / 100;
         if (newCapacity < sizeHint)
             newCapacity = sizeHint;
 

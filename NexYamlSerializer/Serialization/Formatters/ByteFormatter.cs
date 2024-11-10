@@ -1,10 +1,8 @@
-#nullable enable
 using NexVYaml.Parser;
-using Stride.Core;
-using System.Globalization;
-using System;
-using System.Buffers.Text;
 using NexYamlSerializer.Parser;
+using Stride.Core;
+using System.Buffers.Text;
+using System.Globalization;
 
 namespace NexVYaml.Serialization;
 
@@ -19,7 +17,7 @@ public class ByteFormatter : YamlSerializer<byte>
 
     public override void Read(IYamlReader parser, ref byte value)
     {
-        if(parser.TryGetScalarAsSpan(out var span))
+        if (parser.TryGetScalarAsSpan(out var span))
         {
             if (uint.TryParse(span, CultureInfo.InvariantCulture, out var result))
             {
@@ -29,7 +27,7 @@ public class ByteFormatter : YamlSerializer<byte>
             }
             else if (FormatHelper.TryDetectHex(span, out var hexNumber))
             {
-                if(Utf8Parser.TryParse(hexNumber, out value, out var bytesConsumed, 'x') &&
+                if (Utf8Parser.TryParse(hexNumber, out value, out var bytesConsumed, 'x') &&
                        bytesConsumed == hexNumber.Length)
                 {
                     value = checked((byte)result);

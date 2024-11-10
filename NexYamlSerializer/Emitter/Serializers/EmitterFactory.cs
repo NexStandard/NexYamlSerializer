@@ -1,10 +1,6 @@
 ﻿using NexVYaml.Emitter;
 using Stride.Core;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NexYamlSerializer.Emitter.Serializers;
 internal class EmitterFactory : IEmitterFactory
@@ -43,10 +39,10 @@ internal class EmitterFactory : IEmitterFactory
 
     public IEmitter BeginNodeMap(DataStyle style, bool isSequence)
     {
-        if(isSequence)
+        if (isSequence)
         {
 
-            if(style is DataStyle.Normal or DataStyle.Any)
+            if (style is DataStyle.Normal or DataStyle.Any)
             {
                 return blockSequenceEntrySerializer;
             }

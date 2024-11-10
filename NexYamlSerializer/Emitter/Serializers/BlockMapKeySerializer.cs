@@ -1,10 +1,6 @@
 ﻿using NexVYaml;
 using NexVYaml.Emitter;
-using NexVYaml.Parser;
-using NexYaml.Core;
 using System;
-using System.Buffers;
-using System.Text;
 
 namespace NexYamlSerializer.Emitter.Serializers;
 internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
@@ -23,10 +19,10 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
                 throw new YamlException("Cannot start block-mapping in the flow-sequence");
 
             case EmitState.BlockSequenceEntry:
-                {
-                    emitter.WriteBlockSequenceEntryHeader();
-                    break;
-                }
+            {
+                emitter.WriteBlockSequenceEntryHeader();
+                break;
+            }
         }
         emitter.Next = emitter.Map(State);
 
@@ -38,35 +34,35 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
             switch (emitter.Previous.State)
             {
                 case EmitState.BlockSequenceEntry:
+                {
+                    emitter.IndentationManager.IncreaseIndent();
+
+                    // Try write tag
+                    if (emitter.tagStack.TryPop(out var tag))
                     {
-                        emitter.IndentationManager.IncreaseIndent();
-                        
-                        // Try write tag
-                        if (emitter.tagStack.TryPop(out var tag))
-                        {
-                            emitter.WriteRaw(tag);
-                            emitter.WriteNewLine();
-                            emitter.WriteIndent();
-                        }
-                        else
-                        {
-                            emitter.WriteIndent(UTF8Stream.IndentWidth - 2);
-                        }
-                        // The first key in block-sequence is like so that: "- key: .."
-                        break;
-                    }
-                case EmitState.BlockMappingValue:
-                    {
-                        emitter.IndentationManager.IncreaseIndent();
-                        // Try write tag
-                        if (emitter.tagStack.TryPop(out var tag))
-                        {
-                            emitter.WriteRaw(tag);
-                        }
+                        emitter.WriteRaw(tag);
                         emitter.WriteNewLine();
                         emitter.WriteIndent();
-                        break;
                     }
+                    else
+                    {
+                        emitter.WriteIndent(UTF8Stream.IndentWidth - 2);
+                    }
+                    // The first key in block-sequence is like so that: "- key: .."
+                    break;
+                }
+                case EmitState.BlockMappingValue:
+                {
+                    emitter.IndentationManager.IncreaseIndent();
+                    // Try write tag
+                    if (emitter.tagStack.TryPop(out var tag))
+                    {
+                        emitter.WriteRaw(tag);
+                    }
+                    emitter.WriteNewLine();
+                    emitter.WriteIndent();
+                    break;
+                }
                 default:
                     emitter.WriteIndent();
                     break;

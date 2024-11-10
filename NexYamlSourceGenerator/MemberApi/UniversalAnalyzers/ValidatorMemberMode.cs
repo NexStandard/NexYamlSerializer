@@ -1,9 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using NexYamlSourceGenerator.MemberApi.Analyzers;
 using NexYamlSourceGenerator.MemberApi.Data;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace NexYamlSourceGenerator.MemberApi.UniversalAnalyzers;
 internal class ValidatorMemberMode<T>(
@@ -19,5 +16,5 @@ internal class ValidatorMemberMode<T>(
 }
 internal enum MemberMode
 {
-    Default = 0, Assign = 1 , Content = 2 , Never = 4
+    Default = 0, Assign = 1, Content = 2, Never = 4
 }

@@ -1,7 +1,5 @@
 ﻿using NexVYaml.Emitter;
-using NexYaml.Core;
 using System;
-using System.Linq;
 
 namespace NexYamlSerializer.Emitter.Serializers;
 public interface IEmitter

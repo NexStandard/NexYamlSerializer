@@ -1,7 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
-using NexYamlSourceGenerator.MemberApi.Data;
-using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using NexYamlSourceGenerator.MemberApi.Data;
 using System.Text;
 
 namespace NexYamlSourceGenerator.Templates;
@@ -37,7 +34,7 @@ using NexYamlSerializer.Serialization.Formatters;
 
 namespace NexVYaml;
 [System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]
-public struct {info.GeneratorName + "Helper" } : IYamlFormatterHelper
+public struct {info.GeneratorName + "Helper"} : IYamlFormatterHelper
 {{
     public void Register(IYamlFormatterResolver resolver)
     {{
@@ -50,7 +47,7 @@ public struct {info.GeneratorName + "Helper" } : IYamlFormatterHelper
 [System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]
 file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSerializer<{info.NameDefinition}> {info.TypeParameterRestrictions}
 {{
-    { (info.DataStyle != "DataStyle.Any" ? $"protected override DataStyle Style {{ get; }} = {info.DataStyle};" : "")}
+    {(info.DataStyle != "DataStyle.Any" ? $"protected override DataStyle Style {{ get; }} = {info.DataStyle};" : "")}
     {package.CreateUTF8Members()}
 
     public override void Write(IYamlWriter stream, {info.NameDefinition} value, DataStyle style = {info.DataStyle})

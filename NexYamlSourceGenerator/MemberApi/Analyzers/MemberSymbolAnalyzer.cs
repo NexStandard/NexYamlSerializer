@@ -15,5 +15,8 @@ internal abstract class MemberSymbolAnalyzer<T>(IMemberSymbolAnalyzer<T> analyze
             return CreateInfo();
     }
     public abstract bool AppliesTo(MemberData<T> symbol);
-    protected virtual SymbolInfo CreateInfo() => SymbolInfo.Empty;
+    protected virtual SymbolInfo CreateInfo()
+    {
+        return SymbolInfo.Empty;
+    }
 }

@@ -5,14 +5,18 @@ using Xunit;
 namespace NexYamlTest;
 public class DataContractAliasTest
 {
-    private static void Setup () => NexYamlSerializerRegistry.Init();
+    private static void Setup()
+    {
+        NexYamlSerializerRegistry.Init();
+    }
+
     [Fact]
     public void CheckAliasString()
     {
         Setup();
         var aliased = new DataContractAlias();
         var s = YamlSerializer.SerializeToString(aliased);
-        Assert.StartsWith("!Alias",s);
+        Assert.StartsWith("!Alias", s);
 
     }
     [Fact]

@@ -1,6 +1,5 @@
-using System.Runtime.CompilerServices;
-using System.Text;
 using Stride.Core;
+using System.Text;
 
 namespace NexYaml.Core;
 

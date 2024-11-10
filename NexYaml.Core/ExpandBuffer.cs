@@ -1,6 +1,3 @@
-using Silk.NET.OpenXR;
-using System.Buffers;
-
 namespace NexYaml.Core;
 
 public sealed class ExpandBuffer<T>(int capacity) : IDisposable
@@ -24,7 +21,7 @@ public sealed class ExpandBuffer<T>(int capacity) : IDisposable
 
     public void Dispose()
     {
-        if (Length < 0) 
+        if (Length < 0)
             return;
         Length = -1;
     }
@@ -79,7 +76,7 @@ public sealed class ExpandBuffer<T>(int capacity) : IDisposable
 
     private void SetCapacity(int newCapacity)
     {
-        if (buffer.Length >= newCapacity) 
+        if (buffer.Length >= newCapacity)
             return;
 
         var newBuffer = new T[newCapacity];

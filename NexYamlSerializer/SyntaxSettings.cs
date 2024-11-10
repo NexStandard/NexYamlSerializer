@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NexYamlSerializer;
+﻿namespace NexYamlSerializer;
 
 public class SyntaxSettings()
 {
@@ -16,6 +10,6 @@ public class SyntaxSettings()
     public string FlowSequenceStart { get; init; } = "[";
     public string FlowSequenceEnd { get; init; } = "]";
     public string FlowMappingDelimiter { get; init; } = ",";
-    public string FlowSequenceSeparator { get; init;} = ",";
+    public string FlowSequenceSeparator { get; init; } = ",";
 
 }

@@ -5,9 +5,13 @@ using Xunit;
 namespace NexYamlTest.Helper;
 internal class YamlHelper
 {
-    public static void SetUp () => NexYamlSerializerRegistry.Init ();
+    public static void SetUp()
+    {
+        NexYamlSerializerRegistry.Init();
+    }
+
     public static void Run<T>(T target)
-        where T: IEquatable<T>
+        where T : IEquatable<T>
     {
         SetUp();
         var serialized = YamlSerializer.SerializeToString(target);

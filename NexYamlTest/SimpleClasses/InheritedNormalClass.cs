@@ -4,7 +4,7 @@ namespace NexYamlTest.SimpleClasses;
 [DataContract]
 internal class InheritedNormalClass : BaseClass
 {
-    public int Test {  get; set; }
+    public int Test { get; set; }
     public override int AbstractInt { get; set; }
     public override string Name { get; set; } = string.Empty;
 }

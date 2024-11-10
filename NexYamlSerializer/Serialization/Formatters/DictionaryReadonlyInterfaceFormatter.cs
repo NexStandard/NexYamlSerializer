@@ -1,4 +1,3 @@
-#nullable enable
 using NexVYaml.Parser;
 using NexYamlSerializer;
 using Stride.Core;
@@ -37,7 +36,7 @@ public class DictionaryReadonlyInterfaceFormatter<TKey, TValue> : YamlSerializer
         }
     }
 
-    public override void Read(IYamlReader parser,  ref IReadOnlyDictionary<TKey, TValue> value)
+    public override void Read(IYamlReader parser, ref IReadOnlyDictionary<TKey, TValue> value)
     {
         var map = new Dictionary<TKey, TValue>();
         if (FormatterExtensions.IsPrimitive(typeof(TKey)))

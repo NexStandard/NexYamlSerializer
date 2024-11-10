@@ -20,7 +20,7 @@ internal static class Extensionss
     {
         foreach (var info in infos)
         {
-            if(info != SymbolInfo.Empty)
+            if (info != SymbolInfo.Empty)
                 yield return info;
         }
     }
@@ -44,7 +44,11 @@ internal static class Extensionss
     /// <param name="type">The <see cref="INamedTypeSymbol"/> to retrieve members for.</param>
     /// <param name="reference">The <see cref="ReferencePackage"/> containing necessary references.</param>
     /// <returns>all <see cref="IPropertySymbol"/> and <see cref="IFieldSymbol"/> in top to bottom order of inheritance tree.</returns>
-    internal static IEnumerable<ISymbol> GetAllMembers(this INamedTypeSymbol type, ReferencePackage reference) => type.GetAllMembersBottomToTop(reference);
+    internal static IEnumerable<ISymbol> GetAllMembers(this INamedTypeSymbol type, ReferencePackage reference)
+    {
+        return type.GetAllMembersBottomToTop(reference);
+    }
+
     public static string GenericRestrictions(this INamedTypeSymbol namedType)
     {
         const string whereClause = "where ";
@@ -75,7 +79,7 @@ internal static class Extensionss
             {
                 restrictionsString.Add("new()");
             }
-            
+
             if (restrictionsString.Count > 0)
                 stringBuilder.Append(typeRestriction.ToDisplayString()).Append(" : ").AppendLine(string.Join(", ", restrictionsString));
         }

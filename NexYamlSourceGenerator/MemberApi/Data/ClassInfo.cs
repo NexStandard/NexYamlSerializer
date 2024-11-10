@@ -6,7 +6,10 @@ namespace NexYamlSourceGenerator.MemberApi.Data;
 
 internal record ShortGenericDefinition(int Count)
 {
-    public override string ToString() => Count <= 0 ? "" : $"<{new string(',', Count - 1)}>";
+    public override string ToString()
+    {
+        return Count <= 0 ? "" : $"<{new string(',', Count - 1)}>";
+    }
 }
 
 /// <summary>

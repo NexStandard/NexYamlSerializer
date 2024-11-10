@@ -1,6 +1,3 @@
-
-using System.Runtime.CompilerServices;
-
 namespace NexYaml.Core;
 
 public class InsertionQueue<T>
@@ -26,7 +23,7 @@ public class InsertionQueue<T>
 
     public T Peek()
     {
-        if (Count == 0) 
+        if (Count == 0)
             ThrowForEmptyQueue();
         return array[headIndex];
     }
@@ -43,7 +40,7 @@ public class InsertionQueue<T>
 
     public T Dequeue()
     {
-        if (Count == 0) 
+        if (Count == 0)
             ThrowForEmptyQueue();
 
         var removed = array[headIndex];

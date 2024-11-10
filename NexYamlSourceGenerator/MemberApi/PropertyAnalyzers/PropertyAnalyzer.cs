@@ -15,7 +15,7 @@ internal class PropertyAnalyzer(ReferencePackage package) : IMemberSymbolAnalyze
         {
             Name = context.Symbol.Name,
             TypeKind = SymbolKind.Property,
-            DataStyle =  dataStyle,
+            DataStyle = dataStyle,
             IsAbstract = context.Symbol.Type.IsAbstract,
             IsInterface = context.Symbol.Type.TypeKind == TypeKind.Interface,
             Type = typeName,
@@ -24,8 +24,14 @@ internal class PropertyAnalyzer(ReferencePackage package) : IMemberSymbolAnalyze
         };
     }
 
-    public bool AppliesTo(MemberData<IPropertySymbol> symbol) => true;
+    public bool AppliesTo(MemberData<IPropertySymbol> symbol)
+    {
+        return true;
+    }
+
     private string GetTypeDisplay(ITypeSymbol type)
-        => type.TypeKind == TypeKind.Array ?
-        ((IArrayTypeSymbol)type).ElementType.ToDisplayString() : type.ToDisplayString();
+    {
+        return type.TypeKind == TypeKind.Array ?
+            ((IArrayTypeSymbol)type).ElementType.ToDisplayString() : type.ToDisplayString();
+    }
 }

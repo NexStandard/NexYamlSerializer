@@ -1,15 +1,8 @@
-﻿using Irony.Parsing;
-using NexVYaml;
+﻿using NexVYaml;
 using NexVYaml.Parser;
 using NexYaml.Core;
-using SharpDX.Direct3D12;
-using Silk.NET.OpenXR;
 using Stride.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace NexYamlSerializer.Serialization.Formatters;
 internal class DelegateFormatter<T> : YamlSerializer<T>
@@ -17,12 +10,12 @@ internal class DelegateFormatter<T> : YamlSerializer<T>
 {
     public override void Read(IYamlReader stream, ref T value)
     {
-        
+
         stream.ReadSequence(() =>
         {
             if (stream.TryGetScalarAsSpan(out var span))
             {
-                string val = StringEncoding.Utf8.GetString(span);
+                var val = StringEncoding.Utf8.GetString(span);
                 stream.ReadWithVerify(ParseEventType.Scalar);
             }
         });

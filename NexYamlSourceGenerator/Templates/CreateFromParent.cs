@@ -1,6 +1,4 @@
 ﻿using NexYamlSourceGenerator.MemberApi.Data;
-using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace NexYamlSourceGenerator.Templates;
@@ -54,7 +52,7 @@ internal static class CreateFromParent
             var t = package.ClassInfo.TypeParameters;
             var ins = data.TypeParameters;
             var indexArray = CreateIndexArray(t, ins);
-            if(indexArray != null)
+            if (indexArray != null)
             {
                 var compare = data.IsGeneric ? "genericTypeDefinition" : "type";
                 stringBuilder.AppendLine($$"""

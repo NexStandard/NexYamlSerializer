@@ -1,4 +1,3 @@
-#nullable enable
 using NexVYaml.Parser;
 using Stride.Core;
 using System.Collections.Generic;
@@ -9,7 +8,7 @@ public class InterfaceListFormatter<T> : YamlSerializer<IList<T>>
 {
     public override void Write(IYamlWriter stream, IList<T> value, DataStyle style)
     {
-        stream.WriteSequence(style,() =>
+        stream.WriteSequence(style, () =>
         {
             foreach (var x in value)
             {

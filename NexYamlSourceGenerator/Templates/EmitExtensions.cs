@@ -27,7 +27,7 @@ internal static class EmitExtensions
         }
         return defaultValues.ToString();
     }
-    public static string CreateUTF8Members(this  ClassPackage package)
+    public static string CreateUTF8Members(this ClassPackage package)
     {
         var utf8Members = new StringBuilder();
         foreach (var member in package.MemberSymbols)

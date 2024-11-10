@@ -1,14 +1,5 @@
-﻿using NexVYaml.Parser;
-using NexVYaml.Serialization;
-using Stride.Core;
-using Stride.Rendering.Materials;
-using System;
-using System.Buffers;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NexVYaml.Parser;
 public static class ParserExtensions
@@ -27,7 +18,7 @@ public static class ParserExtensions
         }
         stream.ReadWithVerify(ParseEventType.MappingEnd);
     }
-    
+
     public static void ReadSequence(this IYamlReader stream, Action action)
     {
         stream.ReadWithVerify(ParseEventType.SequenceStart);

@@ -1,11 +1,6 @@
 ﻿using NexVYaml;
 using NexVYaml.Emitter;
-using NexYaml.Core;
 using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace NexYamlSerializer.Emitter.Serializers;
 internal class BlockSequenceEntrySerializer(UTF8Stream emitter) : IEmitter

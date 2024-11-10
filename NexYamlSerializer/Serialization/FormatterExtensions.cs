@@ -1,6 +1,4 @@
-﻿using NexVYaml;
-using System;
-using System.Linq;
+﻿using System;
 
 namespace NexYamlSerializer;
 internal static class FormatterExtensions

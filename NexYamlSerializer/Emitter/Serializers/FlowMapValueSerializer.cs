@@ -1,6 +1,5 @@
 ﻿using NexVYaml.Emitter;
 using System;
-using System.Linq;
 
 namespace NexYamlSerializer.Emitter.Serializers;
 internal class FlowMapValueSerializer(UTF8Stream emitter) : IEmitter

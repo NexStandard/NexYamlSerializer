@@ -8,14 +8,14 @@ internal static class Registration
 {
     public static string CreateRegisterAbstracts(this ClassPackage package)
     {
-        return RegisterTypes(package.ClassInfo.AllAbstracts,package.ClassInfo.ShortDefinition , package.ClassInfo.TypeParameters);
+        return RegisterTypes(package.ClassInfo.AllAbstracts, package.ClassInfo.ShortDefinition, package.ClassInfo.TypeParameters);
     }
     private static string RegisterTypes(ImmutableList<DataPackage> datas, string targetTypeShort, string[] classData)
     {
         StringBuilder sb = new();
         foreach (var data in datas)
         {
-            if (CreateFromParent.CreateIndexArray(classData,data.TypeParameters) != null)
+            if (CreateFromParent.CreateIndexArray(classData, data.TypeParameters) != null)
             {
                 sb.AppendLine($"{Constants.SerializerRegistry}.Register(this,typeof({targetTypeShort}),typeof({data.ShortDisplayString}));");
             }
@@ -33,7 +33,7 @@ internal static class Registration
         }
         if (package.ClassInfo.IsGeneric)
         {
-            
+
             sb.AppendLine($"{Constants.SerializerRegistry}.RegisterGenericFormatter(typeof({package.ClassInfo.ShortDefinition}),typeof({package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}));");
             sb.AppendLine($"{Constants.SerializerRegistry}.RegisterFormatter(typeof({package.ClassInfo.ShortDefinition}));");
             return sb.ToString();

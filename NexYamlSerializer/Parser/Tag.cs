@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 
 namespace NexVYaml.Parser;
@@ -8,7 +7,10 @@ public record class Tag(string Prefix, string Handle) : ITokenContent
     public string Prefix { get; } = Prefix;
     public string Handle { get; } = Handle;
 
-    public override string ToString() => $"{Prefix}{Handle}";
+    public override string ToString()
+    {
+        return $"{Prefix}{Handle}";
+    }
 
     public bool Equals(string tagString)
     {
