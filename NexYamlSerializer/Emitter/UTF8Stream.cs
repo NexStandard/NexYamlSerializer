@@ -25,7 +25,8 @@ public enum EmitState
     FlowMappingKey,
     FlowMappingValue,
 }
-sealed class UTF8Stream : IUTF8Stream
+
+internal sealed class UTF8Stream : IUTF8Stream
 {
     public int CurrentIndentLevel => IndentationManager.CurrentIndentLevel;
     internal ExpandBuffer<IEmitter> StateStack { get; private set; }
@@ -41,7 +42,8 @@ sealed class UTF8Stream : IUTF8Stream
     }
 
     internal IndentationManager IndentationManager { get; } = new();
-    ExpandBuffer<int> elementCountStack;
+
+    private ExpandBuffer<int> elementCountStack;
     internal ExpandBuffer<string> tagStack;
     internal int currentElementCount;
 

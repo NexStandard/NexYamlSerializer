@@ -18,32 +18,33 @@ internal class SubstitutedGenericClassNoParams : GenericImplementedClassWithLess
 {
 
 }
-abstract class GenericAbstract<T,K>
+
+internal abstract class GenericAbstract<T,K>
 {
     public int Test { get; set; }
 }
 [DataContract]
-abstract class GenericAbstractWithDataContract<T, K>
+internal abstract class GenericAbstractWithDataContract<T, K>
 {
     public int Test { get; set; }
 }
 [DataContract]
-class GenericAbstractImplementation<T,K> : GenericAbstract<T, K>
+internal class GenericAbstractImplementation<T,K> : GenericAbstract<T, K>
 {
     public required T TI { get; set; }
     public required K TI2 { get; set; }
 }
 [DataContract]
-class GenericAbstractImlementationLessParams<T> : GenericAbstract<T, int>
+internal class GenericAbstractImlementationLessParams<T> : GenericAbstract<T, int>
 {
     public int X;
 }
 [DataContract]
-class GenericAbstractImlementationLessParamsEmpty<T> : GenericAbstract<T, int>
+internal class GenericAbstractImlementationLessParamsEmpty<T> : GenericAbstract<T, int>
 {
 }
 [DataContract]
-class GenericAbstractImlementationLessParamsDataContract<T> : GenericAbstractWithDataContract<T, int>
+internal class GenericAbstractImlementationLessParamsDataContract<T> : GenericAbstractWithDataContract<T, int>
 {
 
 }
@@ -53,18 +54,19 @@ internal class GenericImplementedClassWithNoParams : IGenericInterface<int, int>
     public int Generic { get; set; }
     public int Generic2 { get; set; }
 }
-interface IGenericInterface<T,K>
+
+internal interface IGenericInterface<T,K>
 {
     public T Generic { get; set; }
     public K Generic2 { get; set; }
 }
 [DataContract]
-class Base
+internal class Base
 {
     public int X;
 }
 [DataContract]
-class Inherited : Base
+internal class Inherited : Base
 {
     public double T;
 }

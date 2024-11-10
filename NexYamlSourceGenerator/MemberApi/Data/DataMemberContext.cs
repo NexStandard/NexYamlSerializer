@@ -8,7 +8,8 @@ namespace NexYamlSourceGenerator.MemberApi.Data;
 internal record DataMemberContext
 {
     private DataMemberContext() { }
-    static DataMemberContext Empty { get; } = new DataMemberContext() { State = DataMemberContextState.Excluded };
+
+    private static DataMemberContext Empty { get; } = new DataMemberContext() { State = DataMemberContextState.Excluded };
     internal static DataMemberContext Create(ISymbol symbol, ReferencePackage references)
     {
         var context = new DataMemberContext();

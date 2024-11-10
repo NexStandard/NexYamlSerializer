@@ -160,7 +160,7 @@ internal record ClassInfo
         return false;
     }
 
-    static string GetFullNamespace(INamedTypeSymbol typeSymbol, char separator)
+    private static string GetFullNamespace(INamedTypeSymbol typeSymbol, char separator)
     {
         var namespaceSymbol = typeSymbol.ContainingNamespace;
         var fullNamespace = "";

@@ -11,8 +11,8 @@ namespace NexVYaml.Serialization;
 public class EnumAsStringFormatter<T> : YamlSerializer<T>
     where T : Enum
 {
-    static readonly Dictionary<string, T> NameValueMapping;
-    static readonly Dictionary<T, string> ValueNameMapping;
+    private static readonly Dictionary<string, T> NameValueMapping;
+    private static readonly Dictionary<T, string> ValueNameMapping;
 
     static EnumAsStringFormatter()
     {

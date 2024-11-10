@@ -7,7 +7,7 @@ namespace NexYaml.Core;
 
 public static class ReusableByteSequenceBuilderPool
 {
-    static readonly ConcurrentQueue<ReusableByteSequenceBuilder> queue = new();
+    private static readonly ConcurrentQueue<ReusableByteSequenceBuilder> queue = new();
 
     public static ReusableByteSequenceBuilder Rent()
     {
@@ -23,9 +23,9 @@ public static class ReusableByteSequenceBuilderPool
     }
 }
 
-class ReusableByteSequenceSegment : ReadOnlySequenceSegment<byte>
+internal class ReusableByteSequenceSegment : ReadOnlySequenceSegment<byte>
 {
-    bool returnToPool;
+    private bool returnToPool;
 
     public ReusableByteSequenceSegment()
     {
@@ -56,8 +56,8 @@ class ReusableByteSequenceSegment : ReadOnlySequenceSegment<byte>
 
 public class ReusableByteSequenceBuilder
 {
-    readonly Stack<ReusableByteSequenceSegment> segmentPool = new();
-    readonly List<ReusableByteSequenceSegment> segments = [];
+    private readonly Stack<ReusableByteSequenceSegment> segmentPool = new();
+    private readonly List<ReusableByteSequenceSegment> segments = [];
 
     public void Add(ReadOnlyMemory<byte> buffer, bool returnToPool)
     {

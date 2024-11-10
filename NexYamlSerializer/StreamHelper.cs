@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace NexVYaml.Internal;
 
-static class StreamHelper
+internal static class StreamHelper
 {
     public static async ValueTask<ReusableByteSequenceBuilder> ReadAsSequenceAsync(Stream stream, CancellationToken cancellation = default)
     {
@@ -69,9 +69,9 @@ static class StreamHelper
         return builder;
     }
 
-    const int ArrayMexLength = 0x7FFFFFC7;
+    private const int ArrayMexLength = 0x7FFFFFC7;
 
-    static int NewArrayCapacity(int size)
+    private static int NewArrayCapacity(int size)
     {
         var newSize = unchecked(size * 2);
         if ((uint)newSize > ArrayMexLength)

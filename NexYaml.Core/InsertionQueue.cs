@@ -5,12 +5,11 @@ namespace NexYaml.Core;
 
 public class InsertionQueue<T>
 {
-    const int MinimumGrow = 4;
-    const int GrowFactor = 200;
-
-    T[] array;
-    int headIndex;
-    int tailIndex;
+    private const int MinimumGrow = 4;
+    private const int GrowFactor = 200;
+    private T[] array;
+    private int headIndex;
+    private int tailIndex;
 
     public InsertionQueue(int capacity)
     {
@@ -70,7 +69,7 @@ public class InsertionQueue<T>
         array[(posTo + headIndex) % array.Length] = item;
     }
 
-    void Grow()
+    private void Grow()
     {
         var newCapacity = (int)((long)array.Length * GrowFactor / 100);
         if (newCapacity < array.Length + MinimumGrow)
@@ -78,7 +77,7 @@ public class InsertionQueue<T>
         SetCapacity(newCapacity);
     }
 
-    void SetCapacity(int capacity)
+    private void SetCapacity(int capacity)
     {
         var newArray = new T[capacity];
         if (Count > 0)
@@ -99,12 +98,12 @@ public class InsertionQueue<T>
         tailIndex = Count == capacity ? 0 : Count;
     }
 
-    void MoveNext(ref int index)
+    private void MoveNext(ref int index)
     {
         index = (index + 1) % array.Length;
     }
 
-    static void ThrowForEmptyQueue()
+    private static void ThrowForEmptyQueue()
     {
         throw new InvalidOperationException("EmptyQueue");
     }

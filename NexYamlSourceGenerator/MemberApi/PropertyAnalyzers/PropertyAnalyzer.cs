@@ -25,7 +25,7 @@ internal class PropertyAnalyzer(ReferencePackage package) : IMemberSymbolAnalyze
     }
 
     public bool AppliesTo(MemberData<IPropertySymbol> symbol) => true;
-    string GetTypeDisplay(ITypeSymbol type)
+    private string GetTypeDisplay(ITypeSymbol type)
         => type.TypeKind == TypeKind.Array ?
         ((IArrayTypeSymbol)type).ElementType.ToDisplayString() : type.ToDisplayString();
 }

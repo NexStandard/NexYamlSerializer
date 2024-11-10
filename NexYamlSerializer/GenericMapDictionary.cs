@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace NexVYaml;
 
-static class DictionaryExtension
+internal static class DictionaryExtension
 {
     internal static Type FindAssignableType(this Dictionary<Type, Type> dictionary, Type type)
     {
@@ -12,7 +12,7 @@ static class DictionaryExtension
     }
 }
 
-class GenericEqualityComparer : IEqualityComparer<Type>
+internal class GenericEqualityComparer : IEqualityComparer<Type>
 {
     public bool Equals(Type x, Type y)
     {

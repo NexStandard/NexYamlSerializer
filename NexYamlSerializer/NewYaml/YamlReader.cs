@@ -41,7 +41,8 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
     {
         return parser.Read();
     }
-    static readonly Type NullableFormatter = typeof(NullableFormatter<>);
+
+    private static readonly Type NullableFormatter = typeof(NullableFormatter<>);
 
     public void Read<T>(ref T? value)
     {
@@ -119,7 +120,8 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
             Resolver.GetFormatter<T>().Read(this, ref value!);
         }
     }
-    void Read<T>(YamlSerializer<T> innerFormatter, ref YamlParser parser, ref T value)
+
+    private void Read<T>(YamlSerializer<T> innerFormatter, ref YamlParser parser, ref T value)
     {
         if (parser.TryResolveCurrentAlias<T>(ref parser, out var aliasValue))
         {

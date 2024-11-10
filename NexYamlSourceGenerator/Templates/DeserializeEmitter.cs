@@ -43,7 +43,8 @@ internal class DeserializeEmitter
                  value = __TEMP__RESULT;
         """;
     }
-    Dictionary<int, List<SymbolInfo>> MapPropertiesToLength(IEnumerable<SymbolInfo> properties)
+
+    private Dictionary<int, List<SymbolInfo>> MapPropertiesToLength(IEnumerable<SymbolInfo> properties)
     {
         Dictionary<int, List<SymbolInfo>> map = [];
         foreach (var property in properties)
@@ -61,7 +62,7 @@ internal class DeserializeEmitter
         return map;
     }
 
-    void AppendMember(SymbolInfo symbol, StringBuilder switchBuilder)
+    private void AppendMember(SymbolInfo symbol, StringBuilder switchBuilder)
     {
         switchBuilder.AppendLine($"\t\t\t\t!stream.TryRead(ref __TEMP__{symbol.Name}, ref key,{"UTF8" + symbol.Name}) &&");
     }

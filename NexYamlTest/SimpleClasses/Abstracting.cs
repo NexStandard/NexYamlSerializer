@@ -2,12 +2,12 @@
 
 namespace NexYamlTest.SimpleClasses;
 [DataContract]
-class Abstracting : IDAbstract
+internal class Abstracting : IDAbstract
 {
 
 }
 [DataContract]
-abstract class IDAbstract
+internal abstract class IDAbstract
 {
     public int Id { get; set; }
 }

@@ -20,8 +20,7 @@ public readonly struct EmitStringInfo(int lines, bool needsQuotes, bool isReserv
 
 public static class EmitStringAnalyzer
 {
-
-    static char[] whiteSpaces =
+    private static char[] whiteSpaces =
     [
         ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
         ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
@@ -109,7 +108,7 @@ public static class EmitStringAnalyzer
         return stringBuilder;
     }
 
-    static bool IsReservedWord(string value)
+    private static bool IsReservedWord(string value)
     {
         switch (value.Length)
         {
@@ -129,7 +128,7 @@ public static class EmitStringAnalyzer
         return false;
     }
 
-    static void AppendWhiteSpace(StringBuilder stringBuilder, int length)
+    private static void AppendWhiteSpace(StringBuilder stringBuilder, int length)
     {
         if (length > whiteSpaces.Length)
             whiteSpaces = Enumerable.Repeat(' ', length * 2).ToArray();

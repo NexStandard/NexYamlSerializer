@@ -50,7 +50,7 @@ public class CompactTest
         var d = YamlSerializer.Deserialize<CompactList>(s);
         Assert.True(d!.Lists[0] is not null);
         Assert.True(d.Lists[1] is not null);
-    }    
+    }
     [Fact]
     public void Double_Compact_RecordWithMember()
     {
@@ -59,7 +59,6 @@ public class CompactTest
         };
         NexYamlSerializerRegistry.Init();
         var s = YamlSerializer.SerializeToString(compact);
-
         Assert.Equal("!NexYamlTest.DataStyleTests.CompactCompactRecord,NexYamlTest\nCompactMember: !NexYamlTest.DataStyleTests.CompactRecordWithCompactMember,NexYamlTest { CompactMember: !NexYamlTest.DataStyleTests.CompactRecord,NexYamlTest { X: 0, Y: 0, W: !!null } }\n", s);
     }
 

@@ -28,7 +28,7 @@ public class NullableFormatter<T> : YamlSerializer<T?> where T : struct
 }
 public sealed class StaticNullableFormatter<T>(YamlSerializer<T> underlyingFormatter) : YamlSerializer<T?> where T : struct
 {
-    readonly YamlSerializer<T> underlyingSerializer = underlyingFormatter;
+    private readonly YamlSerializer<T> underlyingSerializer = underlyingFormatter;
 
     public override void Write(IYamlWriter stream, T? value, DataStyle style)
     {

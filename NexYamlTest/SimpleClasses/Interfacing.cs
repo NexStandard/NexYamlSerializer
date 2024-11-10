@@ -6,7 +6,8 @@ internal class Interfacing : IDInterface
 {
     public int Id { get; set; }
 }
-interface IDInterface
+
+internal interface IDInterface
 {
     public int Id { get; set; }
 }

@@ -6,7 +6,7 @@ using Xunit;
 namespace NexYamlTest;
 public class RedirectionTest
 {
-    static void Setup() => NexYamlSerializerRegistry.Init();
+    private static void Setup() => NexYamlSerializerRegistry.Init();
     [Fact]
     public void InterfaceTester()
     {

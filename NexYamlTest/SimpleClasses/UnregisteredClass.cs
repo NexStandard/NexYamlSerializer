@@ -24,11 +24,13 @@ public class UnregisteredClass
         return HashCode.Combine(ID);
     }
 }
-class UnregisteredBase
+
+internal class UnregisteredBase
 {
     public int X;
 }
-class UnregisteredInherited : UnregisteredBase
+
+internal class UnregisteredInherited : UnregisteredBase
 {
     public double T;
 }

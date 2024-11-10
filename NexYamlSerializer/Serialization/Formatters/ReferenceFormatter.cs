@@ -11,7 +11,7 @@ namespace NexYamlSerializer.Serialization.Formatters;
 public class ReferenceFormatter<T> : YamlSerializer<T>
     where T : IIdentifiable
 {
-    const string refPrefix = "!!ref ";
+    private const string refPrefix = "!!ref ";
     public override void Read(IYamlReader stream, ref T value)
     {
         if(stream.TryGetScalarAsString(out var reference))

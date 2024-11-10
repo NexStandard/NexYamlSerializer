@@ -26,7 +26,7 @@ internal class FieldAnalyzer(ReferencePackage package) : IMemberSymbolAnalyzer<I
 
     public bool AppliesTo(MemberData<IFieldSymbol> symbol) => true;
 
-    string GetTypeDisplay(ITypeSymbol type)
+    private string GetTypeDisplay(ITypeSymbol type)
     => type.TypeKind == TypeKind.Array ?
         ((IArrayTypeSymbol)type).ElementType.ToDisplayString() : type.ToDisplayString();
 }

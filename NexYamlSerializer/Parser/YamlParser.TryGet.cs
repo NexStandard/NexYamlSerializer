@@ -20,7 +20,8 @@ public partial class YamlParser
                (currentScalar == null ||
                 currentScalar.IsNull());
     }
-    readonly Dictionary<Anchor, object?> aliases = [];
+
+    private readonly Dictionary<Anchor, object?> aliases = [];
 
     public void Reset()
     {

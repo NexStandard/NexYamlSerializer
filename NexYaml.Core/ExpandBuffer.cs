@@ -5,15 +5,11 @@ namespace NexYaml.Core;
 
 public sealed class ExpandBuffer<T>(int capacity) : IDisposable
 {
-    const int MinimumGrow = 4;
-    const int GrowFactor = 200;
+    private const int MinimumGrow = 4;
+    private const int GrowFactor = 200;
+    private T[] buffer = new T[capacity];
 
-    T[] buffer = new T[capacity];
-
-    public ref T this[int index]
-    {
-        get => ref buffer[index];
-    }
+    public ref T this[int index] => ref buffer[index];
     /// <summary>
     /// Gets the current highest element on the Stack.
     /// Set replaces the current highest element with the value
@@ -23,10 +19,7 @@ public sealed class ExpandBuffer<T>(int capacity) : IDisposable
         get => this[^1];
         set => this[^1] = value;
     }
-    public T Previous
-    {
-        get => this[^2];
-    }
+    public T Previous => this[^2];
     public int Length { get; private set; } = 0;
 
     public void Dispose()
@@ -36,7 +29,10 @@ public sealed class ExpandBuffer<T>(int capacity) : IDisposable
         Length = -1;
     }
 
-    public Span<T> AsSpan() => buffer.AsSpan(0, Length);
+    public Span<T> AsSpan()
+    {
+        return buffer.AsSpan(0, Length);
+    }
 
     public Span<T> AsSpan(int length)
     {
@@ -50,7 +46,10 @@ public sealed class ExpandBuffer<T>(int capacity) : IDisposable
         Length = 0;
     }
 
-    public ref T Peek() => ref buffer[Length - 1];
+    public ref T Peek()
+    {
+        return ref buffer[Length - 1];
+    }
 
     public ref T Pop()
     {
@@ -78,7 +77,7 @@ public sealed class ExpandBuffer<T>(int capacity) : IDisposable
         buffer[Length++] = item;
     }
 
-    void SetCapacity(int newCapacity)
+    private void SetCapacity(int newCapacity)
     {
         if (buffer.Length >= newCapacity) 
             return;
@@ -88,7 +87,7 @@ public sealed class ExpandBuffer<T>(int capacity) : IDisposable
         buffer = newBuffer;
     }
 
-    void Grow()
+    private void Grow()
     {
         var newCapacity = buffer.Length * GrowFactor / 100;
         if (newCapacity < buffer.Length + MinimumGrow)

@@ -10,7 +10,7 @@ namespace NexVYaml.Serialization;
 /// </summary>
 public class StyleEnforcer
 {
-    int count;
+    private int count;
     public void Begin(ref DataStyle style)
     {
         if(style is DataStyle.Compact || count > 0)

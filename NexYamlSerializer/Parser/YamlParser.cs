@@ -30,7 +30,7 @@ public enum ParseEventType : byte
     MappingEnd,
 }
 
-enum ParseState
+internal enum ParseState
 {
     StreamStart,
     ImplicitDocumentStart,
@@ -90,6 +90,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
     /// Indicates if the current <see cref="ParseEventType.SequenceEnd"/> or <see cref="ParseEventType.StreamEnd"/> has not happened yet.
     /// </summary>
     public bool HasSequence => CurrentEventType is not ParseEventType.StreamEnd and not ParseEventType.SequenceEnd;
+
     /// <summary>
     /// Validates the scalar and returns it if succesful.
     /// Else it's an empty scalar and <see cref="YamlException"/> will be thrown
@@ -97,7 +98,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
     /// <param name="key">The <see cref="Scalar"/> Key of the Mapping</param>
     /// <returns></returns>
     /// <exception cref="YamlException">Throws when there is no <see cref="ParseEventType.Scalar"/> or if <see cref="TryGetScalarAsSpan(out ReadOnlySpan{byte})"/> doesn't succeed</exception>
-    void ValidateScalar(out ReadOnlySpan<byte> key)
+    private void ValidateScalar(out ReadOnlySpan<byte> key)
     {
         if (CurrentEventType != ParseEventType.Scalar)
         {
@@ -109,20 +110,20 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
             throw new YamlException(CurrentMark, "Custom type deserialization supports only string key");
         }
     }
-    TokenType CurrentTokenType
+
+    private TokenType CurrentTokenType
     {
         get => tokenizer.CurrentTokenType;
     }
 
-    Utf8YamlTokenizer tokenizer = new Utf8YamlTokenizer(sequence);
-    ParseState currentState = ParseState.StreamStart;
+    private Utf8YamlTokenizer tokenizer = new Utf8YamlTokenizer(sequence);
+    private ParseState currentState = ParseState.StreamStart;
     internal Scalar? currentScalar = null;
-    Tag? currentTag = null;
-    Anchor? currentAnchor = null;
-    int lastAnchorId = -1;
-
-    readonly Dictionary<string, int> anchors = [];
-    ExpandBuffer<ParseState> stateStack = new ExpandBuffer<ParseState>(16);
+    private Tag? currentTag = null;
+    private Anchor? currentAnchor = null;
+    private int lastAnchorId = -1;
+    private readonly Dictionary<string, int> anchors = [];
+    private ExpandBuffer<ParseState> stateStack = new ExpandBuffer<ParseState>(16);
 
     public void Dispose()
     {
@@ -308,7 +309,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
         }
     }
 
-    void ParseStreamStart()
+    private void ParseStreamStart()
     {
         if (CurrentTokenType == TokenType.None)
         {
@@ -320,7 +321,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
         CurrentEventType = ParseEventType.StreamStart;
     }
 
-    void ParseDocumentStart(bool implicitStarted)
+    private void ParseDocumentStart(bool implicitStarted)
     {
         if (!implicitStarted)
         {
@@ -360,7 +361,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
         }
     }
 
-    void ParseExplicitDocumentStart()
+    private void ParseExplicitDocumentStart()
     {
         ProcessDirectives();
         ThrowIfCurrentTokenUnless(TokenType.DocumentStart);
@@ -370,7 +371,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
         CurrentEventType = ParseEventType.DocumentStart;
     }
 
-    void ParseDocumentContent()
+    private void ParseDocumentContent()
     {
         switch (tokenizer.CurrentTokenType)
         {
@@ -388,7 +389,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
         }
     }
 
-    void ParseDocumentEnd()
+    private void ParseDocumentEnd()
     {
         // var _implicit = true;
         if (CurrentTokenType == TokenType.DocumentEnd)
@@ -402,7 +403,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
         CurrentEventType = ParseEventType.DocumentEnd;
     }
 
-    void ParseNode(bool block, bool indentlessSequence)
+    private void ParseNode(bool block, bool indentlessSequence)
     {
         currentAnchor = null;
         currentTag = null;
@@ -509,7 +510,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
         }
     }
 
-    void ParseBlockMappingKey(bool first)
+    private void ParseBlockMappingKey(bool first)
     {
         // skip BlockMappingStart
         if (first)
@@ -553,7 +554,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
         }
     }
 
-    void ParseBlockMappingValue()
+    private void ParseBlockMappingValue()
     {
         if (CurrentTokenType == TokenType.ValueStart)
         {
@@ -579,7 +580,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
         }
     }
 
-    void ParseBlockSequenceEntry(bool first)
+    private void ParseBlockSequenceEntry(bool first)
     {
         // BLOCK-SEQUENCE-START
         if (first)
@@ -614,7 +615,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
         }
     }
 
-    void ParseFlowSequenceEntry(bool first)
+    private void ParseFlowSequenceEntry(bool first)
     {
         // skip FlowMappingStart
         if (first)
@@ -664,7 +665,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
         }
     }
 
-    void ParseFlowMappingKey(bool first)
+    private void ParseFlowMappingKey(bool first)
     {
         if (first)
         {
@@ -727,7 +728,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
         }
     }
 
-    void ParseFlowMappingValue(bool empty)
+    private void ParseFlowMappingValue(bool empty)
     {
         if (empty)
         {
@@ -752,7 +753,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
         EmptyScalar();
     }
 
-    void ParseIndentlessSequenceEntry()
+    private void ParseIndentlessSequenceEntry()
     {
         if (CurrentTokenType != TokenType.BlockEntryStart)
         {
@@ -778,7 +779,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
         }
     }
 
-    void ParseFlowSequenceEntryMappingKey()
+    private void ParseFlowSequenceEntryMappingKey()
     {
         if (CurrentTokenType is
             TokenType.ValueStart or
@@ -796,7 +797,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
         }
     }
 
-    void ParseFlowSequenceEntryMappingValue()
+    private void ParseFlowSequenceEntryMappingValue()
     {
         if (CurrentTokenType == TokenType.ValueStart)
         {
@@ -822,29 +823,29 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
         }
     }
 
-    void ParseFlowSequenceEntryMappingEnd()
+    private void ParseFlowSequenceEntryMappingEnd()
     {
         currentState = ParseState.FlowSequenceEntry;
         CurrentEventType = ParseEventType.MappingEnd;
     }
 
-    void PopState()
+    private void PopState()
     {
         currentState = stateStack.Pop();
     }
 
-    void PushState(ParseState state)
+    private void PushState(ParseState state)
     {
         stateStack.Add(state);
     }
 
-    void EmptyScalar()
+    private void EmptyScalar()
     {
         currentScalar = null;
         CurrentEventType = ParseEventType.Scalar;
     }
 
-    void ProcessDirectives()
+    private void ProcessDirectives()
     {
         while (true)
         {
@@ -870,7 +871,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterR
         return newId;
     }
 
-    void ThrowIfCurrentTokenUnless(TokenType expectedTokenType)
+    private void ThrowIfCurrentTokenUnless(TokenType expectedTokenType)
     {
         if (CurrentTokenType != expectedTokenType)
         {

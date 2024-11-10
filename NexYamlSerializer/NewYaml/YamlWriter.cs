@@ -17,12 +17,14 @@ namespace NexVYaml;
 
 public class YamlWriter : IYamlWriter
 {
-    bool IsRedirected { get; set; } = false;
-    bool IsFirst { get; set; } = true;
-    IUTF8Stream stream { get; set; }
+    private bool IsRedirected { get; set; } = false;
+    public HashSet<Guid> References { get; } = new();
+    private bool IsFirst { get; set; } = true;
+    private IUTF8Stream stream { get; set; }
     public IYamlFormatterResolver Resolver{ get; init; }
     StyleEnforcer enforcer = new();
-    internal YamlWriter(IUTF8Stream stream, IYamlFormatterResolver resolver)
+
+    private StyleEnforcer enforcer = new();
     {
         Resolver = resolver;
         this.stream = stream;
