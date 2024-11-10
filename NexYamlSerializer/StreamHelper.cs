@@ -69,14 +69,12 @@ internal static class StreamHelper
         return builder;
     }
 
-    private const int ArrayMexLength = 0x7FFFFFC7;
-
     private static int NewArrayCapacity(int size)
     {
         var newSize = unchecked(size * 2);
-        if ((uint)newSize > ArrayMexLength)
+        if ((uint)newSize > Array.MaxLength)
         {
-            newSize = ArrayMexLength;
+            newSize = Array.MaxLength;
         }
         return newSize;
     }
