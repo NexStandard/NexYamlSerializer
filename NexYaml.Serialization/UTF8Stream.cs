@@ -51,12 +51,37 @@ public sealed class UTF8Stream : IUTF8Stream
     }
     public void Reset()
     {
-        StateStack = new ExpandBuffer<IEmitter>(4);
-        elementCountStack = new ExpandBuffer<int>(4);
-        EmitterFactory = new EmitterFactory(this);
+        if(StateStack is null)
+        {
+            StateStack = new ExpandBuffer<IEmitter>(4);
+
+        }
+        else
+        {
+            StateStack.Clear();
+        }
+        if(elementCountStack is null)
+        {
+            elementCountStack = new ExpandBuffer<int>(4);
+        }
+        else
+        {
+            elementCountStack.Clear();
+        }
+        if(EmitterFactory is null)
+        {
+            EmitterFactory = new EmitterFactory(this);
+        }
         currentElementCount = 0;
         StateStack.Add(EmitterFactory.Map(EmitState.None));
-        tagStack = new ExpandBuffer<string>(4);
+        if(tagStack is null)
+        {
+            tagStack = new ExpandBuffer<string>(4);
+        }
+        else
+        {
+            tagStack.Clear();
+        }
     }
 
     public void Dispose()
@@ -145,8 +170,8 @@ public sealed class UTF8Stream : IUTF8Stream
                     break;
             }
         }
-        WriteRaw(settings.SequenceIdentifier);
         WriteIndent();
+        WriteRaw(settings.SequenceIdentifier);
     }
 
     public IEmitter Current

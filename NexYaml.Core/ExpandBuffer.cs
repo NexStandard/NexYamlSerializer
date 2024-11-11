@@ -13,10 +13,10 @@ public sealed class ExpandBuffer<T>(int capacity) : IDisposable
     /// </summary>
     public T Current
     {
-        get => this[^1];
-        set => this[^1] = value;
+        get => this[Length-1];
+        set => this[Length-1] = value;
     }
-    public T Previous => this[^2];
+    public T Previous => this[Length-2];
     public int Length { get; private set; } = 0;
 
     public void Dispose()

@@ -1,8 +1,11 @@
 ﻿using NexYaml;
 using NexYamlTest.ComplexCases;
 using NexYamlTest.SimpleClasses;
+using SharpFont;
 using Stride.Core;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace NexYamlTest;
@@ -40,6 +43,7 @@ public class CollectionTest
         Assert.IsType<GenericAbstractImlementationLessParams<int>>(d[0]);
         Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
     }
+
     [Fact]
     public void EmitMixedCollectionCompact()
     {
@@ -70,7 +74,7 @@ public class CollectionTest
         Assert.IsType<GenericAbstractImlementationLessParamsEmpty<int>>(d[0]);
         Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
     }
-    [Fact(Skip = "doesnt assert anything yet")]
+    [Fact(Skip = "no Asertions")]
     public void Collection()
     {
         // Creating test data
@@ -107,10 +111,38 @@ public class CollectionTest
 
         NexYamlSerializerRegistry.Init();
         var s = YamlSerializer.SerializeToString(testCollections);
-
+        throw new System.Exception(s);
         var d = YamlSerializer.Deserialize<Collections>(s);
+        Assert.True(d.Enumerable.Count() == 2);
 
     }
+    [Fact]
+    public void ComplexDictionary()
+    {
+        var data = new ComplexDictionary();
+        data.Dictionary.Add(new TempData(), new TempData());
+        data.Dictionary.Add(new TempData() { Id = 2, Name = "2"}, new TempData());
+        NexYamlSerializerRegistry.Init();
+        var s = YamlSerializer.SerializeToString(data);
+        // throw new System.Exception(s);
+    }
+    [DataContract]
+    internal class C
+    {
+        public IEnumerable<int> Foo { get; init; }
+    }
+    [Fact(Skip ="Collection initializer? it doesnt redirect to ienumerable")]
+    public void EnumerableTest()
+    {
+        C c = new()
+        {
+            Foo = [1, 2, 3]
+        };
+        NexYamlSerializerRegistry.Init();
+        var s = YamlSerializer.SerializeToString(c);
+        throw new System.Exception(s);
+    }
+
     [Fact]
     public void InterfaceList()
     {
