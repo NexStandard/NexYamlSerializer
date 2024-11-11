@@ -24,6 +24,7 @@ public class YamlWriter(IUTF8Stream stream, IYamlFormatterResolver resolver) : I
     List<ISyntaxPlugin> plugins =
     [
             new NullPlugin(),
+            new NullablePlugin(),
             new ArrayPlugin(),
             new DelegatePlugin(),
             new ReferencePlugin(),
