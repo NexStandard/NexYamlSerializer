@@ -7,7 +7,7 @@ namespace NexYamlTest;
 public class BaseFormatterTesting
 {
     [Fact]
-    public void T()
+    public void BaseFormatter_NonNullable()
     {
         var x = new BaseFormatterTest()
         {
@@ -119,6 +119,18 @@ public class BaseFormatterTesting
         Assert.Equal(x.ULongProperty, d.ULongProperty);
         Assert.Equal(x.Time, d.Time);
 
+    }
+    [Fact]
+    public void BaseFormatterNullableWithValues()
+    {
+        var x = new BaseFormatterNullable()
+        {
+            IntField = 1,
+        };
+        NexYamlSerializerRegistry.Init();
+        var s = YamlSerializer.SerializeToString(x);
+        var d = YamlSerializer.Deserialize<BaseFormatterTest>(s);
+        Assert.Equal(x.IntField, d.IntField);
     }
     [Fact]
     public void BaseFormatterNullable()
