@@ -84,9 +84,9 @@ public static class YamlCodes
     public static bool IsAlphaNumericDashOrUnderscore(byte code)
     {
         return code is
-        >= (byte)'0' and <= (byte)'9' or
-        >= (byte)'A' and <= (byte)'Z' or
-        >= (byte)'a' and <= (byte)'z' or
+        (>= (byte)'0' and <= (byte)'9') or
+        (>= (byte)'A' and <= (byte)'Z') or
+        (>= (byte)'a' and <= (byte)'z') or
         (byte)'_' or
         (byte)'-';
     }
@@ -119,16 +119,16 @@ public static class YamlCodes
     public static bool IsNumberRepresentation(byte code)
     {
         return code is
-        >= (byte)'0' and <= (byte)'9' or
+        (>= (byte)'0' and <= (byte)'9') or
         (byte)'+' or (byte)'-' or (byte)'.';
     }
 
     public static bool IsHex(byte code)
     {
         return code is
-        >= (byte)'0' and <= (byte)'9' or
-        >= (byte)'A' and <= (byte)'F' or
-        >= (byte)'a' and <= (byte)'f';
+        (>= (byte)'0' and <= (byte)'9') or
+        (>= (byte)'A' and <= (byte)'F') or
+        (>= (byte)'a' and <= (byte)'f');
     }
 
     public static bool IsAnyFlowSymbol(byte code)

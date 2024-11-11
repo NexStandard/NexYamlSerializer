@@ -1,5 +1,4 @@
 ﻿using Stride.Core;
-using System;
 
 namespace NexYaml.Serialization.Emittters;
 internal class EmitterFactory : IEmitterFactory

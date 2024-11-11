@@ -1,6 +1,6 @@
+using NexYaml.Core;
 using NexYaml.Parser;
 using Stride.Core;
-using NexYaml.Core;
 using System.Runtime.Serialization;
 
 namespace NexYaml.Serialization.Formatters;
@@ -48,7 +48,7 @@ public class EnumAsStringFormatter<T> : YamlSerializer<T>
     {
         var span = s.AsSpan();
         if (span.Length <= 0 ||
-            span.Length <= 1 && char.IsLower(span[0]))
+            (span.Length <= 1 && char.IsLower(span[0])))
         {
             return s;
         }

@@ -1,5 +1,3 @@
-using System;
-
 namespace NexYaml.Parser;
 
 public record class Tag(string Prefix, string Handle) : ITokenContent

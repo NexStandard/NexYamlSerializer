@@ -1,8 +1,8 @@
-using System.Buffers;
-using System.Buffers.Text;
+using NexYaml.Core;
 using NexYaml.Parser;
 using Stride.Core;
-using NexYaml.Core;
+using System.Buffers;
+using System.Buffers.Text;
 
 namespace NexYaml.Serialization.Formatters;
 

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NexYaml.Serialization;
+﻿namespace NexYaml.Serialization;
 internal static class FormatterExtensions
 {
     internal static bool IsPrimitive(Type type)

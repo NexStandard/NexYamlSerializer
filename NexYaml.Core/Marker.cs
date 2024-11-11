@@ -6,7 +6,7 @@ public struct Marker(int position, int line, int col)
     public int Line { get; set; } = line;
     public int Col { get; set; } = col;
 
-    public readonly override string ToString()
+    public override readonly string ToString()
     {
         return $"Line: {Line}, Col: {Col}, Idx: {Position}";
     }

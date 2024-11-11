@@ -1,7 +1,5 @@
 using NexYaml.Core;
-using System;
 using System.Buffers;
-using System.Linq;
 
 namespace NexYaml.Parser;
 

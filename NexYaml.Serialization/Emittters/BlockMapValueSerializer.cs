@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NexYaml.Serialization.Emittters;
+﻿namespace NexYaml.Serialization.Emittters;
 internal class BlockMapValueSerializer(UTF8Stream emitter) : IEmitter
 {
     public EmitState State { get; } = EmitState.BlockMappingValue;

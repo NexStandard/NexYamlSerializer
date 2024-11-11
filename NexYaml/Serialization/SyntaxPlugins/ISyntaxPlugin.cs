@@ -1,5 +1,4 @@
-﻿using NexYaml;
-using Stride.Core;
+﻿using Stride.Core;
 
 namespace NexYaml.Serialization.SyntaxPlugins;
 /// <summary>

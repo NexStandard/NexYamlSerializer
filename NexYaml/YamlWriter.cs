@@ -18,7 +18,8 @@ public class YamlWriter(IUTF8Stream stream, IYamlFormatterResolver resolver) : I
     private bool IsFirst { get; set; } = true;
     public IYamlFormatterResolver Resolver { get; init; } = resolver;
     public SyntaxSettings Settings { get; init; } = new();
-    List<ISyntaxPlugin> plugins =
+
+    private List<ISyntaxPlugin> plugins =
     [
             new NullPlugin(),
             new NullablePlugin(),

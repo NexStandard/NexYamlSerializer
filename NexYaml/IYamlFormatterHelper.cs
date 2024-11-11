@@ -1,5 +1,4 @@
 ﻿using NexYaml.Serialization;
-using System;
 
 namespace NexYaml;
 public interface IYamlFormatterHelper

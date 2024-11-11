@@ -1,4 +1,3 @@
-using NexYaml;
 using NexYaml.Parser;
 using Stride.Core;
 

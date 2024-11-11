@@ -1,12 +1,8 @@
 using NexYaml.Core;
-using NexYaml.Parser;
 using NexYaml.Serialization;
-using System;
 using System.Buffers;
-using System.Collections.Generic;
 
-namespace NexVYaml.Parser;
-
+namespace NexYaml.Parser;
 
 public enum ParseEventType : byte
 {

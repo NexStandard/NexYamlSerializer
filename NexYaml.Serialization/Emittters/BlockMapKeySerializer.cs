@@ -17,10 +17,10 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
                 throw new YamlException("Cannot start block-mapping in the flow-sequence");
 
             case EmitState.BlockSequenceEntry:
-                {
-                    emitter.WriteBlockSequenceEntryHeader();
-                    break;
-                }
+            {
+                emitter.WriteBlockSequenceEntryHeader();
+                break;
+            }
         }
         emitter.Next = emitter.Map(State);
 
@@ -32,35 +32,35 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
             switch (emitter.Previous.State)
             {
                 case EmitState.BlockSequenceEntry:
-                    {
-                        emitter.IndentationManager.IncreaseIndent();
+                {
+                    emitter.IndentationManager.IncreaseIndent();
 
-                        // Try write tag
-                        if (emitter.tagStack.TryPop(out var tag))
-                        {
-                            emitter.WriteRaw(tag);
-                            emitter.WriteNewLine();
-                            emitter.WriteIndent();
-                        }
-                        else
-                        {
-                            emitter.WriteIndent(emitter.IndentWidth - 2);
-                        }
-                        // The first key in block-sequence is like so that: "- key: .."
-                        break;
-                    }
-                case EmitState.BlockMappingValue:
+                    // Try write tag
+                    if (emitter.tagStack.TryPop(out var tag))
                     {
-                        emitter.IndentationManager.IncreaseIndent();
-                        // Try write tag
-                        if (emitter.tagStack.TryPop(out var tag))
-                        {
-                            emitter.WriteRaw(tag);
-                        }
+                        emitter.WriteRaw(tag);
                         emitter.WriteNewLine();
                         emitter.WriteIndent();
-                        break;
                     }
+                    else
+                    {
+                        emitter.WriteIndent(emitter.IndentWidth - 2);
+                    }
+                    // The first key in block-sequence is like so that: "- key: .."
+                    break;
+                }
+                case EmitState.BlockMappingValue:
+                {
+                    emitter.IndentationManager.IncreaseIndent();
+                    // Try write tag
+                    if (emitter.tagStack.TryPop(out var tag))
+                    {
+                        emitter.WriteRaw(tag);
+                    }
+                    emitter.WriteNewLine();
+                    emitter.WriteIndent();
+                    break;
+                }
                 default:
                     emitter.WriteIndent();
                     break;

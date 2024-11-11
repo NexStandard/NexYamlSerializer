@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NexYaml.Core;
+﻿namespace NexYaml.Core;
 
 public class YamlException : Exception
 {

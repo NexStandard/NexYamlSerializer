@@ -1,6 +1,5 @@
 ﻿using NexYaml.Core;
 using Stride.Core;
-using System;
 using System.Globalization;
 
 namespace NexYaml;

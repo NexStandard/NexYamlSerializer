@@ -1,6 +1,5 @@
 ﻿using NexYaml.Core;
 using NexYaml.Serialization.Emittters;
-using System;
 
 namespace NexYaml.Serialization;
 public interface IUTF8Stream : IDisposable

@@ -1,5 +1,4 @@
 ﻿using NexYaml.Serialization.Emittters;
-using System;
 
 namespace NexYaml.Serialization;
 public static class Utf8StreamExtensions

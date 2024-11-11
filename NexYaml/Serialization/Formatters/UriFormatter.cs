@@ -1,6 +1,5 @@
 using NexYaml.Parser;
 using Stride.Core;
-using System;
 
 namespace NexYaml.Serialization.Formatters;
 

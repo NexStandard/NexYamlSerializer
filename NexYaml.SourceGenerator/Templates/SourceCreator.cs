@@ -29,7 +29,7 @@ using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
 
-namespace NexVYaml;
+namespace NexYaml;
 [System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]
 public struct {info.GeneratorName + "Helper"} : IYamlFormatterHelper
 {{

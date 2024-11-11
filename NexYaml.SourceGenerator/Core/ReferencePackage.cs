@@ -7,20 +7,23 @@ internal class ReferencePackage(Compilation compilation)
     public const string DataContract = "Stride.Core.DataContractAttribute";
     public INamedTypeSymbol DataMemberAttribute { get; } =
         compilation.GetTypeByMetadataName("Stride.Core.DataMemberAttribute");
-    public bool IsDataMemberAttribute(ITypeSymbol typeSymbol) =>
-    typeSymbol is
+    public bool IsDataMemberAttribute(ITypeSymbol typeSymbol)
     {
-        MetadataName: "DataMemberAttribute",
-        ContainingNamespace:
+        return typeSymbol is
         {
-            Name: "Core",
+            MetadataName: "DataMemberAttribute",
             ContainingNamespace:
             {
-                Name: "Stride",
-                ContainingNamespace.IsGlobalNamespace: true,
+                Name: "Core",
+                ContainingNamespace:
+                {
+                    Name: "Stride",
+                    ContainingNamespace.IsGlobalNamespace: true,
+                },
             },
-        },
-    };
+        };
+    }
+
     public INamedTypeSymbol DataMemberIgnoreAttribute { get; } =
         compilation.GetTypeByMetadataName("Stride.Core.DataMemberIgnoreAttribute");
 

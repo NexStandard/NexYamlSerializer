@@ -77,7 +77,7 @@ public static class EmitStringAnalyzer
         if (originalValue.Length > 0 && originalValue[^1] == '\n')
         {
             if (originalValue[^2] == '\n' ||
-                originalValue[^2] == '\r' && originalValue[^3] == '\n')
+                (originalValue[^2] == '\r' && originalValue[^3] == '\n'))
             {
                 chompHint = '+';
             }

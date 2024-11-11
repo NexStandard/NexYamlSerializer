@@ -1,8 +1,5 @@
-using NexYaml.Parser;
-using System;
-using System.Collections.Generic;
 using NexYaml.Core;
-namespace NexVYaml.Parser;
+namespace NexYaml.Parser;
 
 public partial class YamlParser
 {

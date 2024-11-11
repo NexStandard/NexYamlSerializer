@@ -12,30 +12,30 @@ internal class FlowSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
             case EmitState.BlockMappingKey:
                 throw new YamlException("To start block-mapping in the mapping key is not supported.");
             case EmitState.BlockSequenceEntry:
-                {
-                    emitter.WriteIndent();
-                    emitter.WriteSequenceSeparator();
-                    emitter.WriteFlowMappingStart();
-                    break;
-                }
-            case EmitState.FlowSequenceEntry:
-                {
-                    if (emitter.currentElementCount > 0)
-                    {
-                        emitter.WriteFlowSequenceSeparator();
-                    }
-                    emitter.WriteFlowSequenceStart();
-                    break;
-                }
-            case EmitState.BlockMappingValue:
-                {
-                    if (emitter.currentElementCount > 0)
-                    {
-                        emitter.WriteFlowSequenceSeparator();
-                    }
-                    emitter.WriteFlowSequenceStart();
-                }
+            {
+                emitter.WriteIndent();
+                emitter.WriteSequenceSeparator();
+                emitter.WriteFlowMappingStart();
                 break;
+            }
+            case EmitState.FlowSequenceEntry:
+            {
+                if (emitter.currentElementCount > 0)
+                {
+                    emitter.WriteFlowSequenceSeparator();
+                }
+                emitter.WriteFlowSequenceStart();
+                break;
+            }
+            case EmitState.BlockMappingValue:
+            {
+                if (emitter.currentElementCount > 0)
+                {
+                    emitter.WriteFlowSequenceSeparator();
+                }
+                emitter.WriteFlowSequenceStart();
+            }
+            break;
             default:
                 emitter.WriteFlowSequenceStart();
                 break;

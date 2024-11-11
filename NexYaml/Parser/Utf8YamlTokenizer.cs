@@ -1,5 +1,4 @@
 using NexYaml.Core;
-using System;
 using System.Buffers;
 
 namespace NexYaml.Parser;
@@ -210,8 +209,8 @@ public class Utf8YamlTokenizer
                 ConsumeComplexKeyStart(ref reader);
                 break;
             case YamlCodes.MapValueIndent
-                when TryPeek(1, out var nextCode, ref reader) && YamlCodes.IsEmpty(nextCode) ||
-                     flowLevel > 0 && (YamlCodes.IsAnyFlowSymbol(nextCode) || mark.Position == adjacentValueAllowedAt):
+                when (TryPeek(1, out var nextCode, ref reader) && YamlCodes.IsEmpty(nextCode)) ||
+                     (flowLevel > 0 && (YamlCodes.IsAnyFlowSymbol(nextCode) || mark.Position == adjacentValueAllowedAt)):
                 ConsumeValueStart(ref reader);
                 break;
             case YamlCodes.Alias:
@@ -393,7 +392,7 @@ public class Utf8YamlTokenizer
             }
 
             length++;
-            value = value * 10 + YamlCodes.AsHex(currentCode);
+            value = (value * 10) + YamlCodes.AsHex(currentCode);
             Advance(1, ref reader);
         }
 
@@ -1248,7 +1247,7 @@ public class Utf8YamlTokenizer
                     var hasNext = TryPeek(1, out var nextCode, ref reader);
                     if (!hasNext ||
                         YamlCodes.IsEmpty(nextCode) ||
-                        flowLevel > 0 && YamlCodes.IsAnyFlowSymbol(nextCode))
+                        (flowLevel > 0 && YamlCodes.IsAnyFlowSymbol(nextCode)))
                     {
                         break;
                     }

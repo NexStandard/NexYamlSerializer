@@ -1,8 +1,6 @@
 using NexYaml.Core;
 using NexYaml.Serialization.Emittters;
-using System;
 using System.Buffers;
-using System.Linq;
 using System.Text;
 namespace NexYaml.Serialization;
 
@@ -26,7 +24,6 @@ public sealed class UTF8Stream : IUTF8Stream
     public int IndentWidth { get; } = 2;
     public IEmitterFactory EmitterFactory { get; private set; }
 
-
     internal bool IsFirstElement => currentElementCount <= 0;
     public SyntaxSettings settings { get; } = new();
     internal IndentationManager IndentationManager { get; } = new();
@@ -37,7 +34,7 @@ public sealed class UTF8Stream : IUTF8Stream
 
     public UTF8Stream(SyntaxSettings settings = null)
     {
-        if(settings is not null)
+        if (settings is not null)
         {
             this.settings = settings;
         }

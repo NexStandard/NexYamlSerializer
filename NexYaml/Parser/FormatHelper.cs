@@ -1,5 +1,4 @@
 ﻿using NexYaml.Core;
-using System;
 
 namespace NexYaml.Parser;
 internal class FormatHelper

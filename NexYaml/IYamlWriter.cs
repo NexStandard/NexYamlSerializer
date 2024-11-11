@@ -1,8 +1,6 @@
 ﻿using NexYaml.Core;
 using NexYaml.Serialization;
 using Stride.Core;
-using System;
-using System.Collections.Generic;
 
 namespace NexYaml;
 /// <summary>

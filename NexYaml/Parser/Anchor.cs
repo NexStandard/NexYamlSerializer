@@ -1,5 +1,3 @@
-using System;
-
 namespace NexYaml.Parser;
 
 public class Anchor(string name, int id) : IEquatable<Anchor>
