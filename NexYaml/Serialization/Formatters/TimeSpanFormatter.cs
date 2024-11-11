@@ -1,4 +1,5 @@
 using NexVYaml;
+using NexYaml.Parser;
 using Stride.Core;
 using System;
 using System.Buffers.Text;
@@ -23,7 +24,7 @@ public class TimeSpanFormatter : YamlSerializer<TimeSpan>
         }
     }
 
-    public override void Read(IYamlReader parser, ref TimeSpan value)
+    public override void Read(IYamlReader parser, ref TimeSpan value, ref ParseResult result)
     {
         if (parser.TryGetScalarAsSpan(out var span) &&
                Utf8Parser.TryParse(span, out TimeSpan timeSpan, out var bytesConsumed) &&

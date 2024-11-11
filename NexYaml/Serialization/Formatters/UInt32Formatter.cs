@@ -14,7 +14,7 @@ public class UInt32Formatter : YamlSerializer<uint>
         stream.Write(value, style);
     }
 
-    public override void Read(IYamlReader parser, ref uint value)
+    public override void Read(IYamlReader parser, ref uint value, ref ParseResult result)
     {
         if (parser.TryGetScalarAsSpan(out var span))
         {

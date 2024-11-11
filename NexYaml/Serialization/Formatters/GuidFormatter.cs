@@ -1,4 +1,5 @@
 using NexVYaml;
+using NexYaml.Parser;
 using Stride.Core;
 using System;
 using System.Buffers.Text;
@@ -23,7 +24,7 @@ public class GuidFormatter : YamlSerializer<Guid>
         }
     }
 
-    public override void Read(IYamlReader parser, ref Guid value)
+    public override void Read(IYamlReader parser, ref Guid value, ref ParseResult result)
     {
         if (parser.TryGetScalarAsSpan(out var span) &&
               Utf8Parser.TryParse(span, out Guid guid, out var bytesConsumed) &&

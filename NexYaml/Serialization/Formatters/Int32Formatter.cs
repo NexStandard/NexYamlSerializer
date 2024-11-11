@@ -14,7 +14,7 @@ public class Int32Formatter : YamlSerializer<int>
         stream.Write(value, style);
     }
 
-    public override void Read(IYamlReader parser, ref int value)
+    public override void Read(IYamlReader parser, ref int value, ref ParseResult result)
     {
         if (parser.TryGetScalarAsSpan(out var span))
         {

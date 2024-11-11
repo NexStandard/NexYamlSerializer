@@ -1,4 +1,5 @@
 ﻿using NexVYaml.Parser;
+using NexYaml.Parser;
 using NexYaml.Serialization;
 using NexYaml.Serialization.Formatters;
 using System;
@@ -37,8 +38,8 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
     }
 
     private static readonly Type NullableFormatter = typeof(NullableFormatter<>);
-
-    public void Read<T>(ref T? value)
+    public Dictionary<Guid, Action<object>> References = new();
+    public void Read<T>(ref T? value, ref ParseResult parseResult)
     {
         if (parser.IsNullScalar())
         {
@@ -53,7 +54,7 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
             var arrayFormatterType = typeof(ArrayFormatter<>).MakeGenericType(t);
             var arrayFormatter = (YamlSerializer)Activator.CreateInstance(arrayFormatterType)!;
 
-            arrayFormatter.Read(this, ref val);
+            arrayFormatter.Read(this, ref val, ref parseResult);
             value = (T)val!;
             return;
         }
@@ -63,7 +64,7 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
             var genericFilledFormatter = NullableFormatter.MakeGenericType(underlyingType);
             // TODO : Nullable makes sense?
             var f = (YamlSerializer<T?>?)Activator.CreateInstance(genericFilledFormatter)!;
-            f.Read(this, ref value);
+            f.Read(this, ref value, ref parseResult);
             return;
         }
         else if (type.IsInterface || type.IsAbstract || type.IsGenericType)
@@ -82,7 +83,7 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
                 else
                 {
 
-                    Read(formatt, ref parser, ref value);
+                    Read(formatt, ref parser, ref value, ref parseResult);
                     return;
                 }
             }
@@ -106,16 +107,16 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
                 return;
             }
             var valueObject = (object)value;
-            formatter.Read(this, ref valueObject);
+            formatter.Read(this, ref valueObject, ref parseResult);
             value = (T?)valueObject;
         }
         else
         {
-            Resolver.GetFormatter<T>().Read(this, ref value!);
+            Resolver.GetFormatter<T>().Read(this, ref value!, ref parseResult);
         }
     }
 
-    private void Read<T>(YamlSerializer<T> innerFormatter, ref YamlParser parser, ref T value)
+    private void Read<T>(YamlSerializer<T> innerFormatter, ref YamlParser parser, ref T value, ref ParseResult parseResult)
     {
         if (parser.TryResolveCurrentAlias<T>(ref parser, out var aliasValue))
         {
@@ -125,7 +126,7 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
 
         var withAnchor = parser.TryGetCurrentAnchor(out var anchor);
 
-        innerFormatter.Read(this, ref value);
+        innerFormatter.Read(this, ref value, ref parseResult);
 
         if (withAnchor)
         {
@@ -143,12 +144,24 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
     {
         parser.Reset();
     }
-    public bool TryRead<T>(ref T? target, ref ReadOnlySpan<byte> key, byte[] mappingKey)
+    public bool TryRead<T>(ref T? target, ref ReadOnlySpan<byte> key, byte[] mappingKey, ref ParseResult parseResult)
     {
         if (key.SequenceEqual(mappingKey))
         {
             Move();
-            Read(ref target);
+            Read(ref target, ref parseResult);
+            return true;
+        }
+        return false;
+    }
+
+    public bool TryRead<T>(ref T? target, ref ReadOnlySpan<byte> key, byte[] mappingKey)
+    {
+        var parseResult = new ParseResult();
+        if (key.SequenceEqual(mappingKey))
+        {
+            Move();
+            Read(ref target, ref parseResult);
             return true;
         }
         return false;
@@ -171,5 +184,11 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
     public bool TryGetScalarAsString(out string? value)
     {
         return parser.TryGetScalarAsString(out value);
+    }
+
+    public void Read<T>(ref T? value)
+    {
+        var parseResult = new ParseResult();
+        Read(ref value, ref parseResult);
     }
 }

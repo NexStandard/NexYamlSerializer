@@ -1,5 +1,6 @@
 using NexVYaml.Parser;
 using NexYaml.Core;
+using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
 using System;
@@ -178,7 +179,7 @@ public abstract class YamlSerializer
     protected virtual DataStyle Style { get; } = DataStyle.Any;
     public abstract void Write(IYamlWriter stream, object value, DataStyle style);
     public abstract void Write(IYamlWriter stream, object value);
-    public abstract void Read(IYamlReader parser, ref object? value);
+    public abstract void Read(IYamlReader parser, ref object? value, ref ParseResult parseResult);
 }
 public abstract class YamlSerializer<T> : YamlSerializer
 {
@@ -190,12 +191,12 @@ public abstract class YamlSerializer<T> : YamlSerializer
     {
         Write(stream, (T)value, style);
     }
-    public override void Read(IYamlReader parser, ref object? value)
+    public override void Read(IYamlReader parser, ref object? value, ref ParseResult parseResult)
     {
         var val = (T)value!;
-        Read(parser, ref val);
+        Read(parser, ref val, ref parseResult);
         value = val;
     }
     public abstract void Write(IYamlWriter stream, T value, DataStyle style);
-    public abstract void Read(IYamlReader parser, [MaybeNull] ref T value);
+    public abstract void Read(IYamlReader parser, [MaybeNull] ref T value, ref ParseResult parseResult);
 }

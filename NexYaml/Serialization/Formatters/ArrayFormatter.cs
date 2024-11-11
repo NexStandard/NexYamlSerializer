@@ -1,3 +1,4 @@
+using NexYaml.Parser;
 using Stride.Core;
 using System.Collections.Generic;
 
@@ -17,7 +18,7 @@ public class ArrayFormatter<T> : YamlSerializer<T[]>
         });
     }
 
-    public override void Read(IYamlReader stream, ref T[] value)
+    public override void Read(IYamlReader stream, ref T[] value, ref ParseResult result)
     {
         var list = new List<T>();
         stream.ReadSequence(() =>

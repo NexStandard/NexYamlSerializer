@@ -14,7 +14,7 @@ public class UInt64Formatter : YamlSerializer<ulong>
         stream.Write(value, style);
     }
 
-    public override void Read(IYamlReader parser, ref ulong value)
+    public override void Read(IYamlReader parser, ref ulong value, ref ParseResult result)
     {
         if (parser.TryGetScalarAsSpan(out var span))
         {

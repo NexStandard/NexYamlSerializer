@@ -1,4 +1,5 @@
 using NexYaml.Core;
+using NexYaml.Parser;
 using Stride.Core;
 using System;
 using System.Buffers.Text;
@@ -15,7 +16,7 @@ public class Int64Formatter : YamlSerializer<long>
         stream.Write(value, style);
     }
 
-    public override void Read(IYamlReader parser, ref long value)
+    public override void Read(IYamlReader parser, ref long value, ref ParseResult result)
     {
         if (parser.TryGetScalarAsSpan(out var span))
         {

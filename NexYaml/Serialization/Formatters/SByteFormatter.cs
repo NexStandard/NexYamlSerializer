@@ -14,7 +14,7 @@ public class SByteFormatter : YamlSerializer<sbyte>
         stream.Write(value, style);
     }
 
-    public override void Read(IYamlReader parser, ref sbyte value)
+    public override void Read(IYamlReader parser, ref sbyte value, ref ParseResult parseResult)
     {
         if (parser.TryGetScalarAsSpan(out var span))
         {

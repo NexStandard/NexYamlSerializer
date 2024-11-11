@@ -1,4 +1,5 @@
 using NexVYaml.Parser;
+using NexYaml.Parser;
 using Stride.Core;
 
 namespace NexYaml.Serialization.Formatters;
@@ -12,7 +13,7 @@ public class CharFormatter : YamlSerializer<char>
         stream.Write(value, style);
     }
 
-    public override void Read(IYamlReader parser, ref char value)
+    public override void Read(IYamlReader parser, ref char value, ref ParseResult parseResult)
     {
         if (parser.TryGetScalarAsString(out var result))
         {

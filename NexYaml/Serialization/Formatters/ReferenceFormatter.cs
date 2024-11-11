@@ -1,11 +1,12 @@
-﻿using Stride.Core;
+﻿using NexYaml.Parser;
+using Stride.Core;
 
 namespace NexYaml.Serialization.Formatters;
 public class ReferenceFormatter<T> : YamlSerializer<T>
     where T : IIdentifiable
 {
     private const string refPrefix = "!!ref ";
-    public override void Read(IYamlReader stream, ref T value)
+    public override void Read(IYamlReader stream, ref T value, ref ParseResult result)
     {
         if (stream.TryGetScalarAsString(out var reference))
         {

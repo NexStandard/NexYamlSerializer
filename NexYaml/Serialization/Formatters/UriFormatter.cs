@@ -1,3 +1,4 @@
+using NexYaml.Parser;
 using Stride.Core;
 using System;
 
@@ -12,7 +13,7 @@ public class UriFormatter : YamlSerializer<Uri>
         stream.Write(value.ToString());
     }
 
-    public override void Read(IYamlReader parser, ref Uri value)
+    public override void Read(IYamlReader parser, ref Uri value, ref ParseResult result)
     {
         if (parser.TryGetScalarAsString(out var scalar) && scalar != null)
         {

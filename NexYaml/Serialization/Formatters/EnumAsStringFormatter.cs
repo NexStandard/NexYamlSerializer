@@ -1,5 +1,6 @@
 using NexVYaml;
 using NexYaml;
+using NexYaml.Parser;
 using Stride.Core;
 using System;
 using System.Collections.Generic;
@@ -74,7 +75,7 @@ public class EnumAsStringFormatter<T> : YamlSerializer<T>
         }
     }
 
-    public override void Read(IYamlReader parser, ref T value)
+    public override void Read(IYamlReader parser, ref T value, ref ParseResult result)
     {
         if (parser.TryGetScalarAsString(out var scalar))
         {

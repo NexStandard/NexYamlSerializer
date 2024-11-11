@@ -1,5 +1,6 @@
 ﻿using NexVYaml.Parser;
 using NexYaml.Core;
+using NexYaml.Parser;
 using Stride.Core;
 using System.Text;
 
@@ -7,7 +8,7 @@ namespace NexYaml.Serialization.Formatters;
 internal class DelegateFormatter<T> : YamlSerializer<T>
     where T : Delegate
 {
-    public override void Read(IYamlReader stream, ref T value)
+    public override void Read(IYamlReader stream, ref T value, ref ParseResult result)
     {
 
         stream.ReadSequence(() =>

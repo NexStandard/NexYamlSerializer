@@ -1,5 +1,6 @@
 using NexVYaml.Parser;
 using NexYaml;
+using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
 using System.Collections.Generic;
@@ -37,7 +38,7 @@ public class DictionaryReadonlyInterfaceFormatter<TKey, TValue> : YamlSerializer
         }
     }
 
-    public override void Read(IYamlReader parser, ref IReadOnlyDictionary<TKey, TValue> value)
+    public override void Read(IYamlReader parser, ref IReadOnlyDictionary<TKey, TValue> value, ref ParseResult parseResult)
     {
         var map = new Dictionary<TKey, TValue>();
         if (FormatterExtensions.IsPrimitive(typeof(TKey)))
@@ -61,7 +62,7 @@ public class DictionaryReadonlyInterfaceFormatter<TKey, TValue> : YamlSerializer
         {
             var listFormatter = new ListFormatter<KeyValuePair<TKey, TValue>>();
             var keyValuePairs = default(List<KeyValuePair<TKey, TValue>>);
-            listFormatter.Read(parser, ref keyValuePairs);
+            listFormatter.Read(parser, ref keyValuePairs,ref parseResult);
 
             value = keyValuePairs?.ToDictionary() ?? [];
         }

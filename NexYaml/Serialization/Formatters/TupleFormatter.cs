@@ -1,3 +1,4 @@
+using NexYaml.Parser;
 using Stride.Core;
 using System;
 
@@ -13,7 +14,7 @@ public class TupleFormatter<T1> : YamlSerializer<Tuple<T1>?>
         });
     }
 
-    public override void Read(IYamlReader stream, ref Tuple<T1>? value)
+    public override void Read(IYamlReader stream, ref Tuple<T1>? value, ref ParseResult result)
     {
         var item1 = default(T1);
         stream.ReadSequence(() =>
@@ -35,7 +36,7 @@ public class TupleFormatter<T1, T2> : YamlSerializer<Tuple<T1, T2>?>
         });
     }
 
-    public override void Read(IYamlReader stream, ref Tuple<T1, T2>? value)
+    public override void Read(IYamlReader stream, ref Tuple<T1, T2>? value, ref ParseResult result)
     {
         var item1 = default(T1);
         var item2 = default(T2);
@@ -60,7 +61,7 @@ public class TupleFormatter<T1, T2, T3> : YamlSerializer<Tuple<T1, T2, T3>?>
         });
     }
 
-    public override void Read(IYamlReader stream, ref Tuple<T1, T2, T3>? value)
+    public override void Read(IYamlReader stream, ref Tuple<T1, T2, T3>? value, ref ParseResult result)
     {
         var item1 = default(T1);
         var item2 = default(T2);
@@ -88,7 +89,7 @@ public class TupleFormatter<T1, T2, T3, T4> : YamlSerializer<Tuple<T1, T2, T3, T
         });
     }
 
-    public override void Read(IYamlReader stream, ref Tuple<T1, T2, T3, T4>? value)
+    public override void Read(IYamlReader stream, ref Tuple<T1, T2, T3, T4>? value, ref ParseResult result)
     {
         var item1 = default(T1);
         var item2 = default(T2);
@@ -119,7 +120,7 @@ public class TupleFormatter<T1, T2, T3, T4, T5> : YamlSerializer<Tuple<T1, T2, T
         });
     }
 
-    public override void Read(IYamlReader stream, ref Tuple<T1, T2, T3, T4, T5>? value)
+    public override void Read(IYamlReader stream, ref Tuple<T1, T2, T3, T4, T5>? value, ref ParseResult result)
     {
         var item1 = default(T1);
         var item2 = default(T2);
@@ -153,7 +154,7 @@ public class TupleFormatter<T1, T2, T3, T4, T5, T6> : YamlSerializer<Tuple<T1, T
         });
     }
 
-    public override void Read(IYamlReader stream, ref Tuple<T1, T2, T3, T4, T5, T6>? value)
+    public override void Read(IYamlReader stream, ref Tuple<T1, T2, T3, T4, T5, T6>? value, ref ParseResult result)
     {
         var item1 = default(T1);
         var item2 = default(T2);
@@ -190,7 +191,7 @@ public class TupleFormatter<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<Tuple<T
         });
     }
 
-    public override void Read(IYamlReader stream, ref Tuple<T1, T2, T3, T4, T5, T6, T7>? value)
+    public override void Read(IYamlReader stream, ref Tuple<T1, T2, T3, T4, T5, T6, T7>? value, ref ParseResult result)
     {
         var item1 = default(T1);
         var item2 = default(T2);
@@ -231,7 +232,7 @@ public class TupleFormatter<T1, T2, T3, T4, T5, T6, T7, T8> : YamlSerializer<Tup
         });
     }
 
-    public override void Read(IYamlReader stream, ref Tuple<T1, T2, T3, T4, T5, T6, T7, T8>? value)
+    public override void Read(IYamlReader stream, ref Tuple<T1, T2, T3, T4, T5, T6, T7, T8>? value, ref ParseResult result)
     {
         var item1 = default(T1);
         var item2 = default(T2);

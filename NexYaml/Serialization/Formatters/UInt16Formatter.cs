@@ -14,7 +14,7 @@ public class UInt16Formatter : YamlSerializer<ushort>
         stream.Write(value, style);
     }
 
-    public override void Read(IYamlReader parser, ref ushort value)
+    public override void Read(IYamlReader parser, ref ushort value, ref ParseResult result)
     {
         if (parser.TryGetScalarAsSpan(out var span))
         {

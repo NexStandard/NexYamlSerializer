@@ -55,7 +55,7 @@ file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSeria
         stream.EndMapping();
     }}
 
-    public override void Read(IYamlReader stream, ref {info.NameDefinition} value)
+    public override void Read(IYamlReader stream, ref {info.NameDefinition} value, ref ParseResult parseResult)
     {{
 {package.CreateDeserialize()}
     }}

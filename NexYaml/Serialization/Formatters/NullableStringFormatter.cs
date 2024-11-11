@@ -1,6 +1,7 @@
 using NexVYaml.Parser;
 using NexYaml;
 using NexYaml.Core;
+using NexYaml.Parser;
 using Stride.Core;
 
 namespace NexYaml.Serialization.Formatters;
@@ -13,7 +14,7 @@ public class NullableStringFormatter : YamlSerializer<string?>
         stream.Write(value!);
     }
 
-    public override void Read(IYamlReader parser, ref string? value)
+    public override void Read(IYamlReader parser, ref string? value, ref ParseResult result)
     {
         if (parser.TryGetScalarAsSpan(out var span))
         {

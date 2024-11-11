@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using NexVYaml.Parser;
+using NexYaml.Parser;
 
 namespace NexYaml;
 public interface IYamlReader
@@ -9,8 +10,8 @@ public interface IYamlReader
     bool HasSequence { get; }
 
     void Read(ref ReadOnlySpan<byte> span);
+    void Read<T>(ref T? value, ref ParseResult parseResult);
     void Read<T>(ref T? value);
-
     void Dispose();
     bool HasMapping(out ReadOnlySpan<byte> mappingKey);
     bool IsNullScalar();
@@ -21,5 +22,6 @@ public interface IYamlReader
     void SkipRead();
     bool TryGetScalarAsSpan([MaybeNullWhen(false)] out ReadOnlySpan<byte> span);
     bool TryGetScalarAsString(out string? value);
+    public bool TryRead<T>(ref T? target, ref ReadOnlySpan<byte> key, byte[] mappingKey, ref ParseResult parseResult);
     public bool TryRead<T>(ref T? target, ref ReadOnlySpan<byte> key, byte[] mappingKey);
 }

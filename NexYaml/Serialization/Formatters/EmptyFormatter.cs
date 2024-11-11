@@ -1,4 +1,5 @@
-﻿using Stride.Core;
+﻿using NexYaml.Parser;
+using Stride.Core;
 
 namespace NexYaml.Serialization.Formatters;
 public class EmptyFormatter<T> : YamlSerializer<T>
@@ -13,7 +14,7 @@ public class EmptyFormatter<T> : YamlSerializer<T>
         stream.Write([(byte)'!', (byte)'!', (byte)'n', (byte)'u', (byte)'l', (byte)'l']);
     }
 
-    public override void Read(IYamlReader parser, ref T value)
+    public override void Read(IYamlReader parser, ref T value, ref ParseResult result)
     {
         value = default!;
     }

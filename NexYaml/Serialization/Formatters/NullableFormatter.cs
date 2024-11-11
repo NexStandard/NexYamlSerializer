@@ -1,4 +1,5 @@
 using NexYaml;
+using NexYaml.Parser;
 using Stride.Core;
 
 namespace NexYaml.Serialization.Formatters;
@@ -17,7 +18,7 @@ public class NullableFormatter<T> : YamlSerializer<T?> where T : struct
         }
     }
 
-    public override void Read(IYamlReader parser, ref T? value)
+    public override void Read(IYamlReader parser, ref T? value, ref ParseResult result)
     {
         var val = default(T);
         parser.Read(ref val);
@@ -40,7 +41,7 @@ public sealed class StaticNullableFormatter<T>(YamlSerializer<T> underlyingForma
         }
     }
 
-    public override void Read(IYamlReader parser, ref T? value)
+    public override void Read(IYamlReader parser, ref T? value, ref ParseResult result)
     {
         var val = default(T);
         parser.Read(ref val);

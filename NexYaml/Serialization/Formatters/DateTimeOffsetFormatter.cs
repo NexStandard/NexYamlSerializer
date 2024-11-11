@@ -1,5 +1,6 @@
 using NexVYaml;
 using NexYaml;
+using NexYaml.Parser;
 using Stride.Core;
 using System;
 using System.Buffers;
@@ -25,7 +26,7 @@ public class DateTimeOffsetFormatter : YamlSerializer<DateTimeOffset>
         }
     }
 
-    public override void Read(IYamlReader parser, ref DateTimeOffset value)
+    public override void Read(IYamlReader parser, ref DateTimeOffset value, ref ParseResult result)
     {
         if (parser.TryGetScalarAsSpan(out var span) &&
              Utf8Parser.TryParse(span, out DateTimeOffset val, out var bytesConsumed) &&

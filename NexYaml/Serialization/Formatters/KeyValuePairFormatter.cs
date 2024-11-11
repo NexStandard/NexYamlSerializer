@@ -1,3 +1,4 @@
+using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
 using System;
@@ -16,7 +17,7 @@ public class KeyValuePairFormatter<TKey, TValue> : YamlSerializer<KeyValuePair<T
         });
     }
 
-    public override void Read(IYamlReader stream, ref KeyValuePair<TKey, TValue> value)
+    public override void Read(IYamlReader stream, ref KeyValuePair<TKey, TValue> value, ref ParseResult result)
     {
         var key = default(TKey);
         var val = default(TValue);

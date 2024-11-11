@@ -1,4 +1,5 @@
 using NexYaml.Core;
+using NexYaml.Parser;
 using Stride.Core;
 using System;
 namespace NexYaml.Serialization.Formatters;
@@ -12,7 +13,7 @@ public class BooleanFormatter : YamlSerializer<bool>
         stream.Write(value, style);
     }
 
-    public override void Read(IYamlReader parser, ref bool value)
+    public override void Read(IYamlReader parser, ref bool value, ref ParseResult result)
     {
         if (parser.TryGetScalarAsSpan(out var span))
         {
