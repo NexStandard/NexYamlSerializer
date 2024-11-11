@@ -1,4 +1,4 @@
-namespace NexVYaml.Parser;
+namespace NexYaml.Core;
 
 public struct Marker(int position, int line, int col)
 {

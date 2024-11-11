@@ -1,7 +1,6 @@
-﻿using NexVYaml.Parser;
-using System;
+﻿using System;
 
-namespace NexVYaml;
+namespace NexYaml.Core;
 
 public class YamlException : Exception
 {

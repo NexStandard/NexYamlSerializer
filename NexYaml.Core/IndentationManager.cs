@@ -1,4 +1,4 @@
-﻿namespace NexYamlSerializer.Emitter;
+﻿namespace NexYaml.Core;
 public class IndentationManager
 {
     public int CurrentIndentLevel { get; private set; }

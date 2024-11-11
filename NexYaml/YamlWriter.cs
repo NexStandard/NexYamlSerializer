@@ -1,9 +1,6 @@
-﻿using NexVYaml;
-using NexVYaml.Serialization;
-using NexYaml.Core;
+﻿using NexYaml.Core;
 using NexYaml.Serialization;
 using NexYaml.Serialization.SyntaxPlugins;
-using NexYamlSerializer;
 using Stride.Core;
 
 namespace NexYaml;

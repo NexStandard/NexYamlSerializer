@@ -1,5 +1,4 @@
-﻿using NexVYaml;
-using System;
+﻿using NexYaml.Core;
 
 namespace NexYaml.Serialization.Emittters;
 internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter

@@ -1,5 +1,5 @@
-﻿using NexYaml.Serialization.Emittters;
-using NexYamlSerializer;
+﻿using NexYaml.Core;
+using NexYaml.Serialization.Emittters;
 using System;
 
 namespace NexYaml.Serialization;

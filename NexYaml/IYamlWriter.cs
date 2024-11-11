@@ -1,6 +1,5 @@
 ﻿using NexYaml.Core;
 using NexYaml.Serialization;
-using NexYamlSerializer;
 using Stride.Core;
 using System;
 using System.Collections.Generic;

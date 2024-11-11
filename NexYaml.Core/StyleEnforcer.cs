@@ -1,6 +1,6 @@
 using Stride.Core;
 
-namespace NexVYaml.Serialization;
+namespace NexYaml.Core;
 
 /// <summary>
 /// Enforces <see cref="DataStyle.Compact"/> 

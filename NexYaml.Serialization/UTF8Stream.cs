@@ -1,7 +1,5 @@
 using NexYaml.Core;
 using NexYaml.Serialization.Emittters;
-using NexYamlSerializer;
-using NexYamlSerializer.Emitter;
 using System;
 using System.Buffers;
 using System.Linq;

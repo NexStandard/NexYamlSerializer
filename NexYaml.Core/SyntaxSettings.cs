@@ -1,4 +1,4 @@
-﻿namespace NexYamlSerializer;
+﻿namespace NexYaml.Core;
 
 public class SyntaxSettings()
 {

@@ -1,10 +1,6 @@
-using NexVYaml;
-using NexYaml;
 using NexYaml.Parser;
 using Stride.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using NexYaml.Core;
 using System.Runtime.Serialization;
 
 namespace NexYaml.Serialization.Formatters;

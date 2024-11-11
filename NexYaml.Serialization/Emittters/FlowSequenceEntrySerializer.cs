@@ -1,5 +1,4 @@
-﻿using NexVYaml;
-using System;
+﻿using NexYaml.Core;
 
 namespace NexYaml.Serialization.Emittters;
 internal class FlowSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
