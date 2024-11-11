@@ -5,9 +5,9 @@ namespace NexYaml.Core;
 
 public readonly struct EmitStringInfo(int lines, bool needsQuotes, bool isReservedWord)
 {
-    public readonly int Lines = lines;
-    public readonly bool NeedsQuotes = needsQuotes;
-    public readonly bool IsReservedWord = isReservedWord;
+    public int Lines { get; } = lines;
+    public bool NeedsQuotes { get; } = needsQuotes;
+    public bool IsReservedWord { get; } = isReservedWord;
 
     public ScalarStyle SuggestScalarStyle()
     {
