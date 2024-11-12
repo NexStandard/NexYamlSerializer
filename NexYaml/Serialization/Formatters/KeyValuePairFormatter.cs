@@ -7,6 +7,7 @@ public class KeyValuePairFormatter<TKey, TValue> : YamlSerializer<KeyValuePair<T
 {
     public override void Write(IYamlWriter stream, KeyValuePair<TKey, TValue> value, DataStyle style)
     {
+        var x = value.Key;
         stream.WriteSequence(style, () =>
         {
             stream.Write(value.Key, style);

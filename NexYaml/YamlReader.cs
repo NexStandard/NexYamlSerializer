@@ -55,6 +55,13 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
             value = (T)val!;
             return;
         }
+        if(typeof(T) == typeof(Type))
+        {
+            object? val = value;
+            TypeFormatter.Instance.Read(this, ref val, ref parseResult);
+            value = (T)val!;
+            return;
+        }
         var type = typeof(T);
         if (parser.IsNullable(type, out var underlyingType))
         {

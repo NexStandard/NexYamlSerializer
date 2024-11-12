@@ -26,6 +26,7 @@ public class YamlWriter(IUTF8Stream stream, IYamlFormatterResolver resolver) : I
             new ArrayPlugin(),
             new DelegatePlugin(),
             new ReferencePlugin(),
+            new TypePlugin(),
     ];
 
     private StyleEnforcer enforcer = new();

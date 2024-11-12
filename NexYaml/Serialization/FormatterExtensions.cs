@@ -19,6 +19,7 @@ internal static class FormatterExtensions
                type == typeof(decimal) ||
                type == typeof(string) ||
                type == typeof(DateTime) ||
+               type == typeof(Type) ||
                type == typeof(TimeSpan);
     }
 }
