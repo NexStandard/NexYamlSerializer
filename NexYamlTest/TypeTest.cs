@@ -18,5 +18,8 @@ public class TypeTest
         var s = YamlSerializer.SerializeToString(x);
         var d = YamlSerializer.Deserialize<TypeDictionary>(s);
         Assert.NotNull(d);
+        Assert.Equal(x.TypeMap[typeof(int)], 1);
+        Assert.Equal(x.TypeMap[typeof(string)], 0);
+        Assert.NotEqual(x.TypeMap[typeof(double)], 0);
     }
 }
