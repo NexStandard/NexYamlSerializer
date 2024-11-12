@@ -7,6 +7,7 @@ public interface IYamlFormatterResolver
     YamlSerializer GetFormatter(Type type, Type origin);
     YamlSerializer<T>? GetGenericFormatter<T>();
     public Type GetAliasType(string alias);
+    public string GetTypeAlias(Type type);
     public void Register(IYamlFormatterHelper yamlFormatterHelper, Type target, Type interfaceType);
     public void RegisterFormatter<T>(YamlSerializer<T> formatter);
     public void RegisterFormatter(Type formatter);

@@ -2,6 +2,6 @@
 using NexYaml;
 using NexYaml.Serialization;
 using Test;
-
-NexYamlSerializerRegistry.Init();
-BenchmarkRunner.Run<Benchmarker>();
+var s = new Benchmarker();
+s.Setup();
+s.Yaml();

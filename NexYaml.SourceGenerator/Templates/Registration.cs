@@ -25,11 +25,14 @@ internal static class Registration
     public static string CreateRegisterThis(this ClassPackage package)
     {
         var sb = new StringBuilder();
-        sb.AppendLine($"{Constants.SerializerRegistry}.RegisterTag($\"{package.ClassInfo.NameSpace}.{package.ClassInfo.TypeName},{package.ClassInfo.NameSpace.Split('.')[0]}\",typeof({package.ClassInfo.ShortDefinition}));");
         sb.AppendLine($"{Constants.SerializerRegistry}.Register(this,typeof({package.ClassInfo.ShortDefinition}),typeof({package.ClassInfo.ShortDefinition}));");
         if (package.ClassInfo.AliasTag != "")
         {
             sb.AppendLine($"{Constants.SerializerRegistry}.RegisterTag(\"{package.ClassInfo.AliasTag}\",typeof({package.ClassInfo.ShortDefinition}));");
+        }
+        else
+        {
+            sb.AppendLine($"{Constants.SerializerRegistry}.RegisterTag($\"{package.ClassInfo.NameSpace}.{package.ClassInfo.TypeName},{package.ClassInfo.NameSpace.Split('.')[0]}\",typeof({package.ClassInfo.ShortDefinition}));");
         }
         if (package.ClassInfo.IsGeneric)
         {

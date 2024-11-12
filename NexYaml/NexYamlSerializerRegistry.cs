@@ -15,7 +15,10 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
     {
         return FormatterRegistry.TypeMap[alias];
     }
-
+    public string GetTypeAlias(Type type)
+    {
+        return FormatterRegistry.AliasMap[type];
+    }
     public YamlSerializer<T> GetFormatter<T>()
     {
         if (FormatterRegistry.DefinedFormatters.TryGetValue(typeof(T), out var formatter))
@@ -103,6 +106,7 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
         }
         return null;
     }
+
     public void RegisterFormatter<T>(YamlSerializer<T> formatter)
     {
         var keyType = typeof(T);
@@ -117,6 +121,7 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
     public void RegisterTag(string tag, Type formatterGenericType)
     {
         FormatterRegistry.TypeMap[tag] = formatterGenericType;
+        FormatterRegistry.AliasMap[formatterGenericType] = tag;
     }
 
     public void RegisterGenericFormatter(Type target, Type formatterType)
@@ -150,6 +155,9 @@ public class SerializerRegistry
     internal Dictionary<string, Type> TypeMap { get; } = new()
     {
         ["!!del"] = typeof(Action)
+    };
+    internal Dictionary<Type, string> AliasMap { get; } = new()
+    {
     };
     internal Dictionary<Type, YamlSerializer> DefinedFormatters { get; } = new Dictionary<Type, YamlSerializer>()
     {

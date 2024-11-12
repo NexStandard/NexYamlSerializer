@@ -12,9 +12,15 @@ public class Benchmarker
     internal static Collections c = new Collections();
     public IYamlWriter writer;
     public UTF8Stream stream;
-    [GlobalSetup()]
+    static bool  x = false;
+    [IterationSetup()]
     public void Setup()
     {
+        if(!x)
+        {
+        NexYamlSerializerRegistry.Init();
+            x = true;
+        }
         stream = new UTF8Stream();
         writer = new YamlWriter(stream, NexYamlSerializerRegistry.Instance);
     }
@@ -23,7 +29,6 @@ public class Benchmarker
     {
         writer.Write(c, DataStyle.Compact);
         var s = stream.GetChars().Span.ToString();
-        stream.Reset();
     }
     [Benchmark()]
     public void Json()
