@@ -53,11 +53,12 @@ internal class DeserializeEmitter
         {
             if (!x.IsInit)
             {
-                stringBuilder.AppendLine($"if(__TEMP__RESULT__{x.Name}.IsReference) {{ stream.ReferenceResolvingMap.Add(__TEMP__RESULT__{x.Name}.Reference, (obj) => __TEMP__RESULT.{x.Name} = ({x.Type}{(x.IsArray ? "[]" : "")})obj) ; }}");
+                stringBuilder.AppendLine($"if(__TEMP__RESULT__{x.Name}.IsReference) {{ stream.AddReference(__TEMP__RESULT__{x.Name}.Reference, (obj) => __TEMP__RESULT.{x.Name} = ({x.Type}{(x.IsArray ? "[]" : "")})obj); }}");
             }
             else
             {
-                stringBuilder.AppendLine($"if(__TEMP__RESULT__{x.Name}.IsReference) {{ stream.ReferenceResolvingMap.Add(__TEMP__RESULT__{x.Name}.Reference, (obj) => SetInit(\"{x.Name}\",__TEMP__RESULT)) ; }}");
+                stringBuilder.AppendLine($"if(__TEMP__RESULT__{x.Name}.IsReference) {{ stream.AddReference(__TEMP__RESULT__{x.Name}.Reference, (obj) => SetInit(\"{x.Name}\",__TEMP__RESULT)); }}");
+                
             }
         }
         return stringBuilder.ToString();

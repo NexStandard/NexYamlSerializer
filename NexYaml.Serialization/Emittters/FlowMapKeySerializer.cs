@@ -10,9 +10,6 @@ internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
         var current = emitter.Current.State;
         if (current is EmitState.BlockSequenceEntry)
         {
-            emitter.WriteIndent()
-                .WriteSequenceSeparator()
-                .WriteFlowMappingStart();
             emitter.WriteBlockSequenceEntryHeader();
         }
         else if (current is EmitState.FlowSequenceEntry)
@@ -36,8 +33,7 @@ internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
             if (emitter.tagStack.TryPop(out var tag))
             {
                 emitter.WriteRaw(tag)
-                    .WriteSpace()
-                    .WriteIndent();
+                    .WriteSpace();
             }
             emitter.WriteFlowMappingStart();
         }

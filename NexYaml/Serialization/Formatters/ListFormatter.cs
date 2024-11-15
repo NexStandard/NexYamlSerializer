@@ -1,4 +1,5 @@
 using NexYaml.Parser;
+using Silk.NET.SDL;
 using Stride.Core;
 
 namespace NexYaml.Serialization.Formatters;
@@ -7,6 +8,37 @@ public class ListFormatter<T> : YamlSerializer<List<T>?>
 {
     public override void Write(IYamlWriter stream, List<T>? value, DataStyle style)
     {
+        if(value!.Any(value => value is IIdentifiable))
+        {
+            List<IIdentifiable> reservedIds = new();
+
+            for (var i = 0; i < value.Count; i++)
+            {
+                var element = value[i];
+                if (element is IIdentifiable identifiable 
+                    && !stream.References.Contains(identifiable.Id))
+                {
+                    stream.References.Add(identifiable.Id);
+                    reservedIds.Add(identifiable);
+                }
+            }
+            List<IIdentifiable> removedIds = new();
+            stream.BeginSequence(style);
+            for (var i = 0; i < value.Count; i++)
+            {
+                var element = value[i];
+                if(element is IIdentifiable identifiable 
+                    && reservedIds.Contains(identifiable) &&
+                    !removedIds.Contains(identifiable))
+                {
+                    stream.References.Remove(identifiable.Id);
+                    removedIds.Add(identifiable);
+                }
+                stream.Write(element, style);
+            }
+            stream.EndSequence();
+            return;
+        }
         stream.BeginSequence(style);
         foreach (var x in value)
         {
@@ -18,14 +50,20 @@ public class ListFormatter<T> : YamlSerializer<List<T>?>
     public override void Read(IYamlReader stream, ref List<T>? value, ref ParseResult result)
     {
         var list = new List<T>();
-
-        stream.ReadSequence(() =>
+        stream.ReadWithVerify(ParseEventType.SequenceStart);
+        while (stream.HasSequence)
         {
             var val = default(T);
-            stream.Read(ref val);
+            var parseResult = new ParseResult();
+            stream.Read(ref val, ref parseResult);
+            int counter = list.Count;
+            if (parseResult.IsReference)
+            {
+                stream.AddReference(parseResult.Reference, (obj) => list[counter] = (T)obj);
+            }
             list.Add(val!);
-        });
-
+        }
+        stream.ReadWithVerify(ParseEventType.SequenceEnd);
         value = list;
     }
 }

@@ -171,7 +171,8 @@ public sealed class UTF8Stream : IUTF8Stream
             }
         }
         WriteIndent();
-        WriteRaw(settings.SequenceIdentifier);
+         WriteRaw(settings.SequenceIdentifier);
+
     }
 
     public IEmitter Current

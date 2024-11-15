@@ -40,8 +40,20 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
     }
 
     private static readonly Type NullableFormatter = typeof(NullableFormatter<>);
-    public Dictionary<Guid, Action<object>> References = new();
-    private byte[] reference = [(byte)'i', (byte)'d'];
+    private byte[] reference = [(byte)'I', (byte)'d'];
+
+    public void AddReference(Guid id, Action<object> resolution)
+    {
+        if (ReferenceResolvingMap.TryGetValue(id, out var action))
+        {
+            action += resolution;
+            ReferenceResolvingMap[id] = action;
+        }
+        else
+        {
+            ReferenceResolvingMap.Add(id, resolution);
+        }
+    }
     public void Read<T>(ref T? value, ref ParseResult parseResult)
     {
         if (parser.IsNullScalar())
@@ -159,6 +171,7 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
         {
             if(ReferenceResolvingMap.TryGetValue(identifiable.Id,out var value))
             {
+                var x = value.GetInvocationList();
                 value(identifiable);
             }
         }

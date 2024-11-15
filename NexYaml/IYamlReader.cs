@@ -13,6 +13,7 @@ public interface IYamlReader
     void Dispose();
     bool HasMapping(out ReadOnlySpan<byte> mappingKey);
     void ResolveReferences();
+    void AddReference(Guid id, Action<object> resolution);
     bool IsNullScalar();
     bool Move();
     void ReadWithVerify(ParseEventType eventType);

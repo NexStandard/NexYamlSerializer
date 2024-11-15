@@ -11,7 +11,7 @@ internal class ReferencePlugin : ISyntaxPlugin
             {
                 stream.BeginMapping(DataStyle.Compact);
                 stream.WriteTag("!!ref",true);
-                stream.Write("id",id.Id, DataStyle.Any);
+                stream.Write("Id",id.Id, DataStyle.Compact);
                 stream.EndMapping();
                 return true;
             }
