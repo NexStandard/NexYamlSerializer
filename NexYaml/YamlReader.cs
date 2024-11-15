@@ -64,24 +64,18 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
         }
         if(parser.TryGetCurrentTag(out var tag))
         {
-            string s = tag.Handle;
-            if(s == "ref")
+            string handle = tag.Handle;
+            if(handle == "ref")
             {
                 Guid? id = null;
-                ParseResult r = default;
-                this.ReadMapping((key) =>
-                {
-                    if (
-                        !this.TryRead(ref id, ref key, reference, ref r)
-                    )
-                    {
-                        this.SkipRead();
-                    }
-                });
-                if(id != null)
+                ParseResult result = default;
+                this.TryGetScalarAsString(out var idScalar);
+
+                parser.ReadWithVerify(ParseEventType.Scalar);
+                if (idScalar != null)
                 {
                     parseResult.IsReference = true;
-                    parseResult.Reference = id.Value;
+                    parseResult.Reference = Guid.Parse(idScalar);
                 }
                 return;
             }
