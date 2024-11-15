@@ -14,6 +14,7 @@ public interface IYamlReader
     bool HasMapping(out ReadOnlySpan<byte> mappingKey);
     void ResolveReferences();
     void AddReference(Guid id, Action<object> resolution);
+    public bool TryGetCurrentTag(out Tag tag);
     bool IsNullScalar();
     bool Move();
     void ReadWithVerify(ParseEventType eventType);
@@ -22,6 +23,7 @@ public interface IYamlReader
     void SkipRead();
     bool TryGetScalarAsSpan([MaybeNullWhen(false)] out ReadOnlySpan<byte> span);
     bool TryGetScalarAsString(out string? value);
+    
     public bool TryRead<T>(ref T? target, ref ReadOnlySpan<byte> key, byte[] mappingKey, ref ParseResult parseResult);
     public bool TryRead<T>(ref T? target, ref ReadOnlySpan<byte> key, byte[] mappingKey);
 }

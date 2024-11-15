@@ -1,6 +1,7 @@
 ﻿using NexYaml.Parser;
 using NexYaml.Serialization;
 using NexYaml.Serialization.Formatters;
+using NexYaml.Serialization.SyntaxPlugins;
 using Stride.Core;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -14,6 +15,15 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
 
     public Dictionary<Guid, Action<object>> ReferenceResolvingMap { get; } = new();
     private HashSet<IIdentifiable> identifiables = new();
+    private List<IResolvePlugin> plugins =
+    [
+        new NullPlugin(),
+            new NullablePlugin(),
+            new ArrayPlugin(),
+            new DelegatePlugin(),
+            new ReferencePlugin(),
+            new TypePlugin(),
+    ];
     public void Dispose()
     {
         parser.Dispose();
@@ -56,60 +66,17 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
     }
     public void Read<T>(ref T? value, ref ParseResult parseResult)
     {
-        if (parser.IsNullScalar())
+        foreach (var syntax in plugins)
         {
-            value = default;
-            Move();
-            return;
-        }
-        if(parser.TryGetCurrentTag(out var tag))
-        {
-            string handle = tag.Handle;
-            if(handle == "ref")
+            if (syntax.Read(this, ref value, ref parseResult))
             {
-                Guid? id = null;
-                ParseResult result = default;
-                this.TryGetScalarAsString(out var idScalar);
-
-                parser.ReadWithVerify(ParseEventType.Scalar);
-                if (idScalar != null)
-                {
-                    parseResult.IsReference = true;
-                    parseResult.Reference = Guid.Parse(idScalar);
-                }
                 return;
             }
         }
-        if (typeof(T).IsArray)
+        Type type = typeof(T);
+        if (type.IsInterface || type.IsAbstract || type.IsGenericType)
         {
-            var t = typeof(T).GetElementType()!;
-            object? val = value;
-            var arrayFormatterType = typeof(ArrayFormatter<>).MakeGenericType(t);
-            var arrayFormatter = (YamlSerializer)Activator.CreateInstance(arrayFormatterType)!;
-
-            arrayFormatter.Read(this, ref val, ref parseResult);
-            value = (T)val!;
-            return;
-        }
-        if(typeof(T) == typeof(Type))
-        {
-            object? val = value;
-            TypeFormatter.Instance.Read(this, ref val, ref parseResult);
-            value = (T)val!;
-            return;
-        }
-        var type = typeof(T);
-        if (parser.IsNullable(type, out var underlyingType))
-        {
-            var genericFilledFormatter = NullableFormatter.MakeGenericType(underlyingType);
-            // TODO : Nullable makes sense?
-            var f = (YamlSerializer<T?>?)Activator.CreateInstance(genericFilledFormatter)!;
-            f.Read(this, ref value, ref parseResult);
-            return;
-        }
-        else if (type.IsInterface || type.IsAbstract || type.IsGenericType)
-        {
-            
+            TryGetCurrentTag(out var tag);
             YamlSerializer? formatter;
             if (tag == null)
             {
@@ -244,5 +211,10 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
     {
         var parseResult = new ParseResult();
         Read(ref value, ref parseResult);
+    }
+
+    public bool TryGetCurrentTag(out Tag tag)
+    {
+        return parser.TryGetCurrentTag(out tag);
     }
 }

@@ -1,8 +1,14 @@
-﻿using Stride.Core;
+﻿using NexYaml.Parser;
+using Stride.Core;
 
 namespace NexYaml.Serialization.SyntaxPlugins;
-internal class DelegatePlugin : ISyntaxPlugin
+internal class DelegatePlugin : IResolvePlugin
 {
+    public bool Read<T>(IYamlReader parser, ref T value, ref ParseResult result)
+    {
+        return false;
+    }
+
     public bool Write<T>(IYamlWriter stream, T value, DataStyle style)
     {
         if (value is Delegate @delegate)
