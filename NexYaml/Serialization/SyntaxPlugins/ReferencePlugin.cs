@@ -9,7 +9,10 @@ internal class ReferencePlugin : ISyntaxPlugin
         {
             if (stream.References.Contains(id.Id))
             {
-                stream.Write($"{stream.Settings.Reference} {id.Id}");
+                stream.BeginMapping(DataStyle.Compact);
+                stream.WriteTag("!!ref",true);
+                stream.Write("id",id.Id, DataStyle.Any);
+                stream.EndMapping();
                 return true;
             }
             else

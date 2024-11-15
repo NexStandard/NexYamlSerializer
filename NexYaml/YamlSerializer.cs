@@ -1,6 +1,7 @@
 using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
+using Silk.NET.OpenXR;
 using Stride.Core;
 using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
@@ -143,6 +144,7 @@ public abstract class YamlSerializer
             stream.SkipAfter(ParseEventType.DocumentStart);
             var value = default(T);
             stream.Read(ref value);
+            stream.ResolveReferences();
             return value;
         }
         finally
@@ -195,4 +197,15 @@ public abstract class YamlSerializer<T> : YamlSerializer
     }
     public abstract void Write(IYamlWriter stream, T value, DataStyle style);
     public abstract void Read(IYamlReader parser, [MaybeNull] ref T value, ref ParseResult parseResult);
+    public Action<T> SetInit<T>(string propertyName, T value)
+    {
+        return (obj) =>
+        {
+            var property = typeof(T).GetProperty(propertyName);
+            if (property != null)
+            {
+                property.SetValue(value, obj);
+            }
+        };
+    }
 }

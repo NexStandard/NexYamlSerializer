@@ -6,12 +6,13 @@ public interface IYamlReader
 {
     bool HasKeyMapping { get; }
     bool HasSequence { get; }
-
+    public Dictionary<Guid, Action<object>> ReferenceResolvingMap { get; }
     void Read(ref ReadOnlySpan<byte> span);
     void Read<T>(ref T? value, ref ParseResult parseResult);
     void Read<T>(ref T? value);
     void Dispose();
     bool HasMapping(out ReadOnlySpan<byte> mappingKey);
+    void ResolveReferences();
     bool IsNullScalar();
     bool Move();
     void ReadWithVerify(ParseEventType eventType);

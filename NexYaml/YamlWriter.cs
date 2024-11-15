@@ -177,9 +177,9 @@ public class YamlWriter(IUTF8Stream stream, IYamlFormatterResolver resolver) : I
             }
         }
     }
-    public void WriteTag(string tag)
+    public void WriteTag(string tag, bool force)
     {
-        if (IsRedirected || IsFirst)
+        if (IsRedirected || IsFirst || force)
         {
             var fulTag = tag;
             stream.Tag(ref fulTag);

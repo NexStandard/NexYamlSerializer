@@ -21,7 +21,8 @@ internal class PropertyAnalyzer(ReferencePackage package) : IMemberSymbolAnalyze
             Type = typeName,
             Context = context.DataMemberContext,
             IsArray = context.Symbol.Type.TypeKind == TypeKind.Array,
-        };
+            IsInit = context.Symbol.SetMethod?.IsInitOnly ?? false,
+    };
     }
 
     public bool AppliesTo(MemberData<IPropertySymbol> symbol)

@@ -13,12 +13,16 @@ public class ReferenceFormatter<T> : YamlSerializer<T>
             if (reference == null)
                 value = default;
             var id = reference.Substring(refPrefix.Length);
-
+            result = new ParseResult()
+            {
+                Reference = Guid.Parse(id),
+                IsReference = true
+            };
         }
     }
 
     public override void Write(IYamlWriter stream, T value, DataStyle style)
     {
-        stream.Write("!!ref " + value.Id);
+        stream.Write(("!!ref " + value.Id).AsSpan());
     }
 }

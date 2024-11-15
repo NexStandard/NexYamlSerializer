@@ -14,7 +14,7 @@ public interface IYamlWriter
     /// Writes lazy a YAML tag for the object type, depending on its serialization context.
     /// </summary>
     /// <param name="tag">The YAML tag identifying the object's type.</param>
-    void WriteTag(string tag);
+    void WriteTag(string tag, bool force =false);
 
     /// <summary>
     /// Gets the settings that define YAML syntax and formatting behavior.

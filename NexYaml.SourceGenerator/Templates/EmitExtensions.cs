@@ -24,6 +24,7 @@ internal static class EmitExtensions
         foreach (var member in package.MemberSymbols)
         {
             defaultValues.Append("\t\tvar __TEMP__").Append(member.Name).AppendLine($"= default({(member.IsArray ? member.Type + "[]" : member.Type)});");
+            defaultValues.Append("\t\tParseResult __TEMP__RESULT__").Append(member.Name).AppendLine($"= new();");
         }
         return defaultValues.ToString();
     }

@@ -1,7 +1,10 @@
 ﻿using NexYaml.Parser;
 using NexYaml.Serialization;
 using NexYaml.Serialization.Formatters;
+using Stride.Core;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Text.Unicode;
 
 namespace NexYaml;
 internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : IYamlReader
@@ -9,6 +12,8 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
     public bool HasKeyMapping => parser.HasKeyMapping;
     public bool HasSequence => parser.HasSequence;
 
+    public Dictionary<Guid, Action<object>> ReferenceResolvingMap { get; } = new();
+    private HashSet<IIdentifiable> identifiables = new();
     public void Dispose()
     {
         parser.Dispose();
@@ -36,6 +41,7 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
 
     private static readonly Type NullableFormatter = typeof(NullableFormatter<>);
     public Dictionary<Guid, Action<object>> References = new();
+    private byte[] reference = [(byte)'i', (byte)'d'];
     public void Read<T>(ref T? value, ref ParseResult parseResult)
     {
         if (parser.IsNullScalar())
@@ -43,6 +49,30 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
             value = default;
             Move();
             return;
+        }
+        if(parser.TryGetCurrentTag(out var tag))
+        {
+            string s = tag.Handle;
+            if(s == "ref")
+            {
+                Guid? id = null;
+                ParseResult r = default;
+                this.ReadMapping((key) =>
+                {
+                    if (
+                        !this.TryRead(ref id, ref key, reference, ref r)
+                    )
+                    {
+                        this.SkipRead();
+                    }
+                });
+                if(id != null)
+                {
+                    parseResult.IsReference = true;
+                    parseResult.Reference = id.Value;
+                }
+                return;
+            }
         }
         if (typeof(T).IsArray)
         {
@@ -73,7 +103,7 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
         }
         else if (type.IsInterface || type.IsAbstract || type.IsGenericType)
         {
-            parser.TryGetCurrentTag(out var tag);
+            
             YamlSerializer? formatter;
             if (tag == null)
             {
@@ -118,8 +148,21 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
         {
             Resolver.GetFormatter<T>().Read(this, ref value!, ref parseResult);
         }
+        if(value is IIdentifiable identifiable and not null)
+        {
+            identifiables.Add(identifiable);
+        }
     }
-
+    public void ResolveReferences()
+    {
+        foreach(var identifiable in identifiables)
+        {
+            if(ReferenceResolvingMap.TryGetValue(identifiable.Id,out var value))
+            {
+                value(identifiable);
+            }
+        }
+    }
     private void Read<T>(YamlSerializer<T> innerFormatter, ref YamlParser parser, ref T value, ref ParseResult parseResult)
     {
         if (parser.TryResolveCurrentAlias<T>(ref parser, out var aliasValue))
