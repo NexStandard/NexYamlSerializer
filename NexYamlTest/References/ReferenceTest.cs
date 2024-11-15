@@ -27,6 +27,7 @@ public class ReferenceTest
         };
         var s = YamlSerializer.SerializeToString(refScript);
         var d = YamlSerializer.Deserialize<ReferenceScript>(s);
-        Assert.Equal(refScript.Reference, refScript.Reference1);
+        Assert.NotNull(d);
+        Assert.Equal(d.Reference, d.Reference1);
     }
 }
