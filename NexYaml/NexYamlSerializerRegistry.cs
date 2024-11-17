@@ -1,5 +1,6 @@
 ﻿using NexYaml.Serialization;
 using NexYaml.Serialization.Formatters;
+using System.Runtime.CompilerServices;
 
 namespace NexYaml;
 /// <summary>
@@ -73,6 +74,7 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
         var emptyFormatter = (YamlSerializer?)Activator.CreateInstance(genericType);
         return emptyFormatter!;
     }
+
     /// <summary>
     /// Registers all available Serializers.
     /// May be removed in future.w

@@ -10,6 +10,8 @@ namespace NexYaml;
 /// </summary>
 public interface IYamlWriter
 {
+
+    public bool IsRedirected { get; set; }
     /// <summary>
     /// Writes lazy a YAML tag for the object type, depending on its serialization context.
     /// </summary>

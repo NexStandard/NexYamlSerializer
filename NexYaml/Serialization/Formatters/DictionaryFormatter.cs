@@ -8,6 +8,7 @@ public class DictionaryFormatter<TKey, TValue> : YamlSerializer<Dictionary<TKey,
 {
     public override void Write(IYamlWriter stream, Dictionary<TKey, TValue>? value, DataStyle style = DataStyle.Normal)
     {
+        stream.IsRedirected = false;
         DictionaryFormatterHelper.Serialize(stream, value!, style);
     }
 

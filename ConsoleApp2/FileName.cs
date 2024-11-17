@@ -13,22 +13,30 @@ public class Benchmarker
     public IYamlWriter writer;
     public UTF8Stream stream;
     static bool  x = false;
+    [GlobalSetup]
+    public void S()
+    {
+        NexYamlSerializerRegistry.Init();
+        stream = new UTF8Stream();
+        writer = new YamlWriter(stream, NexYamlSerializerRegistry.Instance);
+
+    }
+
     [IterationSetup()]
     public void Setup()
     {
-        if(!x)
-        {
-        NexYamlSerializerRegistry.Init();
-            x = true;
-        }
-        stream = new UTF8Stream();
-        writer = new YamlWriter(stream, NexYamlSerializerRegistry.Instance);
+        stream.Reset();
     }
     [Benchmark()]
     public void Yaml()
     {
         writer.Write(c, DataStyle.Compact);
+        
         var s = stream.GetChars().Span.ToString();
+        if(s == "")
+        {
+            throw new Exception();
+        }
     }
     [Benchmark()]
     public void Json()

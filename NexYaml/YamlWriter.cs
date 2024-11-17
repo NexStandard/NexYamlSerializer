@@ -10,7 +10,7 @@ public class YamlWriter(IUTF8Stream stream, IYamlFormatterResolver resolver) : I
     /// <summary>
     /// Tracks whether the tag has to be written.
     /// </summary>
-    private bool IsRedirected { get; set; } = false;
+    public bool IsRedirected { get; set; } = false;
     public HashSet<Guid> References { get; private set; } = new();
     /// <summary>
     /// Tracks if the first element is written, if not the <see cref="WriteTag(string)"/> has to be always included.

@@ -8,6 +8,7 @@ public class ListFormatter<T> : YamlSerializer<List<T>?>
 {
     public override void Write(IYamlWriter stream, List<T>? value, DataStyle style)
     {
+        stream.IsRedirected = false;
         if(value!.Any(value => value is IIdentifiable))
         {
             List<IIdentifiable> reservedIds = new();
