@@ -197,15 +197,4 @@ public abstract class YamlSerializer<T> : YamlSerializer
     }
     public abstract void Write(IYamlWriter stream, T value, DataStyle style);
     public abstract void Read(IYamlReader parser, [MaybeNull] ref T value, ref ParseResult parseResult);
-    public Action<T> SetInit<T>(string propertyName, T value)
-    {
-        return (obj) =>
-        {
-            var property = typeof(T).GetProperty(propertyName);
-            if (property != null)
-            {
-                property.SetValue(value, obj);
-            }
-        };
-    }
 }

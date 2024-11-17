@@ -28,11 +28,13 @@ using NexYaml;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
+using System.Runtime.CompilerServices;
 
 namespace NexYaml;
 [System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]
 public struct {info.GeneratorName + "Helper"} : IYamlFormatterHelper
 {{
+
     public void Register(IYamlFormatterResolver resolver)
     {{
 {package.CreateRegisterThis()}
@@ -40,6 +42,10 @@ public struct {info.GeneratorName + "Helper"} : IYamlFormatterHelper
 {package.CreateRegisterInterfaces()}
     }}
 {package.CreateInstantiateMethodTyped()}
+}}
+file sealed class ExternWrapper{info.TypeParameterArguments} {info.TypeParameterRestrictions}
+{{
+{package.CreateExternCalls()}
 }}
 [System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]
 file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSerializer<{info.NameDefinition}> {info.TypeParameterRestrictions}

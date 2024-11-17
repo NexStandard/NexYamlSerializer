@@ -28,15 +28,15 @@ public class ComplexTests
             Assert.Equal(list[i], deserialized[i]);
         }
     }
-
+    [Fact]
     public void Delegates()
     {
         Setup();
         var g = new Delegates();
         var x = YamlSerializer.SerializeToString(g, Stride.Core.DataStyle.Compact);
         var t = YamlSerializer.Deserialize<Delegates>(x);
-        throw new Exception(x);
         throw new Exception(t.Action.ToString());
+        throw new Exception(x);
     }
 
     [Fact]

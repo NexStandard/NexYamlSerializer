@@ -18,9 +18,9 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
     private List<IResolvePlugin> plugins =
     [
         new NullPlugin(),
+            new DelegatePlugin(),
             new NullablePlugin(),
             new ArrayPlugin(),
-            new DelegatePlugin(),
             new ReferencePlugin(),
             new TypePlugin(),
     ];

@@ -57,7 +57,7 @@ internal class DeserializeEmitter
             }
             else
             {
-                stringBuilder.AppendLine($"if(__TEMP__RESULT__{x.Name}.IsReference) {{ stream.AddReference(__TEMP__RESULT__{x.Name}.Reference, (obj) => SetInit(\"{x.Name}\",__TEMP__RESULT)); }}");
+                stringBuilder.AppendLine($"if(__TEMP__RESULT__{x.Name}.IsReference) {{ stream.AddReference(__TEMP__RESULT__{x.Name}.Reference, (obj) => ExternWrapper{classInfo.TypeParameterArguments}.set_{x.Name}(__TEMP__RESULT,({x.Type})obj)); }}");
                 
             }
         }
