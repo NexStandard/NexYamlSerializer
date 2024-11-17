@@ -31,12 +31,7 @@ public class Benchmarker
     public void Yaml()
     {
         writer.Write(c, DataStyle.Compact);
-        
         var s = stream.GetChars().Span.ToString();
-        if(s == "")
-        {
-            throw new Exception();
-        }
     }
     [Benchmark()]
     public void Json()
