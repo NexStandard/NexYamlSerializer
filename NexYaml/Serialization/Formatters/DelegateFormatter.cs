@@ -1,6 +1,10 @@
-﻿using NexYaml.Core;
+﻿using Irony.Parsing;
+using NexYaml.Core;
 using NexYaml.Parser;
+using SharpFont;
 using Stride.Core;
+using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace NexYaml.Serialization.Formatters;
@@ -9,15 +13,29 @@ internal class DelegateFormatter<T> : YamlSerializer<T>
 {
     public override void Read(IYamlReader stream, ref T value, ref ParseResult result)
     {
-
-        stream.ReadSequence(() =>
+        stream.ReadWithVerify(ParseEventType.SequenceStart);
+        T val = default;
+        while (stream.HasSequence)
         {
-            if (stream.TryGetScalarAsSpan(out var span))
+            if (stream.TryGetScalarAsSpan(out var dele))
             {
-                var val = StringEncoding.Utf8.GetString(span);
+                var strin = StringEncoding.Utf8.GetString(dele);
+                string[] parts = strin.Split('#', 2);
+                string id = parts[0];
+                string methodName = parts[1];
+                var delegateType = typeof(T);
+                stream.AddReference(Guid.Parse(id), (obj) => {
+                    var method = obj.GetType().GetMethod(methodName);
+                    Console.WriteLine(method.GetParameters().Length); 
+                    Console.WriteLine(method.ReturnParameter); 
+                    var createdDelegate = method.CreateDelegate<T>(obj);
+                    Console.WriteLine(createdDelegate);
+                    val =(T)Delegate.Combine(val,createdDelegate);
+                });
                 stream.ReadWithVerify(ParseEventType.Scalar);
             }
-        });
+        }
+        stream.ReadWithVerify(ParseEventType.SequenceEnd);
         value = default!;
     }
 
@@ -30,7 +48,7 @@ internal class DelegateFormatter<T> : YamlSerializer<T>
             var target = invocation.Target;
             if (target is IIdentifiable id)
             {
-                stream.Write(Encoding.UTF8.GetBytes("!!del " + id.Id.ToString() + "#" + invocation.Method.Name));
+                stream.Write(System.Text.Encoding.UTF8.GetBytes("!!del " + id.Id.ToString() + "#" + invocation.Method.Name));
             }
         }
         stream.EndSequence();

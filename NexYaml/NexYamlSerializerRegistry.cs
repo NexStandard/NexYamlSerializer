@@ -74,7 +74,8 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
         var emptyFormatter = (YamlSerializer?)Activator.CreateInstance(genericType);
         return emptyFormatter!;
     }
-
+    public static bool IsReady = false;
+    static Lock s = new();
     /// <summary>
     /// Registers all available Serializers.
     /// May be removed in future.w
@@ -82,22 +83,30 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
     /// </summary>
     public static void Init()
     {
-        Instance.FormatterRegistry = new();
-        // Get all loaded assemblies
-        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-        // Find types implementing IYamlFormatterHelper and invoke Register method
-        foreach (var assembly in assemblies)
+        lock (s)
         {
-            var formatterHelperTypes = assembly.GetTypes()
-                .Where(t => typeof(IYamlFormatterHelper).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
-
-            foreach (var formatterHelperType in formatterHelperTypes)
+            if (!IsReady)
             {
-                var instance = (IYamlFormatterHelper)Activator.CreateInstance(formatterHelperType)!;
-                instance.Register(Instance);
+                Instance.FormatterRegistry = new();
+                // Get all loaded assemblies
+                var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+                // Find types implementing IYamlFormatterHelper and invoke Register method
+                foreach (var assembly in assemblies)
+                {
+                    var formatterHelperTypes = assembly.GetTypes()
+                        .Where(t => typeof(IYamlFormatterHelper).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+
+                    foreach (var formatterHelperType in formatterHelperTypes)
+                    {
+                        var instance = (IYamlFormatterHelper)Activator.CreateInstance(formatterHelperType)!;
+                        instance.Register(Instance);
+                    }
+                }
+                IsReady = true;
             }
         }
+
     }
 
     public YamlSerializer? GetFormatter(Type type)
