@@ -32,10 +32,10 @@ using System.Runtime.CompilerServices;
 
 namespace NexYaml;
 [System.CodeDom.Compiler.GeneratedCode(""NexVYaml"",""1.0.0.0"")]
-public struct {info.GeneratorName + "Helper"} : IYamlFormatterHelper
+public struct {info.GeneratorName + "Helper"} : IYamlSerializerFactory
 {{
 
-    public void Register(IYamlFormatterResolver resolver)
+    public void Register(IYamlSerializerResolver resolver)
     {{
 {package.CreateRegisterThis()}
 {package.CreateRegisterAbstracts()}

@@ -19,8 +19,8 @@ public class RedirectionTest
         {
             Id = 10235
         };
-        var s = YamlSerializer.Serialize(dInterface);
-        var deserialized = YamlSerializer.Deserialize<IDInterface>(s);
+        var s = Yaml.Write(dInterface);
+        var deserialized = Yaml.Read<IDInterface>(s);
         Assert.NotNull(deserialized);
         Assert.Equal(dInterface.Id, deserialized.Id);
     }
@@ -32,8 +32,8 @@ public class RedirectionTest
         {
             Id = 10235
         };
-        var s = YamlSerializer.Serialize(dInterface);
-        var deserialized = YamlSerializer.Deserialize<IDAbstract>(s);
+        var s = Yaml.Write(dInterface);
+        var deserialized = Yaml.Read<IDAbstract>(s);
         Assert.Equal(dInterface.Id, deserialized.Id);
     }
     [Fact]
@@ -44,8 +44,8 @@ public class RedirectionTest
         {
             Value = 10235
         };
-        var s = YamlSerializer.Serialize(generic);
-        var deserialized = YamlSerializer.Deserialize<Generics<int>>(s);
+        var s = Yaml.Write(generic);
+        var deserialized = Yaml.Read<Generics<int>>(s);
         Assert.Equal(generic.Value, deserialized.Value);
     }
     [Fact]
@@ -56,8 +56,8 @@ public class RedirectionTest
         {
             Value = new Generics<int>() { Value = 1 }
         };
-        var s = YamlSerializer.Serialize(generic);
-        var deserialized = YamlSerializer.Deserialize<GenericWithRestriction<Generics<int>>>(s);
+        var s = Yaml.Write(generic);
+        var deserialized = Yaml.Read<GenericWithRestriction<Generics<int>>>(s);
         Assert.Equal(generic.Value.Value, deserialized.Value.Value);
     }
     [Fact]
@@ -68,8 +68,8 @@ public class RedirectionTest
         {
             Value = 43
         };
-        var s = YamlSerializer.Serialize(generic);
-        var deserialized = YamlSerializer.Deserialize<Generics<int>>(s);
+        var s = Yaml.Write(generic);
+        var deserialized = Yaml.Read<Generics<int>>(s);
         Assert.Equal(generic.Value, deserialized.Value);
     }
     [Fact]
@@ -81,8 +81,8 @@ public class RedirectionTest
             T = 123,
             X = 1234
         };
-        var s = YamlSerializer.Serialize<Base>(generic);
-        var deserialized = YamlSerializer.Deserialize<Base>(s);
+        var s = Yaml.Write<Base>(generic);
+        var deserialized = Yaml.Read<Base>(s);
         Assert.Equal(generic.X, deserialized.X);
     }
 }

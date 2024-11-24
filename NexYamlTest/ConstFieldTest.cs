@@ -17,8 +17,8 @@ public class ConstFieldTest
         {
             Normal = 1,
         };
-        var s = YamlSerializer.SerializeToString(aliased);
-        var deserialized = YamlSerializer.Deserialize<ClassWithConstField>(s);
+        var s = Yaml.WriteToString(aliased);
+        var deserialized = Yaml.Read<ClassWithConstField>(s);
         Assert.Equal(aliased.Normal, deserialized.Normal);
     }
 }

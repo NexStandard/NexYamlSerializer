@@ -1,5 +1,5 @@
 ﻿using NexYaml.Core;
-using NexYaml.Serialization.SyntaxPlugins;
+using NexYaml.ResolvePlugin;
 
 namespace NexYaml;
 
@@ -20,7 +20,10 @@ public class SyntaxSettings()
     public List<IResolvePlugin> Plugins { get; init; } = new()
     {
         new NullPlugin(),
-        new ReferencePlugin(),
+        new NullablePlugin(),
         new ArrayPlugin(),
+        new DelegatePlugin(),
+        new ReferencePlugin(),
+        new TypePlugin(),
     };
 }

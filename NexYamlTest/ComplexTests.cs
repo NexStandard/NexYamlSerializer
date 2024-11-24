@@ -19,8 +19,8 @@ public class ComplexTests
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
         };
 
-        var s = YamlSerializer.SerializeToString(list);
-        var deserialized = YamlSerializer.Deserialize<DoubleInheritedList>(s);
+        var s = Yaml.WriteToString(list);
+        var deserialized = Yaml.Read<DoubleInheritedList>(s);
         Assert.Null(s);
         Assert.Equal(list.Count, deserialized!.Count);
         for (var i = 0; i < list.Count; i++)
@@ -33,8 +33,8 @@ public class ComplexTests
     {
         Setup();
         var g = new Delegates();
-        var x = YamlSerializer.SerializeToString(g, Stride.Core.DataStyle.Compact);
-        var t = YamlSerializer.Deserialize<Delegates>(x);
+        var x = Yaml.WriteToString(g, Stride.Core.DataStyle.Compact);
+        var t = Yaml.Read<Delegates>(x);
         throw new Exception(t.Action.ToString());
         throw new Exception(x);
     }
@@ -48,8 +48,8 @@ public class ComplexTests
             Generic2 = 1,
             Generic = 4
         };
-        var s = YamlSerializer.SerializeToString(genericInterface);
-        var deserialized = YamlSerializer.Deserialize<IGenericInterface<int, int>>(s);
+        var s = Yaml.WriteToString(genericInterface);
+        var deserialized = Yaml.Read<IGenericInterface<int, int>>(s);
         Assert.Equal(genericInterface.Generic, deserialized.Generic);
         Assert.Equal(genericInterface.Generic2, deserialized.Generic2);
     }
@@ -62,8 +62,8 @@ public class ComplexTests
             Generic2 = 1,
             Generic = 4
         };
-        var s = YamlSerializer.SerializeToString(genericInterface);
-        var deserialized = YamlSerializer.Deserialize<IGenericInterface<int, int>>(s);
+        var s = Yaml.WriteToString(genericInterface);
+        var deserialized = Yaml.Read<IGenericInterface<int, int>>(s);
         Assert.Equal(genericInterface.Generic, deserialized.Generic);
         Assert.Equal(genericInterface.Generic2, deserialized.Generic2);
     }
@@ -80,8 +80,8 @@ public class ComplexTests
                 Generic = 4
             }
         };
-        var s = YamlSerializer.SerializeToString(genericInterface);
-        var deserialized = YamlSerializer.Deserialize<IGenericInterface<IGenericInterface<int, int>, int>>(s);
+        var s = Yaml.WriteToString(genericInterface);
+        var deserialized = Yaml.Read<IGenericInterface<IGenericInterface<int, int>, int>>(s);
         Assert.NotNull(deserialized);
         Assert.Equal(genericInterface.Generic.Generic, deserialized.Generic.Generic);
         Assert.Equal(genericInterface.Generic.Generic2, deserialized.Generic.Generic2);
@@ -96,8 +96,8 @@ public class ComplexTests
             Generic2 = 1,
             Generic = 10
         };
-        var s = YamlSerializer.SerializeToString(genericInterface);
-        var deserialized = YamlSerializer.Deserialize<IGenericInterface<int, int>>(s);
+        var s = Yaml.WriteToString(genericInterface);
+        var deserialized = Yaml.Read<IGenericInterface<int, int>>(s);
         Assert.NotNull(deserialized);
         Assert.Equal(genericInterface.Generic, deserialized.Generic);
         Assert.Equal(genericInterface.Generic2, deserialized.Generic2);
@@ -111,8 +111,8 @@ public class ComplexTests
             TI = 1,
             TI2 = 10
         };
-        var s = YamlSerializer.SerializeToString(genericInterface);
-        var deserialized = YamlSerializer.Deserialize<GenericAbstractImplementation<int, int>>(s);
+        var s = Yaml.WriteToString(genericInterface);
+        var deserialized = Yaml.Read<GenericAbstractImplementation<int, int>>(s);
         Assert.NotNull(deserialized);
         Assert.Equal(genericInterface.Test, deserialized.Test);
     }
@@ -124,8 +124,8 @@ public class ComplexTests
         {
             Test = 3
         };
-        var s = YamlSerializer.SerializeToString(abstractObject);
-        var deserialized = YamlSerializer.Deserialize<GenericAbstractImlementationLessParams<int>>(s);
+        var s = Yaml.WriteToString(abstractObject);
+        var deserialized = Yaml.Read<GenericAbstractImlementationLessParams<int>>(s);
         Assert.NotNull(deserialized);
         Assert.Equal(0, deserialized.Test);
     }
@@ -137,8 +137,8 @@ public class ComplexTests
         {
             Test = 3
         };
-        var s = YamlSerializer.SerializeToString(abstractObject);
-        var deserialized = YamlSerializer.Deserialize<GenericAbstractImlementationLessParamsDataContract<int>>(s);
+        var s = Yaml.WriteToString(abstractObject);
+        var deserialized = Yaml.Read<GenericAbstractImlementationLessParamsDataContract<int>>(s);
         Assert.NotNull(deserialized);
         Assert.Equal(abstractObject.Test, deserialized.Test);
     }
@@ -150,8 +150,8 @@ public class ComplexTests
         {
             Generic = 3
         };
-        var s = YamlSerializer.SerializeToString(abstractObject);
-        var deserialized = YamlSerializer.Deserialize<GenericImplementedClassWithLessParams<int>>(s);
+        var s = Yaml.WriteToString(abstractObject);
+        var deserialized = Yaml.Read<GenericImplementedClassWithLessParams<int>>(s);
         Assert.NotNull(deserialized);
         Assert.Equal(abstractObject.Generic, deserialized.Generic);
     }
@@ -162,8 +162,8 @@ public class ComplexTests
         UnregisteredBase abstractObject = new UnregisteredInherited()
         {
         };
-        var s = YamlSerializer.SerializeToString(abstractObject);
-        var deserialized = YamlSerializer.Deserialize<UnregisteredBase>(s);
+        var s = Yaml.WriteToString(abstractObject);
+        var deserialized = Yaml.Read<UnregisteredBase>(s);
         Assert.Null(deserialized);
     }
     [Fact()]
@@ -176,8 +176,8 @@ public class ComplexTests
             TI = 2,
             TI2 = null
         };
-        var s = YamlSerializer.SerializeToString(H);
-        var deserialized = YamlSerializer.Deserialize<UnregisteredBase>(s);
+        var s = Yaml.WriteToString(H);
+        var deserialized = Yaml.Read<UnregisteredBase>(s);
         Assert.Null(deserialized);
     }
 }

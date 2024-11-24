@@ -23,8 +23,8 @@ public class CompactTest
     {
         NexYamlSerializerRegistry.Init();
         var compact = new EmptyClass();
-        var s = YamlSerializer.Serialize(compact, DataStyle.Any);
-        var d = YamlSerializer.Deserialize<EmptyClass>(s);
+        var s = Yaml.Write(compact, DataStyle.Any);
+        var d = Yaml.Read<EmptyClass>(s);
         Assert.NotNull(d);
         Assert.IsType<EmptyClass>(d);
     }
@@ -35,7 +35,7 @@ public class CompactTest
         {
         };
         NexYamlSerializerRegistry.Init();
-        var s = YamlSerializer.SerializeToString(compact);
+        var s = Yaml.WriteToString(compact);
 
         Assert.Equal("!NexYamlTest.DataStyleTests.CompactRecordWithCompactMember,NexYamlTest { CompactMember: !NexYamlTest.DataStyleTests.CompactRecord,NexYamlTest { X: 0, Y: 0, W: !!null } }", s);
     }
@@ -46,8 +46,8 @@ public class CompactTest
         {
         };
         NexYamlSerializerRegistry.Init();
-        var s = YamlSerializer.SerializeToString(compact);
-        var d = YamlSerializer.Deserialize<CompactList>(s);
+        var s = Yaml.WriteToString(compact);
+        var d = Yaml.Read<CompactList>(s);
         Assert.True(d!.Lists[0] is not null);
         Assert.True(d.Lists[1] is not null);
     }
@@ -58,7 +58,7 @@ public class CompactTest
         {
         };
         NexYamlSerializerRegistry.Init();
-        var s = YamlSerializer.SerializeToString(compact);
+        var s = Yaml.WriteToString(compact);
         Assert.Equal("!NexYamlTest.DataStyleTests.CompactCompactRecord,NexYamlTest\nCompactMember: !NexYamlTest.DataStyleTests.CompactRecordWithCompactMember,NexYamlTest { CompactMember: !NexYamlTest.DataStyleTests.CompactRecord,NexYamlTest { X: 0, Y: 0, W: !!null } }\n", s);
     }
 
@@ -102,8 +102,8 @@ public class CompactTest
         {
             Ints = [8, 7, 5]
         };
-        var serialized = YamlSerializer.SerializeToString(compact);
-        var deserialized = YamlSerializer.Deserialize<CompactArray>(serialized);
+        var serialized = Yaml.WriteToString(compact);
+        var deserialized = Yaml.Read<CompactArray>(serialized);
         Assert.Equal(compact.Ints[0], deserialized.Ints[0]);
         Assert.Equal(compact.Ints[1], deserialized.Ints[1]);
         Assert.Equal(compact.Ints[2], deserialized.Ints[2]);

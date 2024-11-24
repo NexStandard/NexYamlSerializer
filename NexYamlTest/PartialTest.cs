@@ -19,8 +19,8 @@ public class PartialTest
             Id1 = 1,
             ID2 = 2,
         };
-        var s = YamlSerializer.SerializeToString(simplePartial1);
-        var deserialized = YamlSerializer.Deserialize<SimplePartial>(s);
+        var s = Yaml.WriteToString(simplePartial1);
+        var deserialized = Yaml.Read<SimplePartial>(s);
         Assert.Equal(simplePartial1.Id1, deserialized.Id1);
         Assert.Equal(simplePartial1.ID2, deserialized.ID2);
 

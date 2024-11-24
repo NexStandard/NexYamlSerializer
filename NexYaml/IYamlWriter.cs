@@ -31,7 +31,7 @@ public interface IYamlWriter
     /// <summary>
     /// Provides type resolution for all serializable types.
     /// </summary>
-    IYamlFormatterResolver Resolver { get; }
+    IYamlSerializerResolver Resolver { get; }
 
     /// <summary>
     /// Begins a YAML sequence formatted according to the specified style.

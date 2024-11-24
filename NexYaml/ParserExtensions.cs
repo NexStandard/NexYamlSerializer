@@ -4,7 +4,7 @@ namespace NexYaml.Parser;
 public static class ParserExtensions
 {
     public delegate void ActionKey(ReadOnlySpan<byte> key);
-    public static bool IsNullable(this YamlParser parser, Type value, [MaybeNullWhen(false)] out Type underlyingType)
+    public static bool IsNullable(this YamlParser stream, Type value, [MaybeNullWhen(false)] out Type underlyingType)
     {
         return (underlyingType = Nullable.GetUnderlyingType(value)) != null;
     }

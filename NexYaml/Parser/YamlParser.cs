@@ -52,10 +52,10 @@ internal enum ParseState
     End,
 }
 
-public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlFormatterResolver resolver) : IDisposable
+public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlSerializerResolver resolver) : IDisposable
 {
 
-    public static YamlParser FromSequence(in ReadOnlySequence<byte> sequence, IYamlFormatterResolver resolver)
+    public static YamlParser FromSequence(in ReadOnlySequence<byte> sequence, IYamlSerializerResolver resolver)
     {
         return new YamlParser(sequence, resolver);
     }

@@ -1,78 +1,78 @@
 ﻿using NexYaml.Serialization;
-using NexYaml.Serialization.Formatters;
+using NexYaml.Serializers;
 using System.Runtime.CompilerServices;
 
 namespace NexYaml;
 /// <summary>
-/// Default Implementation for a <see cref="IYamlFormatterResolver"/> Registry to retrieve the types from.
-/// Will be used if no <see cref="IYamlFormatterResolver"/> is given in the <see cref="YamlSerializerOptions"/> when using <see cref="YamlSerializer"/>
+/// Default Implementation for a <see cref="IYamlSerializerResolver"/> Registry to retrieve the types from.
+/// Will be used if no <see cref="IYamlSerializerResolver"/> is given in the <see cref="YamlSerializerOptions"/> when using <see cref="YamlSerializer"/>
 /// </summary>
-public class NexYamlSerializerRegistry : IYamlFormatterResolver
+public class NexYamlSerializerRegistry : IYamlSerializerResolver
 {
-    public SerializerRegistry FormatterRegistry { get; set; } = new();
+    public SerializerRegistry SerializerRegistry { get; set; } = new();
     public static NexYamlSerializerRegistry Instance { get; } = new NexYamlSerializerRegistry();
 
     public Type GetAliasType(string alias)
     {
-        return FormatterRegistry.TypeMap[alias];
+        return SerializerRegistry.TypeMap[alias];
     }
     public string GetTypeAlias(Type type)
     {
-        return FormatterRegistry.AliasMap[type];
+        return SerializerRegistry.AliasMap[type];
     }
-    public YamlSerializer<T> GetFormatter<T>()
+    public YamlSerializer<T> GetSerializer<T>()
     {
-        if (FormatterRegistry.DefinedFormatters.TryGetValue(typeof(T), out var formatter))
+        if (SerializerRegistry.DefinedSerializers.TryGetValue(typeof(T), out var serializer))
         {
-            return (YamlSerializer<T>)formatter;
+            return (YamlSerializer<T>)serializer;
         }
-        return EmptyFormatter<T>.EmptyS();
+        return EmptySerializer<T>.EmptyS();
     }
 
-    public YamlSerializer<T>? GetGenericFormatter<T>()
+    public YamlSerializer<T>? GetGenericSerializer<T>()
     {
         var type = typeof(T);
 
-        var genericFormatter = FormatterRegistry.GenericFormatterBuffer.FindAssignableType(type);
-        if (genericFormatter is null)
+        var genericSerializer = SerializerRegistry.GenericSerializerBuffer.FindAssignableType(type);
+        if (genericSerializer is null)
             return null;
-        var genericType = genericFormatter.MakeGenericType(type.GenericTypeArguments);
+        var genericType = genericSerializer.MakeGenericType(type.GenericTypeArguments);
         return (YamlSerializer<T>?)Activator.CreateInstance(genericType);
     }
 
-    public void Register(IYamlFormatterHelper yamlFormatterHelper, Type target, Type interfaceType)
+    public void Register(IYamlSerializerFactory yamlFactory, Type target, Type interfaceType)
     {
         var tar = target.IsGenericType ? target.GetGenericTypeDefinition() : target;
         var inter = interfaceType.IsGenericType ? interfaceType.GetGenericTypeDefinition() : interfaceType;
-        if (FormatterRegistry.FormatterFactories.TryGetValue(inter, out var factory))
+        if (SerializerRegistry.SerializerFactory.TryGetValue(inter, out var factory))
         {
-            factory.TryAdd(tar, yamlFormatterHelper);
+            factory.TryAdd(tar, yamlFactory);
         }
         else
         {
-            var dictionary = new Dictionary<Type, IYamlFormatterHelper>(new GenericEqualityComparer());
-            FormatterRegistry.FormatterFactories[inter] = dictionary;
-            dictionary.TryAdd(target, yamlFormatterHelper);
+            var dictionary = new Dictionary<Type, IYamlSerializerFactory>(new GenericEqualityComparer());
+            SerializerRegistry.SerializerFactory[inter] = dictionary;
+            dictionary.TryAdd(target, yamlFactory);
         }
     }
-    public YamlSerializer GetFormatter(Type type, Type origin)
+    public YamlSerializer GetSerializer(Type type, Type origin)
     {
-        if (FormatterRegistry.DefinedFormatters.TryGetValue(type, out var form))
+        if (SerializerRegistry.DefinedSerializers.TryGetValue(type, out var serializer1))
         {
-            return form;
+            return serializer1;
         }
-        if (FormatterRegistry.FormatterFactories.TryGetValue(origin, out var formatter))
+        if (SerializerRegistry.SerializerFactory.TryGetValue(origin, out var serializer))
         {
-            formatter.TryGetValue(type, out var t);
+            serializer.TryGetValue(type, out var t);
             if (t is not null)
             {
                 return t.Instantiate(origin);
             }
         }
-        var genericFormatter = typeof(EmptyFormatter<>);
-        var genericType = genericFormatter.MakeGenericType(origin);
-        var emptyFormatter = (YamlSerializer?)Activator.CreateInstance(genericType);
-        return emptyFormatter!;
+        var genericSerializer = typeof(EmptySerializer<>);
+        var genericType = genericSerializer.MakeGenericType(origin);
+        var emptySerializer = (YamlSerializer?)Activator.CreateInstance(genericType);
+        return emptySerializer!;
     }
     public static bool IsReady = false;
     static Lock s = new();
@@ -87,19 +87,18 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
         {
             if (!IsReady)
             {
-                Instance.FormatterRegistry = new();
+                Instance.SerializerRegistry = new();
                 // Get all loaded assemblies
                 var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-                // Find types implementing IYamlFormatterHelper and invoke Register method
                 foreach (var assembly in assemblies)
                 {
-                    var formatterHelperTypes = assembly.GetTypes()
-                        .Where(t => typeof(IYamlFormatterHelper).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+                    var serializerFactories = assembly.GetTypes()
+                        .Where(t => typeof(IYamlSerializerFactory).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
 
-                    foreach (var formatterHelperType in formatterHelperTypes)
+                    foreach (var serializerFactory in serializerFactories)
                     {
-                        var instance = (IYamlFormatterHelper)Activator.CreateInstance(formatterHelperType)!;
+                        var instance = (IYamlSerializerFactory)Activator.CreateInstance(serializerFactory)!;
                         instance.Register(Instance);
                     }
                 }
@@ -109,59 +108,59 @@ public class NexYamlSerializerRegistry : IYamlFormatterResolver
 
     }
 
-    public YamlSerializer? GetFormatter(Type type)
+    public YamlSerializer? GetSerializer(Type type)
     {
-        if (FormatterRegistry.DefinedFormatters.TryGetValue(type, out var value))
+        if (SerializerRegistry.DefinedSerializers.TryGetValue(type, out var value))
         {
             return value;
         }
         return null;
     }
 
-    public void RegisterFormatter<T>(YamlSerializer<T> formatter)
+    public void RegisterSerializer<T>(YamlSerializer<T> serializer)
     {
         var keyType = typeof(T);
-        FormatterRegistry.DefinedFormatters[keyType] = formatter;
+        SerializerRegistry.DefinedSerializers[keyType] = serializer;
     }
 
-    public void RegisterFormatter(Type formatter)
+    public void RegisterSerializer(Type serializer)
     {
-        FormatterRegistry.TypeMap[formatter.FullName] = formatter;
+        SerializerRegistry.TypeMap[serializer.FullName] = serializer;
     }
 
-    public void RegisterTag(string tag, Type formatterGenericType)
+    public void RegisterTag(string tag, Type serializerType)
     {
-        FormatterRegistry.TypeMap[tag] = formatterGenericType;
-        FormatterRegistry.AliasMap[formatterGenericType] = tag;
+        SerializerRegistry.TypeMap[tag] = serializerType;
+        SerializerRegistry.AliasMap[serializerType] = tag;
     }
 
-    public void RegisterGenericFormatter(Type target, Type formatterType)
+    public void RegisterGenericSerializer(Type target, Type serializerType)
     {
-        FormatterRegistry.GenericFormatterBuffer.TryAdd(target, formatterType);
+        SerializerRegistry.GenericSerializerBuffer.TryAdd(target, serializerType);
     }
 }
 public class SerializerRegistry
 {
-    internal Dictionary<Type, Dictionary<Type, IYamlFormatterHelper>> FormatterFactories { get; } = new(new GenericEqualityComparer());
-    internal Dictionary<Type, Type> GenericFormatterBuffer { get; } = new Dictionary<Type, Type>(new GenericEqualityComparer())
+    internal Dictionary<Type, Dictionary<Type, IYamlSerializerFactory>> SerializerFactory { get; } = new(new GenericEqualityComparer());
+    internal Dictionary<Type, Type> GenericSerializerBuffer { get; } = new Dictionary<Type, Type>(new GenericEqualityComparer())
     {
-        [typeof(ICollection<>)] = typeof(CollectionInterfaceFormatter<>),
-        [typeof(IEnumerable<>)] = typeof(InterfaceEnumerableFormatter<>),
-        [typeof(IList<>)] = typeof(InterfaceListFormatter<>),
-        [typeof(IReadOnlyList<>)] = typeof(InterfaceReadOnlyListFormatter<>),
-        [typeof(IReadOnlyCollection<>)] = typeof(InterfaceReadOnlyCollectionFormatter<>),
-        [typeof(IDictionary<,>)] = typeof(DictionaryInterfaceFormatter<,>),
-        [typeof(IReadOnlyDictionary<,>)] = typeof(DictionaryReadonlyInterfaceFormatter<,>),
-        [typeof(KeyValuePair<,>)] = typeof(KeyValuePairFormatter<,>),
-        [typeof(Action)] = typeof(DelegateFormatter<Action>),
-        [typeof(Tuple<>)] = typeof(TupleFormatter<>),
-        [typeof(Tuple<,>)] = typeof(TupleFormatter<,>),
-        [typeof(Tuple<,,>)] = typeof(TupleFormatter<,,>),
-        [typeof(Tuple<,,,>)] = typeof(TupleFormatter<,,,>),
-        [typeof(Tuple<,,,,>)] = typeof(TupleFormatter<,,,,>),
-        [typeof(Tuple<,,,,,>)] = typeof(TupleFormatter<,,,,,>),
-        [typeof(Tuple<,,,,,,>)] = typeof(TupleFormatter<,,,,,,>),
-        [typeof(Tuple<,,,,,,,>)] = typeof(TupleFormatter<,,,,,,,>)
+        [typeof(ICollection<>)] = typeof(CollectionInterfaceSerializer<>),
+        [typeof(IEnumerable<>)] = typeof(InterfaceEnumerableSerializer<>),
+        [typeof(IList<>)] = typeof(InterfaceLisSerializer<>),
+        [typeof(IReadOnlyList<>)] = typeof(InterfaceReadOnlyListSerializer<>),
+        [typeof(IReadOnlyCollection<>)] = typeof(InterfaceReadOnlyCollectionSerializer<>),
+        [typeof(IDictionary<,>)] = typeof(DictionaryInterfaceSerializer<,>),
+        [typeof(IReadOnlyDictionary<,>)] = typeof(DictionaryReadonlyInterfaceSerializer<,>),
+        [typeof(KeyValuePair<,>)] = typeof(KeyValuePairSerializer<,>),
+        [typeof(Action)] = typeof(DelegateSerializer<Action>),
+        [typeof(Tuple<>)] = typeof(TupleSerializer<>),
+        [typeof(Tuple<,>)] = typeof(TupleSerializer<,>),
+        [typeof(Tuple<,,>)] = typeof(TupleSerializer<,,>),
+        [typeof(Tuple<,,,>)] = typeof(TupleSerializer<,,,>),
+        [typeof(Tuple<,,,,>)] = typeof(TupleSerializer<,,,,>),
+        [typeof(Tuple<,,,,,>)] = typeof(TupleSerializer<,,,,,>),
+        [typeof(Tuple<,,,,,,>)] = typeof(TupleSerializer<,,,,,,>),
+        [typeof(Tuple<,,,,,,,>)] = typeof(TupleSerializer<,,,,,,,>)
     };
     internal Dictionary<string, Type> TypeMap { get; } = new()
     {
@@ -182,34 +181,34 @@ public class SerializerRegistry
         [typeof(bool)] = "!boolean",    
         [typeof(string)] = "!string",
     };
-    internal Dictionary<Type, YamlSerializer> DefinedFormatters { get; } = new Dictionary<Type, YamlSerializer>()
+    internal Dictionary<Type, YamlSerializer> DefinedSerializers { get; } = new Dictionary<Type, YamlSerializer>()
     {
             // Primitive
-            { typeof(short), Int16Formatter.Instance },
-            { typeof(int), Int32Formatter.Instance },
-            { typeof(long), Int64Formatter.Instance },
-            { typeof(ushort), UInt16Formatter.Instance },
-            { typeof(uint), UInt32Formatter.Instance },
-            { typeof(ulong), UInt64Formatter.Instance },
-            { typeof(float), Float32Formatter.Instance },
-            { typeof(double), Float64Formatter.Instance },
-            { typeof(bool), BooleanFormatter.Instance },
-            { typeof(byte), ByteFormatter.Instance },
-            { typeof(sbyte), SByteFormatter.Instance },
-            { typeof(DateTime), DateTimeFormatter.Instance },
-            { typeof(char), CharFormatter.Instance },
-            { typeof(Action) , new DelegateFormatter<Action>() },
-            // StandardClassLibraryFormatter
-            { typeof(string), NullableStringFormatter.Instance },
-            { typeof(decimal), DecimalFormatter.Instance },
-            { typeof(decimal?), new StaticNullableFormatter<decimal>(DecimalFormatter.Instance) },
-            { typeof(TimeSpan), TimeSpanFormatter.Instance },
-            { typeof(TimeSpan?), new StaticNullableFormatter<TimeSpan>(TimeSpanFormatter.Instance) },
-            { typeof(DateTimeOffset), DateTimeOffsetFormatter.Instance },
-            { typeof(DateTimeOffset?), new StaticNullableFormatter<DateTimeOffset>(DateTimeOffsetFormatter.Instance) },
-            { typeof(Guid), GuidFormatter.Instance },
-            { typeof(Guid?), new StaticNullableFormatter<Guid>(GuidFormatter.Instance) },
-            { typeof(Uri), UriFormatter.Instance },
-            { typeof(Type), TypeFormatter.Instance },
+            { typeof(short), Int16Serializer.Instance },
+            { typeof(int), Int32Serializer.Instance },
+            { typeof(long), Int64Serializer.Instance },
+            { typeof(ushort), UInt16Serializer.Instance },
+            { typeof(uint), UInt32Serializer.Instance },
+            { typeof(ulong), UInt64Serializer.Instance },
+            { typeof(float), Float32Serializer.Instance },
+            { typeof(double), Float64Serializer.Instance },
+            { typeof(bool), BooleanSerializer.Instance },
+            { typeof(byte), ByteSerializer.Instance },
+            { typeof(sbyte), SByteSerializer.Instance },
+            { typeof(DateTime), DateTimeSerializer.Instance },
+            { typeof(char), CharSerializer.Instance },
+            { typeof(Action) , new DelegateSerializer<Action>() },
+            // StandardClassLibrarySerializer
+            { typeof(string), NullableStringSerializer.Instance },
+            { typeof(decimal), DecimalSerializer.Instance },
+            { typeof(decimal?), DecimalSerializer.Instance },
+            { typeof(TimeSpan), TimeSpanSerializer.Instance },
+            { typeof(TimeSpan?), TimeSpanSerializer.Instance },
+            { typeof(DateTimeOffset), DateTimeOffsetSerializer.Instance },
+            { typeof(DateTimeOffset?), DateTimeOffsetSerializer.Instance },
+            { typeof(Guid), GuidSerializer.Instance },
+            { typeof(Guid?), GuidSerializer.Instance },
+            { typeof(Uri), UriSerializer.Instance },
+            { typeof(Type), TypeSerializer.Instance },
     };
 }

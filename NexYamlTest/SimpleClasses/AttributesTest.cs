@@ -20,8 +20,8 @@ public class AttributeTest
             X = 99,
             Z = 200,
         };
-        var s = YamlSerializer.Serialize(dat);
-        var d = YamlSerializer.Deserialize<Attribute>(s);
+        var s = Yaml.Write(dat);
+        var d = Yaml.Read<Attribute>(s);
         Assert.Equal(100, d.InternalVisible);
         Assert.Equal(101, d.X);
         Assert.Equal(101, d.Z);

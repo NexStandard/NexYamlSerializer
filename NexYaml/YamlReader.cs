@@ -1,14 +1,14 @@
 ﻿using NexYaml.Parser;
+using NexYaml.ResolvePlugin;
 using NexYaml.Serialization;
-using NexYaml.Serialization.Formatters;
-using NexYaml.Serialization.SyntaxPlugins;
+using NexYaml.Serializers;
 using Stride.Core;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.Unicode;
 
 namespace NexYaml;
-internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : IYamlReader
+public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : IYamlReader
 {
     public bool HasKeyMapping => parser.HasKeyMapping;
     public bool HasSequence => parser.HasSequence;
@@ -49,9 +49,6 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
         return parser.Read();
     }
 
-    private static readonly Type NullableFormatter = typeof(NullableFormatter<>);
-    private byte[] reference = [(byte)'I', (byte)'d'];
-
     public void AddReference(Guid id, Action<object> resolution)
     {
         if (ReferenceResolvingMap.TryGetValue(id, out var action))
@@ -77,10 +74,10 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
         if (type.IsInterface || type.IsAbstract || type.IsGenericType)
         {
             TryGetCurrentTag(out var tag);
-            YamlSerializer? formatter;
+            YamlSerializer? serializer;
             if (tag == null)
             {
-                var formatt = Resolver.GetGenericFormatter<T>();
+                var formatt = Resolver.GetGenericSerializer<T>();
                 if (formatt == null)
                 {
                     value = default;
@@ -89,7 +86,6 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
 
                 else
                 {
-
                     Read(formatt, ref parser, ref value, ref parseResult);
                     return;
                 }
@@ -105,21 +101,21 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
                     return;
                 }
                 alias = Resolver.GetAliasType(tag.Handle);
-                formatter = Resolver.GetFormatter(alias);
-                formatter ??= Resolver.GetFormatter(alias, type);
+                serializer = Resolver.GetSerializer(alias);
+                serializer ??= Resolver.GetSerializer(alias, type);
             }
-            if (formatter == null)
+            if (serializer == null)
             {
                 value = default;
                 return;
             }
             var valueObject = (object)value;
-            formatter.Read(this, ref valueObject, ref parseResult);
+            serializer.Read(this, ref valueObject, ref parseResult);
             value = (T?)valueObject;
         }
         else
         {
-            Resolver.GetFormatter<T>().Read(this, ref value!, ref parseResult);
+            Resolver.GetSerializer<T>().Read(this, ref value!, ref parseResult);
         }
         if(value is IIdentifiable identifiable and not null)
         {
@@ -137,7 +133,7 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
             }
         }
     }
-    private void Read<T>(YamlSerializer<T> innerFormatter, ref YamlParser parser, ref T value, ref ParseResult parseResult)
+    private void Read<T>(YamlSerializer<T> serializer, ref YamlParser parser, ref T value, ref ParseResult parseResult)
     {
         if (parser.TryResolveCurrentAlias<T>(ref parser, out var aliasValue))
         {
@@ -147,7 +143,7 @@ internal class YamlReader(YamlParser parser, IYamlFormatterResolver Resolver) : 
 
         var withAnchor = parser.TryGetCurrentAnchor(out var anchor);
 
-        innerFormatter.Read(this, ref value, ref parseResult);
+        serializer.Read(this, ref value, ref parseResult);
 
         if (withAnchor)
         {

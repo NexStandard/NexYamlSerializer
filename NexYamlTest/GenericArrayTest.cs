@@ -17,8 +17,8 @@ public class GenericArrayTest
         {
             Value = [1, 2]
         };
-        var s = YamlSerializer.SerializeToString(array);
+        var s = Yaml.WriteToString(array);
         // TODO: activate
-        // Generics<int[]> d = YamlSerializer.Deserialize<Generics<int[]>>(s);
+        Generics<int[]> d = Yaml.Read<Generics<int[]>>(s);
     }
 }

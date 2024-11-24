@@ -37,12 +37,12 @@ internal static class Registration
         if (package.ClassInfo.IsGeneric)
         {
 
-            sb.AppendLine($"{Constants.SerializerRegistry}.RegisterGenericFormatter(typeof({package.ClassInfo.ShortDefinition}),typeof({package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}));");
-            sb.AppendLine($"{Constants.SerializerRegistry}.RegisterFormatter(typeof({package.ClassInfo.ShortDefinition}));");
+            sb.AppendLine($"{Constants.SerializerRegistry}.RegisterGenericSerializer(typeof({package.ClassInfo.ShortDefinition}),typeof({package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}));");
+            sb.AppendLine($"{Constants.SerializerRegistry}.RegisterSerializer(typeof({package.ClassInfo.ShortDefinition}));");
             return sb.ToString();
         }
-        sb.Append("\t\tvar formatter = new ").Append(package.ClassInfo.GeneratorName).AppendLine("();");
-        return sb.Append(Constants.SerializerRegistry).AppendLine(string.Format(Constants.RegisterFormatter, "formatter")).ToString();
+        sb.Append("\t\tvar serializer = new ").Append(package.ClassInfo.GeneratorName).AppendLine("();");
+        return sb.Append(Constants.SerializerRegistry).AppendLine(string.Format(Constants.RegisterSerializer, "serializer")).ToString();
     }
     public static string CreateRegisterInterfaces(this ClassPackage package)
     {

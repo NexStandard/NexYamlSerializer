@@ -1,11 +1,10 @@
 ﻿using NexYaml.Core;
 using NexYaml.Serialization;
-using NexYaml.Serialization.SyntaxPlugins;
 using Stride.Core;
 
 namespace NexYaml;
 
-public class YamlWriter(IUTF8Stream stream, IYamlFormatterResolver resolver) : IYamlWriter
+public class YamlWriter(IUTF8Stream stream, IYamlSerializerResolver resolver) : IYamlWriter
 {
     /// <summary>
     /// Tracks whether the tag has to be written.
@@ -16,18 +15,8 @@ public class YamlWriter(IUTF8Stream stream, IYamlFormatterResolver resolver) : I
     /// Tracks if the first element is written, if not the <see cref="WriteTag(string)"/> has to be always included.
     /// </summary>
     private bool IsFirst { get; set; } = true;
-    public IYamlFormatterResolver Resolver { get; init; } = resolver;
+    public IYamlSerializerResolver Resolver { get; init; } = resolver;
     public SyntaxSettings Settings { get; init; } = new();
-
-    private List<IResolvePlugin> plugins =
-    [
-            new NullPlugin(),
-            new NullablePlugin(),
-            new ArrayPlugin(),
-            new DelegatePlugin(),
-            new ReferencePlugin(),
-            new TypePlugin(),
-    ];
 
     private StyleEnforcer enforcer = new();
 
@@ -130,7 +119,7 @@ public class YamlWriter(IUTF8Stream stream, IYamlFormatterResolver resolver) : I
     /// <inheritdoc />
     public void WriteType<T>(T value, DataStyle style)
     {
-        foreach (var syntax in plugins)
+        foreach (var syntax in Settings.Plugins)
         {
             if (syntax.Write(this, value, style))
             {
@@ -141,13 +130,12 @@ public class YamlWriter(IUTF8Stream stream, IYamlFormatterResolver resolver) : I
 
         if (type.IsValueType || type.IsSealed)
         {
-            var formatter = Resolver.GetFormatter<T>();
-            formatter.Write(this, value, style);
+            Resolver.GetSerializer<T>().Write(this, value, style);
         }
         else if (type.IsInterface || type.IsAbstract || type.IsGenericType || type.IsArray)
         {
             var valueType = value!.GetType();
-            var formatt = Resolver.GetFormatter(value!.GetType(), typeof(T));
+            var formatt = Resolver.GetSerializer(value!.GetType(), typeof(T));
             if (valueType != type)
             {
                 IsRedirected = true;
@@ -169,11 +157,11 @@ public class YamlWriter(IUTF8Stream stream, IYamlFormatterResolver resolver) : I
         {
             if (style is DataStyle.Any)
             {
-                Resolver.GetFormatter<T>().Write(this, value!);
+                Resolver.GetSerializer<T>().Write(this, value!);
             }
             else
             {
-                Resolver.GetFormatter<T>().Write(this, value!, style);
+                Resolver.GetSerializer<T>().Write(this, value!, style);
             }
         }
     }

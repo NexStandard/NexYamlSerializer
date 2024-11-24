@@ -17,8 +17,8 @@ public class ByteArrayTest
         {
             Data = [1, 2]
         };
-        var s = YamlSerializer.SerializeToString(byteArray);
-        var d = YamlSerializer.Deserialize<ByteArray>(s);
+        var s = Yaml.WriteToString(byteArray);
+        var d = Yaml.Read<ByteArray>(s);
         Assert.Equal(byteArray.Data, d.Data);
     }
 }

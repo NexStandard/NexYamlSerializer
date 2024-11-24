@@ -15,8 +15,8 @@ public class UnregisteredClassTest
         Setup();
 
         // Act
-        var serializedData = YamlSerializer.SerializeToString(data);
-        var deserializedData = YamlSerializer.Deserialize<T>(serializedData);
+        var serializedData = Yaml.WriteToString(data);
+        var deserializedData = Yaml.Read<T>(serializedData);
 
         // Assert
         Assert.Equal(default, deserializedData);

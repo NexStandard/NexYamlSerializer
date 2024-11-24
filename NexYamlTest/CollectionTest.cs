@@ -1,4 +1,5 @@
 ﻿using NexYaml;
+using NexYaml.Serialization;
 using NexYamlTest.ComplexCases;
 using NexYamlTest.SimpleClasses;
 using SharpFont;
@@ -9,6 +10,7 @@ using System.Linq;
 using Xunit;
 
 namespace NexYamlTest;
+
 public class CollectionTest
 {
     [DataContract]
@@ -22,8 +24,8 @@ public class CollectionTest
     {
         var collection = new NullDictionary();
         NexYamlSerializerRegistry.Init();
-        var s = YamlSerializer.SerializeToString(collection);
-        var d = YamlSerializer.Deserialize<NullDictionary>(s);
+        var s = Yaml.WriteToString(collection);
+        var d = Yaml.Read<NullDictionary>(s);
         Assert.NotNull(d);
         Assert.Null(d.dict);
     }
@@ -37,8 +39,8 @@ public class CollectionTest
             new GenericAbstractImplementation<int, int>() { TI = 1, TI2 = 3 }
         };
         NexYamlSerializerRegistry.Init();
-        var s = YamlSerializer.SerializeToString(list);
-        var d = YamlSerializer.Deserialize<List<GenericAbstract<int, int>>>(s);
+        var s = Yaml.WriteToString(list);
+        var d = Yaml.Read<List<GenericAbstract<int, int>>>(s);
         Assert.NotNull(d);
         Assert.IsType<GenericAbstractImlementationLessParams<int>>(d[0]);
         Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
@@ -53,8 +55,8 @@ public class CollectionTest
             new GenericAbstractImplementation<int, int>() { TI = 1, TI2 = 3 }
         };
         NexYamlSerializerRegistry.Init();
-        var s = YamlSerializer.SerializeToString(list, DataStyle.Compact);
-        var d = YamlSerializer.Deserialize<List<GenericAbstract<int, int>>>(s);
+        var s = Yaml.WriteToString(list, DataStyle.Compact);
+        var d = Yaml.Read<List<GenericAbstract<int, int>>>(s);
         Assert.NotNull(d);
         Assert.IsType<GenericAbstractImlementationLessParams<int>>(d[0]);
         Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
@@ -68,8 +70,8 @@ public class CollectionTest
             new GenericAbstractImplementation<int, int>() { TI = 1, TI2 = 3 }
         };
         NexYamlSerializerRegistry.Init();
-        var s = YamlSerializer.SerializeToString(list, DataStyle.Compact);
-        var d = YamlSerializer.Deserialize<List<GenericAbstract<int, int>>>(s);
+        var s = Yaml.WriteToString(list, DataStyle.Compact);
+        var d = Yaml.Read<List<GenericAbstract<int, int>>>(s);
         Assert.NotNull(d);
         Assert.IsType<GenericAbstractImlementationLessParamsEmpty<int>>(d[0]);
         Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
@@ -110,9 +112,9 @@ public class CollectionTest
         testCollections.values.Add(data2);
 
         NexYamlSerializerRegistry.Init();
-        var s = YamlSerializer.SerializeToString(testCollections);
+        var s = Yaml.WriteToString(testCollections);
         throw new System.Exception(s);
-        var d = YamlSerializer.Deserialize<Collections>(s);
+        var d = Yaml.Read<Collections>(s);
         Assert.True(d.Enumerable.Count() == 2);
 
     }
@@ -123,7 +125,7 @@ public class CollectionTest
         data.Dictionary.Add(new TempData(), new TempData());
         data.Dictionary.Add(new TempData() { Id = 2, Name = "2"}, new TempData());
         NexYamlSerializerRegistry.Init();
-        var s = YamlSerializer.SerializeToString(data);
+        var s = Yaml.WriteToString(data);
         // throw new System.Exception(s);
     }
     [DataContract]
@@ -139,7 +141,7 @@ public class CollectionTest
             Foo = [1, 2, 3]
         };
         NexYamlSerializerRegistry.Init();
-        var s = YamlSerializer.SerializeToString(c);
+        var s = Yaml.WriteToString(c);
         throw new System.Exception(s);
     }
 
@@ -160,8 +162,8 @@ public class CollectionTest
         };
 
         NexYamlSerializerRegistry.Init();
-        var s = YamlSerializer.SerializeToString(data1);
-        var d = YamlSerializer.Deserialize<CollectionInterfaces>(s);
+        var s = Yaml.WriteToString(data1);
+        var d = Yaml.Read<CollectionInterfaces>(s);
         Assert.Equal(data1.Collection.Count, d.Collection.Count);
     }
 }
