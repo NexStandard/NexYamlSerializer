@@ -13,16 +13,16 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
     public bool HasKeyMapping => parser.HasKeyMapping;
     public bool HasSequence => parser.HasSequence;
 
-    public Dictionary<Guid, Action<object>> ReferenceResolvingMap { get; } = new();
-    private HashSet<IIdentifiable> identifiables = new();
+    public Dictionary<Guid, List<Action<object>>> ReferenceResolvingMap { get; } = new();
+    public HashSet<IIdentifiable> Identifiables { get; } = new();
     private List<IResolvePlugin> plugins =
     [
         new NullPlugin(),
-            new DelegatePlugin(),
-            new NullablePlugin(),
-            new ArrayPlugin(),
-            new ReferencePlugin(),
-            new TypePlugin(),
+        new DelegatePlugin(),
+        new NullablePlugin(),
+        new ArrayPlugin(),
+        new ReferencePlugin(),
+        new TypePlugin(),
     ];
     public void Dispose()
     {
@@ -53,12 +53,11 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
     {
         if (ReferenceResolvingMap.TryGetValue(id, out var action))
         {
-            action += resolution;
-            ReferenceResolvingMap[id] = action;
+            action.Add(resolution);
         }
         else
         {
-            ReferenceResolvingMap.Add(id, resolution);
+            ReferenceResolvingMap.Add(id, new () { resolution });
         }
     }
     public void Read<T>(ref T? value, ref ParseResult parseResult)
@@ -119,17 +118,28 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         }
         if(value is IIdentifiable identifiable and not null)
         {
-            identifiables.Add(identifiable);
+            Identifiables.Add(identifiable);
         }
     }
     public void ResolveReferences()
     {
-        foreach(var identifiable in identifiables)
+        
+        foreach(var identifiable in Identifiables)
         {
+            var x = ReferenceResolvingMap;
             if(ReferenceResolvingMap.TryGetValue(identifiable.Id,out var value))
             {
-                var x = value.GetInvocationList();
-                value(identifiable);
+                foreach(var x2 in value)
+                {
+                    if(identifiable is IdentifiableDelegate identifiableDelegate)
+                    {
+                        x2(identifiableDelegate.Func());
+                    }
+                    else
+                    {
+                        x2(identifiable);
+                    }
+                }
             }
         }
     }

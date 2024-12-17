@@ -1,4 +1,5 @@
 ﻿using NexYaml.Parser;
+using Stride.Core;
 using System.Diagnostics.CodeAnalysis;
 
 namespace NexYaml;
@@ -6,7 +7,8 @@ public interface IYamlReader
 {
     bool HasKeyMapping { get; }
     bool HasSequence { get; }
-    public Dictionary<Guid, Action<object>> ReferenceResolvingMap { get; }
+    public HashSet<IIdentifiable> Identifiables { get; }
+    public Dictionary<Guid, List<Action<object>>> ReferenceResolvingMap { get; }
     void Read(ref ReadOnlySpan<byte> span);
     void Read<T>(ref T? value, ref ParseResult parseResult);
     void Read<T>(ref T? value);

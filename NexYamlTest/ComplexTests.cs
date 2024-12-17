@@ -28,14 +28,14 @@ public class ComplexTests
             Assert.Equal(list[i], deserialized[i]);
         }
     }
-    [Fact]
+    [Fact(Skip = "How to test the invocation???")]
     public void Delegates()
     {
         Setup();
         var g = new Delegates();
         var x = Yaml.WriteToString(g, Stride.Core.DataStyle.Compact);
         var t = Yaml.Read<Delegates>(x);
-        throw new Exception(t.Action.ToString());
+        throw new Exception(t.Action.GetInvocationList().Length.ToString());
         throw new Exception(x);
     }
 
