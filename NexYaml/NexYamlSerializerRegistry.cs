@@ -152,7 +152,6 @@ public class SerializerRegistry
         [typeof(IDictionary<,>)] = typeof(DictionaryInterfaceSerializer<,>),
         [typeof(IReadOnlyDictionary<,>)] = typeof(DictionaryReadonlyInterfaceSerializer<,>),
         [typeof(KeyValuePair<,>)] = typeof(KeyValuePairSerializer<,>),
-        [typeof(Action)] = typeof(DelegateSerializer<Action>),
         [typeof(Tuple<>)] = typeof(TupleSerializer<>),
         [typeof(Tuple<,>)] = typeof(TupleSerializer<,>),
         [typeof(Tuple<,,>)] = typeof(TupleSerializer<,,>),
@@ -197,7 +196,6 @@ public class SerializerRegistry
             { typeof(sbyte), SByteSerializer.Instance },
             { typeof(DateTime), DateTimeSerializer.Instance },
             { typeof(char), CharSerializer.Instance },
-            { typeof(Action) , new DelegateSerializer<Action>() },
             // StandardClassLibrarySerializer
             { typeof(string), NullableStringSerializer.Instance },
             { typeof(decimal), DecimalSerializer.Instance },
