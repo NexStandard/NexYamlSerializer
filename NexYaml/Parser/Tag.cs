@@ -1,6 +1,6 @@
 namespace NexYaml.Parser;
 
-public record class Tag(string Prefix, string Handle) : ITokenContent
+public class Tag(string Prefix, string Handle) : ITokenContent
 {
     public string Prefix { get; } = Prefix;
     public string Handle { get; } = Handle;

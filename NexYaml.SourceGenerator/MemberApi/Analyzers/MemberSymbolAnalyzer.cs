@@ -1,7 +1,9 @@
 ﻿
 using Microsoft.CodeAnalysis;
-using NexYamlSourceGenerator.MemberApi.Data;
-namespace NexYamlSourceGenerator.MemberApi.Analyzers;
+using NexYaml.SourceGenerator.MemberApi;
+using NexYaml.SourceGenerator.MemberApi.Data;
+
+namespace NexYaml.SourceGenerator.MemberApi.Analyzers;
 internal abstract class MemberSymbolAnalyzer<T>(IMemberSymbolAnalyzer<T> analyzer) : IMemberSymbolAnalyzer<T>
     where T : ISymbol
 {

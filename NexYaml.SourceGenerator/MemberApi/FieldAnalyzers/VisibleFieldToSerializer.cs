@@ -1,9 +1,9 @@
 ﻿using Microsoft.CodeAnalysis;
-using NexYamlSourceGenerator.MemberApi.Analyzers;
-using NexYamlSourceGenerator.MemberApi.Data;
-using NexYamlSourceGenerator.MemberApi.UniversalAnalyzers;
+using NexYaml.SourceGenerator.MemberApi.Analyzers;
+using NexYaml.SourceGenerator.MemberApi.Data;
+using NexYaml.SourceGenerator.MemberApi.UniversalAnalyzers;
 
-namespace NexYamlSourceGenerator.MemberApi.FieldAnalyzers;
+namespace NexYaml.SourceGenerator.MemberApi.FieldAnalyzers;
 
 internal class VisibleFieldToSerializer(IMemberSymbolAnalyzer<IFieldSymbol> analyzer) : MemberSymbolAnalyzer<IFieldSymbol>(analyzer)
 {

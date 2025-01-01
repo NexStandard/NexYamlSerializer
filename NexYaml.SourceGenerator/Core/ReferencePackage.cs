@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace NexYamlSourceGenerator.Core;
+namespace NexYaml.SourceGenerator.Core;
 
 internal class ReferencePackage(Compilation compilation)
 {

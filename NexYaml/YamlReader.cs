@@ -1,5 +1,5 @@
 ﻿using NexYaml.Parser;
-using NexYaml.ResolvePlugin;
+using NexYaml.Plugins;
 using NexYaml.Serialization;
 using NexYaml.Serializers;
 using Stride.Core;

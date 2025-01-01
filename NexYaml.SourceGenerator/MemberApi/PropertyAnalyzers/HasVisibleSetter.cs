@@ -1,8 +1,9 @@
 ﻿using Microsoft.CodeAnalysis;
-using NexYamlSourceGenerator.MemberApi.Analyzers;
-using NexYamlSourceGenerator.MemberApi.Data;
-using NexYamlSourceGenerator.MemberApi.UniversalAnalyzers;
-namespace NexYamlSourceGenerator.MemberApi.PropertyAnalyzers;
+using NexYaml.SourceGenerator.MemberApi.Analyzers;
+using NexYaml.SourceGenerator.MemberApi.Data;
+using NexYaml.SourceGenerator.MemberApi.UniversalAnalyzers;
+
+namespace NexYaml.SourceGenerator.MemberApi.PropertyAnalyzers;
 internal class HasVisibleSetter(IMemberSymbolAnalyzer<IPropertySymbol> analyzer) : MemberSymbolAnalyzer<IPropertySymbol>(analyzer)
 {
     public override bool AppliesTo(MemberData<IPropertySymbol> context)

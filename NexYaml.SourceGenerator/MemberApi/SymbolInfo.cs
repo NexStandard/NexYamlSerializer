@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
-using NexYamlSourceGenerator.MemberApi.Data;
+using NexYaml.SourceGenerator.MemberApi.Data;
 
-namespace NexYamlSourceGenerator.MemberApi;
+namespace NexYaml.SourceGenerator.MemberApi;
 internal record SymbolInfo
 {
     public static SymbolInfo Empty { get; } = new SymbolInfo() { IsEmpty = true };

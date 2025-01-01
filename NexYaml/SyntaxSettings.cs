@@ -1,5 +1,5 @@
 ﻿using NexYaml.Core;
-using NexYaml.ResolvePlugin;
+using NexYaml.Plugins;
 
 namespace NexYaml;
 

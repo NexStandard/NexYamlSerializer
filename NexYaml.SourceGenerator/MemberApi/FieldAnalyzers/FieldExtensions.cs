@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
-using NexYamlSourceGenerator.MemberApi.Analyzers;
+using NexYaml.SourceGenerator.MemberApi.Analyzers;
 
-namespace NexYamlSourceGenerator.MemberApi.FieldAnalyzers;
+namespace NexYaml.SourceGenerator.MemberApi.FieldAnalyzers;
 internal static class FieldExtensions
 {
     internal static IMemberSymbolAnalyzer<IFieldSymbol> HasOriginalDefinition(this IMemberSymbolAnalyzer<IFieldSymbol> fieldAnalyzer, INamedTypeSymbol originalDefinition)

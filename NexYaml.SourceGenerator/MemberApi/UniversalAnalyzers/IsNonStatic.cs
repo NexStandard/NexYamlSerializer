@@ -1,8 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
-using NexYamlSourceGenerator.MemberApi.Analyzers;
-using NexYamlSourceGenerator.MemberApi.Data;
+using NexYaml.SourceGenerator.MemberApi.Analyzers;
+using NexYaml.SourceGenerator.MemberApi.Data;
 
-namespace NexYamlSourceGenerator.MemberApi.UniversalAnalyzers;
+namespace NexYaml.SourceGenerator.MemberApi.UniversalAnalyzers;
 
 internal class IsNonStatic<T>(IMemberSymbolAnalyzer<T> analyzer) : MemberSymbolAnalyzer<T>(analyzer)
     where T : ISymbol

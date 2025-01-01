@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
-using NexYamlSourceGenerator.MemberApi.Analyzers;
+using NexYaml.SourceGenerator.MemberApi.Analyzers;
 
-namespace NexYamlSourceGenerator.MemberApi.PropertyAnalyzers;
+namespace NexYaml.SourceGenerator.MemberApi.PropertyAnalyzers;
 internal static class PropertyExtensions
 {
     internal static IMemberSymbolAnalyzer<IPropertySymbol> HasOriginalDefinition(this IMemberSymbolAnalyzer<IPropertySymbol> propertySymbolAnalyzer, INamedTypeSymbol originalDefinition)

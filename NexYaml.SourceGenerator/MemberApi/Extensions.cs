@@ -1,14 +1,14 @@
 ﻿using Microsoft.CodeAnalysis;
-using NexYamlSourceGenerator.Core;
-using NexYamlSourceGenerator.MemberApi.Analyzers;
-using NexYamlSourceGenerator.MemberApi.Data;
-using NexYamlSourceGenerator.MemberApi.FieldAnalyzers;
-using NexYamlSourceGenerator.MemberApi.PropertyAnalyzers;
-using NexYamlSourceGenerator.MemberApi.UniversalAnalyzers;
+using NexYaml.SourceGenerator.Core;
+using NexYaml.SourceGenerator.MemberApi.Analyzers;
+using NexYaml.SourceGenerator.MemberApi.Data;
+using NexYaml.SourceGenerator.MemberApi.FieldAnalyzers;
+using NexYaml.SourceGenerator.MemberApi.PropertyAnalyzers;
+using NexYaml.SourceGenerator.MemberApi.UniversalAnalyzers;
 using System.Collections.Immutable;
 using System.Text;
 
-namespace NexYamlSourceGenerator.MemberApi;
+namespace NexYaml.SourceGenerator.MemberApi;
 internal static class Extensions
 {
     /// <summary>
@@ -112,7 +112,7 @@ internal static class Extensions
     private static IEnumerable<ISymbol> GetAllMembersBottomToTop(this INamedTypeSymbol type, ReferencePackage reference)
     {
         // Get the base types in reverse order
-        var baseTypes = GetBaseTypes(type, reference);
+        var baseTypes = type.GetBaseTypes(reference);
         List<string> properties = [];
         List<string> fields = [];
         foreach (var baseType in baseTypes)

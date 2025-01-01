@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Engines;
 using NexYaml;
 using NexYaml.Serialization;
 using Stride.Core;
@@ -6,37 +7,35 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 namespace Test;
-[MemoryDiagnoser]
+[MemoryDiagnoser(false)]
 public class Benchmarker
 {
     internal static Collections c = new Collections();
     public IYamlWriter writer;
     public UTF8Stream stream;
     static bool  x = false;
-    [GlobalSetup]
-    public void S()
+    public Benchmarker()
     {
         NexYamlSerializerRegistry.Init();
         stream = new UTF8Stream();
         writer = new YamlWriter(stream, NexYamlSerializerRegistry.Instance);
-
     }
+    
 
-    [IterationSetup()]
-    public void Setup()
-    {
-        stream.Reset();
-    }
     [Benchmark()]
     public void Yaml()
     {
         writer.Write(c, DataStyle.Compact);
         var s = stream.GetChars().Span.ToString();
+        stream.Reset();
     }
     [Benchmark()]
     public void Json()
     {
         var json = JsonSerializer.Serialize(c, MyJsonContext.Default.Collections);
+    }    [Benchmark()]
+    public void setup()
+    {
     }
 }
 [DataContract]

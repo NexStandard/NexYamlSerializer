@@ -1,7 +1,7 @@
 ﻿using NexYaml.Parser;
 using Stride.Core;
 
-namespace NexYaml.ResolvePlugin;
+namespace NexYaml.Plugins;
 internal class ReferencePlugin : IResolvePlugin
 {
     public bool Read<T>(IYamlReader stream, ref T value, ref ParseResult result)

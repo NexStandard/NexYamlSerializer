@@ -2,7 +2,7 @@
 using NexYaml.Parser;
 using Stride.Core;
 
-namespace NexYaml.ResolvePlugin;
+namespace NexYaml.Plugins;
 public class IdentifiableDelegate : IIdentifiable
 {
     public Guid Id { get; set; }
@@ -36,7 +36,8 @@ internal class DelegatePlugin : IResolvePlugin
             stream.Identifiables.Add(new IdentifiableDelegate()
             {
                 Id = result.Reference,
-                Func = () => {
+                Func = () =>
+                {
                     Delegate @delegate = null;
                     foreach (var d in delegates)
                     {
@@ -44,10 +45,7 @@ internal class DelegatePlugin : IResolvePlugin
                         if (x is not null)
                         {
                             var method = x.GetType().GetMethod(d.delegateName);
-
-
-
-                            var createdDelegate = method.CreateDelegate(typeof(T),x);
+                            var createdDelegate = method.CreateDelegate(typeof(T), x);
                             @delegate = Delegate.Combine(@delegate, createdDelegate);
                         }
                         if (@delegate is not null)
@@ -61,7 +59,7 @@ internal class DelegatePlugin : IResolvePlugin
             value = default!;
             return true;
         }
-        
+
         return false;
     }
 

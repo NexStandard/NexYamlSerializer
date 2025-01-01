@@ -1,7 +1,7 @@
 ﻿using NexYaml.Parser;
 using Stride.Core;
 
-namespace NexYaml.ResolvePlugin;
+namespace NexYaml.Plugins;
 /// <summary>
 /// Provides the <see cref="IYamlWriter"/> with Syntax options to handle special cases during type resolution
 /// </summary>

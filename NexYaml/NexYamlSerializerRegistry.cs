@@ -1,5 +1,6 @@
 ﻿using NexYaml.Serialization;
 using NexYaml.Serializers;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace NexYaml;
@@ -75,7 +76,25 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
         return emptySerializer!;
     }
     public static bool IsReady = false;
+#if NET9_0_OR_GREATER
     static Lock s = new();
+#elif NET8_0
+    static object s = new object();
+#endif
+    public static IYamlSerializerResolver Create(Assembly assembly)
+    {
+        var registry = new NexYamlSerializerRegistry();
+        registry.SerializerRegistry = new();
+        var serializerFactories = assembly.GetTypes()
+            .Where(t => typeof(IYamlSerializerFactory).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+
+        foreach (var serializerFactory in serializerFactories)
+        {
+            var instance = (IYamlSerializerFactory)Activator.CreateInstance(serializerFactory)!;
+            instance.Register(registry);
+        }
+        return registry;
+    }
     /// <summary>
     /// Registers all available Serializers.
     /// May be removed in future.w

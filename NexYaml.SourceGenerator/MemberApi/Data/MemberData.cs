@@ -1,8 +1,9 @@
 ﻿using Microsoft.CodeAnalysis;
-using NexYamlSourceGenerator.Core;
+using NexYaml.SourceGenerator.Core;
+using NexYaml.SourceGenerator.MemberApi;
 using System.Text;
 
-namespace NexYamlSourceGenerator.MemberApi.Data;
+namespace NexYaml.SourceGenerator.MemberApi.Data;
 
 internal record MemberData<T>(T Symbol, DataMemberContext DataMemberContext) where T : ISymbol;
 
@@ -10,7 +11,7 @@ internal record ClassPackage(ClassInfo ClassInfo, EquatableReadOnlyList<SymbolIn
 {
     internal string CreateExternCalls()
     {
-        StringBuilder builder = new StringBuilder();
+        var builder = new StringBuilder();
         foreach (var symbol in MemberSymbols)
         {
             if (symbol.IsInit)

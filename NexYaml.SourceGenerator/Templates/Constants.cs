@@ -1,4 +1,4 @@
-﻿namespace NexYamlSourceGenerator.Templates;
+﻿namespace NexYaml.SourceGenerator.Templates;
 
 internal static class Constants
 {

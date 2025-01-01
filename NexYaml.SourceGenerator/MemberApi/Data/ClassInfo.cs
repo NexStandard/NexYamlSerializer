@@ -1,8 +1,8 @@
 using Microsoft.CodeAnalysis;
-using NexYamlSourceGenerator.Core;
+using NexYaml.SourceGenerator.Core;
 using System.Collections.Immutable;
 
-namespace NexYamlSourceGenerator.MemberApi.Data;
+namespace NexYaml.SourceGenerator.MemberApi.Data;
 
 internal record ShortGenericDefinition(int Count)
 {

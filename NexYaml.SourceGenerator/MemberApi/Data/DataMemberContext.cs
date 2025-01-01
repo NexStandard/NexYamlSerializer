@@ -1,8 +1,9 @@
 using Microsoft.CodeAnalysis;
-using NexYamlSourceGenerator.Core;
-using NexYamlSourceGenerator.MemberApi.UniversalAnalyzers;
+using NexYaml.SourceGenerator.Core;
+using NexYaml.SourceGenerator.MemberApi;
+using NexYaml.SourceGenerator.MemberApi.UniversalAnalyzers;
 
-namespace NexYamlSourceGenerator.MemberApi.Data;
+namespace NexYaml.SourceGenerator.MemberApi.Data;
 
 internal record DataMemberContext
 {

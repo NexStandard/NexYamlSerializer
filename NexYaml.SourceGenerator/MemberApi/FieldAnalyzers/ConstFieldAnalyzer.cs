@@ -1,8 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
-using NexYamlSourceGenerator.MemberApi.Analyzers;
-using NexYamlSourceGenerator.MemberApi.Data;
+using NexYaml.SourceGenerator.MemberApi.Analyzers;
+using NexYaml.SourceGenerator.MemberApi.Data;
 
-namespace NexYamlSourceGenerator.MemberApi.FieldAnalyzers;
+namespace NexYaml.SourceGenerator.MemberApi.FieldAnalyzers;
 internal class ConstFieldAnalyzer(IMemberSymbolAnalyzer<IFieldSymbol> analyzer) : MemberSymbolAnalyzer<IFieldSymbol>(analyzer)
 {
     public override bool AppliesTo(MemberData<IFieldSymbol> context)

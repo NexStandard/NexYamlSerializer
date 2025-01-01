@@ -1,9 +1,9 @@
 using Microsoft.CodeAnalysis;
-using NexYamlSourceGenerator.Core;
-using NexYamlSourceGenerator.MemberApi.Analyzers;
-using NexYamlSourceGenerator.MemberApi.Data;
+using NexYaml.SourceGenerator.Core;
+using NexYaml.SourceGenerator.MemberApi.Analyzers;
+using NexYaml.SourceGenerator.MemberApi.Data;
 
-namespace NexYamlSourceGenerator.MemberApi.FieldAnalyzers;
+namespace NexYaml.SourceGenerator.MemberApi.FieldAnalyzers;
 
 internal class FieldAnalyzer(ReferencePackage package) : IMemberSymbolAnalyzer<IFieldSymbol>
 {

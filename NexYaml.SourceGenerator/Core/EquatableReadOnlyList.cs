@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-namespace NexYamlSourceGenerator.Core;
+namespace NexYaml.SourceGenerator.Core;
 
 public static class EquatableReadOnlyList
 {
@@ -14,7 +14,7 @@ public static class EquatableReadOnlyList
 /// </summary>
 
 public readonly struct EquatableReadOnlyList<T>(
-    IReadOnlyList<T>? collection
+    IReadOnlyList<T> collection
 ) : IEquatable<EquatableReadOnlyList<T>>, IReadOnlyList<T>
 {
     private IReadOnlyList<T> Collection => collection ?? [];
@@ -24,7 +24,7 @@ public readonly struct EquatableReadOnlyList<T>(
         return this.SequenceEqual(other);
     }
 
-    public override bool Equals(object? obj)
+    public override bool Equals(object obj)
     {
         return obj is EquatableReadOnlyList<T> other && Equals(other);
     }

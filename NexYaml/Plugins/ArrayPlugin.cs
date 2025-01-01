@@ -2,11 +2,9 @@
 using NexYaml.Serializers;
 using Stride.Core;
 
-namespace NexYaml.ResolvePlugin;
+namespace NexYaml.Plugins;
 internal class ArrayPlugin : IResolvePlugin
 {
-
-
     public bool Write<T>(IYamlWriter stream, T value, DataStyle style)
     {
         if (value is Array)

@@ -1,7 +1,7 @@
-﻿using NexYamlSourceGenerator.MemberApi.Data;
+﻿using NexYaml.SourceGenerator.MemberApi.Data;
 using System.Text;
 
-namespace NexYamlSourceGenerator.Templates;
+namespace NexYaml.SourceGenerator.Templates;
 
 internal static class SourceCreator
 {
@@ -55,7 +55,7 @@ file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSeria
 
     public override void Write(IYamlWriter stream, {info.NameDefinition} value, DataStyle style = {info.DataStyle})
     {{
-        stream.BeginMapping(style);
+        stream.BeginMapping(style == DataStyle.Any ? Style : style);
         stream.WriteTag(""!{tag}"");
 {package.CreateNewSerializationEmit()}
         stream.EndMapping();

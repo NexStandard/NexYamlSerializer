@@ -1,6 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using NexYaml.Parser;
+using System.Diagnostics.CodeAnalysis;
 
-namespace NexYaml.Parser;
+namespace NexYaml;
 public static class ParserExtensions
 {
     public delegate void ActionKey(ReadOnlySpan<byte> key);

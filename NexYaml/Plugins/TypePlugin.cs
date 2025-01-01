@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NexYaml.ResolvePlugin;
+namespace NexYaml.Plugins;
 internal class TypePlugin : IResolvePlugin
 {
     public bool Read<T>(IYamlReader stream, ref T value, ref ParseResult result)

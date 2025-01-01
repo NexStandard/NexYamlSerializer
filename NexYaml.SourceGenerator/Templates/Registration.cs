@@ -1,8 +1,8 @@
-﻿using NexYamlSourceGenerator.MemberApi.Data;
+﻿using NexYaml.SourceGenerator.MemberApi.Data;
 using System.Collections.Immutable;
 using System.Text;
 
-namespace NexYamlSourceGenerator.Templates;
+namespace NexYaml.SourceGenerator.Templates;
 
 internal static class Registration
 {

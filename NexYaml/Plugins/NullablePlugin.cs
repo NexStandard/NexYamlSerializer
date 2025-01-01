@@ -2,7 +2,7 @@
 using NexYaml.Serializers;
 using Stride.Core;
 
-namespace NexYaml.ResolvePlugin;
+namespace NexYaml.Plugins;
 
 internal class NullablePlugin : IResolvePlugin
 {

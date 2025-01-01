@@ -1,8 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
-using NexYamlSourceGenerator.MemberApi.Analyzers;
-using NexYamlSourceGenerator.MemberApi.Data;
+using NexYaml.SourceGenerator.MemberApi.Analyzers;
+using NexYaml.SourceGenerator.MemberApi.Data;
 
-namespace NexYamlSourceGenerator.MemberApi.UniversalAnalyzers;
+namespace NexYaml.SourceGenerator.MemberApi.UniversalAnalyzers;
 internal class WhenNot<T>(
         IMemberSymbolAnalyzer<T> analyzer
         , Func<IMemberSymbolAnalyzer<T>, IMemberSymbolAnalyzer<T>> analyzerTarget
@@ -11,6 +11,6 @@ internal class WhenNot<T>(
 {
     public override bool AppliesTo(MemberData<T> symbol)
     {
-        return !analyzerTarget.Invoke(base._analyzer).AppliesTo(symbol);
+        return !analyzerTarget.Invoke(_analyzer).AppliesTo(symbol);
     }
 }

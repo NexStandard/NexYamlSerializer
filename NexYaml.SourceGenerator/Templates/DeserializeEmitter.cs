@@ -1,8 +1,8 @@
-﻿using NexYamlSourceGenerator.MemberApi;
-using NexYamlSourceGenerator.MemberApi.Data;
+﻿using NexYaml.SourceGenerator.MemberApi;
+using NexYaml.SourceGenerator.MemberApi.Data;
 using System.Text;
 
-namespace NexYamlSourceGenerator.Templates;
+namespace NexYaml.SourceGenerator.Templates;
 internal class DeserializeEmitter
 {
     public string Create(ClassPackage package)
@@ -40,16 +40,16 @@ internal class DeserializeEmitter
                 {
                     {{objectCreation.ToString().Trim(',')}}
                 };
-                {{CreateReferenceFallback(package.MemberSymbols,package.ClassInfo)}}
+                {{CreateReferenceFallback(package.MemberSymbols, package.ClassInfo)}}
              
                  value = __TEMP__RESULT;
         """;
     }
 
-    private string CreateReferenceFallback(IEnumerable<SymbolInfo> properties,ClassInfo classInfo)
+    private string CreateReferenceFallback(IEnumerable<SymbolInfo> properties, ClassInfo classInfo)
     {
-        StringBuilder stringBuilder = new StringBuilder();
-        foreach(var x in properties)
+        var stringBuilder = new StringBuilder();
+        foreach (var x in properties)
         {
             if (!x.IsInit)
             {
@@ -57,8 +57,9 @@ internal class DeserializeEmitter
             }
             else
             {
+                stringBuilder.AppendLine("#if NET9_0");
                 stringBuilder.AppendLine($"if(__TEMP__RESULT__{x.Name}.IsReference) {{ stream.AddReference(__TEMP__RESULT__{x.Name}.Reference, (obj) => ExternWrapper{classInfo.TypeParameterArguments}.set_{x.Name}(__TEMP__RESULT,({x.Type})obj)); }}");
-                
+                stringBuilder.AppendLine("#endif");
             }
         }
         return stringBuilder.ToString();

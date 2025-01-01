@@ -1,9 +1,9 @@
 using Microsoft.CodeAnalysis;
-using NexYamlSourceGenerator.Core;
-using NexYamlSourceGenerator.MemberApi.Analyzers;
-using NexYamlSourceGenerator.MemberApi.Data;
+using NexYaml.SourceGenerator.Core;
+using NexYaml.SourceGenerator.MemberApi.Analyzers;
+using NexYaml.SourceGenerator.MemberApi.Data;
 
-namespace NexYamlSourceGenerator.MemberApi.PropertyAnalyzers;
+namespace NexYaml.SourceGenerator.MemberApi.PropertyAnalyzers;
 
 internal class PropertyAnalyzer(ReferencePackage package) : IMemberSymbolAnalyzer<IPropertySymbol>
 {
@@ -22,7 +22,7 @@ internal class PropertyAnalyzer(ReferencePackage package) : IMemberSymbolAnalyze
             Context = context.DataMemberContext,
             IsArray = context.Symbol.Type.TypeKind == TypeKind.Array,
             IsInit = context.Symbol.SetMethod?.IsInitOnly ?? false,
-    };
+        };
     }
 
     public bool AppliesTo(MemberData<IPropertySymbol> symbol)

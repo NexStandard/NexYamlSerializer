@@ -1,7 +1,7 @@
-﻿using NexYamlSourceGenerator.MemberApi.Data;
+﻿using NexYaml.SourceGenerator.MemberApi.Data;
 using System.Text;
 
-namespace NexYamlSourceGenerator.Templates;
+namespace NexYaml.SourceGenerator.Templates;
 internal static class CreateFromParent
 {
     public static string CreateInstantiateMethodTyped(this ClassPackage package)
