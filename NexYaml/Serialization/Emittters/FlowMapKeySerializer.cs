@@ -1,7 +1,7 @@
 ﻿using NexYaml.Core;
 
 namespace NexYaml.Serialization.Emittters;
-internal class FlowMapKeySerializer(IUTF8Stream emitter) : IEmitter
+internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
 {
     public EmitState State { get; } = EmitState.FlowMappingKey;
 

@@ -27,7 +27,7 @@ public class ReferenceTest
             Reference1 = refData,
             Reference2 = refData
         };
-        var s = Yaml.WriteToString(refScript);
+        var s = Yaml.Write(refScript);
         var d = Yaml.Read<ReferenceScript>(s);
         Assert.NotNull(d);
         Assert.Equal(d.Reference, d.Reference1);
@@ -49,7 +49,7 @@ public class ReferenceTest
             Reference1 = refData,
             Reference2 = refData
         };
-        var s = Yaml.WriteToString(refScript);
+        var s = Yaml.Write(refScript);
         var d = Yaml.Read<ReferenceScript>(s);
         Assert.NotNull(d);
         Assert.Equal(d.Reference, d.Reference1);
@@ -69,7 +69,7 @@ public class ReferenceTest
         list.List.Add(refData);
         list.List.Add(refData);
         list.List.Add(refData);
-        var s = Yaml.WriteToString(list);
+        var s = Yaml.Write(list);
         var d = Yaml.Read<ReferenceList>(s);
         Assert.Equal(d.List[0], d.List[1]);
         Assert.Equal(d.List[0], d.List[2]);
@@ -111,7 +111,7 @@ public class ReferenceTest
         list.List.Add(refScript);
         list.List.Add(refScript2);
         list.List.Add(refScript3);
-        var s = Yaml.WriteToString(list);
+        var s = Yaml.Write(list);
         var d = Yaml.Read<ReferenceScriptList>(s);
         Assert.Equal(d.List[1], d.List[0].Reference.ReferenceScript);
     }

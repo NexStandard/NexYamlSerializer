@@ -1,4 +1,6 @@
-﻿namespace NexYaml.Serialization.Emittters;
+﻿using NexYaml.Core;
+
+namespace NexYaml.Serialization.Emittters;
 public interface IEmitter
 {
     EmitState State { get; }

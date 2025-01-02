@@ -1,7 +1,7 @@
 ﻿using NexYaml.Core;
 
 namespace NexYaml.Serialization.Emittters;
-internal class BlockMapKeySerializer(IUTF8Stream emitter) : IEmitter
+internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
 {
     public EmitState State { get; } = EmitState.BlockMappingKey;
 

@@ -15,7 +15,7 @@ public class DataContractAliasTest
     {
         Setup();
         var aliased = new DataContractAlias();
-        var s = Yaml.WriteToString(aliased);
+        var s = Yaml.Write(aliased);
         Assert.StartsWith("!Alias", s);
 
     }
@@ -27,7 +27,7 @@ public class DataContractAliasTest
         {
             Id = 1,
         };
-        var s = Yaml.WriteToString(aliased);
+        var s = Yaml.Write(aliased);
         var deserialized = Yaml.Read<DataContractAlias>(s);
         Assert.Equal(aliased.Id, deserialized.Id);
     }
@@ -39,7 +39,7 @@ public class DataContractAliasTest
         {
             Id = 1,
         };
-        var s = Yaml.WriteToString(aliased);
+        var s = Yaml.Write(aliased);
         var deserialized = Yaml.Read<IDInterface>(s);
         Assert.Equal(aliased.Id, deserialized.Id);
     }

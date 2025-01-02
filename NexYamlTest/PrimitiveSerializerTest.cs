@@ -63,7 +63,7 @@ public class PrimitiveSerializerTest
             //    NullableULongProperty = null,
         };
         NexYamlSerializerRegistry.Init();
-        var s = Yaml.WriteToString(x);
+        var s = Yaml.Write(x);
         var d = Yaml.Read<BaseSerializerTest>(s);
         // Assert
         Assert.Equal(x.IntField, d.IntField);
@@ -128,7 +128,7 @@ public class PrimitiveSerializerTest
             IntField = 1,
         };
         NexYamlSerializerRegistry.Init();
-        var s = Yaml.WriteToString(x);
+        var s = Yaml.Write(x);
         var d = Yaml.Read<BaseSerializerTest>(s);
         Assert.Equal(x.IntField, d.IntField);
     }
@@ -188,7 +188,7 @@ public class PrimitiveSerializerTest
             ULongProperty = 18446744073709551614,
         };
         NexYamlSerializerRegistry.Init();
-        var s = Yaml.WriteToString(x);
+        var s = Yaml.Write(x);
         var d = Yaml.Read<BaseSerializerTest>(s);
         // Assert
         Assert.Equal(x.IntField, d.IntField);
@@ -284,7 +284,7 @@ public class PrimitiveSerializerTest
         };
 
         NexYamlSerializerRegistry.Init();
-        var s = Yaml.WriteToString(x);
+        var s = Yaml.Write(x);
         var d = Yaml.Read<BaseSerializerNullable>(s);
 
         // Assert.Null() for each property to verify they are all initialized to null

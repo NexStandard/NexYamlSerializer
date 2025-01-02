@@ -15,7 +15,7 @@ public class TypeTest
     {
         NexYamlSerializerRegistry.Init();
         var x = new TypeDictionary();
-        var s = Yaml.WriteToString(x);
+        var s = Yaml.Write(x);
         var d = Yaml.Read<TypeDictionary>(s);
         Assert.NotNull(d);
         Assert.Equal(x.TypeMap[typeof(int)], 1);

@@ -16,7 +16,7 @@ public class EmptyClassesTest
         Setup();
 
         // Act
-        var serializedData = Yaml.WriteToString(data);
+        var serializedData = Yaml.Write(data);
         var deserializedData = Yaml.Read<T>(serializedData);
 
         // Assert

@@ -4,7 +4,7 @@ using Stride.Core;
 
 namespace NexYaml;
 
-public class YamlWriter(IUTF8Stream stream, IYamlSerializerResolver resolver) : IYamlWriter
+public class YamlWriter(UTF8Stream stream, IYamlSerializerResolver resolver) : IYamlWriter
 {
     /// <summary>
     /// Tracks whether the tag has to be written.

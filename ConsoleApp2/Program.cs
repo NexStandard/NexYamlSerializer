@@ -10,7 +10,7 @@ var script = new MyComponentScript();
 var dels = new Delegates2();
 dels.Script = script;
 NexYamlSerializerRegistry.Init();
-var s = Yaml.WriteToString(dels);
+var s = Yaml.Write(dels);
 Console.WriteLine(s);
 var d = Yaml.Read<Delegates2>(s);
 // d.Action();

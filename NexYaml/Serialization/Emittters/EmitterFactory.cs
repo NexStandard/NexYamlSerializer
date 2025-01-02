@@ -1,4 +1,5 @@
-﻿using Stride.Core;
+﻿using NexYaml.Core;
+using Stride.Core;
 
 namespace NexYaml.Serialization.Emittters;
 internal class EmitterFactory : IEmitterFactory
@@ -10,7 +11,7 @@ internal class EmitterFactory : IEmitterFactory
     private IEmitter emptySerializer;
     private IEmitter blockMapValueSerializer;
     private IEmitter flowMapValueSerializer;
-    internal EmitterFactory(IUTF8Stream emitter)
+    internal EmitterFactory(UTF8Stream emitter)
     {
         blockMapKeySerializer = new BlockMapKeySerializer(emitter);
         flowMapKeySerializer = new FlowMapKeySerializer(emitter);

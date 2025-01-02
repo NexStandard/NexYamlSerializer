@@ -1,7 +1,7 @@
 ﻿using NexYaml.Core;
 
 namespace NexYaml.Serialization.Emittters;
-internal class BlockSequenceEntrySerializer(IUTF8Stream emitter) : IEmitter
+internal class BlockSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
 {
     public EmitState State { get; } = EmitState.BlockSequenceEntry;
 

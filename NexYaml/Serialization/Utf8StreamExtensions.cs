@@ -10,25 +10,25 @@ public static class Utf8StreamExtensions
             ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
             ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '
         };
-    public static EmitState PreviousState(this IUTF8Stream stream)
+    public static EmitState PreviousState(this UTF8Stream stream)
     {
         return stream.Previous.State;
     }
-    public static IEmitter Map(this IUTF8Stream stream, EmitState state)
+    public static IEmitter Map(this UTF8Stream stream, EmitState state)
     {
         return stream.EmitterFactory.Map(state);
     }
 
-    public static void WriteRaw(this IUTF8Stream stream,string value)
+    public static void WriteRaw(this UTF8Stream stream,string value)
     {
         stream.WriteRaw(StringEncoding.Utf8.GetBytes(value));
     }
-    public static bool IsFirstElement(this IUTF8Stream stream)
+    public static bool IsFirstElement(this UTF8Stream stream)
     {
         return stream.ElementCount == 0;
     }
 
-    public static void WriteBlockSequenceEntryHeader(this IUTF8Stream stream)
+    public static void WriteBlockSequenceEntryHeader(this UTF8Stream stream)
     {
         if (stream.IsFirstElement())
         {
@@ -47,7 +47,7 @@ public static class Utf8StreamExtensions
         stream.WriteRaw(stream.settings.SequenceIdentifier);
     }
 
-    public static void WriteRaw(this IUTF8Stream stream, ReadOnlySpan<char> value)
+    public static void WriteRaw(this UTF8Stream stream, ReadOnlySpan<char> value)
     {
         var length = StringEncoding.Utf8.GetByteCount(value);
         byte[]? rented = null;
@@ -65,11 +65,11 @@ public static class Utf8StreamExtensions
         }
     }
 
-    public static void WriteScalar(this IUTF8Stream stream, string value)
+    public static void WriteScalar(this UTF8Stream stream, string value)
     {
         stream.WriteScalar(StringEncoding.Utf8.GetBytes(value));
     }
-    public static Span<char> TryRemoveDuplicateLineBreak(this IUTF8Stream stream,Span<char> scalarChars)
+    public static Span<char> TryRemoveDuplicateLineBreak(this UTF8Stream stream,Span<char> scalarChars)
     {
         if (stream.Current.State is EmitState.BlockMappingValue or EmitState.BlockSequenceEntry)
         {
@@ -77,8 +77,8 @@ public static class Utf8StreamExtensions
         }
         return scalarChars;
     }
-    // https://gist.github.com/IXLLEGACYIXL/f06b792b482bf796a44c7a9b5ebab890
-    public static IUTF8Stream WriteIndent(this IUTF8Stream stream, int forceWidth = -1)
+
+    public static UTF8Stream WriteIndent(this UTF8Stream stream, int forceWidth = -1)
     {
         int length;
 
@@ -107,7 +107,7 @@ public static class Utf8StreamExtensions
         }
         return stream;
     }
-    public static void WriteScalar(this IUTF8Stream stream, ReadOnlySpan<char> value)
+    public static void WriteScalar(this UTF8Stream stream, ReadOnlySpan<char> value)
     {
 
         var length = StringEncoding.Utf8.GetByteCount(value);
@@ -125,7 +125,7 @@ public static class Utf8StreamExtensions
             ArrayPool<byte>.Shared.Return(rented);
         }
     }
-    public static IUTF8Stream WriteRaw(this IUTF8Stream stream, ReadOnlySpan<byte> value, bool lineBreak)
+    public static UTF8Stream WriteRaw(this UTF8Stream stream, ReadOnlySpan<byte> value, bool lineBreak)
     {
         stream.WriteRaw(value);
         if (lineBreak)
@@ -134,57 +134,57 @@ public static class Utf8StreamExtensions
         }
         return stream;
     }
-    public static IUTF8Stream WriteFlowSequenceSeparator(this IUTF8Stream stream)
+    public static UTF8Stream WriteFlowSequenceSeparator(this UTF8Stream stream)
     {
         stream.WriteRaw([',', ' ']);
         return stream;
     }
-    public static IUTF8Stream WriteFlowSequenceStart(this IUTF8Stream stream)
+    public static UTF8Stream WriteFlowSequenceStart(this UTF8Stream stream)
     {
         stream.WriteRaw(['[']);
         return stream;
     }
-    public static IUTF8Stream WriteFlowSequenceEnd(this IUTF8Stream stream)
+    public static UTF8Stream WriteFlowSequenceEnd(this UTF8Stream stream)
     {
         stream.WriteRaw([']']);
         return stream;
     }
-    public static IUTF8Stream WriteMappingKeyFooter(this IUTF8Stream stream)
+    public static UTF8Stream WriteMappingKeyFooter(this UTF8Stream stream)
     {
         stream.WriteRaw(": ");
         return stream;
     }
-    public static IUTF8Stream WriteEmptyFlowSequence(this IUTF8Stream stream)
+    public static UTF8Stream WriteEmptyFlowSequence(this UTF8Stream stream)
     {
         stream.WriteRaw(['[', ']']);
         return stream;
     }
-    public static IUTF8Stream WriteEmptyFlowMapping(this IUTF8Stream stream)
+    public static UTF8Stream WriteEmptyFlowMapping(this UTF8Stream stream)
     {
         stream.WriteRaw(['{', '}']);
         return stream;
     }
-    public static IUTF8Stream WriteFlowMappingStart(this IUTF8Stream stream)
+    public static UTF8Stream WriteFlowMappingStart(this UTF8Stream stream)
     {
         stream.WriteRaw(['{', ' ']);
         return stream;
     }
-    public static IUTF8Stream WriteFlowMappingEnd(this IUTF8Stream stream)
+    public static UTF8Stream WriteFlowMappingEnd(this UTF8Stream stream)
     {
         stream.WriteRaw([' ', '}']);
         return stream;
     }
-    public static IUTF8Stream WriteSpace(this IUTF8Stream stream)
+    public static UTF8Stream WriteSpace(this UTF8Stream stream)
     {
         stream.WriteRaw([' ']);
         return stream;
     }
-    public static IUTF8Stream WriteSequenceSeparator(this IUTF8Stream stream)
+    public static UTF8Stream WriteSequenceSeparator(this UTF8Stream stream)
     {
         stream.WriteRaw(['-', ' ']);
         return stream;
     }
-    public static IUTF8Stream WriteNewLine(this IUTF8Stream stream)
+    public static UTF8Stream WriteNewLine(this UTF8Stream stream)
     {
         stream.WriteRaw((byte)'\n');
         return stream;

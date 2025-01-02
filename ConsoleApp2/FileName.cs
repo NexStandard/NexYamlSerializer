@@ -10,33 +10,6 @@ namespace Test;
 [MemoryDiagnoser(false)]
 public class Benchmarker
 {
-    internal static Collections c = new Collections();
-    public IYamlWriter writer;
-    public UTF8Stream stream;
-    static bool  x = false;
-    public Benchmarker()
-    {
-        NexYamlSerializerRegistry.Init();
-        stream = new UTF8Stream();
-        writer = new YamlWriter(stream, NexYamlSerializerRegistry.Instance);
-    }
-    
-
-    [Benchmark()]
-    public void Yaml()
-    {
-        writer.Write(c, DataStyle.Compact);
-        var s = stream.GetChars().Span.ToString();
-        stream.Reset();
-    }
-    [Benchmark()]
-    public void Json()
-    {
-        var json = JsonSerializer.Serialize(c, MyJsonContext.Default.Collections);
-    }    [Benchmark()]
-    public void setup()
-    {
-    }
 }
 [DataContract]
 internal class Collections

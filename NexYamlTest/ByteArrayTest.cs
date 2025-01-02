@@ -17,7 +17,7 @@ public class ByteArrayTest
         {
             Data = [1, 2]
         };
-        var s = Yaml.WriteToString(byteArray);
+        var s = Yaml.Write(byteArray);
         var d = Yaml.Read<ByteArray>(s);
         Assert.Equal(byteArray.Data, d.Data);
     }

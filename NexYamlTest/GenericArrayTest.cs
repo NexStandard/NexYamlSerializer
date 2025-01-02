@@ -17,7 +17,7 @@ public class GenericArrayTest
         {
             Value = [1, 2]
         };
-        var s = Yaml.WriteToString(array);
+        var s = Yaml.Write(array);
         // TODO: activate
         Generics<int[]> d = Yaml.Read<Generics<int[]>>(s);
     }

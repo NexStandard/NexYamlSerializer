@@ -1,4 +1,6 @@
-﻿namespace NexYaml.Serialization.Emittters;
+﻿using NexYaml.Core;
+
+namespace NexYaml.Serialization.Emittters;
 internal class EmptySerializer : IEmitter
 {
     public EmitState State { get; } = EmitState.None;

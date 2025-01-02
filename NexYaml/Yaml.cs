@@ -24,10 +24,10 @@ public class Yaml
         try
         {
             stream.Write(value, style);
-            string result = "";
+            var result = "";
             emitter.Flush();
             memoryStream.Seek(0, SeekOrigin.Begin);
-            using (StreamReader reader = new StreamReader(memoryStream))
+            using (var reader = new StreamReader(memoryStream))
             {
                 result = reader.ReadToEnd();
             }
@@ -46,19 +46,20 @@ public class Yaml
     /// <param name="value">The value to serialize.</param>
     /// <param name="options">The serializer options (optional).</param>
     /// <returns>A read-only memory containing the serialized value.</returns>
-    public static void Write<T>(T value, Stream realStream, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
+    public static void Write<T>(T value, Stream stream, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
     {
         options ??= IYamlSerializerResolver.Default;
 
-        var emitter = new UTF8BufferedStream(realStream);
-        var stream = new YamlWriter(emitter, options);
+        using var bufferStream = new UTF8BufferedStream(stream);
+        var writer = new YamlWriter(bufferStream, options);
         try
         {
-            stream.Write(value, style);
+            writer.Write(value, style);
+            bufferStream.Flush();
         }
         finally
         {
-            emitter.Dispose();
+            bufferStream.Dispose();
         }
     }
     /// <summary>
@@ -69,7 +70,7 @@ public class Yaml
     /// <param name="emitter">The Utf8YamlEmitter used for serializing the YAML content.</param>
     /// <param name="value">The object to be serialized.</param>
     /// <param name="options">Optional settings for customizing the YAML serialization process.</param>
-    internal static void Write<T>(ref UTF8Stream emitter, T value, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null, IYamlWriter? stream = null)
+    public static void Write<T>(T value, UTF8Stream emitter, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null, IYamlWriter? stream = null)
     {
         try
         {
@@ -79,25 +80,12 @@ public class Yaml
                 stream = new YamlWriter(emitter, options);
             }
             stream.Write(value, style);
+            emitter.Flush();
         }
         finally
         {
             emitter.Dispose();
         }
-    }
-
-    /// <summary>
-    /// Serializes the specified object of type <typeparamref name="T"/> or any derived class/interface of type <typeparamref name="T"/> to YAML format 
-    /// and returns the serialized content as a UTF-8 encoded string.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to be serialized, or any type derived from <typeparamref name="T"/>.</typeparam>
-    /// <param name="value">The object to be serialized.</param>
-    /// <param name="options">Optional settings for customizing the YAML serialization process.</param>
-    /// <returns>A UTF-8 encoded string representing the YAML serialization of the object.</returns>
-    public static string WriteToString<T>(T value, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
-    {
-        var utf8Bytes = Write(value, style, options);
-        return utf8Bytes.ToString();
     }
 
     public static T? Read<T>(ReadOnlyMemory<char> memory, IYamlSerializerResolver? options = null)
