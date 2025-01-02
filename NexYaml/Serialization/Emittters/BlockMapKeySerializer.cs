@@ -1,7 +1,7 @@
 ﻿using NexYaml.Core;
 
 namespace NexYaml.Serialization.Emittters;
-internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
+internal class BlockMapKeySerializer(IUTF8Stream emitter) : IEmitter
 {
     public EmitState State { get; } = EmitState.BlockMappingKey;
 
@@ -27,7 +27,7 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
     }
     public void WriteScalar(ReadOnlySpan<char> output)
     {
-        if (emitter.IsFirstElement)
+        if (emitter.IsFirstElement())
         {
             switch (emitter.Previous.State)
             {
@@ -36,7 +36,7 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
                     emitter.IndentationManager.IncreaseIndent();
 
                     // Try write tag
-                    if (emitter.tagStack.TryPop(out var tag))
+                    if (emitter.TryGetTag(out var tag))
                     {
                         emitter.WriteRaw(tag);
                         emitter.WriteNewLine();
@@ -53,7 +53,7 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
                 {
                     emitter.IndentationManager.IncreaseIndent();
                     // Try write tag
-                    if (emitter.tagStack.TryPop(out var tag))
+                    if (emitter.TryGetTag(out var tag))
                     {
                         emitter.WriteRaw(tag);
                     }
@@ -67,7 +67,7 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
             }
 
             // Write tag
-            if (emitter.tagStack.TryPop(out var tag2))
+            if (emitter.TryGetTag(out var tag2))
             {
                 emitter.WriteRaw(tag2);
                 emitter.WriteNewLine();
@@ -85,13 +85,13 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
 
     public void End()
     {
-        var isEmptyMapping = emitter.currentElementCount <= 0;
+        var isEmptyMapping = emitter.IsFirstElement();
         emitter.PopState();
 
         if (isEmptyMapping)
         {
             var lineBreak = emitter.Current.State is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
-            if (emitter.tagStack.TryPop(out var tag))
+            if (emitter.TryGetTag(out var tag))
             {
                 emitter.WriteRaw(tag);
                 emitter.WriteRaw(" ");
@@ -110,7 +110,7 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
                 {
                     emitter.IndentationManager.DecreaseIndent();
                 }
-                emitter.currentElementCount++;
+                emitter.ElementCount++;
                 break;
 
             case EmitState.BlockMappingValue:
@@ -119,7 +119,7 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
                     emitter.IndentationManager.DecreaseIndent();
                 }
                 emitter.Current = emitter.Map(EmitState.BlockMappingKey);
-                emitter.currentElementCount++;
+                emitter.ElementCount++;
                 break;
             case EmitState.FlowMappingValue:
                 // TODO: What should be here?
@@ -134,7 +134,7 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
                 throw new NotImplementedException();
                 break;
             case EmitState.FlowSequenceEntry:
-                emitter.currentElementCount++;
+                emitter.ElementCount++;
                 break;
         }
     }

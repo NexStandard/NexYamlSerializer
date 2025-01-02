@@ -15,35 +15,52 @@ public class Yaml
     /// <param name="value">The value to serialize.</param>
     /// <param name="options">The serializer options (optional).</param>
     /// <returns>A read-only memory containing the serialized value.</returns>
-    public static ReadOnlyMemory<char> Write<T>(T value, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
+    public static string Write<T>(T value, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
     {
         options ??= IYamlSerializerResolver.Default;
-
-        var emitter = new UTF8Stream();
+        using var memoryStream = new MemoryStream();
+        using var emitter = new UTF8BufferedStream(memoryStream);
         var stream = new YamlWriter(emitter, options);
         try
         {
             stream.Write(value, style);
-            return emitter.GetChars();
+            string result = "";
+            emitter.Flush();
+            memoryStream.Seek(0, SeekOrigin.Begin);
+            using (StreamReader reader = new StreamReader(memoryStream))
+            {
+                result = reader.ReadToEnd();
+            }
+            return result;
         }
         finally
         {
             emitter.Dispose();
         }
     }
-    public static ReadOnlyMemory<char> Write<T>(T? value, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
-        where T : struct
+
+    /// <summary>
+    /// Serializes the specified value to a <see cref="ReadOnlyMemory{T}"/> using YAML format.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to serialize.</typeparam>
+    /// <param name="value">The value to serialize.</param>
+    /// <param name="options">The serializer options (optional).</param>
+    /// <returns>A read-only memory containing the serialized value.</returns>
+    public static void Write<T>(T value, Stream realStream, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
     {
-        if (value == null)
+        options ??= IYamlSerializerResolver.Default;
+
+        var emitter = new UTF8BufferedStream(realStream);
+        var stream = new YamlWriter(emitter, options);
+        try
         {
-            return new ReadOnlyMemory<char>();
+            stream.Write(value, style);
         }
-        else
+        finally
         {
-            return Write(value.Value, style, options);
+            emitter.Dispose();
         }
     }
-
     /// <summary>
     /// Serializes the specified object of type <typeparamref name="T"/> or any derived class/interface of type <typeparamref name="T"/> to YAML format 
     /// using the provided <paramref name="emitter"/> and <paramref name="options"/> and disposes the emitter afterward.

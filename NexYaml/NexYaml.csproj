@@ -9,7 +9,7 @@
 		<Description>YamlSerializer for C# with Stride3D</Description>
 		<RepositoryUrl>https://github.com/NexStandard/NexYamlSerializer</RepositoryUrl>
 		<Copyright>ixllegacyixl ( zfons123@gmail.com )</Copyright>
-		<PackageVersion>1.7.0</PackageVersion>
+		<PackageVersion>1.8.0</PackageVersion>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<PackageOutputPath>C:\local.nuget\</PackageOutputPath>
 		<IncludeReferencedProjects>true</IncludeReferencedProjects>

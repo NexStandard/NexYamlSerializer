@@ -1,7 +1,7 @@
 ﻿using NexYaml.Core;
 
 namespace NexYaml.Serialization.Emittters;
-internal class BlockSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
+internal class BlockSequenceEntrySerializer(IUTF8Stream emitter) : IEmitter
 {
     public EmitState State { get; } = EmitState.BlockSequenceEntry;
 
@@ -30,7 +30,7 @@ internal class BlockSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
     public void WriteScalar(ReadOnlySpan<char> output)
     {
         // first nested element
-        if (emitter.IsFirstElement)
+        if (emitter.IsFirstElement())
         {
             switch (emitter.Previous.State)
             {
@@ -48,21 +48,21 @@ internal class BlockSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
             .WriteSequenceSeparator();
 
         // Write tag
-        if (emitter.tagStack.TryPop(out var tag))
+        if (emitter.TryGetTag(out var tag))
         {
-            emitter.WriteRaw(tag)
-                .WriteNewLine()
-                .WriteIndent();
+            emitter.WriteRaw(tag);
+            emitter.WriteNewLine();
+            emitter.WriteIndent();
         }
-        emitter.WriteRaw(output)
-            .WriteNewLine();
+        emitter.WriteRaw(output);
+        emitter.WriteNewLine();
 
-        emitter.currentElementCount++;
+        emitter.ElementCount++;
     }
 
     public void End()
     {
-        var isEmptySequence = emitter.currentElementCount == 0;
+        var isEmptySequence = emitter.ElementCount == 0;
         emitter.PopState();
 
         // Empty sequence
@@ -83,7 +83,7 @@ internal class BlockSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
                 {
                     emitter.IndentationManager.DecreaseIndent();
                 }
-                emitter.currentElementCount++;
+                emitter.ElementCount++;
                 break;
 
             case EmitState.BlockMappingKey:
@@ -91,11 +91,11 @@ internal class BlockSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
 
             case EmitState.BlockMappingValue:
                 emitter.Current = emitter.Map(EmitState.BlockMappingKey);
-                emitter.currentElementCount++;
+                emitter.ElementCount++;
                 break;
 
             case EmitState.FlowSequenceEntry:
-                emitter.currentElementCount++;
+                emitter.ElementCount++;
                 break;
         }
     }

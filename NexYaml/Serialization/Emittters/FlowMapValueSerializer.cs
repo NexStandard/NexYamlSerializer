@@ -1,5 +1,5 @@
 ﻿namespace NexYaml.Serialization.Emittters;
-internal class FlowMapValueSerializer(UTF8Stream emitter) : IEmitter
+internal class FlowMapValueSerializer(IUTF8Stream emitter) : IEmitter
 {
     public EmitState State { get; } = EmitState.FlowMappingValue;
 
@@ -12,7 +12,7 @@ internal class FlowMapValueSerializer(UTF8Stream emitter) : IEmitter
     {
         emitter.WriteRaw(value);
         emitter.Current = emitter.Map(EmitState.FlowMappingKey);
-        emitter.currentElementCount++;
+        emitter.ElementCount++;
     }
 
     public void End()

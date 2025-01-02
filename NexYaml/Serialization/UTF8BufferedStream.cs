@@ -1,21 +1,14 @@
-using NexYaml.Core;
+﻿using NexYaml.Core;
 using NexYaml.Serialization.Emittters;
+using System;
 using System.Buffers;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+
 namespace NexYaml.Serialization;
-
-public enum EmitState
-{
-    None,
-    BlockSequenceEntry,
-    BlockMappingKey,
-    BlockMappingValue,
-    FlowSequenceEntry,
-    FlowMappingKey,
-    FlowMappingValue,
-}
-
-public sealed class UTF8Stream : IUTF8Stream
+internal class UTF8BufferedStream : IUTF8Stream
 {
     public int CurrentIndentLevel => IndentationManager.CurrentIndentLevel;
     internal ExpandBuffer<IEmitter> StateStack { get; private set; }
@@ -24,35 +17,43 @@ public sealed class UTF8Stream : IUTF8Stream
     public int IndentWidth { get; } = 2;
     public IEmitterFactory EmitterFactory { get; private set; }
 
-    internal bool IsFirstElement => ElementCount <= 0;
     public SyntaxSettings settings { get; } = new();
     public IndentationManager IndentationManager { get; } = new();
-    public int ElementCount { get; set; }
+
     private ExpandBuffer<int> elementCountStack;
-    public ExpandBuffer<string> tagStack;
-
-
-    public UTF8Stream(SyntaxSettings settings = null)
+    internal ExpandBuffer<string> tagStack;
+    public int ElementCount { get; set; }
+    BufferedStream stream;
+    public UTF8BufferedStream(Stream stream)
     {
-        if (settings is not null)
-        {
-            this.settings = settings;
-        }
+        this.stream = new BufferedStream(stream);
         Reset();
+    }
+    public void Dispose()
+    {
+    }
+    public void Flush()
+    {
+        stream.Flush();
+    }
+
+    public ReadOnlyMemory<char> GetChars()
+    {
+        throw new NotSupportedException();
     }
 
     public void Reset()
     {
-        if(StateStack is null)
+        
+        if (StateStack is null)
         {
             StateStack = new ExpandBuffer<IEmitter>(4);
-
         }
         else
         {
             StateStack.Clear();
         }
-        if(elementCountStack is null)
+        if (elementCountStack is null)
         {
             elementCountStack = new ExpandBuffer<int>(4);
         }
@@ -60,13 +61,13 @@ public sealed class UTF8Stream : IUTF8Stream
         {
             elementCountStack.Clear();
         }
-        if(EmitterFactory is null)
+        if (EmitterFactory is null)
         {
             EmitterFactory = new EmitterFactory(this);
         }
         ElementCount = 0;
         StateStack.Add(EmitterFactory.Map(EmitState.None));
-        if(tagStack is null)
+        if (tagStack is null)
         {
             tagStack = new ExpandBuffer<string>(4);
         }
@@ -76,33 +77,23 @@ public sealed class UTF8Stream : IUTF8Stream
         }
     }
 
-    public void Dispose()
+    public void WriteRaw(ReadOnlySpan<byte> value)
     {
-        StateStack.Dispose();
-        elementCountStack.Dispose();
-        tagStack.Dispose();
+        stream.Write(value);
+    }
+
+    public void WriteRaw(byte value)
+    {
+        stream.Write([ value ]);
     }
 
     public void WriteScalar(ReadOnlySpan<byte> value)
     {
-        // Create a span with enough capacity
         Span<char> span = stackalloc char[Encoding.UTF8.GetCharCount(value)];
 
         Encoding.UTF8.GetChars(value, span);
         StateStack.Current.WriteScalar(span);
     }
-
-    public void WriteRaw(ReadOnlySpan<byte> value)
-    {
-        StringEncoding.Utf8.GetChars(value, Writer2);
-    }
-
-    public void WriteRaw(byte value)
-    {
-        StringEncoding.Utf8.GetChars([value], Writer2);
-    }
-
-    
 
     public IEmitter Current
     {
@@ -119,7 +110,10 @@ public sealed class UTF8Stream : IUTF8Stream
         }
     }
     public IEmitter Previous => StateStack.Previous;
-
+    public bool TryGetTag(out string tag)
+    {
+        return tagStack.TryPop(out tag);
+    }
     public void PopState()
     {
         StateStack.Pop();
@@ -129,14 +123,5 @@ public sealed class UTF8Stream : IUTF8Stream
     public void Tag(ref string value)
     {
         tagStack.Add(value);
-    }
-    public bool TryGetTag(out string tag)
-    {
-        return tagStack.TryPop(out tag);
-    }
-
-    public ReadOnlyMemory<char> GetChars()
-    {
-        return Writer2.WrittenMemory;
     }
 }

@@ -1,7 +1,7 @@
 ﻿using NexYaml.Core;
 
 namespace NexYaml.Serialization.Emittters;
-internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
+internal class FlowMapKeySerializer(IUTF8Stream emitter) : IEmitter
 {
     public EmitState State { get; } = EmitState.FlowMappingKey;
 
@@ -14,7 +14,7 @@ internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
         }
         else if (current is EmitState.FlowSequenceEntry)
         {
-            if (emitter.currentElementCount > 0)
+            if (emitter.ElementCount > 0)
             {
                 emitter.WriteFlowSequenceSeparator();
             }
@@ -28,16 +28,16 @@ internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
 
     public void WriteScalar(ReadOnlySpan<char> value)
     {
-        if (emitter.IsFirstElement)
+        if (emitter.IsFirstElement())
         {
-            if (emitter.tagStack.TryPop(out var tag))
+            if (emitter.TryGetTag(out var tag))
             {
-                emitter.WriteRaw(tag)
-                    .WriteSpace();
+                emitter.WriteRaw(tag);
+                emitter.WriteSpace();
             }
             emitter.WriteFlowMappingStart();
         }
-        if (!emitter.IsFirstElement)
+        if (!emitter.IsFirstElement())
         {
             emitter.WriteFlowSequenceSeparator();
         }
@@ -50,17 +50,17 @@ internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
     {
         if (emitter.Current.State is not EmitState.BlockMappingKey and not EmitState.FlowMappingKey)
         {
-            throw new YamlException($"Invalid block mapping end: {emitter.StateStack.Current}");
+            throw new YamlException($"Invalid block mapping end: {emitter.Current}");
         }
-        var isEmptyMapping = emitter.currentElementCount <= 0;
+        var isEmptyMapping = emitter.IsFirstElement();
         var writeFlowMapEnd = true;
         if (isEmptyMapping)
         {
-            if (emitter.tagStack.TryPop(out var tag))
+            if (emitter.TryGetTag(out var tag))
             {
-                emitter.WriteRaw(tag)
-                    .WriteSpace()
-                    .WriteEmptyFlowMapping()
+                emitter.WriteRaw(tag);
+                emitter.WriteSpace();
+                emitter.WriteEmptyFlowMapping()
                     .WriteNewLine();
                 writeFlowMapEnd = false;
             }
@@ -78,19 +78,19 @@ internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
         {
             case EmitState.BlockSequenceEntry:
                 needsLineBreak = true;
-                emitter.currentElementCount++;
+                emitter.ElementCount++;
                 break;
             case EmitState.BlockMappingValue:
                 emitter.Current = emitter.Map(EmitState.BlockMappingKey);
                 needsLineBreak = true;
-                emitter.currentElementCount++;
+                emitter.ElementCount++;
                 break;
             case EmitState.FlowSequenceEntry:
-                emitter.currentElementCount++;
+                emitter.ElementCount++;
                 break;
             case EmitState.FlowMappingValue:
                 emitter.Current = emitter.Map(EmitState.FlowMappingKey);
-                emitter.currentElementCount++;
+                emitter.ElementCount++;
                 break;
         }
 

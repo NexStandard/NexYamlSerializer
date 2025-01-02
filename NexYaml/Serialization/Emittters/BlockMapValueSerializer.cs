@@ -1,11 +1,11 @@
 ﻿namespace NexYaml.Serialization.Emittters;
-internal class BlockMapValueSerializer(UTF8Stream emitter) : IEmitter
+internal class BlockMapValueSerializer(IUTF8Stream emitter) : IEmitter
 {
     public EmitState State { get; } = EmitState.BlockMappingValue;
 
     public void Begin()
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 
     public void WriteScalar(ReadOnlySpan<char> output)
@@ -13,7 +13,7 @@ internal class BlockMapValueSerializer(UTF8Stream emitter) : IEmitter
         emitter.WriteRaw(output);
         emitter.WriteNewLine();
         emitter.Current = emitter.Map(EmitState.BlockMappingKey);
-        emitter.currentElementCount++;
+        emitter.ElementCount++;
     }
 
     public void End()

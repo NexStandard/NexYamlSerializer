@@ -4,22 +4,21 @@ using NexYaml.Serialization.Emittters;
 namespace NexYaml.Serialization;
 public interface IUTF8Stream : IDisposable
 {
+    IndentationManager IndentationManager { get; }
+    int ElementCount { get; set; }
     int CurrentIndentLevel { get; }
     int IndentWidth { get; }
     IEmitterFactory EmitterFactory { get; }
     IEmitter Current { get; set; }
     IEmitter Previous { get; }
     IEmitter Next { set; }
-    IUTF8Stream Tag(ref string value);
-    IUTF8Stream WriteScalar(ReadOnlySpan<byte> value);
-    IUTF8Stream WriteScalar(ReadOnlySpan<char> value);
-    IUTF8Stream WriteScalar(string value);
-    IUTF8Stream WriteRaw(ReadOnlySpan<byte> value);
-    IUTF8Stream WriteRaw(ReadOnlySpan<char> value);
-    IUTF8Stream WriteRaw(string value);
-    IUTF8Stream WriteIndent(int forceWidth = -1);
+    void Tag(ref string value);
+    bool TryGetTag(out string value);
+    void WriteScalar(ReadOnlySpan<byte> value);
+    void WriteRaw(ReadOnlySpan<byte> value);
+    void WriteRaw(byte value);
     ReadOnlyMemory<char> GetChars();
     public SyntaxSettings settings { get; }
+    void PopState();
     void Reset();
-    Span<char> TryRemoveDuplicateLineBreak(Span<char> scalarChars);
 }

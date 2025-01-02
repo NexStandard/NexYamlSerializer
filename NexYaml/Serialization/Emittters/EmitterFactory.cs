@@ -12,12 +12,12 @@ internal class EmitterFactory : IEmitterFactory
     private IEmitter flowMapValueSerializer;
     internal EmitterFactory(IUTF8Stream emitter)
     {
-        blockMapKeySerializer = new BlockMapKeySerializer((UTF8Stream)emitter);
-        flowMapKeySerializer = new FlowMapKeySerializer((UTF8Stream)emitter);
-        blockSequenceEntrySerializer = new BlockSequenceEntrySerializer((UTF8Stream)emitter);
-        flowSequenceEntrySerializer = new FlowSequenceEntrySerializer((UTF8Stream)emitter);
-        blockMapValueSerializer = new BlockMapValueSerializer((UTF8Stream)emitter);
-        flowMapValueSerializer = new FlowMapValueSerializer((UTF8Stream)emitter);
+        blockMapKeySerializer = new BlockMapKeySerializer(emitter);
+        flowMapKeySerializer = new FlowMapKeySerializer(emitter);
+        blockSequenceEntrySerializer = new BlockSequenceEntrySerializer(emitter);
+        flowSequenceEntrySerializer = new FlowSequenceEntrySerializer(emitter);
+        blockMapValueSerializer = new BlockMapValueSerializer(emitter);
+        flowMapValueSerializer = new FlowMapValueSerializer(emitter);
         emptySerializer = new EmptySerializer();
     }
     public IEmitter Map(EmitState state)
