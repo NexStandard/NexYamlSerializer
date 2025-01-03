@@ -9,7 +9,7 @@ internal class EmptySerializer : IEmitter
     {
     }
 
-    public void WriteScalar(ReadOnlySpan<char> output)
+    public void WriteScalar(ReadOnlySpan<byte> output)
     {
     }
 

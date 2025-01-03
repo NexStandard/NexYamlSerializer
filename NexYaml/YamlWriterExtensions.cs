@@ -64,7 +64,7 @@ public static class YamlWriterExtensions
     }
     public static void Write(this IYamlWriter stream, char value, DataStyle style = DataStyle.Any)
     {
-        stream.Write(['\'', value, '\''], style);
+        stream.Write([(byte)'\'', (byte)value, (byte)'\''], style);
     }
 
     public static void Write(this IYamlWriter stream, short value, DataStyle style = DataStyle.Any)

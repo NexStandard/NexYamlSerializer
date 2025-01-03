@@ -3,7 +3,7 @@ using NexYaml.Serialization.Emittters;
 using System.Buffers;
 
 namespace NexYaml.Serialization;
-public abstract class UTF8Stream : IDisposable
+public abstract class UTF8Stream : IDisposable, ICloneable
 {
     public int CurrentIndentLevel => IndentationManager.CurrentIndentLevel;
     public ExpandBuffer<IEmitter> StateStack { get; private set; }
@@ -92,4 +92,6 @@ public abstract class UTF8Stream : IDisposable
         elementCountStack.Dispose();
         tagStack.Dispose();
     }
+
+    public abstract object Clone();
 }

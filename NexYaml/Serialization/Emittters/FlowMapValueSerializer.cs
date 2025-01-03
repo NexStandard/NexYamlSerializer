@@ -10,7 +10,7 @@ internal class FlowMapValueSerializer(UTF8Stream emitter) : IEmitter
         throw new InvalidOperationException($"Can't start a {State} as Mapping");
     }
 
-    public void WriteScalar(ReadOnlySpan<char> value)
+    public void WriteScalar(ReadOnlySpan<byte> value)
     {
         emitter.WriteRaw(value);
         emitter.Current = emitter.Map(EmitState.FlowMappingKey);

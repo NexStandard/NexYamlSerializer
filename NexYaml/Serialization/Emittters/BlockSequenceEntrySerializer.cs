@@ -27,7 +27,7 @@ internal class BlockSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
         emitter.Next = emitter.Map(State);
     }
 
-    public void WriteScalar(ReadOnlySpan<char> output)
+    public void WriteScalar(ReadOnlySpan<byte> output)
     {
         // first nested element
         if (emitter.IsFirstElement())

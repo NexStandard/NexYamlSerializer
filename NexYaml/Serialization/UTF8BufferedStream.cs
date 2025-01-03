@@ -10,13 +10,18 @@ using System.Threading.Tasks;
 namespace NexYaml.Serialization;
 public class UTF8BufferedStream : UTF8Stream
 {
-
-    BufferedStream stream;
+    Stream stream;
     public UTF8BufferedStream(Stream stream)
     {
-        this.stream = new BufferedStream(stream);
+        this.stream = stream;
         Reset();
     }
+
+    public override object Clone()
+    {
+        throw new NotImplementedException();
+    }
+
     public override void Dispose()
     {
         base.Dispose();
@@ -39,9 +44,6 @@ public class UTF8BufferedStream : UTF8Stream
 
     public override void WriteScalar(ReadOnlySpan<byte> value)
     {
-        Span<char> span = stackalloc char[Encoding.UTF8.GetCharCount(value)];
-
-        Encoding.UTF8.GetChars(value, span);
-        StateStack.Current.WriteScalar(span);
+        StateStack.Current.WriteScalar(value);
     }
 }

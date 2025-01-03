@@ -26,7 +26,7 @@ internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
         emitter.Next = emitter.Map(State);
     }
 
-    public void WriteScalar(ReadOnlySpan<char> value)
+    public void WriteScalar(ReadOnlySpan<byte> value)
     {
         if (emitter.IsFirstElement())
         {

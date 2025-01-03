@@ -2,6 +2,7 @@
 using BenchmarkDotNet.Engines;
 using NexYaml;
 using NexYaml.Serialization;
+using NexYaml.Serializers;
 using Stride.Core;
 using System.Text;
 using System.Text.Json;
@@ -15,17 +16,23 @@ public class Benchmarker
 internal class Collections
 {
     [JsonInclude]
-    public List<TempData> values;
+    public List<TempData> values = new();
 
-    public Collections()
+    public static void Collectio()
     {
-        values = new List<TempData>
+        List<TempData> values = new();
+        for (var i = 0; i < 100000; i++)
         {
-            new TempData { Name = "John", Id = 1 },
-            new TempData { Name = "Alice", Id = 2 },
-            new TempData { Name = "Bob", Id = 3 },
-            // Add more test data as needed
-        };
+            values.Add(new TempData { Name = "John", Id = 1 });
+        }
+        var reg = NexYamlSerializerRegistry.Create(typeof(Collections).Assembly);
+        new ListSerializerFactory().Register(reg);
+        var mem = new MemoryStream();
+        Yaml.Write(values, mem, DataStyle.Any,reg);
+    }
+    public void Bench()
+    {
+
     }
 }
 
@@ -36,7 +43,7 @@ internal partial class MyJsonContext : JsonSerializerContext
 }
 
 [DataContract]
-public record TempData
+public struct TempData
 {
     [DataMember]
     public string Name { get; set; }

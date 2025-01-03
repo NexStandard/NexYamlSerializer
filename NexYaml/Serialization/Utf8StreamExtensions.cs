@@ -52,7 +52,7 @@ public static class Utf8StreamExtensions
         var length = StringEncoding.Utf8.GetByteCount(value);
         byte[]? rented = null;
         Span<byte> buf = length <= 256
-          ? stackalloc byte[1024]
+          ? stackalloc byte[256]
           : rented = ArrayPool<byte>.Shared.Rent(length);
         
         var bytesWritten = StringEncoding.Utf8.GetBytes(value, buf);
@@ -113,7 +113,7 @@ public static class Utf8StreamExtensions
         var length = StringEncoding.Utf8.GetByteCount(value);
         byte[]? rented = null;
         Span<byte> buf = length <= 256
-          ? stackalloc byte[1024]
+          ? stackalloc byte[256]
           : rented = ArrayPool<byte>.Shared.Rent(length);
 
         var bytesWritten = StringEncoding.Utf8.GetBytes(value, buf);

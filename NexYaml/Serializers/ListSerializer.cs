@@ -10,7 +10,16 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
     public override void Write(IYamlWriter stream, List<T>? value, DataStyle style)
     {
         stream.IsRedirected = false;
-        if (value!.Any(value => value is IIdentifiable))
+        bool hasIdentifiable = false;
+        foreach (var item in value)
+        {
+            if(item is IIdentifiable)
+            {
+                hasIdentifiable = true;
+                break;
+            }
+        }
+        if (hasIdentifiable)
         {
             List<IIdentifiable> reservedIds = new();
 
@@ -41,12 +50,23 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
             stream.EndSequence();
             return;
         }
-        stream.BeginSequence(style);
-        foreach (var x in value)
+            stream.BeginSequence(style);
+        if (typeof(T).IsValueType)
         {
-            stream.Write(x, style);
+            var structSerializer = stream.Resolver.GetSerializer<T>();
+            foreach(var x in value)
+            {
+                structSerializer.Write(stream, x,style);
+            }
         }
-        stream.EndSequence();
+        else
+        {
+            foreach (var x in value)
+            {
+                stream.Write(x, style);
+            }
+        }
+            stream.EndSequence();
     }
 
     public override void Read(IYamlReader stream, ref List<T>? value, ref ParseResult result)

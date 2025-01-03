@@ -10,7 +10,7 @@ internal class BlockMapValueSerializer(UTF8Stream emitter) : IEmitter
         throw new NotSupportedException();
     }
 
-    public void WriteScalar(ReadOnlySpan<char> output)
+    public void WriteScalar(ReadOnlySpan<byte> output)
     {
         emitter.WriteRaw(output);
         emitter.WriteNewLine();

@@ -25,7 +25,7 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
         emitter.Next = emitter.Map(State);
 
     }
-    public void WriteScalar(ReadOnlySpan<char> output)
+    public void WriteScalar(ReadOnlySpan<byte> output)
     {
         if (emitter.IsFirstElement())
         {
