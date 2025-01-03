@@ -1,13 +1,17 @@
 ﻿using NexYaml.Core;
 
 namespace NexYaml.Serialization.Emittters;
-internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
+internal class BlockMapKeySerializer : IEmitter
 {
-    public EmitState State { get; } = EmitState.BlockMappingKey;
-
-    public void Begin()
+    public BlockMapKeySerializer(YamlWriter writer, EmitterStateMachine machine) : base(writer, machine)
     {
-        switch (emitter.Current.State)
+    }
+
+    public override EmitState State { get; } = EmitState.BlockMappingKey;
+
+    public override void Begin()
+    {
+        switch (machine.Current.State)
         {
             case EmitState.BlockMappingKey:
                 throw new YamlException("To start block-mapping in the mapping key is not supported.");
@@ -18,108 +22,108 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
 
             case EmitState.BlockSequenceEntry:
             {
-                emitter.WriteBlockSequenceEntryHeader();
+                WriteBlockSequenceEntryHeader();
                 break;
             }
         }
-        emitter.Next = emitter.Map(State);
-
+        machine.Next = machine.Map(State);
     }
-    public void WriteScalar(ReadOnlySpan<byte> output)
+
+    public override void WriteScalar(ReadOnlySpan<char> output)
     {
-        if (emitter.IsFirstElement())
+        if (machine.IsFirstElement)
         {
-            switch (emitter.Previous.State)
+            switch (machine.Previous.State)
             {
                 case EmitState.BlockSequenceEntry:
                 {
-                    emitter.IndentationManager.IncreaseIndent();
+                    machine.IndentationManager.IncreaseIndent();
 
                     // Try write tag
-                    if (emitter.TryGetTag(out var tag))
+                    if (machine.TryGetTag(out var tag))
                     {
-                        emitter.WriteRaw(tag);
-                        emitter.WriteNewLine();
-                        emitter.WriteIndent();
+                        WriteRaw(tag);
+                        WriteRaw(YamlCodes.NewLine);
+                        WriteIndent();
                     }
                     else
                     {
-                        emitter.WriteIndent(emitter.IndentWidth - 2);
+                        WriteIndent(machine.IndentationManager.IndentWidth - 2);
                     }
                     // The first key in block-sequence is like so that: "- key: .."
                     break;
                 }
                 case EmitState.BlockMappingValue:
                 {
-                    emitter.IndentationManager.IncreaseIndent();
+                    machine.IndentationManager.IncreaseIndent();
                     // Try write tag
-                    if (emitter.TryGetTag(out var tag))
+                    if (machine.TryGetTag(out var tag))
                     {
-                        emitter.WriteRaw(tag);
+                        WriteRaw(tag);
                     }
-                    emitter.WriteNewLine();
-                    emitter.WriteIndent();
+                    WriteNewLine();
+                    WriteIndent();
                     break;
                 }
                 default:
-                    emitter.WriteIndent();
+                    WriteIndent();
                     break;
             }
 
             // Write tag
-            if (emitter.TryGetTag(out var tag2))
+            if (machine.TryGetTag(out var tag2))
             {
-                emitter.WriteRaw(tag2);
-                emitter.WriteNewLine();
-                emitter.WriteIndent();
+                WriteRaw(tag2);
+                WriteNewLine();
+                WriteIndent();
             }
         }
         else
         {
-            emitter.WriteIndent();
+            WriteIndent();
         }
-        emitter.WriteRaw(output);
-        emitter.WriteMappingKeyFooter();
-        emitter.Current = emitter.Map(EmitState.BlockMappingValue);
+        WriteRaw(output);
+        WriteMappingKeyFooter();
+        machine.Current = machine.Map(EmitState.BlockMappingValue);
     }
 
-    public void End()
+    public override void End()
     {
-        var isEmptyMapping = emitter.IsFirstElement();
-        emitter.PopState();
+        var isEmptyMapping = machine.IsFirstElement;
+        machine.PopState();
 
         if (isEmptyMapping)
         {
-            var lineBreak = emitter.Current.State is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
-            if (emitter.TryGetTag(out var tag))
+            var lineBreak = machine.Current.State is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
+            if (machine.TryGetTag(out var tag))
             {
-                emitter.WriteRaw(tag);
-                emitter.WriteRaw(" ");
+                WriteRaw(tag);
+                WriteSpace();
             }
-            emitter.WriteEmptyFlowMapping();
+            WriteEmptyFlowMapping();
             if (lineBreak)
             {
-                emitter.WriteNewLine();
+                WriteNewLine();
             }
         }
 
-        switch (emitter.Current.State)
+        switch (machine.Current.State)
         {
             case EmitState.BlockSequenceEntry:
                 if (!isEmptyMapping)
                 {
-                    emitter.IndentationManager.DecreaseIndent();
+                    machine.IndentationManager.DecreaseIndent();
                 }
-                emitter.ElementCount++;
+                machine.ElementCount++;
                 break;
 
             case EmitState.BlockMappingValue:
                 if (!isEmptyMapping)
                 {
-                    emitter.IndentationManager.DecreaseIndent();
+                    machine.IndentationManager.DecreaseIndent();
                 }
-                emitter.Current = emitter.Map(EmitState.BlockMappingKey);
-                emitter.ElementCount++;
+                machine.Current = machine.Map(EmitState.BlockMappingKey);
+                machine.ElementCount++;
                 break;
             case EmitState.FlowMappingValue:
                 // TODO: What should be here?
@@ -134,7 +138,7 @@ internal class BlockMapKeySerializer(UTF8Stream emitter) : IEmitter
                 throw new NotImplementedException();
                 break;
             case EmitState.FlowSequenceEntry:
-                emitter.ElementCount++;
+                machine.ElementCount++;
                 break;
         }
     }

@@ -1,95 +1,99 @@
 ﻿using NexYaml.Core;
 
 namespace NexYaml.Serialization.Emittters;
-internal class FlowSequenceEntrySerializer(UTF8Stream emitter) : IEmitter
+internal class FlowSequenceEntrySerializer : IEmitter
 {
-    public EmitState State { get; } = EmitState.FlowSequenceEntry;
-
-    public void Begin()
+    public FlowSequenceEntrySerializer(YamlWriter writer, EmitterStateMachine machine) : base(writer, machine)
     {
-        switch (emitter.Current.State)
+    }
+
+    public override EmitState State { get; } = EmitState.FlowSequenceEntry;
+
+    public override void Begin()
+    {
+        switch (machine.Current.State)
         {
             case EmitState.BlockMappingKey:
                 throw new YamlException("To start block-mapping in the mapping key is not supported.");
             case EmitState.BlockSequenceEntry:
             {
-                emitter.WriteIndent();
-                emitter.WriteSequenceSeparator();
-                emitter.WriteFlowMappingStart();
+                WriteIndent();
+                WriteSequenceSeparator();
+                WriteFlowMappingStart();
                 break;
             }
             case EmitState.FlowSequenceEntry:
             {
-                if (!emitter.IsFirstElement())
+                if (!machine.IsFirstElement)
                 {
-                    emitter.WriteFlowSequenceSeparator();
+                    WriteFlowSequenceSeparator();
                 }
-                emitter.WriteFlowSequenceStart();
+                WriteFlowSequenceStart();
                 break;
             }
             case EmitState.BlockMappingValue:
             {
-                if (!emitter.IsFirstElement())
+                if (!machine.IsFirstElement)
                 {
-                    emitter.WriteFlowSequenceSeparator();
+                    WriteFlowSequenceSeparator();
                 }
-                emitter.WriteFlowSequenceStart();
+                WriteFlowSequenceStart();
             }
             break;
             default:
-                emitter.WriteFlowSequenceStart();
+                WriteFlowSequenceStart();
                 break;
         }
-        emitter.Next = emitter.Map(State);
+        machine.Next = machine.Map(State);
     }
 
-    public void WriteScalar(ReadOnlySpan<byte> value)
+    public override void WriteScalar(ReadOnlySpan<char> value)
     {
-        if (emitter.IsFirstElement())
+        if (machine.IsFirstElement)
         {
-            if (emitter.TryGetTag(out var tag))
+            if (machine.TryGetTag(out var tag))
             {
-                emitter.WriteRaw(tag);
-                emitter.WriteSpace();
+                WriteRaw(tag);
+                WriteSpace();
             }
         }
         else
         {
-            emitter.WriteFlowSequenceSeparator();
+            WriteFlowSequenceSeparator();
         }
-        emitter.WriteRaw(value);
-        emitter.ElementCount++;
+        WriteRaw(value);
+        machine.ElementCount++;
     }
 
-    public void End()
+    public override void End()
     {
-        emitter.PopState();
+        machine.PopState();
 
         var needsLineBreak = false;
-        switch (emitter.Current.State)
+        switch (machine.Current.State)
         {
             case EmitState.BlockSequenceEntry:
                 needsLineBreak = true;
-                emitter.ElementCount++;
+                machine.ElementCount++;
                 break;
             case EmitState.BlockMappingValue:
-                emitter.Current = emitter.Map(EmitState.BlockMappingKey);
+                machine.Current = machine.Map(EmitState.BlockMappingKey);
                 needsLineBreak = true;
-                emitter.ElementCount++;
+                machine.ElementCount++;
                 break;
             case EmitState.FlowMappingValue:
-                emitter.Current = emitter.Map(EmitState.FlowMappingKey);
-                emitter.ElementCount++;
+                machine.Current = machine.Map(EmitState.FlowMappingKey);
+                machine.ElementCount++;
                 break;
             case EmitState.FlowSequenceEntry:
-                emitter.ElementCount++;
+                machine.ElementCount++;
                 break;
         }
 
-        emitter.WriteFlowSequenceEnd();
+        WriteFlowSequenceEnd();
         if (needsLineBreak)
         {
-            emitter.WriteNewLine();
+            WriteNewLine();
         }
     }
 }

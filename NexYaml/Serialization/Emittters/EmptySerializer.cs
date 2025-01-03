@@ -3,17 +3,21 @@
 namespace NexYaml.Serialization.Emittters;
 internal class EmptySerializer : IEmitter
 {
-    public EmitState State { get; } = EmitState.None;
+    public override EmitState State { get; } = EmitState.None;
 
-    public void Begin()
+    public EmptySerializer()  :base(null, null)
     {
     }
 
-    public void WriteScalar(ReadOnlySpan<byte> output)
+    public override void Begin()
     {
     }
 
-    public void End()
+    public override void WriteScalar(ReadOnlySpan<char> output)
+    {
+    }
+
+    public override void End()
     {
     }
 }

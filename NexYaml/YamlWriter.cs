@@ -4,7 +4,7 @@ using Stride.Core;
 
 namespace NexYaml;
 
-public class YamlWriter(UTF8Stream stream, IYamlSerializerResolver resolver) : IYamlWriter
+public class YamlWriter : IYamlWriter
 {
     /// <summary>
     /// Tracks whether the tag has to be written.
@@ -15,16 +15,25 @@ public class YamlWriter(UTF8Stream stream, IYamlSerializerResolver resolver) : I
     /// Tracks if the first element is written, if not the <see cref="WriteTag(string)"/> has to be always included.
     /// </summary>
     private bool IsFirst { get; set; } = true;
-    public IYamlSerializerResolver Resolver { get; init; } = resolver;
+    public IYamlSerializerResolver Resolver { get; init; }
     public SyntaxSettings Settings { get; init; } = new();
 
     private StyleEnforcer enforcer = new();
+    private readonly StreamWriter writer;
+    public EmitterStateMachine StateMachine { get; }
+
+    public YamlWriter(StreamWriter writer, EmitterStateMachine stateMachine,IYamlSerializerResolver resolver)
+    {
+        StateMachine = stateMachine;
+        this.writer = writer;
+        Resolver = resolver;
+    }
 
     /// <inheritdoc />
     public void BeginMapping(DataStyle style)
     {
         enforcer.Begin(ref style);
-        stream.EmitterFactory.BeginNodeMap(style, false).Begin();
+        StateMachine.BeginNodeMap(style, false).Begin();
     }
     public void Reset()
     {
@@ -32,20 +41,20 @@ public class YamlWriter(UTF8Stream stream, IYamlSerializerResolver resolver) : I
         IsFirst = true;
         enforcer = new();
         References = new();
-        stream.Reset();
+        StateMachine.Reset();
     }
 
     /// <inheritdoc />
     public void EndMapping()
     {
-        if (stream.Current.State is EmitState.BlockMappingKey or EmitState.FlowMappingKey)
+        if (StateMachine.Current.State is EmitState.BlockMappingKey or EmitState.FlowMappingKey)
         {
-            stream.Current.End();
+            StateMachine.Current.End();
             enforcer.End();
         }
         else
         {
-            throw new YamlException($"Invalid mapping end: {stream.Current}");
+            throw new YamlException($"Invalid mapping end: {StateMachine.Current}");
         }
     }
 
@@ -53,33 +62,44 @@ public class YamlWriter(UTF8Stream stream, IYamlSerializerResolver resolver) : I
     public void BeginSequence(DataStyle style)
     {
         enforcer.Begin(ref style);
-        stream.EmitterFactory.BeginNodeMap(style, true).Begin();
+        StateMachine.BeginNodeMap(style, true).Begin();
     }
 
     /// <inheritdoc />
     public void EndSequence()
     {
-        if (stream.Current.State is EmitState.BlockSequenceEntry or EmitState.FlowSequenceEntry)
+        if (StateMachine.Current.State is EmitState.BlockSequenceEntry or EmitState.FlowSequenceEntry)
         {
-            stream.Current.End();
+            StateMachine.Current.End();
             enforcer.End();
         }
         else
         {
-            throw new YamlException($"Current state is not sequence: {stream.Current}");
+            throw new YamlException($"Current state is not sequence: {StateMachine.Current}");
         }
+    }
+
+    public void WriteRaw(ReadOnlySpan<char> value)
+    {
+        writer.Write(value);
+    }
+    public void WriteRaw(char value)
+    {
+        writer.Write(value);
     }
 
     /// <inheritdoc />
     public void WriteScalar(ReadOnlySpan<byte> value)
     {
-        stream.WriteScalar(value);
+        ReadOnlySpan<char> byteSpan = StringEncoding.Utf8.GetChars(value.ToArray());
+        StateMachine.WriteScalar(byteSpan);
     }
 
     /// <inheritdoc />
     public void WriteScalar(ReadOnlySpan<char> value)
     {
-        stream.WriteScalar(value);
+        // StateMachine.WriteScalar(value);
+        StateMachine.WriteScalar(value);
     }
 
     /// <inheritdoc />
@@ -106,13 +126,13 @@ public class YamlWriter(UTF8Stream stream, IYamlSerializerResolver resolver) : I
         }
         else if (ScalarStyle.DoubleQuoted == scalarStyle)
         {
-            stream.WriteScalar("\"" + value + "\"");
+            StateMachine.WriteScalar("\"" + value + "\"");
         }
         else if (ScalarStyle.Literal == scalarStyle)
         {
-            var indentCharCount = (stream.CurrentIndentLevel + 1) * stream.CurrentIndentLevel;
+            var indentCharCount = (StateMachine.CurrentIndentLevel + 1) * StateMachine.CurrentIndentLevel;
             var scalarStringBuilt = EmitStringAnalyzer.BuildLiteralScalar(value, indentCharCount);
-            stream.WriteScalar(scalarStringBuilt.ToString());
+            StateMachine.WriteScalar(scalarStringBuilt.ToString());
         }
     }
 
@@ -170,7 +190,7 @@ public class YamlWriter(UTF8Stream stream, IYamlSerializerResolver resolver) : I
         if (IsRedirected || IsFirst || force)
         {
             var fulTag = tag;
-            stream.Tag(ref fulTag);
+            StateMachine.Tag(ref fulTag);
             IsRedirected = false;
             IsFirst = false;
         }

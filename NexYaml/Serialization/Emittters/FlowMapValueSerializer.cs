@@ -1,23 +1,27 @@
 ﻿using NexYaml.Core;
 
 namespace NexYaml.Serialization.Emittters;
-internal class FlowMapValueSerializer(UTF8Stream emitter) : IEmitter
+internal class FlowMapValueSerializer : IEmitter
 {
-    public EmitState State { get; } = EmitState.FlowMappingValue;
+    public FlowMapValueSerializer(YamlWriter writer, EmitterStateMachine machine) : base(writer, machine)
+    {
+    }
 
-    public void Begin()
+    public override EmitState State { get; } = EmitState.FlowMappingValue;
+
+    public override void Begin()
     {
         throw new InvalidOperationException($"Can't start a {State} as Mapping");
     }
 
-    public void WriteScalar(ReadOnlySpan<byte> value)
+    public override void WriteScalar(ReadOnlySpan<char> value)
     {
-        emitter.WriteRaw(value);
-        emitter.Current = emitter.Map(EmitState.FlowMappingKey);
-        emitter.ElementCount++;
+        WriteRaw(value);
+        machine.Current = machine.Map(EmitState.FlowMappingKey);
+        machine.ElementCount++;
     }
 
-    public void End()
+    public override void End()
     {
         throw new NotImplementedException();
     }

@@ -1,24 +1,28 @@
 ﻿using NexYaml.Core;
 
 namespace NexYaml.Serialization.Emittters;
-internal class BlockMapValueSerializer(UTF8Stream emitter) : IEmitter
+internal class BlockMapValueSerializer : IEmitter
 {
-    public EmitState State { get; } = EmitState.BlockMappingValue;
+    public BlockMapValueSerializer(YamlWriter writer, EmitterStateMachine machine) : base(writer, machine)
+    {
+    }
 
-    public void Begin()
+    public override EmitState State { get; } = EmitState.BlockMappingValue;
+
+    public override void Begin()
     {
         throw new NotSupportedException();
     }
 
-    public void WriteScalar(ReadOnlySpan<byte> output)
+    public override void WriteScalar(ReadOnlySpan<char> output)
     {
-        emitter.WriteRaw(output);
-        emitter.WriteNewLine();
-        emitter.Current = emitter.Map(EmitState.BlockMappingKey);
-        emitter.ElementCount++;
+        WriteRaw(output);
+        WriteNewLine();
+        machine.Current = machine.Map(EmitState.BlockMappingKey);
+        machine.ElementCount++;
     }
 
-    public void End()
+    public override void End()
     {
         // Do nothing
     }

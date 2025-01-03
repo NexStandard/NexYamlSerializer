@@ -89,4 +89,6 @@ public interface IYamlWriter
     /// </summary>
     /// <param name="value">The string to write in an auto detection format to the stream.</param>
     void WriteString(string? value, DataStyle style);
+
+    public void WriteRaw(ReadOnlySpan<char> value);
 }

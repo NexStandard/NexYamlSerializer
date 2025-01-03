@@ -1,4 +1,5 @@
 using Stride.Core;
+using System.Buffers;
 using System.Text;
 
 namespace NexYaml.Core;
@@ -19,6 +20,7 @@ public readonly struct EmitStringInfo(int lines, bool needsQuotes, bool isReserv
 
 public static class EmitStringAnalyzer
 {
+    private static ReadOnlySpan<char> SpecialTokens => [':', '{', '[', ']', ',', '#', '`', '"', ' ','\''];
     private static char[] whiteSpaces =
     [
         ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
@@ -29,45 +31,26 @@ public static class EmitStringAnalyzer
 
     public static EmitStringInfo Analyze(string value)
     {
-        var chars = value.AsSpan();
-        if (chars.Length <= 0)
+        if (value.Length <= 0)
             return new EmitStringInfo(0, true, false);
 
         var isReservedWord = IsReservedWord(value);
 
-        var first = chars[0];
-        var last = chars[^1];
+        var first = value[0];
+        var last = value[^1];
+        var span = value.AsSpan();
 
         var needsQuotes = isReservedWord ||
                           first == YamlCodes.Space ||
                           last == YamlCodes.Space ||
-                          first is '&' or '*' or '?' or '|' or '-' or '<' or '>' or '=' or '!' or '%' or '@' or '.';
+                          first is '&' or '*' or '?' or '|' or '-' or '<' or '>' or '=' or '!' or '%' or '@' or '.' ||
+                          span.ContainsAny(SpecialTokens);
 
-        var lines = 1;
-        foreach (var ch in chars)
-        {
-            switch (ch)
-            {
-                case ':':
-                case '{':
-                case '[':
-                case ']':
-                case ',':
-                case '#':
-                case '`':
-                case '"':
-                case ' ':
-                case '\'':
-                    needsQuotes = true;
-                    break;
-                case '\n':
-                    lines++;
-                    break;
-            }
-        }
+        var lines = span.Count('\n');
 
         if (last == '\n')
             lines--;
+
         return new EmitStringInfo(lines, needsQuotes, isReservedWord);
     }
 
@@ -109,22 +92,7 @@ public static class EmitStringAnalyzer
 
     private static bool IsReservedWord(string value)
     {
-        switch (value.Length)
-        {
-            case 1:
-                if (value == "~")
-                    return true;
-                break;
-            case 4:
-                if (value is "null" or "Null" or "NULL" or "true" or "True" or "TRUE")
-                    return true;
-                break;
-            case 5:
-                if (value is "false" or "False" or "FALSE")
-                    return true;
-                break;
-        }
-        return false;
+        return value is "~" or "null" or "Null" or "NULL" or "true" or "True" or "TRUE" or "false" or "False" or "FALSE";
     }
 
     private static void AppendWhiteSpace(StringBuilder stringBuilder, int length)

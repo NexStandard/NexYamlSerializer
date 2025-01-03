@@ -62,6 +62,7 @@ public static class YamlCodes
     public const byte Space = (byte)' ';
     public const byte Tab = (byte)'\t';
     public const byte Lf = (byte)'\n';
+    public const char NewLine = '\n';
     public const byte Cr = (byte)'\r';
     public const byte Comment = (byte)'#';
     public const byte DirectiveLine = (byte)'%';

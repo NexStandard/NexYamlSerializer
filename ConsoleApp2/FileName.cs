@@ -27,8 +27,9 @@ internal class Collections
         }
         var reg = NexYamlSerializerRegistry.Create(typeof(Collections).Assembly);
         new ListSerializerFactory().Register(reg);
-        var mem = new MemoryStream();
-        Yaml.Write(values, mem, DataStyle.Any,reg);
+        using var mem = new MemoryStream();
+        using var StreamWriter = new StreamWriter(mem);
+        Yaml.Write(values, StreamWriter, DataStyle.Any,reg);
     }
     public void Bench()
     {

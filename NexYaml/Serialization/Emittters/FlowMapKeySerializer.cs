@@ -1,107 +1,111 @@
 ﻿using NexYaml.Core;
 
 namespace NexYaml.Serialization.Emittters;
-internal class FlowMapKeySerializer(UTF8Stream emitter) : IEmitter
+internal class FlowMapKeySerializer : IEmitter
 {
-    public EmitState State { get; } = EmitState.FlowMappingKey;
-
-    public void Begin()
+    public FlowMapKeySerializer(YamlWriter writer, EmitterStateMachine machine) : base(writer, machine)
     {
-        var current = emitter.Current.State;
+    }
+
+    public override EmitState State { get; } = EmitState.FlowMappingKey;
+
+    public override void Begin()
+    {
+        var current = machine.Current.State;
         if (current is EmitState.BlockSequenceEntry)
         {
-            emitter.WriteBlockSequenceEntryHeader();
+            WriteBlockSequenceEntryHeader();
         }
         else if (current is EmitState.FlowSequenceEntry)
         {
-            if (emitter.ElementCount > 0)
+            if (machine.ElementCount > 0)
             {
-                emitter.WriteFlowSequenceSeparator();
+                WriteFlowSequenceSeparator();
             }
         }
         else if (current is EmitState.BlockMappingKey)
         {
             throw new InvalidOperationException($"To start flow-mapping in the {current} is not supported");
         }
-        emitter.Next = emitter.Map(State);
+        machine.Next = machine.Map(State);
     }
 
-    public void WriteScalar(ReadOnlySpan<byte> value)
+    public override void WriteScalar(ReadOnlySpan<char> value)
     {
-        if (emitter.IsFirstElement())
+        if (machine.IsFirstElement)
         {
-            if (emitter.TryGetTag(out var tag))
+            if (machine.TryGetTag(out var tag))
             {
-                emitter.WriteRaw(tag);
-                emitter.WriteSpace();
+                WriteRaw(tag);
+                WriteSpace();
             }
-            emitter.WriteFlowMappingStart();
+            WriteFlowMappingStart();
         }
-        if (!emitter.IsFirstElement())
+        if (!machine.IsFirstElement)
         {
-            emitter.WriteFlowSequenceSeparator();
+            WriteFlowSequenceSeparator();
         }
-        emitter.WriteRaw(value);
-        emitter.WriteMappingKeyFooter();
-        emitter.Current = emitter.Map(EmitState.FlowMappingValue);
+        WriteRaw(value);
+        WriteMappingKeyFooter();
+        machine.Current = machine.Map(EmitState.FlowMappingValue);
     }
 
-    public void End()
+    public override void End()
     {
-        if (emitter.Current.State is not EmitState.BlockMappingKey and not EmitState.FlowMappingKey)
+        if (machine.Current.State is not EmitState.BlockMappingKey and not EmitState.FlowMappingKey)
         {
-            throw new YamlException($"Invalid block mapping end: {emitter.Current}");
+            throw new YamlException($"Invalid block mapping end: {machine.Current}");
         }
-        var isEmptyMapping = emitter.IsFirstElement();
+        var isEmptyMapping = machine.IsFirstElement;
         var writeFlowMapEnd = true;
         if (isEmptyMapping)
         {
-            if (emitter.TryGetTag(out var tag))
+            if (machine.TryGetTag(out var tag))
             {
-                emitter.WriteRaw(tag);
-                emitter.WriteSpace();
-                emitter.WriteEmptyFlowMapping()
-                    .WriteNewLine();
+                WriteRaw(tag);
+                WriteSpace();
+                WriteEmptyFlowMapping();
+                WriteNewLine();
                 writeFlowMapEnd = false;
             }
             else
             {
-                emitter.WriteEmptyFlowMapping()
-                    .WriteNewLine();
+                WriteEmptyFlowMapping();
+                WriteNewLine();
                 writeFlowMapEnd = false;
             }
         }
-        emitter.PopState();
+        machine.PopState();
 
         var needsLineBreak = false;
-        switch (emitter.Current.State)
+        switch (machine.Current.State)
         {
             case EmitState.BlockSequenceEntry:
                 needsLineBreak = true;
-                emitter.ElementCount++;
+                machine.ElementCount++;
                 break;
             case EmitState.BlockMappingValue:
-                emitter.Current = emitter.Map(EmitState.BlockMappingKey);
+                machine.Current = machine.Map(EmitState.BlockMappingKey);
                 needsLineBreak = true;
-                emitter.ElementCount++;
+                machine.ElementCount++;
                 break;
             case EmitState.FlowSequenceEntry:
-                emitter.ElementCount++;
+                machine.ElementCount++;
                 break;
             case EmitState.FlowMappingValue:
-                emitter.Current = emitter.Map(EmitState.FlowMappingKey);
-                emitter.ElementCount++;
+                machine.Current = machine.Map(EmitState.FlowMappingKey);
+                machine.ElementCount++;
                 break;
         }
 
         if (writeFlowMapEnd)
         {
-            emitter.WriteFlowMappingEnd();
+            WriteFlowMappingEnd();
         }
 
         if (needsLineBreak)
         {
-            emitter.WriteNewLine();
+            WriteNewLine();
         }
     }
 }
