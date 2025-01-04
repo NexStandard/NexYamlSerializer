@@ -1,14 +1,14 @@
 ﻿using NexYaml.Core;
 
 namespace NexYaml.Serialization.Emittters;
-public abstract class IEmitter(YamlWriter writer, EmitterStateMachine machine)
+public abstract class IEmitter(IYamlWriter writer, EmitterStateMachine machine)
 {
     private static ReadOnlySpan<char> whitespaces => new char[]
     {
             ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
             ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '
     };
-    protected YamlWriter writer = writer;
+    protected IYamlWriter writer = writer;
     protected EmitterStateMachine machine = machine;
     public abstract EmitState State { get; }
     public abstract void End();
@@ -38,8 +38,6 @@ public abstract class IEmitter(YamlWriter writer, EmitterStateMachine machine)
 
         if (forceWidth > -1)
         {
-            if (forceWidth <= 0)
-                return;
             length = forceWidth;
         }
         else if (machine.CurrentIndentLevel > 0)
@@ -112,6 +110,7 @@ public abstract class IEmitter(YamlWriter writer, EmitterStateMachine machine)
     {
         writer.WriteRaw(chars);
     }
+
     protected void WriteRaw(char c)
     {
         writer.WriteRaw(c);

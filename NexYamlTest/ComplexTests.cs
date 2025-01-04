@@ -133,12 +133,12 @@ public class ComplexTests
     public void InheritedNoDatacontractOnAbstractClassWithDataContract()
     {
         Setup();
-        GenericAbstractWithDataContract<int, int> abstractObject = new GenericAbstractImlementationLessParamsDataContract<int>()
+        GenericAbstractWithDataContract<int, int> abstractObject = new GenericAbstractLessParams<int>()
         {
             Test = 3
         };
         var s = Yaml.Write(abstractObject);
-        var deserialized = Yaml.Read<GenericAbstractImlementationLessParamsDataContract<int>>(s);
+        var deserialized = Yaml.Read<GenericAbstractLessParams<int>>(s);
         Assert.NotNull(deserialized);
         Assert.Equal(abstractObject.Test, deserialized.Test);
     }

@@ -83,6 +83,10 @@ public class YamlWriter : IYamlWriter
     {
         writer.Write(value);
     }
+    public void WriteRaw(string value)
+    {
+        writer.Write(value);
+    }
     public void WriteRaw(char value)
     {
         writer.Write(value);
@@ -107,7 +111,7 @@ public class YamlWriter : IYamlWriter
     {
         if (value is null)
         {
-            WriteScalar(['!', '!', 'n', 'u', 'l']);
+            WriteScalar(YamlCodes.NullString);
             return;
         }
         var result = EmitStringAnalyzer.Analyze(value);
@@ -196,3 +200,4 @@ public class YamlWriter : IYamlWriter
         }
     }
 }
+

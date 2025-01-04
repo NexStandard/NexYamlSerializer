@@ -44,7 +44,7 @@ internal class GenericAbstractImlementationLessParamsEmpty<T> : GenericAbstract<
 {
 }
 [DataContract]
-internal class GenericAbstractImlementationLessParamsDataContract<T> : GenericAbstractWithDataContract<T, int>
+internal class GenericAbstractLessParams<T> : GenericAbstractWithDataContract<T, int>
 {
 
 }

@@ -19,9 +19,8 @@ internal class DelegatePlugin : IResolvePlugin
             List<(Guid reference, string delegateName)> delegates = new();
             while (stream.HasSequence)
             {
-                if (stream.TryGetScalarAsSpan(out var dele))
+                if (stream.TryGetScalarAsString(out var strin))
                 {
-                    var strin = StringEncoding.Utf8.GetString(dele);
                     var parts = strin.Split('#', 2);
                     var id = parts[0];
                     var methodName = parts[1];

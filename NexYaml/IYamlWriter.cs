@@ -91,4 +91,6 @@ public interface IYamlWriter
     void WriteString(string? value, DataStyle style);
 
     public void WriteRaw(ReadOnlySpan<char> value);
+    public void WriteRaw(string value);
+    public void WriteRaw(char value);
 }

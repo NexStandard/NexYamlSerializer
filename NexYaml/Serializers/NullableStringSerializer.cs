@@ -14,9 +14,8 @@ public class NullableStringSerializer : YamlSerializer<string?>
 
     public override void Read(IYamlReader stream, ref string? value, ref ParseResult result)
     {
-        if (stream.TryGetScalarAsSpan(out var span))
+        if (stream.TryGetScalarAsString(out value))
         {
-            value = StringEncoding.Utf8.GetString(span);
             stream.ReadWithVerify(ParseEventType.Scalar);
             return;
         }

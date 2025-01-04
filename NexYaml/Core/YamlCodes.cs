@@ -63,6 +63,7 @@ public static class YamlCodes
     public const byte Tab = (byte)'\t';
     public const byte Lf = (byte)'\n';
     public const char NewLine = '\n';
+    public static ReadOnlySpan<char> NullString => ['!', '!', 'n', 'u', 'l', 'l'];
     public const byte Cr = (byte)'\r';
     public const byte Comment = (byte)'#';
     public const byte DirectiveLine = (byte)'%';

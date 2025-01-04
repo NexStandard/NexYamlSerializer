@@ -11,11 +11,11 @@ public class TimeSpanSerializer : YamlSerializer<TimeSpan>
 
     public override void Write(IYamlWriter stream, TimeSpan value, DataStyle style)
     {
-        Span<byte> buf = stackalloc byte[32];
-        if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten))
+        Span<char> buf = stackalloc char[32];
+        
+        if (value.TryFormat(buf, out var bytesWritten))
         {
-            ReadOnlySpan<byte> bytes = buf[..bytesWritten];
-            stream.Write(bytes);
+            stream.Write(buf[..bytesWritten]);
         }
         else
         {

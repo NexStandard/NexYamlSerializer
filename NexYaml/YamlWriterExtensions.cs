@@ -64,53 +64,53 @@ public static class YamlWriterExtensions
     }
     public static void Write(this IYamlWriter stream, char value, DataStyle style = DataStyle.Any)
     {
-        stream.Write([(byte)'\'', (byte)value, (byte)'\''], style);
+        stream.Write(['\'', value, '\''], style);
     }
 
     public static void Write(this IYamlWriter stream, short value, DataStyle style = DataStyle.Any)
     {
-        Span<byte> span = stackalloc byte[6];
+        Span<char> span = stackalloc char[6];
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
         stream.Write(span[..written]);
     }
 
     public static void Write(this IYamlWriter stream, int value, DataStyle style = DataStyle.Any)
     {
-        Span<byte> span = stackalloc byte[11];
+        Span<char> span = stackalloc char[11];
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
         stream.Write(span[..written]);
     }
 
     public static void Write(this IYamlWriter stream, uint value, DataStyle style = DataStyle.Any)
     {
-        Span<byte> span = stackalloc byte[10];
+        Span<char> span = stackalloc char[10];
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
         stream.Write(span[..written]);
     }
 
     public static void Write(this IYamlWriter stream, long value, DataStyle style = DataStyle.Any)
     {
-        Span<byte> span = stackalloc byte[20];
+        Span<char> span = stackalloc char[20];
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
         stream.Write(span[..written]);
     }
     public static void Write(this IYamlWriter stream, ulong value, DataStyle style = DataStyle.Any)
     {
-        Span<byte> span = stackalloc byte[20];
+        Span<char> span = stackalloc char[20];
 
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
         stream.Write(span[..written]);
     }
     public static void Write(this IYamlWriter stream, float value, DataStyle style = DataStyle.Any)
     {
-        Span<byte> span = stackalloc byte[32];
+        Span<char> span = stackalloc char[32];
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
         stream.Write(span[..written]);
     }
 
     public static void Write(this IYamlWriter stream, double value, DataStyle style = DataStyle.Any)
     {
-        Span<byte> span = stackalloc byte[32];
+        Span<char> span = stackalloc char[32];
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
         stream.Write(span[..written]);
     }
@@ -123,12 +123,12 @@ public static class YamlWriterExtensions
     /// <param name="style">The <see cref="DataStyle"/> of the scalar</param>
     public static void Write(this IYamlWriter stream, bool value, DataStyle style = DataStyle.Any)
     {
-        stream.Write(value ? [(byte)'t', (byte)'r', (byte)'u', (byte)'e'] : stackalloc[] { (byte)'f', (byte)'a', (byte)'l', (byte)'s', (byte)'e' });
+        stream.Write(value ? ['t', 'r', 'u', 'e'] : stackalloc[] { 'f', 'a', 'l', 's', 'e' });
     }
 
     public static void Write(this IYamlWriter stream, ushort value, DataStyle style = DataStyle.Any)
     {
-        Span<byte> span = stackalloc byte[5];
+        Span<char> span = stackalloc char[5];
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
         stream.Write(span[..written]);
     }
@@ -141,7 +141,7 @@ public static class YamlWriterExtensions
     /// <param name="style">The <see cref="DataStyle"/> of the scalar</param>
     public static void Write(this IYamlWriter stream, byte value, DataStyle style = DataStyle.Any)
     {
-        Span<byte> span = stackalloc byte[3];
+        Span<char> span = stackalloc char[3];
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
         stream.Write(span[..written]);
     }
@@ -154,7 +154,7 @@ public static class YamlWriterExtensions
     /// <param name="style">The <see cref="DataStyle"/> of the scalar</param>
     public static void Write(this IYamlWriter stream, sbyte value, DataStyle style = DataStyle.Any)
     {
-        Span<byte> span = stackalloc byte[4];
+        Span<char> span = stackalloc char[4];
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
         stream.Write(span[..written]);
     }
@@ -167,7 +167,7 @@ public static class YamlWriterExtensions
     /// <param name="style">The <see cref="DataStyle"/> of the scalar</param>
     public static void Write(this IYamlWriter stream, decimal value, DataStyle style = DataStyle.Any)
     {
-        Span<byte> span = stackalloc byte[64];
+        Span<char> span = stackalloc char[64];
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
         stream.Write(span[..written]);
     }
@@ -353,7 +353,7 @@ public static class YamlWriterExtensions
         stream.Write(key);
         if (value is null)
         {
-            stream.Write(YamlCodes.Null0);
+            stream.Write(YamlCodes.NullString);
         }
         else
         {
