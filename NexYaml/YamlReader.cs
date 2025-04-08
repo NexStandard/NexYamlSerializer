@@ -21,8 +21,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         new DelegatePlugin(),
         new NullablePlugin(),
         new ArrayPlugin(),
-        new ReferencePlugin(),
-        new TypePlugin(),
+         new ReferencePlugin(),
     ];
     public void Dispose()
     {
@@ -79,7 +78,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
                 var formatt = Resolver.GetGenericSerializer<T>();
                 if (formatt == null)
                 {
-                    value = default;
+                    Resolver.GetSerializer<T>().Read(this, ref value!, ref parseResult);
                     return;
                 }
 

@@ -24,6 +24,5 @@ public class SyntaxSettings()
         new ArrayPlugin(),
         new DelegatePlugin(),
         new ReferencePlugin(),
-        new TypePlugin(),
     };
 }

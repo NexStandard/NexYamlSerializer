@@ -8,7 +8,7 @@ public struct Marker(int position, int line, int col)
 
     public override readonly string ToString()
     {
-        return $"Line: {Line}, Col: {Col}, Idx: {Position}";
+        return $"Line: {Line}, Col: {Col}, Position: {Position}";
     }
 }
 

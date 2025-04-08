@@ -1,4 +1,5 @@
-﻿using NexYaml.Serialization;
+﻿using NexYaml.Plugins;
+using NexYaml.Serialization;
 using NexYaml.Serializers;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -10,7 +11,7 @@ namespace NexYaml;
 /// </summary>
 public class NexYamlSerializerRegistry : IYamlSerializerResolver
 {
-    public SerializerRegistry SerializerRegistry { get; set; } = new();
+    internal SerializerRegistry SerializerRegistry { get; set; } = new();
     public static NexYamlSerializerRegistry Instance { get; } = new NexYamlSerializerRegistry();
 
     public Type GetAliasType(string alias)
@@ -58,10 +59,16 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
     }
     public YamlSerializer GetSerializer(Type type, Type origin)
     {
+        // search if the actual type is in the standard serializers
         if (SerializerRegistry.DefinedSerializers.TryGetValue(type, out var serializer1))
         {
             return serializer1;
         }
+        if(SerializerRegistry.DefinedSerializers.TryGetValue(origin, out var serializer2))
+        {
+            return serializer2;
+        }
+        // search if there is a 
         if (SerializerRegistry.SerializerFactory.TryGetValue(origin, out var serializer))
         {
             serializer.TryGetValue(type, out var t);
@@ -158,9 +165,11 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
         SerializerRegistry.GenericSerializerBuffer.TryAdd(target, serializerType);
     }
 }
-public class SerializerRegistry
+internal class SerializerRegistry
 {
-    internal Dictionary<Type, Dictionary<Type, IYamlSerializerFactory>> SerializerFactory { get; } = new(new GenericEqualityComparer());
+    internal Dictionary<Type, Dictionary<Type, IYamlSerializerFactory>> SerializerFactory { get; } = new(new GenericEqualityComparer())
+    {
+    };
     internal Dictionary<Type, Type> GenericSerializerBuffer { get; } = new Dictionary<Type, Type>(new GenericEqualityComparer())
     {
         [typeof(ICollection<>)] = typeof(CollectionInterfaceSerializer<>),
@@ -226,6 +235,6 @@ public class SerializerRegistry
             { typeof(Guid), GuidSerializer.Instance },
             { typeof(Guid?), GuidSerializer.Instance },
             { typeof(Uri), UriSerializer.Instance },
-            { typeof(Type), TypeSerializer.Instance },
+            { typeof(Type), TypeSerializer.Instance }
     };
 }
