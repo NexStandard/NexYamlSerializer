@@ -28,19 +28,21 @@ public class ComplexTests
             Assert.Equal(list[i], deserialized[i]);
         }
     }
-    [Fact(Skip = "How to test the invocation???")]
-    public void Delegates()
+    [Fact]
+    public void Delegate_Serialization_Preserves_Single_Invocation()
     {
         Setup();
         var g = new Delegates();
         var x = Yaml.Write(g, Stride.Core.DataStyle.Compact);
         var t = Yaml.Read<Delegates>(x);
-        throw new Exception(t.Action.GetInvocationList().Length.ToString());
-        throw new Exception(x);
+        // Expect Delegate to not be empty
+        Assert.NotNull(t);
+        // Expect to have an Invocation in the Delegate
+        Assert.Single(t.Action.GetInvocationList());
     }
 
     [Fact]
-    public void DynamicGenerics()
+    public void Generic_Serialization_Same_Count_Generic_Parameters_Than_Interface()
     {
         Setup();
         IGenericInterface<int, int> genericInterface = new GenericImplementedClass<int, int>()
@@ -50,11 +52,12 @@ public class ComplexTests
         };
         var s = Yaml.Write(genericInterface);
         var deserialized = Yaml.Read<IGenericInterface<int, int>>(s);
+        Assert.NotNull(deserialized);
         Assert.Equal(genericInterface.Generic, deserialized.Generic);
         Assert.Equal(genericInterface.Generic2, deserialized.Generic2);
     }
     [Fact]
-    public void LessGenericsThanRoot()
+    public void Generic_Serialization_Less_Generic_Parameters_Than_Interface()
     {
         Setup();
         IGenericInterface<int, int> genericInterface = new GenericImplementedClassWithLessParams<int>()
@@ -64,11 +67,12 @@ public class ComplexTests
         };
         var s = Yaml.Write(genericInterface);
         var deserialized = Yaml.Read<IGenericInterface<int, int>>(s);
+        Assert.NotNull(deserialized);
         Assert.Equal(genericInterface.Generic, deserialized.Generic);
         Assert.Equal(genericInterface.Generic2, deserialized.Generic2);
     }
     [Fact]
-    public void NestedDynamicGenerics()
+    public void Generic_Serialization_Nested_Generic_Parameters()
     {
         Setup();
         IGenericInterface<IGenericInterface<int, int>, int> genericInterface = new GenericImplementedClassWithLessParams<IGenericInterface<int, int>>()
@@ -88,7 +92,7 @@ public class ComplexTests
         Assert.Equal(genericInterface.Generic2, deserialized.Generic2);
     }
     [Fact]
-    public void NoParamsImplementation()
+    public void Generic_Serialization_Fixed_Generic_Parameters_Of_Interface()
     {
         Setup();
         IGenericInterface<int, int> genericInterface = new GenericImplementedClassWithNoParams()
@@ -102,8 +106,21 @@ public class ComplexTests
         Assert.Equal(genericInterface.Generic, deserialized.Generic);
         Assert.Equal(genericInterface.Generic2, deserialized.Generic2);
     }
+    [Fact()]
+    public void Generic_Serialization_Fixed_Generic_Parameters_Of_Parent_Class()
+    {
+        Setup();
+        GenericImplementedClassWithLessParams<int> abstractObject = new SubstitutedGenericClassNoParams()
+        {
+            Generic = 3
+        };
+        var s = Yaml.Write(abstractObject);
+        var deserialized = Yaml.Read<GenericImplementedClassWithLessParams<int>>(s);
+        Assert.NotNull(deserialized);
+        Assert.Equal(abstractObject.Generic, deserialized.Generic);
+    }
     [Fact]
-    public void InheritedSameGenerics()
+    public void Generic_Serialization_Same_Generic_Parameters_Amount_As_Parent()
     {
         Setup();
         GenericAbstract<int, int> genericInterface = new GenericAbstractImplementation<int, int>()
@@ -116,7 +133,7 @@ public class ComplexTests
         Assert.NotNull(deserialized);
         Assert.Equal(genericInterface.Test, deserialized.Test);
     }
-    [Fact()]
+    [Fact]
     public void InheritedNoDatacontractOnAbstractClass()
     {
         Setup();
@@ -129,7 +146,7 @@ public class ComplexTests
         Assert.NotNull(deserialized);
         Assert.Equal(0, deserialized.Test);
     }
-    [Fact()]
+    [Fact]
     public void InheritedNoDatacontractOnAbstractClassWithDataContract()
     {
         Setup();
@@ -142,19 +159,7 @@ public class ComplexTests
         Assert.NotNull(deserialized);
         Assert.Equal(abstractObject.Test, deserialized.Test);
     }
-    [Fact()]
-    public void SubstitutedGenericInheritedClass()
-    {
-        Setup();
-        GenericImplementedClassWithLessParams<int> abstractObject = new SubstitutedGenericClassNoParams()
-        {
-            Generic = 3
-        };
-        var s = Yaml.Write(abstractObject);
-        var deserialized = Yaml.Read<GenericImplementedClassWithLessParams<int>>(s);
-        Assert.NotNull(deserialized);
-        Assert.Equal(abstractObject.Generic, deserialized.Generic);
-    }
+
     [Fact()]
     public void UnregisteredRedirection()
     {
