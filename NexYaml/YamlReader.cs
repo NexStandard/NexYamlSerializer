@@ -1,4 +1,5 @@
-﻿using NexYaml.Parser;
+﻿using NexYaml.Core;
+using NexYaml.Parser;
 using NexYaml.Plugins;
 using NexYaml.Serialization;
 using NexYaml.Serializers;
@@ -12,7 +13,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
 {
     public bool HasKeyMapping => parser.HasKeyMapping;
     public bool HasSequence => parser.HasSequence;
-
+    public Marker CurrentMarker => parser.CurrentMark;
     public Dictionary<Guid, List<Action<object>>> ReferenceResolvingMap { get; } = new();
     public HashSet<IIdentifiable> Identifiables { get; } = new();
     private List<IResolvePlugin> plugins =
@@ -43,7 +44,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         parser.TryGetScalarAsSpan(out span);
     }
 
-    public bool Move()
+    public bool Read()
     {
         return parser.Read();
     }
@@ -174,7 +175,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
     {
         if (key.SequenceEqual(mappingKey))
         {
-            Move();
+            Read();
             Read(ref target, ref parseResult);
             return true;
         }
@@ -186,7 +187,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         var parseResult = new ParseResult();
         if (key.SequenceEqual(mappingKey))
         {
-            Move();
+            Read();
             Read(ref target, ref parseResult);
             return true;
         }

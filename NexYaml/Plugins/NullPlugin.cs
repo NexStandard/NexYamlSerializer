@@ -20,7 +20,7 @@ internal class NullPlugin : IResolvePlugin
         if (stream.IsNullScalar())
         {
             value = default;
-            stream.Move();
+            stream.Read();
             return true;
         }
         return false;

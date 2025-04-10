@@ -31,6 +31,6 @@ public class UInt64Serializer : YamlSerializer<ulong>
                 }
             }
         }
-        stream.Move();
+        stream.Read();
     }
 }

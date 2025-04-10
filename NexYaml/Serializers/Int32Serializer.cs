@@ -1,3 +1,4 @@
+using NexYaml.Core;
 using NexYaml.Parser;
 using Stride.Core;
 using System.Buffers.Text;
@@ -21,7 +22,7 @@ public class Int32Serializer : YamlSerializer<int>
             if (int.TryParse(span, CultureInfo.InvariantCulture, out var temp))
             {
                 value = temp;
-                stream.Move();
+                stream.Read();
                 return;
             }
 
@@ -31,7 +32,7 @@ public class Int32Serializer : YamlSerializer<int>
                        bytesConsumed1 == hexNumber.Length)
                 {
                     value = hexTemp;
-                    stream.Move();
+                    stream.Read();
                     return;
                 }
             }
@@ -42,9 +43,11 @@ public class Int32Serializer : YamlSerializer<int>
             {
                 value = negativeHexTemp;
                 value *= -1;
-                stream.Move();
+                stream.Read();
                 return;
             }
+            stream.TryGetScalarAsString(out var text);
+            YamlException.ThrowExpectedTypeParseException(typeof(int), text, stream.CurrentMarker);
         }
     }
 }

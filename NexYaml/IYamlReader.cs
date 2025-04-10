@@ -1,4 +1,5 @@
-﻿using NexYaml.Parser;
+﻿using NexYaml.Core;
+using NexYaml.Parser;
 using Stride.Core;
 using System.Diagnostics.CodeAnalysis;
 
@@ -7,6 +8,7 @@ public interface IYamlReader
 {
     bool HasKeyMapping { get; }
     bool HasSequence { get; }
+    Marker CurrentMarker { get; }
     public HashSet<IIdentifiable> Identifiables { get; }
     public Dictionary<Guid, List<Action<object>>> ReferenceResolvingMap { get; }
     void Read(ref ReadOnlySpan<byte> span);
@@ -18,7 +20,7 @@ public interface IYamlReader
     void AddReference(Guid id, Action<object> resolution);
     public bool TryGetCurrentTag(out Tag tag);
     bool IsNullScalar();
-    bool Move();
+    bool Read();
     void ReadWithVerify(ParseEventType eventType);
     void Reset();
     void SkipAfter(ParseEventType eventType);
