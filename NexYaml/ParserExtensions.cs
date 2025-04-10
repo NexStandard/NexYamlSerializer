@@ -11,21 +11,21 @@ public static class ParserExtensions
     }
     public static void ReadMapping(this IYamlReader stream, ActionKey action)
     {
-        stream.ReadWithVerify(ParseEventType.MappingStart);
+        stream.Move(ParseEventType.MappingStart);
         while (stream.HasMapping(out var key))
         {
             action(key);
         }
-        stream.ReadWithVerify(ParseEventType.MappingEnd);
+        stream.Move(ParseEventType.MappingEnd);
     }
 
     public static void ReadSequence(this IYamlReader stream, Action action)
     {
-        stream.ReadWithVerify(ParseEventType.SequenceStart);
+        stream.Move(ParseEventType.SequenceStart);
         while (stream.HasSequence)
         {
             action();
         }
-        stream.ReadWithVerify(ParseEventType.SequenceEnd);
+        stream.Move(ParseEventType.SequenceEnd);
     }
 }

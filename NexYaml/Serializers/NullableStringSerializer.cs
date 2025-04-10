@@ -16,7 +16,7 @@ public class NullableStringSerializer : YamlSerializer<string?>
     {
         if (stream.TryGetScalarAsString(out value))
         {
-            stream.ReadWithVerify(ParseEventType.Scalar);
+            stream.Move(ParseEventType.Scalar);
             return;
         }
         value = null;

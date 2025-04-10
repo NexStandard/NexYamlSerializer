@@ -31,6 +31,6 @@ public class BooleanSerializer : YamlSerializer<bool>
                     break;
             }
         }
-        stream.Read();
+        stream.Move();
     }
 }

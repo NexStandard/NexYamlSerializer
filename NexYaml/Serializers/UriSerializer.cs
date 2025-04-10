@@ -17,7 +17,7 @@ public class UriSerializer : YamlSerializer<Uri>
         if (stream.TryGetScalarAsString(out var scalar) && scalar != null)
         {
             var uri = new Uri(scalar, UriKind.RelativeOrAbsolute);
-            stream.Read();
+            stream.Move();
             value = uri;
         }
     }

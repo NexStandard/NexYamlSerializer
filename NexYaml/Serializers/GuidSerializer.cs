@@ -29,7 +29,7 @@ public class GuidSerializer : YamlSerializer<Guid>
               Utf8Parser.TryParse(span, out Guid guid, out var bytesConsumed) &&
               bytesConsumed == span.Length)
         {
-            stream.Read();
+            stream.Move();
             value = guid;
             return;
         }

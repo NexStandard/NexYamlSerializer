@@ -19,7 +19,7 @@ public class Int64Serializer : YamlSerializer<long>
     public override void Read(IYamlReader stream, ref long value, ref ParseResult result)
     {
         stream.TryGetScalarAsSpan(out var span);
-        stream.Read();
+        stream.Move();
 
         if (long.TryParse(span, CultureInfo.InvariantCulture, out var temp))
         {

@@ -20,7 +20,7 @@ public class DecimalSerializer : YamlSerializer<decimal>
                    bytesConsumed == span.Length)
         {
             value = val;
-            stream.Read();
+            stream.Move();
             return;
         }
     }

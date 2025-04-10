@@ -25,6 +25,6 @@ public class CharSerializer : YamlSerializer<char>
             }
         }
 
-        stream.ReadWithVerify(ParseEventType.Scalar);
+        stream.Move(ParseEventType.Scalar);
     }
 }

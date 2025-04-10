@@ -21,7 +21,7 @@ public class SByteSerializer : YamlSerializer<sbyte>
             if (int.TryParse(span, CultureInfo.InvariantCulture, out var result))
             {
                 value = checked((sbyte)result);
-                stream.Read();
+                stream.Move();
                 return;
             }
             else if (FormatHelper.TryDetectHex(span, out var hexNumber))
@@ -30,7 +30,7 @@ public class SByteSerializer : YamlSerializer<sbyte>
                        bytesConsumed == hexNumber.Length)
                 {
                     value = checked((sbyte)result);
-                    stream.Read();
+                    stream.Move();
                     return;
                 }
             }

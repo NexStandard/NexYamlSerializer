@@ -22,7 +22,7 @@ public class Int32Serializer : YamlSerializer<int>
             if (int.TryParse(span, CultureInfo.InvariantCulture, out var temp))
             {
                 value = temp;
-                stream.Read();
+                stream.Move();
                 return;
             }
 
@@ -32,7 +32,7 @@ public class Int32Serializer : YamlSerializer<int>
                        bytesConsumed1 == hexNumber.Length)
                 {
                     value = hexTemp;
-                    stream.Read();
+                    stream.Move();
                     return;
                 }
             }
@@ -43,7 +43,7 @@ public class Int32Serializer : YamlSerializer<int>
             {
                 value = negativeHexTemp;
                 value *= -1;
-                stream.Read();
+                stream.Move();
                 return;
             }
             stream.TryGetScalarAsString(out var text);

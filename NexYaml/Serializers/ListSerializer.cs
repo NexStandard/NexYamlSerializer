@@ -72,7 +72,7 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
     public override void Read(IYamlReader stream, ref List<T>? value, ref ParseResult result)
     {
         var list = new List<T>();
-        stream.ReadWithVerify(ParseEventType.SequenceStart);
+        stream.Move(ParseEventType.SequenceStart);
         while (stream.HasSequence)
         {
             var val = default(T);
@@ -85,7 +85,7 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
             }
             list.Add(val!);
         }
-        stream.ReadWithVerify(ParseEventType.SequenceEnd);
+        stream.Move(ParseEventType.SequenceEnd);
         value = list;
     }
 }

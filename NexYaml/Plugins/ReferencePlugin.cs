@@ -15,7 +15,7 @@ internal class ReferencePlugin : IResolvePlugin
                 Guid? id = null;
                 stream.TryGetScalarAsString(out var idScalar);
 
-                stream.ReadWithVerify(ParseEventType.Scalar);
+                stream.Move(ParseEventType.Scalar);
                 if (idScalar != null)
                 {
                     result.IsReference = true;

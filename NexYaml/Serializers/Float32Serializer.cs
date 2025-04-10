@@ -20,7 +20,7 @@ public class Float32Serializer : YamlSerializer<float>
         {
             if (float.TryParse(span, CultureInfo.InvariantCulture, out value))
             {
-                stream.Read();
+                stream.Move();
                 return;
             }
 
@@ -32,7 +32,7 @@ public class Float32Serializer : YamlSerializer<float>
                         span.SequenceEqual(YamlCodes.Inf2))
                     {
                         value = float.PositiveInfinity;
-                        stream.Read();
+                        stream.Move();
                         return;
                     }
 
@@ -41,7 +41,7 @@ public class Float32Serializer : YamlSerializer<float>
                         span.SequenceEqual(YamlCodes.Nan2))
                     {
                         value = float.NaN;
-                        stream.Read();
+                        stream.Move();
                         return;
                     }
                     break;
@@ -51,7 +51,7 @@ public class Float32Serializer : YamlSerializer<float>
                         span.SequenceEqual(YamlCodes.Inf5))
                     {
                         value = float.PositiveInfinity;
-                        stream.Read();
+                        stream.Move();
                         return;
                     }
                     if (span.SequenceEqual(YamlCodes.NegInf0) ||
@@ -59,7 +59,7 @@ public class Float32Serializer : YamlSerializer<float>
                         span.SequenceEqual(YamlCodes.NegInf2))
                     {
                         value = float.NegativeInfinity;
-                        stream.Read();
+                        stream.Move();
                         return;
                     }
                     break;

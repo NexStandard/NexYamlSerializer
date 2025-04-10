@@ -18,7 +18,7 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
         var map = new Dictionary<TKey, TValue>();
         if (SerializerExtensions.IsPrimitive(typeof(TKey)))
         {
-            stream.ReadWithVerify(ParseEventType.MappingStart);
+            stream.Move(ParseEventType.MappingStart);
 
             while (stream.HasKeyMapping)
             {
@@ -29,7 +29,7 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
                 map.Add(key!, val!);
             }
 
-            stream.ReadWithVerify(ParseEventType.MappingEnd);
+            stream.Move(ParseEventType.MappingEnd);
             value = map;
         }
         else

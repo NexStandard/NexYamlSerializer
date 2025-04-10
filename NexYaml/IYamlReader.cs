@@ -20,9 +20,21 @@ public interface IYamlReader
     void AddReference(Guid id, Action<object> resolution);
     public bool TryGetCurrentTag(out Tag tag);
     bool IsNullScalar();
-    bool Read();
-    void ReadWithVerify(ParseEventType eventType);
+    /// <summary>
+    /// Moves the Reader to the next Scalar
+    /// </summary>
+    /// <returns>false if the end of the stream is reached, else true</returns>
+    bool Move();
+    /// <summary>
+    /// Moves the <see cref="IYamlReader"/> to the next <see cref="Scalar"/> with the expected <paramref name="eventType"/>
+    /// </summary>
+    /// <param name="eventType">The expected <see cref="ParseEventType"/> to be read</param>
+    void Move(ParseEventType eventType);
     void Reset();
+    /// <summary>
+    /// Moves the <see cref="IYamlReader>"/> until the <paramref name="eventType"/> is passed
+    /// </summary>
+    /// <param name="eventType"></param>
     void SkipAfter(ParseEventType eventType);
     void SkipRead();
     bool TryGetScalarAsSpan([MaybeNullWhen(false)] out ReadOnlySpan<byte> span);

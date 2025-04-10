@@ -31,6 +31,6 @@ public class UInt16Serializer : YamlSerializer<ushort>
                 }
             }
         }
-        stream.Read();
+        stream.Move();
     }
 }

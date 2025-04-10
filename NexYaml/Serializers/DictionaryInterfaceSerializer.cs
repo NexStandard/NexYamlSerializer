@@ -40,7 +40,7 @@ public class DictionaryInterfaceSerializer<TKey, TValue> : YamlSerializer<IDicti
         var map = new Dictionary<TKey, TValue>();
         if (SerializerExtensions.IsPrimitive(typeof(TKey)))
         {
-            stream.ReadWithVerify(ParseEventType.MappingStart);
+            stream.Move(ParseEventType.MappingStart);
 
             while (stream.HasKeyMapping)
             {
@@ -51,7 +51,7 @@ public class DictionaryInterfaceSerializer<TKey, TValue> : YamlSerializer<IDicti
                 map.Add(key!, val!);
             }
 
-            stream.ReadWithVerify(ParseEventType.MappingEnd);
+            stream.Move(ParseEventType.MappingEnd);
             value = map;
             return;
         }

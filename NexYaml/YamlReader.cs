@@ -44,7 +44,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         parser.TryGetScalarAsSpan(out span);
     }
 
-    public bool Read()
+    public bool Move()
     {
         return parser.Read();
     }
@@ -162,7 +162,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         return;
     }
 
-    public void ReadWithVerify(ParseEventType eventType)
+    public void Move(ParseEventType eventType)
     {
         parser.ReadWithVerify(eventType);
     }
@@ -175,7 +175,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
     {
         if (key.SequenceEqual(mappingKey))
         {
-            Read();
+            Move();
             Read(ref target, ref parseResult);
             return true;
         }
@@ -187,7 +187,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         var parseResult = new ParseResult();
         if (key.SequenceEqual(mappingKey))
         {
-            Read();
+            Move();
             Read(ref target, ref parseResult);
             return true;
         }

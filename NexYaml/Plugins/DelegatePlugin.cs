@@ -14,7 +14,7 @@ internal class DelegatePlugin : IResolvePlugin
     {
         if (typeof(Delegate).IsAssignableFrom(typeof(T)))
         {
-            stream.ReadWithVerify(ParseEventType.SequenceStart);
+            stream.Move(ParseEventType.SequenceStart);
             T val = default;
             List<(Guid reference, string delegateName)> delegates = new();
             while (stream.HasSequence)
@@ -26,9 +26,9 @@ internal class DelegatePlugin : IResolvePlugin
                     var methodName = parts[1];
                     delegates.Add((reference: Guid.Parse(id), delegateName: methodName));
                 }
-                stream.ReadWithVerify(ParseEventType.Scalar);
+                stream.Move(ParseEventType.Scalar);
             }
-            stream.ReadWithVerify(ParseEventType.SequenceEnd);
+            stream.Move(ParseEventType.SequenceEnd);
             result = new ParseResult();
             result.IsReference = true;
             result.Reference = Guid.NewGuid();

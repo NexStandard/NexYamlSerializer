@@ -31,6 +31,6 @@ public class UInt32Serializer : YamlSerializer<uint>
                 }
             }
         }
-        stream.Read();
+        stream.Move();
     }
 }
