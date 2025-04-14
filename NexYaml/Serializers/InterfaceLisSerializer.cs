@@ -18,12 +18,8 @@ public class InterfaceLisSerializer<T> : YamlSerializer<IList<T>>
     public override void Read(IYamlReader stream, ref IList<T> value, ref ParseResult result)
     {
         var list = new List<T>();
-        stream.ReadSequence(() =>
-        {
-            var val = default(T);
-            stream.Read(ref val);
-            list.Add(val!);
-        });
-        value = list!;
+        foreach (var val in stream.ReadAsSequenceOf<T>())
+            list.Add(val);
+        value = list;
     }
 }

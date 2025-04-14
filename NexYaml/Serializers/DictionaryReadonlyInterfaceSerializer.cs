@@ -11,26 +11,26 @@ public class DictionaryReadonlyInterfaceSerializer<TKey, TValue> : YamlSerialize
     {
         if (SerializerExtensions.IsPrimitive(typeof(TKey)))
         {
-            stream.WriteMapping(style, () =>
+            using (stream.MappingScope(style))
             {
                 foreach (var x in value)
                 {
                     stream.Write(x.Key, style);
                     stream.Write(x.Value, style);
                 }
-            });
+            }
             return;
         }
         else
         {
             var kvp = new KeyValuePairSerializer<TKey, TValue>();
-            stream.WriteSequence(style, () =>
+            using (stream.SequenceScope(style))
             {
                 foreach (var x in value)
                 {
                     kvp.Write(stream, x);
                 }
-            });
+            }
         }
     }
 
