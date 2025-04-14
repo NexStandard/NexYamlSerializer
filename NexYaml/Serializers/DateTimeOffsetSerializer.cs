@@ -33,5 +33,10 @@ public class DateTimeOffsetSerializer : YamlSerializer<DateTimeOffset>
             stream.Move();
             value = val;
         }
+        else
+        {
+            stream.TryGetScalarAsString(out var text);
+            YamlException.ThrowExpectedTypeParseException(typeof(DateTimeOffset), text, stream.CurrentMarker);
+        }
     }
 }

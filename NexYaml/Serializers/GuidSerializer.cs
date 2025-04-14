@@ -33,5 +33,10 @@ public class GuidSerializer : YamlSerializer<Guid>
             value = guid;
             return;
         }
+        else
+        {
+            stream.TryGetScalarAsString(out var text);
+            YamlException.ThrowExpectedTypeParseException(typeof(Guid), text, stream.CurrentMarker);
+        }
     }
 }

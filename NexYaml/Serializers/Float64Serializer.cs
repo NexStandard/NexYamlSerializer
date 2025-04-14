@@ -63,6 +63,8 @@ public class Float64Serializer : YamlSerializer<double>
                     }
                     break;
             }
+            stream.TryGetScalarAsString(out var text);
+            YamlException.ThrowExpectedTypeParseException(typeof(double), text, stream.CurrentMarker);
         }
     }
 }

@@ -1,3 +1,4 @@
+using NexYaml.Core;
 using NexYaml.Parser;
 using Stride.Core;
 using System.Buffers.Text;
@@ -20,7 +21,8 @@ public class UInt64Serializer : YamlSerializer<ulong>
         {
             if (ulong.TryParse(span, CultureInfo.InvariantCulture, out var temp))
             {
-                value = temp;
+                value = temp; 
+                stream.Move();
             }
             else if (FormatHelper.TryDetectHex(span, out var hexNumber))
             {
@@ -28,9 +30,14 @@ public class UInt64Serializer : YamlSerializer<ulong>
                        bytesConsumed == hexNumber.Length)
                 {
                     value = temp2;
+                    stream.Move();
                 }
             }
+            else
+            {
+                stream.TryGetScalarAsString(out var text);
+                YamlException.ThrowExpectedTypeParseException(typeof(int), text, stream.CurrentMarker);
+            }
         }
-        stream.Move();
     }
 }

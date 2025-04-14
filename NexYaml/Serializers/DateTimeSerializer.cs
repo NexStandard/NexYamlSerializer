@@ -49,7 +49,10 @@ public class DateTimeSerializer : YamlSerializer<DateTime>
                 value = dateTime;
                 return;
             }
+            stream.TryGetScalarAsString(out var text);
+            YamlException.ThrowExpectedTypeParseException(typeof(DateTime), text, stream.CurrentMarker);
         }
+        
     }
 }
 

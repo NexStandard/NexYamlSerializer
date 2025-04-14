@@ -64,6 +64,8 @@ public class Float32Serializer : YamlSerializer<float>
                     }
                     break;
             }
+            stream.TryGetScalarAsString(out var text);
+            YamlException.ThrowExpectedTypeParseException(typeof(float), text, stream.CurrentMarker);
         }
     }
 }

@@ -1,3 +1,4 @@
+using NexYaml.Core;
 using NexYaml.Parser;
 using Stride.Core;
 
@@ -21,10 +22,15 @@ public class CharSerializer : YamlSerializer<char>
                 if (result.Length == 1)
                 {
                     value = result[0];
+                    stream.Move(ParseEventType.Scalar);
                 }
+            }
+            else
+            {
+                stream.TryGetScalarAsString(out var text);
+                YamlException.ThrowExpectedTypeParseException(typeof(int), text, stream.CurrentMarker);
             }
         }
 
-        stream.Move(ParseEventType.Scalar);
     }
 }

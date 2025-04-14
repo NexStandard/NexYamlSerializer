@@ -1,3 +1,4 @@
+using NexYaml.Core;
 using NexYaml.Parser;
 using Stride.Core;
 using System.Buffers.Text;
@@ -45,6 +46,8 @@ public class Int16Serializer : YamlSerializer<short>
                 stream.Move();
                 return;
             }
+            stream.TryGetScalarAsString(out var text);
+            YamlException.ThrowExpectedTypeParseException(typeof(short), text, stream.CurrentMarker);
         }
     }
 }
