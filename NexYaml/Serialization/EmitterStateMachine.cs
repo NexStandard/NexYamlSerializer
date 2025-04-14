@@ -76,10 +76,10 @@ public class EmitterStateMachine
     }
     public int CurrentIndentLevel => IndentationManager.CurrentIndentLevel;
     public ExpandBuffer<IEmitter> StateStack { get; private set; } = new ExpandBuffer<IEmitter>(4);
-    public IndentationManager IndentationManager { get; } = new();
+    internal IndentationManager IndentationManager { get; } = new();
 
-    protected ExpandBuffer<int> elementCountStack = new ExpandBuffer<int>(4);
-    protected ExpandBuffer<string> tagStack = new ExpandBuffer<string>(4);
+    protected ExpandBuffer<int> elementCountStack = new(4);
+    protected ExpandBuffer<string> tagStack = new(4);
     public bool IsFirstElement => ElementCount == 0;
     public IEmitter Current
     {
