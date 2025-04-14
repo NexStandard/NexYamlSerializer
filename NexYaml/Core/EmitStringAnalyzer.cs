@@ -4,7 +4,7 @@ using System.Text;
 
 namespace NexYaml.Core;
 
-public readonly struct EmitStringInfo(int lines, bool needsQuotes, bool isReservedWord)
+internal readonly struct EmitStringInfo(int lines, bool needsQuotes, bool isReservedWord)
 {
     public int Lines { get; } = lines;
     public bool NeedsQuotes { get; } = needsQuotes;
@@ -18,7 +18,7 @@ public readonly struct EmitStringInfo(int lines, bool needsQuotes, bool isReserv
     }
 }
 
-public static class EmitStringAnalyzer
+internal static class EmitStringAnalyzer
 {
     private static ReadOnlySpan<char> SpecialTokens => [':', '{', '[', ']', ',', '#', '`', '"', ' ','\''];
     private static char[] whiteSpaces =
