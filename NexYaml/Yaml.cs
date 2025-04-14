@@ -1,5 +1,6 @@
 ﻿using NexYaml.Core;
 using NexYaml.Parser;
+using NexYaml.Plugins;
 using NexYaml.Serialization;
 using NexYaml.Serialization.Emittters;
 using Stride.Core;
@@ -22,8 +23,15 @@ public class Yaml
         using var memoryStream = new MemoryStream();
         using var writer = new StreamWriter(memoryStream);
         var state = new EmitterStateMachine();
-
-        var stream = new YamlWriter(writer, state,options);
+        List<IResolvePlugin> plugins= new()
+        {
+            new NullPlugin(),
+            new NullablePlugin(),
+            new ArrayPlugin(),
+            new DelegatePlugin(),
+            new ReferencePlugin(),
+        };
+        var stream = new YamlWriter(writer, state,options, plugins);
         state.Bind(stream);
 
             stream.Write(value, style);
@@ -49,7 +57,15 @@ public class Yaml
         options ??= IYamlSerializerResolver.Default;
 
         var state = new EmitterStateMachine();
-        var stream = new YamlWriter(streamWriter, state, options);
+        List<IResolvePlugin> plugins = new()
+        {
+            new NullPlugin(),
+            new NullablePlugin(),
+            new ArrayPlugin(),
+            new DelegatePlugin(),
+            new ReferencePlugin(),
+        };
+        var stream = new YamlWriter(streamWriter, state, options, plugins);
         state.Bind(stream);
         stream.Write(value, style);
 

@@ -1,4 +1,5 @@
-﻿using NexYaml.Parser;
+﻿using NexYaml.Core;
+using NexYaml.Parser;
 using Stride.Core;
 
 namespace NexYaml.Plugins;
@@ -9,7 +10,7 @@ internal class NullPlugin : IResolvePlugin
     {
         if (value is null)
         {
-            stream.WriteScalar(stream.Settings.Null);
+            stream.WriteScalar(YamlCodes.NullString);
             return true;
         }
         return false;

@@ -19,11 +19,6 @@ public interface IYamlWriter
     void WriteTag(string tag, bool force =false);
 
     /// <summary>
-    /// Gets the settings that define YAML syntax and formatting behavior.
-    /// </summary>
-    SyntaxSettings Settings { get; }
-
-    /// <summary>
     /// Maintains a cache of references used during serialization to prevent duplication.
     /// </summary>
     HashSet<Guid> References { get; }

@@ -1,4 +1,5 @@
 ﻿using NexYaml.Core;
+using NexYaml.Plugins;
 using NexYaml.Serialization;
 using Stride.Core;
 
@@ -15,15 +16,16 @@ public class YamlWriter : IYamlWriter
     /// Tracks if the first element is written, if not the <see cref="WriteTag(string)"/> has to be always included.
     /// </summary>
     private bool IsFirst { get; set; } = true;
+    private ICollection<IResolvePlugin> Plugins;
     public IYamlSerializerResolver Resolver { get; init; }
-    public SyntaxSettings Settings { get; init; } = new();
 
     private StyleEnforcer enforcer = new();
     private readonly StreamWriter writer;
     public EmitterStateMachine StateMachine { get; }
 
-    public YamlWriter(StreamWriter writer, EmitterStateMachine stateMachine,IYamlSerializerResolver resolver)
+    public YamlWriter(StreamWriter writer, EmitterStateMachine stateMachine,IYamlSerializerResolver resolver, ICollection<IResolvePlugin> plugins)
     {
+        Plugins = plugins;
         StateMachine = stateMachine;
         this.writer = writer;
         Resolver = resolver;
@@ -143,7 +145,7 @@ public class YamlWriter : IYamlWriter
     /// <inheritdoc />
     public void WriteType<T>(T value, DataStyle style)
     {
-        foreach (var syntax in Settings.Plugins)
+        foreach (var syntax in Plugins)
         {
             if (syntax.Write(this, value, style))
             {
