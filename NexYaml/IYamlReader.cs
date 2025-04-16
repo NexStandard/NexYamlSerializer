@@ -134,26 +134,8 @@ public interface IYamlReader
     /// <param name="value">The scalar value as a string, if found.</param>
     /// <returns><c>true</c> if the scalar value is successfully retrieved as a string; otherwise, <c>false</c>.</returns>
     bool TryGetScalarAsString(out string? value);
-
-    /// <summary>
-    /// Attempts to read a value of type <typeparamref name="T"/> from the YAML stream for a specific mapping key.
-    /// </summary>
-    /// <typeparam name="T">The type of value to read.</typeparam>
-    /// <param name="target">The target value to be populated.</param>
-    /// <param name="key">The mapping key to match.</param>
-    /// <param name="mappingKey">The byte array representing the mapping key to match.</param>
-    /// <param name="parseResult">The result of the parsing operation.</param>
-    /// <returns><c>true</c> if the value is successfully read; otherwise, <c>false</c>.</returns>
-    bool TryRead<T>(ref T? target, ref ReadOnlySpan<byte> key, byte[] mappingKey, ref ParseResult parseResult);
-
-    /// <summary>
-    /// Attempts to read a value of type <typeparamref name="T"/> from the YAML stream for a specific mapping key.
-    /// </summary>
-    /// <typeparam name="T">The type of value to read.</typeparam>
-    /// <param name="target">The target value to be populated.</param>
-    /// <param name="key">The mapping key to match.</param>
-    /// <param name="mappingKey">The byte array representing the mapping key to match.</param>
-    /// <returns><c>true</c> if the value is successfully read; otherwise, <c>false</c>.</returns>
-    bool TryRead<T>(ref T? target, ref ReadOnlySpan<byte> key, byte[] mappingKey);
+    
+    public bool TryRead<T>(ref T? target, in ReadOnlySpan<byte> key, byte[] mappingKey, ref ParseResult parseResult);
+    public bool TryRead<T>(ref T? target, in ReadOnlySpan<byte> key, byte[] mappingKey);
 }
 

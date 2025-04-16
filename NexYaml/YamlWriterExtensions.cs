@@ -6,30 +6,34 @@ namespace NexYaml;
 
 public static class YamlWriterExtensions
 {
-    /// <summary>
-    /// Run the <paramref name="action"/> on the stream while wrapping it into <see cref="IYamlWriter.BeginMapping(DataStyle)"
-    /// </summary>
-    /// <param name="stream">The <see cref="IYamlWriter"/> to write to</param>
-    /// <param name="style">The <see cref="DataStyle"/> to format the mapping</param>
-    /// <param name="action">The Action to run inside the mapping</param>
-    public static void WriteMapping(this IYamlWriter stream, DataStyle style, Action action)
+    public static MappingScopeDisposable MappingScope(this IYamlWriter stream, DataStyle style) => new(stream, style);
+    
+    public static SequenceScopeDisposable SequenceScope(this IYamlWriter stream, DataStyle style) => new(stream, style);
+
+    public struct SequenceScopeDisposable : IDisposable
     {
-        stream.BeginMapping(style);
-        action();
-        stream.EndMapping();
+        private IYamlWriter _stream;
+        
+        public SequenceScopeDisposable(IYamlWriter stream, DataStyle style)
+        {
+            _stream = stream;
+            _stream.BeginSequence(style);
+        }
+
+        public void Dispose() => _stream.EndSequence();
     }
 
-    /// <summary>
-    /// Run the <paramref name="action"/> on the stream while wrapping it into <see cref="IYamlWriter.BeginSequence(DataStyle)"
-    /// </summary>
-    /// <param name="stream">The <see cref="IYamlWriter"/> to write to</param>
-    /// <param name="style">The <see cref="DataStyle"/> to format the mapping</param>
-    /// <param name="action">The Action to run inside the mapping</param>
-    public static void WriteSequence(this IYamlWriter stream, DataStyle style, Action action)
+    public struct MappingScopeDisposable : IDisposable
     {
-        stream.BeginSequence(style);
-        action();
-        stream.EndSequence();
+        private IYamlWriter _stream;
+        
+        public MappingScopeDisposable(IYamlWriter stream, DataStyle style)
+        {
+            _stream = stream;
+            _stream.BeginMapping(style);
+        }
+
+        public void Dispose() => _stream.EndMapping();
     }
 
     /// <summary>
