@@ -18,20 +18,21 @@ internal class EmitterStateMachine
     private IEmitter emptySerializer;
     private IEmitter blockMapValueSerializer;
     private IEmitter flowMapValueSerializer;
-    public void Bind(YamlWriter emitter)
+    public EmitterStateMachine(YamlWriter stream)
     {
-        blockMapKeySerializer = new BlockMapKeySerializer(emitter, this);
-        flowMapKeySerializer = new FlowMapKeySerializer(emitter, this);
-        blockSequenceEntrySerializer = new BlockSequenceEntrySerializer(emitter, this);
-        flowSequenceEntrySerializer = new FlowSequenceEntrySerializer(emitter, this);
-        blockMapValueSerializer = new BlockMapValueSerializer(emitter, this);
-        flowMapValueSerializer = new FlowMapValueSerializer(emitter, this);
+        blockMapKeySerializer = new BlockMapKeySerializer(stream, this);
+        flowMapKeySerializer = new FlowMapKeySerializer(stream, this);
+        blockSequenceEntrySerializer = new BlockSequenceEntrySerializer(stream, this);
+        flowSequenceEntrySerializer = new FlowSequenceEntrySerializer(stream, this);
+        blockMapValueSerializer = new BlockMapValueSerializer(stream, this);
+        flowMapValueSerializer = new FlowMapValueSerializer(stream, this);
         emptySerializer = new EmptySerializer();
-        if(StateStack.Length == 0)
+        if (StateStack.Length == 0)
         {
             StateStack.Add(emptySerializer);
         }
     }
+
     public IEmitter Map(EmitState state)
     {
         return state switch

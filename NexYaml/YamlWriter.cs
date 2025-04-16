@@ -26,11 +26,10 @@ public class YamlWriter : IYamlWriter
 
     public YamlWriter(StreamWriter writer,IYamlSerializerResolver resolver, ICollection<IResolvePlugin> plugins)
     {
-        StateMachine = new EmitterStateMachine();
+        StateMachine = new EmitterStateMachine(this);
         Plugins = plugins;
         this.writer = writer;
         Resolver = resolver;
-        StateMachine.Bind(this);
     }
 
     /// <inheritdoc />
