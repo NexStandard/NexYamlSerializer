@@ -2,6 +2,7 @@
 using NexYaml.Plugins;
 using NexYaml.Serialization;
 using Stride.Core;
+using System.Text;
 
 namespace NexYaml;
 
@@ -21,14 +22,15 @@ public class YamlWriter : IYamlWriter
 
     private StyleEnforcer enforcer = new();
     private readonly StreamWriter writer;
-    public EmitterStateMachine StateMachine { get; }
+    private EmitterStateMachine StateMachine { get; }
 
-    public YamlWriter(StreamWriter writer, EmitterStateMachine stateMachine,IYamlSerializerResolver resolver, ICollection<IResolvePlugin> plugins)
+    public YamlWriter(StreamWriter writer,IYamlSerializerResolver resolver, ICollection<IResolvePlugin> plugins)
     {
+        StateMachine = new EmitterStateMachine();
         Plugins = plugins;
-        StateMachine = stateMachine;
         this.writer = writer;
         Resolver = resolver;
+        StateMachine.Bind(this);
     }
 
     /// <inheritdoc />
@@ -97,7 +99,7 @@ public class YamlWriter : IYamlWriter
     /// <inheritdoc />
     public void WriteScalar(ReadOnlySpan<byte> value)
     {
-        ReadOnlySpan<char> byteSpan = StringEncoding.Utf8.GetChars(value.ToArray());
+        ReadOnlySpan<char> byteSpan = Encoding.UTF8.GetChars(value.ToArray());
         StateMachine.WriteScalar(byteSpan);
     }
 

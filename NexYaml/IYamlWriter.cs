@@ -1,8 +1,6 @@
-﻿using NexYaml.Core;
-using NexYaml.Serialization;
+﻿using NexYaml.Serialization;
 using Stride.Core;
 
-namespace NexYaml;
 /// <summary>
 /// Defines methods for writing YAML data, including support for various data structures,
 /// type resolution, and formatting styles. This interface provides a flexible serialization 
@@ -10,67 +8,75 @@ namespace NexYaml;
 /// </summary>
 public interface IYamlWriter
 {
-
-    public bool IsRedirected { get; set; }
     /// <summary>
-    /// Writes lazy a YAML tag for the object type, depending on its serialization context.
+    /// Gets or sets a flag indicating whether the output is redirected to another stream or writer.
+    /// </summary>
+    public bool IsRedirected { get; set; }
+
+    /// <summary>
+    /// Writes a YAML tag for the object type, depending on its serialization context. 
+    /// Tags are used to specify the type of an object within YAML data.
     /// </summary>
     /// <param name="tag">The YAML tag identifying the object's type.</param>
-    void WriteTag(string tag, bool force =false);
+    /// <param name="force">If set to true, the tag will be written regardless of the context.</param>
+    void WriteTag(string tag, bool force = false);
 
     /// <summary>
-    /// Maintains a cache of references used during serialization to prevent duplication.
+    /// Maintains a cache of references used during serialization to prevent duplication 
+    /// of the same object or value within the YAML data.
     /// </summary>
     HashSet<Guid> References { get; }
 
     /// <summary>
-    /// Provides type resolution for all serializable types.
+    /// Provides type resolution for all serializable types through a <see cref="IYamlSerializerResolver"/>.
+    /// This resolver helps in managing and providing the appropriate serializer for various types.
     /// </summary>
     IYamlSerializerResolver Resolver { get; }
 
     /// <summary>
-    /// Begins a YAML sequence formatted according to the specified style.
-    /// Call <see cref="EndSequence"/> to close the sequence.
+    /// Begins a YAML sequence, formatted according to the specified style. 
+    /// A sequence represents a list of values in YAML.
     /// </summary>
-    /// <param name="style">Defines the style used to format the sequence.</param>
+    /// <param name="style">The style to use for formatting the sequence.</param>
     void BeginSequence(DataStyle style);
 
     /// <summary>
-    /// Ends the YAML sequence initiated by <see cref="BeginSequence(DataStyle)"/>.
+    /// Ends the YAML sequence that was started by <see cref="BeginSequence(DataStyle)"/>.
     /// </summary>
     void EndSequence();
 
     /// <summary>
-    /// Begins a YAML mapping formatted according to the specified style.
-    /// Call <see cref="EndMapping"/> to close the mapping.
+    /// Begins a YAML mapping, formatted according to the specified style. 
+    /// A mapping represents a set of key-value pairs in YAML.
     /// </summary>
-    /// <param name="style">Defines the style used to format the mapping.</param>
+    /// <param name="style">The style to use for formatting the mapping.</param>
     void BeginMapping(DataStyle style);
 
     /// <summary>
-    /// Ends the YAML mapping initiated by <see cref="BeginMapping(DataStyle)"/>.
+    /// Ends the YAML mapping that was started by <see cref="BeginMapping(DataStyle)"/>.
     /// </summary>
     void EndMapping();
 
     /// <summary>
-    /// Writes the specified value of type <typeparamref name="T"/> using the provided style.
-    /// The <see cref="Resolver"/> is used to determine the appropriate serializer for <paramref name="value"/>.
+    /// Writes a value of type <typeparamref name="T"/> using the provided formatting style.
+    /// The <see cref="Resolver"/> is used to determine the appropriate serializer for the value.
     /// </summary>
     /// <typeparam name="T">The type of the value to serialize.</typeparam>
-    /// <param name="value">The value to write to the output.</param>
-    /// <param name="style">Defines the formatting style for the value.</param>
+    /// <param name="value">The value to serialize.</param>
+    /// <param name="style">The style to use for formatting the value.</param>
     void WriteType<T>(T value, DataStyle style);
 
     /// <summary>
-    /// Writes a scalar value to the output from a span of bytes, formatted according to syntax settings.
+    /// Writes a scalar value from a span of bytes to the output, formatted according to YAML syntax settings.
+    /// A scalar represents a single value such as a string, integer, or boolean.
     /// </summary>
-    /// <param name="bytes">The bytes to write as a scalar value.</param>
+    /// <param name="bytes">The bytes representing the scalar value.</param>
     void WriteScalar(ReadOnlySpan<byte> bytes);
 
     /// <summary>
-    /// Writes a scalar value to the output from a span of characters, formatted according to syntax settings.
+    /// Writes a scalar value from a span of characters to the output, formatted according to YAML syntax settings.
     /// </summary>
-    /// <param name="chars">The characters to write as a scalar value.</param>
+    /// <param name="chars">The characters representing the scalar value.</param>
     void WriteScalar(ReadOnlySpan<char> chars);
 
     /// <summary>
@@ -85,7 +91,21 @@ public interface IYamlWriter
     /// <param name="value">The string to write in an auto detection format to the stream.</param>
     void WriteString(string? value, DataStyle style);
 
+    /// <summary>
+    /// Writes raw characters to the output stream.
+    /// </summary>
+    /// <param name="value">The raw characters to write.</param>
     public void WriteRaw(ReadOnlySpan<char> value);
+
+    /// <summary>
+    /// Writes raw string data to the output stream.
+    /// </summary>
+    /// <param name="value">The raw string to write.</param>
     public void WriteRaw(string value);
+
+    /// <summary>
+    /// Writes a single raw character to the output stream.
+    /// </summary>
+    /// <param name="value">The raw character to write.</param>
     public void WriteRaw(char value);
 }

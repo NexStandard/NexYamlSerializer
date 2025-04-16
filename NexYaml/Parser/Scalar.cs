@@ -1,5 +1,6 @@
 using NexYaml.Core;
 using System.Buffers;
+using System.Text;
 
 namespace NexYaml.Parser;
 
@@ -98,9 +99,9 @@ public class Scalar : ITokenContent, IDisposable
     {
         Span<char> chars = stackalloc char[1];
         chars[0] = (char)codepoint;
-        var utf8ByteCount = StringEncoding.Utf8.GetByteCount(chars);
+        var utf8ByteCount = Encoding.UTF8.GetByteCount(chars);
         Span<byte> utf8Bytes = stackalloc byte[utf8ByteCount];
-        StringEncoding.Utf8.GetBytes(chars, utf8Bytes);
+        Encoding.UTF8.GetBytes(chars, utf8Bytes);
         Write(utf8Bytes);
     }
 
@@ -121,7 +122,7 @@ public class Scalar : ITokenContent, IDisposable
 
     public override string ToString()
     {
-        return StringEncoding.Utf8.GetString(AsSpan());
+        return Encoding.UTF8.GetString(AsSpan());
     }
 
     public bool IsNull()

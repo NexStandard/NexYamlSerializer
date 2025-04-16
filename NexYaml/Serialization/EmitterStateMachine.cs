@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NexYaml.Serialization;
-public class EmitterStateMachine
+internal class EmitterStateMachine
 {
     private IEmitter blockMapKeySerializer;
     private IEmitter flowMapKeySerializer;

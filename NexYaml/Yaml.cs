@@ -5,6 +5,7 @@ using NexYaml.Serialization;
 using NexYaml.Serialization.Emittters;
 using Stride.Core;
 using System.Buffers;
+using System.Text;
 
 namespace NexYaml;
 
@@ -22,7 +23,6 @@ public class Yaml
         options ??= IYamlSerializerResolver.Default;
         using var memoryStream = new MemoryStream();
         using var writer = new StreamWriter(memoryStream);
-        var state = new EmitterStateMachine();
         List<IResolvePlugin> plugins= new()
         {
             new NullPlugin(),
@@ -31,8 +31,7 @@ public class Yaml
             new DelegatePlugin(),
             new ReferencePlugin(),
         };
-        var stream = new YamlWriter(writer, state,options, plugins);
-        state.Bind(stream);
+        var stream = new YamlWriter(writer, options, plugins);
 
             stream.Write(value, style);
             var result = "";
@@ -56,7 +55,6 @@ public class Yaml
     {
         options ??= IYamlSerializerResolver.Default;
 
-        var state = new EmitterStateMachine();
         List<IResolvePlugin> plugins = new()
         {
             new NullPlugin(),
@@ -65,8 +63,7 @@ public class Yaml
             new DelegatePlugin(),
             new ReferencePlugin(),
         };
-        var stream = new YamlWriter(streamWriter, state, options, plugins);
-        state.Bind(stream);
+        var stream = new YamlWriter(streamWriter, options, plugins);
         stream.Write(value, style);
 
         streamWriter.Flush();
@@ -75,7 +72,7 @@ public class Yaml
 
     public static T? Read<T>(ReadOnlyMemory<char> memory, IYamlSerializerResolver? options = null)
     {
-        return Read<T>(StringEncoding.Utf8.GetBytes(memory.Span.ToArray()), options);
+        return Read<T>(Encoding.UTF8.GetBytes(memory.Span.ToArray()), options);
     }
 
     /// <summary>
@@ -101,7 +98,7 @@ public class Yaml
     /// <returns>An object of type <typeparamref name="T"/> representing the deserialized YAML content.</returns>
     public static T? Read<T>(string yaml, IYamlSerializerResolver? options = null)
     {
-        return Read<T?>(StringEncoding.Utf8.GetBytes(yaml), options);
+        return Read<T?>(Encoding.UTF8.GetBytes(yaml), options);
     }
 
     /// <summary>

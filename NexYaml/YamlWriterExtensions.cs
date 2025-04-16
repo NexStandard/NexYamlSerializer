@@ -45,23 +45,57 @@ public static class YamlWriterExtensions
         stream.Write(value, style);
     }
 
+    /// <summary>
+    /// Writes a scalar value from a byte span to the YAML stream.
+    /// </summary>
+    /// <param name="stream">The YAML writer instance.</param>
+    /// <param name="value">The byte span to write.</param>
+    /// <param name="style">The data style to use. Default is <see cref="DataStyle.Any"/>.</param>
     public static void Write(this IYamlWriter stream, ReadOnlySpan<byte> value, DataStyle style = DataStyle.Any)
     {
         stream.WriteScalar(value);
     }
 
+    /// <summary>
+    /// Writes a value of type <typeparamref name="T"/> using the associated type handler.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to write.</typeparam>
+    /// <param name="stream">The YAML writer instance.</param>
+    /// <param name="value">The value to write.</param>
+    /// <param name="style">The data style to use.</param>
     public static void Write<T>(this IYamlWriter stream, T value, DataStyle style)
     {
         stream.WriteType(value, style);
     }
+
+    /// <summary>
+    /// Writes a scalar value from a character span to the YAML stream.
+    /// </summary>
+    /// <param name="stream">The YAML writer instance.</param>
+    /// <param name="value">The character span to write.</param>
+    /// <param name="style">The data style to use. Default is <see cref="DataStyle.Any"/>.</param>
     public static void Write(this IYamlWriter stream, ReadOnlySpan<char> value, DataStyle style = DataStyle.Any)
     {
         stream.WriteScalar(value);
     }
+
+    /// <summary>
+    /// Writes a string value to the YAML stream.
+    /// </summary>
+    /// <param name="stream">The YAML writer instance.</param>
+    /// <param name="value">The string to write. Null values are handled accordingly.</param>
+    /// <param name="style">The data style to use. Default is <see cref="DataStyle.Any"/>.</param>
     public static void Write(this IYamlWriter stream, string? value, DataStyle style = DataStyle.Any)
     {
         stream.WriteString(value, style);
     }
+
+    /// <summary>
+    /// Writes a single character as a single quoted YAML scalar.
+    /// </summary>
+    /// <param name="stream">The YAML writer instance.</param>
+    /// <param name="value">The character to write.</param>
+    /// <param name="style">The data style to use. Default is <see cref="DataStyle.Any"/>.</param>
     public static void Write(this IYamlWriter stream, char value, DataStyle style = DataStyle.Any)
     {
         stream.Write(['\'', value, '\''], style);
