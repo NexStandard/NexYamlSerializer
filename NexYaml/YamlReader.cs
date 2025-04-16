@@ -182,17 +182,6 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         return false;
     }
 
-    public bool TryRead<T>(ref T? target, in ReadOnlySpan<byte> key, byte[] mappingKey)
-    {
-        var parseResult = new ParseResult();
-        if (key.SequenceEqual(mappingKey))
-        {
-            Move();
-            Read(ref target, ref parseResult);
-            return true;
-        }
-        return false;
-    }
     public void SkipAfter(ParseEventType eventType)
     {
         parser.SkipAfter(eventType);
