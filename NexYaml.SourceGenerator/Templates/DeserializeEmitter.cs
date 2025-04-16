@@ -31,10 +31,11 @@ internal class DeserializeEmitter
         }
         return $$"""
         {{package.CreateTempMembers()}}
-                stream.ReadMapping((key) => {
+                foreach (var key in stream.ReadMapping())
+                {
         {{ifstatement}}
 
-                });
+                }
 
                 var __TEMP__RESULT = new {{info.NameDefinition}}
                 {
@@ -85,7 +86,7 @@ internal class DeserializeEmitter
 
     private void AppendMember(SymbolInfo symbol, StringBuilder switchBuilder)
     {
-        switchBuilder.AppendLine($"\t\t\t\t!stream.TryRead(ref __TEMP__{symbol.Name}, ref key,{"UTF8" + symbol.Name}, ref __TEMP__RESULT__{symbol.Name}) &&");
+        switchBuilder.AppendLine($"\t\t\t\t!stream.TryRead(ref __TEMP__{symbol.Name}, in key, {"UTF8" + symbol.Name}, ref __TEMP__RESULT__{symbol.Name}) &&");
     }
     public string MapPropertiesToSwitch(Dictionary<int, List<SymbolInfo>> properties)
     {

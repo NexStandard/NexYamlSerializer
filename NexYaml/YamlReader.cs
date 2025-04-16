@@ -171,7 +171,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
     {
         parser.Reset();
     }
-    public bool TryRead<T>(ref T? target, ref ReadOnlySpan<byte> key, byte[] mappingKey, ref ParseResult parseResult)
+    public bool TryRead<T>(ref T? target, in ReadOnlySpan<byte> key, byte[] mappingKey, ref ParseResult parseResult)
     {
         if (key.SequenceEqual(mappingKey))
         {
@@ -182,7 +182,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         return false;
     }
 
-    public bool TryRead<T>(ref T? target, ref ReadOnlySpan<byte> key, byte[] mappingKey)
+    public bool TryRead<T>(ref T? target, in ReadOnlySpan<byte> key, byte[] mappingKey)
     {
         var parseResult = new ParseResult();
         if (key.SequenceEqual(mappingKey))

@@ -9,22 +9,22 @@ public class KeyValuePairSerializer<TKey, TValue> : YamlSerializer<KeyValuePair<
     public override void Write(IYamlWriter stream, KeyValuePair<TKey, TValue> value, DataStyle style)
     {
         var x = value.Key;
-        stream.WriteSequence(style, () =>
+        using (stream.SequenceScope(style))
         {
             stream.Write(value.Key, style);
             stream.Write(value.Value, style);
-        });
+        }
     }
 
     public override void Read(IYamlReader stream, ref KeyValuePair<TKey, TValue> value, ref ParseResult result)
     {
         var key = default(TKey);
         var val = default(TValue);
-        stream.ReadSequence(() =>
+        using (stream.SequenceScope())
         {
             stream.Read(ref key);
             stream.Read(ref val);
-        });
+        }
         value = new KeyValuePair<TKey, TValue>(key!, val!);
     }
 }

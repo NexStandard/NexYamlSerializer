@@ -61,13 +61,13 @@ internal class DictionarySerializerFactory : IYamlSerializerFactory
         else
         {
             var kvp = new KeyValuePairSerializer<TKey, TValue>();
-            stream.WriteSequence(style, () =>
+            using (stream.SequenceScope(style))
             {
                 foreach (var x in value)
                 {
                     kvp.Write(stream, x);
                 }
-            });
+            }
         }
     }
 

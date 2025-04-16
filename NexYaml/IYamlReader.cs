@@ -40,6 +40,6 @@ public interface IYamlReader
     bool TryGetScalarAsSpan([MaybeNullWhen(false)] out ReadOnlySpan<byte> span);
     bool TryGetScalarAsString(out string? value);
     
-    public bool TryRead<T>(ref T? target, ref ReadOnlySpan<byte> key, byte[] mappingKey, ref ParseResult parseResult);
-    public bool TryRead<T>(ref T? target, ref ReadOnlySpan<byte> key, byte[] mappingKey);
+    public bool TryRead<T>(ref T? target, in ReadOnlySpan<byte> key, byte[] mappingKey, ref ParseResult parseResult);
+    public bool TryRead<T>(ref T? target, in ReadOnlySpan<byte> key, byte[] mappingKey);
 }
