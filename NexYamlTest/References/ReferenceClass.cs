@@ -6,6 +6,18 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NexYamlTest.References;
+
+[DataContract]
+internal class ClassA : ClassB,IIdentifiable { public MyStruct MyStruct;
+
+}
+[DataContract]
+class ClassB : IIdentifiable
+{
+    public Guid Id { get; set; }
+}
+[DataContract]
+internal struct MyStruct { public ClassB MyRef; }
 [DataContract]
 internal class ReferenceClass : IIdentifiable
 {

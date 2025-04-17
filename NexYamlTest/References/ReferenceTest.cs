@@ -115,4 +115,17 @@ public class ReferenceTest
         var d = Yaml.Read<ReferenceScriptList>(s);
         Assert.Equal(d.List[1], d.List[0].Reference.ReferenceScript);
     }
+    [Fact]
+    public void StructsLinkedWithinReference()
+    {
+        NexYamlSerializerRegistry.Init();
+        var a = new ClassA();
+        a.Id = Guid.NewGuid();
+        a.MyStruct = new MyStruct() { MyRef = new ClassB() { Id = a.Id } };
+        var s = Yaml.Write<ClassA>(a);
+        var d = Yaml.Read<ClassA>(s);
+        Assert.NotNull(d);
+        Assert.Equal(a.Id, d.Id);
+        Assert.Equal(a.MyStruct.MyRef.Id,d.MyStruct.MyRef.Id);
+    }
 }
