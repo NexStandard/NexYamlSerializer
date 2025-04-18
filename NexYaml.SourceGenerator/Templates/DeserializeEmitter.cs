@@ -1,5 +1,6 @@
 ﻿using NexYaml.SourceGenerator.MemberApi;
 using NexYaml.SourceGenerator.MemberApi.Data;
+using NexYaml.SourceGenerator.MemberApi.UniversalAnalyzers;
 using System.Text;
 
 namespace NexYaml.SourceGenerator.Templates;
@@ -9,11 +10,42 @@ internal class DeserializeEmitter
     {
         var info = package.ClassInfo;
         var objectCreation = new StringBuilder();
+        var setResults = new StringBuilder();
+        var objTempVariables = new StringBuilder();
         var map = MapPropertiesToLength(package.MemberSymbols);
+        objTempVariables.AppendLine($"var res =  parseResult.DataMemberMode == DataMemberMode.Content ? value : new {info.NameDefinition}();");
 
         foreach (var symbol in package.MemberSymbols)
         {
-            objectCreation.Append(symbol.Name + "=__TEMP__" + symbol.Name + ",");
+            if(symbol.Context.Mode == MemberMode.Content)
+            {
+                objTempVariables.Append("\t\tvar __TEMP__RESULT__").Append(symbol.Name).AppendLine($"= new ParseResult() {{ DataMemberMode = DataMemberMode.Content }};");
+            }
+            else
+            {
+                objTempVariables.Append("\t\tvar __TEMP__RESULT__").Append(symbol.Name).AppendLine($"= new ParseResult();");
+            }
+            if (symbol.Context.Mode == MemberMode.Content || symbol.IsReadonly)
+            {
+                objTempVariables.AppendLine($"var __TEMP__{symbol.Name} = res.{symbol.Name};");
+            }
+            else if (symbol.Context.Mode == MemberMode.Assign)
+            {
+                objTempVariables.AppendLine($"var __TEMP__{symbol.Name} = default({(symbol.IsArray ? symbol.Type + "[]" : symbol.Type)});");
+
+                if (symbol.IsInit)
+                {
+                    setResults.AppendLine("#if NET9_0");
+                    setResults.AppendLine($"if(__TEMP__RESULT__{symbol.Name}.IsReference) {{ stream.AddReference(__TEMP__RESULT__{symbol.Name}.Reference, (obj) => ExternWrapper{package.ClassInfo.TypeParameterArguments}.set_{symbol.Name}(res,({symbol.Type})obj)); }}");
+                    setResults.AppendLine($"else {{ ExternWrapper.set_{symbol.Name}(res,__TEMP__{symbol.Name}); }}");
+                    setResults.AppendLine("#endif");
+                }
+                else
+                {
+                    setResults.AppendLine($"if(__TEMP__RESULT__{symbol.Name}.IsReference) {{ stream.AddReference(__TEMP__RESULT__{symbol.Name}.Reference, (obj) => res.{symbol.Name} = ({symbol.Type}{(symbol.IsArray ? "[]" : "")})obj); }}");
+                    setResults.AppendLine($"else {{ res.{symbol.Name} = __TEMP__{symbol.Name}; }}");
+                }
+            }
         }
         var ifstatement = "\t\t\t\tstream.SkipRead();";
 
@@ -30,20 +62,14 @@ internal class DeserializeEmitter
             """;
         }
         return $$"""
-        {{package.CreateTempMembers()}}
+        {{objTempVariables}}
                 foreach (var key in stream.ReadMapping())
                 {
         {{ifstatement}}
 
                 }
-
-                var __TEMP__RESULT = new {{info.NameDefinition}}
-                {
-                    {{objectCreation.ToString().Trim(',')}}
-                };
-                {{CreateReferenceFallback(package.MemberSymbols, package.ClassInfo)}}
-             
-                 value = __TEMP__RESULT;
+                {{setResults}}
+                 value = res;
         """;
     }
 

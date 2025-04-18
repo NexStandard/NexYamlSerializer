@@ -42,9 +42,9 @@ internal record class CompactRecordWithCompactMember
 [DataContract]
 internal record class CompactMembers
 {
-    public required CompactRecord X { get; set; }
+    public CompactRecord X { get; set; }
     [DataStyle(DataStyle.Compact)]
-    public required NonCompactClass NonCompactClass { get; set; }
+    public NonCompactClass NonCompactClass { get; set; }
 }
 [DataContract]
 internal record class CompactList

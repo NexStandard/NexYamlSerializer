@@ -26,10 +26,10 @@ public abstract class YamlSerializer<T> : YamlSerializer
     }
     public override void Read(IYamlReader stream, ref object? value, ref ParseResult parseResult)
     {
-        var val = (T)value!;
+        var val = (T?)value!;
         Read(stream, ref val, ref parseResult);
         value = val;
     }
     public abstract void Write(IYamlWriter stream, T value, DataStyle style);
-    public abstract void Read(IYamlReader stream, [MaybeNull] ref T value, ref ParseResult parseResult);
+    public abstract void Read(IYamlReader stream, ref T value, ref ParseResult parseResult);
 }

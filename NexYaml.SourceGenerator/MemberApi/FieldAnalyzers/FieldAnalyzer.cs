@@ -21,7 +21,8 @@ internal class FieldAnalyzer(ReferencePackage package) : IMemberSymbolAnalyzer<I
             IsInterface = context.Symbol.Type.TypeKind == TypeKind.Interface,
             Context = context.DataMemberContext,
             IsArray = context.Symbol.Type.TypeKind == TypeKind.Array,
-            IsInit = context.Symbol.IsReadOnly,
+            IsInit = false,
+            IsReadonly = context.Symbol.IsReadOnly
         };
     }
 

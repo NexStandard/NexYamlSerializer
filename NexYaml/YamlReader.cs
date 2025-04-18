@@ -62,6 +62,16 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
     }
     public void Read<T>(ref T? value, ref ParseResult parseResult)
     {
+        if(value is not null)
+        {
+
+        }
+        if (IsNullScalar())
+        {
+            value = default;
+            Move();
+            return;
+        }
         foreach (var syntax in plugins)
         {
             if (syntax.Read(this, ref value, ref parseResult))

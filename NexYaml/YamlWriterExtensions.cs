@@ -209,7 +209,7 @@ public static class YamlWriterExtensions
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
         stream.Write(span[..written]);
     }
-
+    
     /// <summary>
     /// Writes the YAML scalar of <paramref name="key"/> and the <paramref name="value"/>
     /// </summary>

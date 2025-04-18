@@ -22,6 +22,7 @@ internal class PropertyAnalyzer(ReferencePackage package) : IMemberSymbolAnalyze
             Context = context.DataMemberContext,
             IsArray = context.Symbol.Type.TypeKind == TypeKind.Array,
             IsInit = context.Symbol.SetMethod?.IsInitOnly ?? false,
+            IsReadonly = context.Symbol.SetMethod == null || context.Symbol.SetMethod.DeclaredAccessibility is not Accessibility.Public or Accessibility.Internal
         };
     }
 

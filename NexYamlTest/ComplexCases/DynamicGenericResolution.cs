@@ -31,8 +31,8 @@ internal abstract class GenericAbstractWithDataContract<T, K>
 [DataContract]
 internal class GenericAbstractImplementation<T, K> : GenericAbstract<T, K>
 {
-    public required T TI { get; set; }
-    public required K TI2 { get; set; }
+    public T TI { get; set; }
+    public K TI2 { get; set; }
 }
 [DataContract]
 internal class GenericAbstractImlementationLessParams<T> : GenericAbstract<T, int>

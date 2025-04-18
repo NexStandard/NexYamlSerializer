@@ -24,7 +24,14 @@ internal record DataMemberContext
             {
                 context.Mode = (MemberMode)mode;
                 if (context.Mode == MemberMode.Never)
+                {
                     context.State = DataMemberContextState.Excluded;
+                }
+
+                if (context.Mode == MemberMode.Content)
+                {
+                    context.State = DataMemberContextState.Included;
+                }
             }
             else
             {
