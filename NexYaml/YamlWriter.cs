@@ -192,9 +192,9 @@ public class YamlWriter : IYamlWriter
             }
         }
     }
-    public void WriteTag(string tag, bool force)
+    public void WriteTag(string tag)
     {
-        if (IsRedirected || IsFirst || force)
+        if (IsRedirected || IsFirst)
         {
             var fulTag = tag;
             StateMachine.Tag(ref fulTag);

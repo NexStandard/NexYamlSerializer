@@ -19,7 +19,7 @@ public interface IYamlWriter
     /// </summary>
     /// <param name="tag">The YAML tag identifying the object's type.</param>
     /// <param name="force">If set to true, the tag will be written regardless of the context.</param>
-    void WriteTag(string tag, bool force = false);
+    void WriteTag(string tag);
 
     /// <summary>
     /// Maintains a cache of references used during serialization to prevent duplication 
