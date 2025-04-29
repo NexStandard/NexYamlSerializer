@@ -10,13 +10,10 @@ public class YamlWriter : IYamlWriter
 {
     /// <summary>
     /// Tracks whether the tag has to be written.
+    /// Default to True as the first element always has to be written
     /// </summary>
-    public bool IsRedirected { get; set; } = false;
+    public bool IsRedirected { get; set; } = true;
     public HashSet<Guid> References { get; private set; } = new();
-    /// <summary>
-    /// Tracks if the first element is written, if not the <see cref="WriteTag(string)"/> has to be always included.
-    /// </summary>
-    private bool IsFirst { get; set; } = true;
     private ICollection<IResolvePlugin> Plugins;
     public IYamlSerializerResolver Resolver { get; init; }
 
@@ -40,8 +37,7 @@ public class YamlWriter : IYamlWriter
     }
     public void Reset()
     {
-        IsRedirected = false;
-        IsFirst = true;
+        IsRedirected = true;
         enforcer = new();
         References = new();
         StateMachine.Reset();
@@ -194,12 +190,11 @@ public class YamlWriter : IYamlWriter
     }
     public void WriteTag(string tag)
     {
-        if (IsRedirected || IsFirst)
+        if (IsRedirected)
         {
             var fulTag = tag;
             StateMachine.Tag(ref fulTag);
             IsRedirected = false;
-            IsFirst = false;
         }
     }
 }
