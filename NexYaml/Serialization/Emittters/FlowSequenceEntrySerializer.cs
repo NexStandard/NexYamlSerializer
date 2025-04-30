@@ -82,7 +82,7 @@ internal class FlowSequenceEntrySerializer : IEmitter
                 machine.ElementCount++;
                 break;
             case EmitState.FlowMappingValue:
-                machine.Current = machine.Map(EmitState.FlowMappingKey);
+                machine.Current = machine.Map(EmitState.FlowMappingSecondaryKey);
                 machine.ElementCount++;
                 break;
             case EmitState.FlowSequenceEntry:

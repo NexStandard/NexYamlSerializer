@@ -51,6 +51,49 @@ internal class BlockMapKeySerializer : IEmitter
             }
         }
         machine.Next = machine.Map(State);
+        switch (machine.Previous.State)
+        {
+            case EmitState.BlockSequenceEntry:
+            {
+                machine.IndentationManager.IncreaseIndent();
+
+                // Try writing the tag, if present
+                if (machine.TryGetTag(out var tag))
+                {
+                    WriteRaw(tag);
+                    WriteRaw(YamlCodes.NewLine);
+                    WriteIndent();
+                }
+                else
+                {
+                    WriteIndent(machine.IndentationManager.IndentWidth - 2);
+                }
+                break;
+            }
+            case EmitState.BlockMappingValue:
+            {
+                machine.IndentationManager.IncreaseIndent();
+                // Try writing the tag, if present
+                if (machine.TryGetTag(out var tag))
+                {
+                    WriteRaw(tag);
+                }
+                WriteNewLine();
+                WriteIndent();
+                break;
+            }
+            default:
+                WriteIndent();
+                break;
+        }
+
+        // Write tag if applicable
+        if (machine.TryGetTag(out var tag2))
+        {
+            WriteRaw(tag2);
+            WriteNewLine();
+            WriteIndent();
+        }
     }
 
     /// <summary>
@@ -62,49 +105,7 @@ internal class BlockMapKeySerializer : IEmitter
     {
         if (machine.IsFirstElement)
         {
-            switch (machine.Previous.State)
-            {
-                case EmitState.BlockSequenceEntry:
-                {
-                    machine.IndentationManager.IncreaseIndent();
 
-                    // Try writing the tag, if present
-                    if (machine.TryGetTag(out var tag))
-                    {
-                        WriteRaw(tag);
-                        WriteRaw(YamlCodes.NewLine);
-                        WriteIndent();
-                    }
-                    else
-                    {
-                        WriteIndent(machine.IndentationManager.IndentWidth - 2);
-                    }
-                    break;
-                }
-                case EmitState.BlockMappingValue:
-                {
-                    machine.IndentationManager.IncreaseIndent();
-                    // Try writing the tag, if present
-                    if (machine.TryGetTag(out var tag))
-                    {
-                        WriteRaw(tag);
-                    }
-                    WriteNewLine();
-                    WriteIndent();
-                    break;
-                }
-                default:
-                    WriteIndent();
-                    break;
-            }
-
-            // Write tag if applicable
-            if (machine.TryGetTag(out var tag2))
-            {
-                WriteRaw(tag2);
-                WriteNewLine();
-                WriteIndent();
-            }
         }
         else
         {

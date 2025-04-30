@@ -49,6 +49,15 @@ public enum EmitState
     FlowMappingKey,
 
     /// <summary>
+    /// Inside a flow-style mapping (e.g., "{ key: value }").
+    /// Expects a key to be emitted.
+    /// Used for non First Elements
+    /// </summary>
+    FlowMappingSecondaryKey,
+
+
+
+    /// <summary>
     /// Inside a flow-style mapping.
     /// Expects a value after a key.
     /// </summary>

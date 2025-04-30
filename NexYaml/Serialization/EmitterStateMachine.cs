@@ -13,15 +13,25 @@ internal class EmitterStateMachine
 {
     private IEmitter blockMapKeySerializer;
     private IEmitter flowMapKeySerializer;
+    private IEmitter flowMapSecondarySerializer;
     private IEmitter blockSequenceEntrySerializer;
     private IEmitter flowSequenceEntrySerializer;
     private IEmitter emptySerializer;
     private IEmitter blockMapValueSerializer;
     private IEmitter flowMapValueSerializer;
+    public int CurrentIndentLevel => IndentationManager.CurrentIndentLevel;
+    public ExpandBuffer<IEmitter> StateStack { get; private set; } = new ExpandBuffer<IEmitter>(4);
+    internal IndentationManager IndentationManager { get; } = new();
+
+    protected ExpandBuffer<int> elementCountStack = new(4);
+    protected ExpandBuffer<string> tagStack = new(4);
+    public bool IsFirstElement => ElementCount == 0;
+    public int ElementCount { get; set; }
     public EmitterStateMachine(YamlWriter stream)
     {
         blockMapKeySerializer = new BlockMapKeySerializer(stream, this);
         flowMapKeySerializer = new FlowMapKeySerializer(stream, this);
+        flowMapSecondarySerializer = new FlowMapSecondKeySerializer(stream, this);
         blockSequenceEntrySerializer = new BlockSequenceEntrySerializer(stream, this);
         flowSequenceEntrySerializer = new FlowSequenceEntrySerializer(stream, this);
         blockMapValueSerializer = new BlockMapValueSerializer(stream, this);
@@ -37,6 +47,7 @@ internal class EmitterStateMachine
     {
         return state switch
         {
+            EmitState.FlowMappingSecondaryKey => flowMapSecondarySerializer,
             EmitState.BlockSequenceEntry => blockSequenceEntrySerializer,
             EmitState.FlowSequenceEntry => flowSequenceEntrySerializer,
             EmitState.FlowMappingKey => flowMapKeySerializer,
@@ -75,13 +86,7 @@ internal class EmitterStateMachine
         }
         throw new ArgumentException();
     }
-    public int CurrentIndentLevel => IndentationManager.CurrentIndentLevel;
-    public ExpandBuffer<IEmitter> StateStack { get; private set; } = new ExpandBuffer<IEmitter>(4);
-    internal IndentationManager IndentationManager { get; } = new();
 
-    protected ExpandBuffer<int> elementCountStack = new(4);
-    protected ExpandBuffer<string> tagStack = new(4);
-    public bool IsFirstElement => ElementCount == 0;
     public IEmitter Current
     {
         get => StateStack.Current;
@@ -111,7 +116,7 @@ internal class EmitterStateMachine
     {
         tagStack.Add(value);
     }
-    public int ElementCount { get; set; }
+    
     public virtual void Reset()
     {
 

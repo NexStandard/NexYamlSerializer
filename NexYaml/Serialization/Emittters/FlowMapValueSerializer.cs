@@ -17,12 +17,12 @@ internal class FlowMapValueSerializer : IEmitter
     public override void WriteScalar(ReadOnlySpan<char> value)
     {
         WriteRaw(value);
-        machine.Current = machine.Map(EmitState.FlowMappingKey);
+        machine.Current = machine.Map(EmitState.FlowMappingSecondaryKey);
         machine.ElementCount++;
     }
 
     public override void End()
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 }

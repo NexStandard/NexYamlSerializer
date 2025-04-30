@@ -197,5 +197,5 @@ public class YamlWriter : IYamlWriter
             IsRedirected = false;
         }
     }
-}
+    }
 

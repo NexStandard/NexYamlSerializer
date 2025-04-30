@@ -4,6 +4,7 @@ using NexYamlTest.ComplexCases;
 using NexYamlTest.SimpleClasses;
 using SharpFont;
 using Stride.Core;
+using Stride.Core.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,7 @@ public class CollectionTest
         var collection = new NullDictionary();
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(collection);
+        
         var d = Yaml.Read<NullDictionary>(s);
         Assert.NotNull(d);
         Assert.Null(d.dict);
@@ -33,7 +35,7 @@ public class CollectionTest
     [Fact]
     public void EmitMixedCollection()
     {
-        var list = new List<GenericAbstract<int, int>>
+        IList<GenericAbstract<int,int>> list = new List<GenericAbstract<int, int>>
         {
             new GenericAbstractImlementationLessParams<int>(),
             new GenericAbstractImplementation<int, int>() { TI = 1, TI2 = 3 }

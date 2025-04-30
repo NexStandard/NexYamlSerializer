@@ -29,35 +29,29 @@ internal class BlockSequenceEntrySerializer : IEmitter
         }
 
         machine.Next = machine.Map(State);
-    }
-
-    public override void WriteScalar(ReadOnlySpan<char> output)
-    {
-        // first nested element
-        if (machine.IsFirstElement)
-        {
-            switch (machine.Previous.State)
-            {
-                case EmitState.BlockSequenceEntry:
-                    machine.IndentationManager.IncreaseIndent();
-                    WriteNewLine();
-                    break;
-                case EmitState.BlockMappingValue:
-                    WriteNewLine();
-                    break;
-            }
-        }
-
-        WriteIndent();
-        WriteSequenceSeparator();
-
-        // Write tag
         if (machine.TryGetTag(out var tag))
         {
             WriteRaw(tag);
             WriteNewLine();
-            WriteIndent();
+            // TODO: needed?
+            // WriteIndent();
         }
+        switch (machine.Previous.State)
+        {
+            case EmitState.BlockSequenceEntry:
+                machine.IndentationManager.IncreaseIndent();
+                WriteNewLine();
+                break;
+            case EmitState.BlockMappingValue:
+                WriteNewLine();
+                break;
+        }
+    }
+
+    public override void WriteScalar(ReadOnlySpan<char> output)
+    {
+        WriteIndent();
+        WriteSequenceSeparator();
         WriteRaw(output);
         WriteNewLine();
 

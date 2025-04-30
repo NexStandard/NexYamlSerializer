@@ -56,8 +56,8 @@ file sealed class {info.GeneratorName + info.TypeParameterArguments} : YamlSeria
     public override void Write(IYamlWriter stream, {info.NameDefinition} value, DataStyle style = {info.DataStyle})
     {{
         style = style == DataStyle.Any ? Style : style;
-        stream.BeginMapping(style);
         stream.WriteTag(""!{tag}"");
+        stream.BeginMapping(style);
 {package.CreateNewSerializationEmit()}
         stream.EndMapping();
     }}

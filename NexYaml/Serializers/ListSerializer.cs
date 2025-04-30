@@ -34,6 +34,7 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
                 }
             }
             List<IIdentifiable> removedIds = new();
+            
             stream.BeginSequence(style);
             for (var i = 0; i < value.Count; i++)
             {
@@ -50,7 +51,8 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
             stream.EndSequence();
             return;
         }
-            stream.BeginSequence(style);
+        stream.WriteTag("!List");
+        stream.BeginSequence(style);
         if (typeof(T).IsValueType)
         {
             var structSerializer = stream.Resolver.GetSerializer<T>();
@@ -99,6 +101,7 @@ public class ListSerializerFactory : IYamlSerializerFactory
 
         resolver.Register(this, typeof(List<>), typeof(List<>));
 
+        resolver.RegisterTag("List", typeof(List<>));
         resolver.Register(this, typeof(List<>), typeof(IList<>));
         resolver.Register(this, typeof(List<>), typeof(ICollection<>));
         resolver.Register(this, typeof(List<>), typeof(IReadOnlyList<>));

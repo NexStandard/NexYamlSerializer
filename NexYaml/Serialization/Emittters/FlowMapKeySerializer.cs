@@ -41,10 +41,7 @@ internal class FlowMapKeySerializer : IEmitter
             }
             WriteFlowMappingStart();
         }
-        if (!machine.IsFirstElement)
-        {
-            WriteFlowSequenceSeparator();
-        }
+
         WriteRaw(value);
         WriteMappingKeyFooter();
         machine.Current = machine.Map(EmitState.FlowMappingValue);
@@ -64,16 +61,11 @@ internal class FlowMapKeySerializer : IEmitter
             {
                 WriteRaw(tag);
                 WriteSpace();
-                WriteEmptyFlowMapping();
-                WriteNewLine();
-                writeFlowMapEnd = false;
             }
-            else
-            {
-                WriteEmptyFlowMapping();
-                WriteNewLine();
-                writeFlowMapEnd = false;
-            }
+
+            WriteEmptyFlowMapping();
+            WriteNewLine();
+            writeFlowMapEnd = false;
         }
         machine.PopState();
 
