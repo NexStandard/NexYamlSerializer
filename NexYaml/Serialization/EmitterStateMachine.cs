@@ -140,7 +140,6 @@ internal class EmitterStateMachine
     public virtual void Dispose()
     {
         StateStack.Dispose();
-        elementCountStack.Dispose();
         tagStack.Dispose();
     }
     public void WriteScalar(ReadOnlySpan<char> value)

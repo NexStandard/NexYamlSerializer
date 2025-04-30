@@ -33,8 +33,6 @@ internal class BlockSequenceEntrySerializer : IEmitter
         {
             WriteRaw(tag);
             WriteNewLine();
-            // TODO: needed?
-            // WriteIndent();
         }
         switch (machine.Previous.State)
         {
