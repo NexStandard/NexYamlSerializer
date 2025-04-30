@@ -36,6 +36,17 @@ public static class YamlWriterExtensions
         public void Dispose() => _stream.EndMapping();
     }
 
+    public static void WriteEmptySequence(this IYamlWriter writer, string tag)
+    {
+        writer.WriteTag(tag);
+        writer.WriteScalar("[ ]");
+    }
+    public static void WriteEmptyMapping(this IYamlWriter writer, string tag)
+    {
+        writer.WriteTag(tag);
+        writer.WriteScalar("{ }");
+    }
+
     /// <summary>
     /// Writes the YAML scalar of <paramref name="key"/> and the <paramref name="value"/>
     /// </summary>

@@ -7,6 +7,11 @@ public class ArraySerializer<T> : YamlSerializer<T[]>
 {
     public override void Write(IYamlWriter stream, T[] value, DataStyle style)
     {
+        if (value.Length == 0)
+        {
+            ((YamlWriter)stream).WriteEmptySequence("!Array");
+            return;
+        }
         using (stream.SequenceScope(style))
         {
             foreach (var x in value)

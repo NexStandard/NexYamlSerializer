@@ -60,27 +60,11 @@ internal class BlockSequenceEntrySerializer : IEmitter
 
     public override void End()
     {
-        var isEmptySequence = machine.ElementCount == 0;
         machine.PopState();
-
-        // Empty sequence
-        if (isEmptySequence)
-        {
-            WriteEmptyFlowSequence();
-            var lineBreak = machine.Current.State is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
-            if (lineBreak)
-            {
-                WriteNewLine();
-            }
-        }
-
         switch (machine.Current.State)
         {
             case EmitState.BlockSequenceEntry:
-                if (!isEmptySequence)
-                {
-                    machine.IndentationManager.DecreaseIndent();
-                }
+                machine.IndentationManager.DecreaseIndent();
                 machine.ElementCount++;
                 break;
 
@@ -91,7 +75,6 @@ internal class BlockSequenceEntrySerializer : IEmitter
                 machine.Current = machine.Map(EmitState.BlockMappingKey);
                 machine.ElementCount++;
                 break;
-
             case EmitState.FlowSequenceEntry:
                 machine.ElementCount++;
                 break;

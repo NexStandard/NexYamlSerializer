@@ -49,6 +49,11 @@ internal class DictionarySerializerFactory : IYamlSerializerFactory
     {
         if (SerializerExtensions.IsPrimitive(typeof(TKey)))
         {
+            if (value.Count == 0)
+            {
+                ((YamlWriter)stream).WriteEmptyMapping("!Dictionary");
+                return;
+            }
             stream.BeginMapping(style);
             foreach (var x in value)
             {
@@ -60,6 +65,11 @@ internal class DictionarySerializerFactory : IYamlSerializerFactory
         }
         else
         {
+            if (value?.Count == 0)
+            {
+                ((YamlWriter)stream).WriteEmptySequence("!Dictionary");
+                return;
+            }
             var kvp = new KeyValuePairSerializer<TKey, TValue>();
             using (stream.SequenceScope(style))
             {

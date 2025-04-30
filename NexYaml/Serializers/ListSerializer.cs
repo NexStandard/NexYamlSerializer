@@ -11,6 +11,11 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
     {
         stream.IsRedirected = false;
         bool hasIdentifiable = false;
+        if (value.Count == 0)
+        {
+            ((YamlWriter)stream).WriteEmptySequence("!List");
+            return;
+        }
         foreach (var item in value)
         {
             if(item is IIdentifiable)
