@@ -103,14 +103,6 @@ internal class BlockMapKeySerializer : IEmitter
     /// <param name="output">The scalar key value to be written to the YAML output.</param>
     public override void WriteScalar(ReadOnlySpan<char> output)
     {
-        if (machine.IsFirstElement)
-        {
-
-        }
-        else
-        {
-            WriteIndent();
-        }
         WriteRaw(output);
         WriteMappingKeyFooter();
         machine.Current = machine.Map(EmitState.BlockMappingValue);
@@ -122,50 +114,22 @@ internal class BlockMapKeySerializer : IEmitter
     /// </summary>
     public override void End()
     {
-        var isEmptyMapping = machine.IsFirstElement;
         machine.PopState();
-
-        if (isEmptyMapping)
-        {
-            var lineBreak = machine.Current.State is EmitState.BlockSequenceEntry or EmitState.BlockMappingValue;
-            if (machine.TryGetTag(out var tag))
-            {
-                WriteRaw(tag);
-                WriteSpace();
-            }
-            WriteEmptyFlowMapping();
-            if (lineBreak)
-            {
-                WriteNewLine();
-            }
-        }
 
         switch (machine.Current.State)
         {
             case EmitState.BlockSequenceEntry:
-                if (!isEmptyMapping)
-                {
-                    machine.IndentationManager.DecreaseIndent();
-                }
-                machine.ElementCount++;
+                machine.IndentationManager.DecreaseIndent();
                 break;
 
             case EmitState.BlockMappingValue:
-                if (!isEmptyMapping)
-                {
-                    machine.IndentationManager.DecreaseIndent();
-                }
+                machine.IndentationManager.DecreaseIndent();
                 machine.Current = machine.Map(EmitState.BlockMappingKey);
-                machine.ElementCount++;
                 break;
 
             case EmitState.FlowMappingValue:
                 // This case is not implemented, further clarification needed
                 throw new NotImplementedException();
-                break;
-
-            case EmitState.FlowSequenceEntry:
-                machine.ElementCount++;
                 break;
         }
     }

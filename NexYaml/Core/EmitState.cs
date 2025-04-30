@@ -31,6 +31,13 @@ public enum EmitState
     BlockMappingKey,
 
     /// <summary>
+    /// Inside a block-style mapping (e.g., "key: value").
+    /// Expects a key to be emitted.
+    /// Used for non First Elements
+    /// </summary>
+    BlockMappingSecondaryKey,
+
+    /// <summary>
     /// Inside a block-style mapping.
     /// Expects a value after a key.
     /// </summary>
@@ -41,6 +48,12 @@ public enum EmitState
     /// Expects a sequence entry with comma-separated syntax.
     /// </summary>
     FlowSequenceEntry,
+
+    /// <summary>
+    /// Inside a flow-style sequence (e.g., "[item1, item2]").
+    /// Expects a sequence entry with comma-separated syntax.
+    /// </summary>
+    FlowSequenceSecondaryEntry,
 
     /// <summary>
     /// Inside a flow-style mapping (e.g., "{ key: value }").

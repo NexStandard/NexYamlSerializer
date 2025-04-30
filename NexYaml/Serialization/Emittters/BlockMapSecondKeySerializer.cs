@@ -18,4 +18,22 @@ internal class BlockMapSecondKeySerializer : BlockMapKeySerializer
         WriteMappingKeyFooter();
         machine.Current = machine.Map(EmitState.BlockMappingValue);
     }
+    public override void End()
+    {
+        machine.PopState();
+
+        switch (machine.Current.State)
+        {
+            case EmitState.BlockSequenceEntry:
+                machine.IndentationManager.DecreaseIndent();
+                break;
+            case EmitState.BlockMappingValue:
+                machine.IndentationManager.DecreaseIndent();
+                machine.Current = machine.Map(EmitState.BlockMappingSecondaryKey);
+                break;
+            case EmitState.FlowMappingValue:
+                // This case is not implemented, further clarification needed
+                throw new NotImplementedException();
+        }
+    }
 }

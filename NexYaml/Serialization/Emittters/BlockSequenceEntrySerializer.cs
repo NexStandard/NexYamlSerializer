@@ -23,7 +23,7 @@ internal class BlockSequenceEntrySerializer : IEmitter
             case EmitState.FlowMappingKey:
                 throw new YamlException(
                     "To start block-sequence in the flow mapping key is not supported.");
-            case EmitState.BlockMappingKey:
+            case EmitState.BlockMappingKey or EmitState.BlockMappingSecondaryKey:
                 throw new YamlException(
                     "To start block-sequence in the mapping key is not supported.");
         }
@@ -54,8 +54,6 @@ internal class BlockSequenceEntrySerializer : IEmitter
         WriteSequenceSeparator();
         WriteRaw(output);
         WriteNewLine();
-
-        machine.ElementCount++;
     }
 
     public override void End()
@@ -65,7 +63,6 @@ internal class BlockSequenceEntrySerializer : IEmitter
         {
             case EmitState.BlockSequenceEntry:
                 machine.IndentationManager.DecreaseIndent();
-                machine.ElementCount++;
                 break;
 
             case EmitState.BlockMappingKey:
@@ -73,10 +70,6 @@ internal class BlockSequenceEntrySerializer : IEmitter
 
             case EmitState.BlockMappingValue:
                 machine.Current = machine.Map(EmitState.BlockMappingKey);
-                machine.ElementCount++;
-                break;
-            case EmitState.FlowSequenceEntry:
-                machine.ElementCount++;
                 break;
         }
     }

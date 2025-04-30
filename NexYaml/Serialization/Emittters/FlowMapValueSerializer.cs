@@ -18,7 +18,6 @@ internal class FlowMapValueSerializer : IEmitter
     {
         WriteRaw(value);
         machine.Current = machine.Map(EmitState.FlowMappingSecondaryKey);
-        machine.ElementCount++;
     }
 
     public override void End()

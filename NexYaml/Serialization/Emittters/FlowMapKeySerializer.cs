@@ -16,32 +16,25 @@ internal class FlowMapKeySerializer : IEmitter
         {
             WriteBlockSequenceEntryHeader();
         }
-        else if (current is EmitState.FlowSequenceEntry)
+        else if (current is EmitState.FlowSequenceSecondaryEntry)
         {
-            if (machine.ElementCount > 0)
-            {
-                WriteFlowSequenceSeparator();
-            }
+                 WriteFlowSequenceSeparator();
         }
         else if (current is EmitState.BlockMappingKey)
         {
             throw new InvalidOperationException($"To start flow-mapping in the {current} is not supported");
         }
         machine.Next = machine.Map(State);
+        if (machine.TryGetTag(out var tag))
+        {
+            WriteRaw(tag);
+            WriteSpace();
+        }
+        WriteFlowMappingStart();
     }
 
     public override void WriteScalar(ReadOnlySpan<char> value)
     {
-        if (machine.IsFirstElement)
-        {
-            if (machine.TryGetTag(out var tag))
-            {
-                WriteRaw(tag);
-                WriteSpace();
-            }
-            WriteFlowMappingStart();
-        }
-
         WriteRaw(value);
         WriteMappingKeyFooter();
         machine.Current = machine.Map(EmitState.FlowMappingValue);
@@ -53,20 +46,7 @@ internal class FlowMapKeySerializer : IEmitter
         {
             throw new YamlException($"Invalid block mapping end: {machine.Current}");
         }
-        var isEmptyMapping = machine.IsFirstElement;
-        var writeFlowMapEnd = true;
-        if (isEmptyMapping)
-        {
-            if (machine.TryGetTag(out var tag))
-            {
-                WriteRaw(tag);
-                WriteSpace();
-            }
 
-            WriteEmptyFlowMapping();
-            WriteNewLine();
-            writeFlowMapEnd = false;
-        }
         machine.PopState();
 
         var needsLineBreak = false;
@@ -74,26 +54,19 @@ internal class FlowMapKeySerializer : IEmitter
         {
             case EmitState.BlockSequenceEntry:
                 needsLineBreak = true;
-                machine.ElementCount++;
                 break;
             case EmitState.BlockMappingValue:
                 machine.Current = machine.Map(EmitState.BlockMappingKey);
                 needsLineBreak = true;
-                machine.ElementCount++;
                 break;
             case EmitState.FlowSequenceEntry:
-                machine.ElementCount++;
+                machine.Current = machine.Map(EmitState.FlowSequenceSecondaryEntry);
                 break;
             case EmitState.FlowMappingValue:
                 machine.Current = machine.Map(EmitState.FlowMappingKey);
-                machine.ElementCount++;
                 break;
         }
-
-        if (writeFlowMapEnd)
-        {
-            WriteFlowMappingEnd();
-        }
+        WriteFlowMappingEnd();
 
         if (needsLineBreak)
         {

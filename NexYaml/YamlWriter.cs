@@ -67,7 +67,7 @@ public class YamlWriter : IYamlWriter
     /// <inheritdoc />
     public void EndSequence()
     {
-        if (StateMachine.Current.State is EmitState.BlockSequenceEntry or EmitState.FlowSequenceEntry)
+        if (StateMachine.Current.State is EmitState.BlockSequenceEntry or EmitState.FlowSequenceEntry or EmitState.FlowSequenceSecondaryEntry)
         {
             StateMachine.Current.End();
             enforcer.End();
@@ -101,8 +101,9 @@ public class YamlWriter : IYamlWriter
     /// <inheritdoc />
     public void WriteScalar(ReadOnlySpan<char> value)
     {
-        // StateMachine.WriteScalar(value);
-        StateMachine.WriteScalar(value);
+
+            StateMachine.WriteScalar(value);
+        
     }
 
     /// <inheritdoc />

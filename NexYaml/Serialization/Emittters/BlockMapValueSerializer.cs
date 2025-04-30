@@ -18,8 +18,7 @@ internal class BlockMapValueSerializer : IEmitter
     {
         WriteRaw(output);
         WriteNewLine();
-        machine.Current = machine.Map(EmitState.BlockMappingKey);
-        machine.ElementCount++;
+        machine.Current = machine.Map(EmitState.BlockMappingSecondaryKey);
     }
 
     public override void End()

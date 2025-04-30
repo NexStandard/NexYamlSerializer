@@ -52,19 +52,17 @@ internal abstract class IEmitter(IYamlWriter writer, EmitterStateMachine machine
     /// </summary>
     protected void WriteBlockSequenceEntryHeader()
     {
-        if (machine.IsFirstElement)
+        switch (machine.Previous.State)
         {
-            switch (machine.Previous.State)
-            {
-                case EmitState.BlockSequenceEntry:
-                    writer.WriteRaw(YamlCodes.NewLine);
-                    machine.IndentationManager.IncreaseIndent();
-                    break;
-                case EmitState.BlockMappingValue:
-                    writer.WriteRaw(YamlCodes.NewLine);
-                    break;
-            }
+            case EmitState.BlockSequenceEntry:
+                writer.WriteRaw(YamlCodes.NewLine);
+                machine.IndentationManager.IncreaseIndent();
+                break;
+            case EmitState.BlockMappingValue:
+                writer.WriteRaw(YamlCodes.NewLine);
+                break;
         }
+
         WriteIndent();
         WriteSequenceIdentifier();
     }

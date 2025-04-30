@@ -5,8 +5,8 @@ internal class EmptySerializer : IEmitter
 {
     public override EmitState State { get; } = EmitState.None;
 
-    public EmptySerializer()  :base(null, null)
-    {
+    public EmptySerializer(YamlWriter writer, EmitterStateMachine machine) : base(writer, machine)
+{
     }
 
     public override void Begin()
@@ -15,6 +15,7 @@ internal class EmptySerializer : IEmitter
 
     public override void WriteScalar(ReadOnlySpan<char> output)
     {
+        WriteRaw(output);
     }
 
     public override void End()

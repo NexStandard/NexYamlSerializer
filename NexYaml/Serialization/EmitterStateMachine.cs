@@ -12,6 +12,7 @@ namespace NexYaml.Serialization;
 internal class EmitterStateMachine
 {
     private IEmitter blockMapKeySerializer;
+    private IEmitter blockMapSecondaryKeySerializer;
     private IEmitter flowMapKeySerializer;
     private IEmitter flowMapSecondarySerializer;
     private IEmitter blockSequenceEntrySerializer;
@@ -19,24 +20,23 @@ internal class EmitterStateMachine
     private IEmitter emptySerializer;
     private IEmitter blockMapValueSerializer;
     private IEmitter flowMapValueSerializer;
+    private IEmitter flowSequenceSecondarySerializer;
     public int CurrentIndentLevel => IndentationManager.CurrentIndentLevel;
     public ExpandBuffer<IEmitter> StateStack { get; private set; } = new ExpandBuffer<IEmitter>(4);
     internal IndentationManager IndentationManager { get; } = new();
-
-    protected ExpandBuffer<int> elementCountStack = new(4);
     protected ExpandBuffer<string> tagStack = new(4);
-    public bool IsFirstElement => ElementCount == 0;
-    public int ElementCount { get; set; }
     public EmitterStateMachine(YamlWriter stream)
     {
         blockMapKeySerializer = new BlockMapKeySerializer(stream, this);
+        blockMapSecondaryKeySerializer = new BlockMapSecondKeySerializer(stream, this);
         flowMapKeySerializer = new FlowMapKeySerializer(stream, this);
         flowMapSecondarySerializer = new FlowMapSecondKeySerializer(stream, this);
         blockSequenceEntrySerializer = new BlockSequenceEntrySerializer(stream, this);
         flowSequenceEntrySerializer = new FlowSequenceEntrySerializer(stream, this);
         blockMapValueSerializer = new BlockMapValueSerializer(stream, this);
         flowMapValueSerializer = new FlowMapValueSerializer(stream, this);
-        emptySerializer = new EmptySerializer();
+        flowSequenceSecondarySerializer = new FlowSequenceSecondaryEntrySerializer(stream, this);
+        emptySerializer = new EmptySerializer(stream,this);
         if (StateStack.Length == 0)
         {
             StateStack.Add(emptySerializer);
@@ -48,6 +48,8 @@ internal class EmitterStateMachine
         return state switch
         {
             EmitState.FlowMappingSecondaryKey => flowMapSecondarySerializer,
+            EmitState.FlowSequenceSecondaryEntry => flowSequenceSecondarySerializer,
+            EmitState.BlockMappingSecondaryKey => blockMapSecondaryKeySerializer,
             EmitState.BlockSequenceEntry => blockSequenceEntrySerializer,
             EmitState.FlowSequenceEntry => flowSequenceEntrySerializer,
             EmitState.FlowMappingKey => flowMapKeySerializer,
@@ -97,8 +99,6 @@ internal class EmitterStateMachine
         set
         {
             StateStack.Add(value);
-            elementCountStack.Add(ElementCount);
-            ElementCount = 0;
         }
     }
     public IEmitter Previous => StateStack.Previous;
@@ -109,7 +109,6 @@ internal class EmitterStateMachine
     public void PopState()
     {
         StateStack.Pop();
-        ElementCount = elementCountStack.Length > 0 ? elementCountStack.Pop() : 0;
     }
 
     public void Tag(ref string value)
@@ -128,15 +127,6 @@ internal class EmitterStateMachine
         {
             StateStack.Clear();
         }
-        if (elementCountStack is null)
-        {
-            elementCountStack = new ExpandBuffer<int>(4);
-        }
-        else
-        {
-            elementCountStack.Clear();
-        }
-        ElementCount = 0;
         StateStack.Add(Map(EmitState.None));
         if (tagStack is null)
         {
