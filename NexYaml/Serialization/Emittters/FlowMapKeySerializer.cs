@@ -42,11 +42,6 @@ internal class FlowMapKeySerializer : IEmitter
 
     public override void End()
     {
-        if (machine.Current.State is not EmitState.BlockMappingKey and not EmitState.FlowMappingKey)
-        {
-            throw new YamlException($"Invalid block mapping end: {machine.Current}");
-        }
-
         machine.PopState();
 
         var needsLineBreak = false;

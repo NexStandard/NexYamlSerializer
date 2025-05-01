@@ -21,7 +21,6 @@ internal class BlockMapSecondKeySerializer : BlockMapKeySerializer
     public override void End()
     {
         machine.PopState();
-
         switch (machine.Current.State)
         {
             case EmitState.BlockSequenceEntry:
@@ -32,7 +31,7 @@ internal class BlockMapSecondKeySerializer : BlockMapKeySerializer
                 machine.Current = machine.Map(EmitState.BlockMappingSecondaryKey);
                 break;
             case EmitState.FlowMappingValue:
-                // This case is not implemented, further clarification needed
+                // TODO: This case is not implemented, further clarification needed
                 throw new NotImplementedException();
         }
     }

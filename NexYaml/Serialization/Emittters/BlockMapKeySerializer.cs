@@ -46,12 +46,13 @@ internal class BlockMapKeySerializer : IEmitter
 
             case EmitState.BlockSequenceEntry:
             {
-                WriteBlockSequenceEntryHeader();
+                WriteIndent();
+                WriteSequenceIdentifier();
                 break;
             }
         }
-        machine.Next = machine.Map(State);
-        switch (machine.Previous.State)
+        
+        switch (machine.Current.State)
         {
             case EmitState.BlockSequenceEntry:
             {
@@ -87,6 +88,7 @@ internal class BlockMapKeySerializer : IEmitter
                 break;
         }
 
+        machine.Next = machine.Map(State);
         // Write tag if applicable
         if (machine.TryGetTag(out var tag2))
         {
@@ -118,6 +120,8 @@ internal class BlockMapKeySerializer : IEmitter
 
         switch (machine.Current.State)
         {
+            case EmitState.BlockMappingSecondaryKey:
+                break;
             case EmitState.BlockSequenceEntry:
                 machine.IndentationManager.DecreaseIndent();
                 break;

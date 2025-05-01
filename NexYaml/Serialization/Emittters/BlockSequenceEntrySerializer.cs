@@ -28,13 +28,13 @@ internal class BlockSequenceEntrySerializer : IEmitter
                     "To start block-sequence in the mapping key is not supported.");
         }
 
-        machine.Next = machine.Map(State);
+        
         if (machine.TryGetTag(out var tag))
         {
             WriteRaw(tag);
             WriteNewLine();
         }
-        switch (machine.Previous.State)
+        switch (machine.Current.State)
         {
             case EmitState.BlockSequenceEntry:
                 machine.IndentationManager.IncreaseIndent();
@@ -44,6 +44,7 @@ internal class BlockSequenceEntrySerializer : IEmitter
                 WriteNewLine();
                 break;
         }
+        machine.Next = machine.Map(State);
     }
 
     public override void WriteScalar(ReadOnlySpan<char> output)
@@ -57,6 +58,7 @@ internal class BlockSequenceEntrySerializer : IEmitter
     public override void End()
     {
         machine.PopState();
+
         switch (machine.Current.State)
         {
             case EmitState.BlockSequenceEntry:
