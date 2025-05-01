@@ -21,4 +21,5 @@ public struct ParseContext<T>
     public Guid Reference;
     public bool IsReference;
     public DataMemberMode DataMemberMode = DataMemberMode.Assign;
+    public T? Value;
 }
