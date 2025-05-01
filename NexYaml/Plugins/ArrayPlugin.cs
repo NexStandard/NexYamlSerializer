@@ -27,7 +27,7 @@ internal class ArrayPlugin : IResolvePlugin
             var arraySerializerType = typeof(ArraySerializer<>).MakeGenericType(t);
             var arraySerializer = (YamlSerializer)Activator.CreateInstance(arraySerializerType)!;
 
-            arraySerializer.Read(stream, ref val, ref result);
+            arraySerializer.ReadUnknown(stream, ref val, ref result);
             value = (T)val!;
             return true;
         }
