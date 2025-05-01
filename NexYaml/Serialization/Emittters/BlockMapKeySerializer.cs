@@ -37,25 +37,10 @@ internal class BlockMapKeySerializer : IEmitter
     {
         switch (machine.Current.State)
         {
-            case EmitState.BlockMappingKey:
-                throw new YamlException("To start block-mapping in the mapping key is not supported.");
-            case EmitState.FlowMappingKey:
-                throw new YamlException("To start flow-mapping in the mapping key is not supported.");
-            case EmitState.FlowSequenceEntry:
-                throw new YamlException("Cannot start block-mapping in the flow-sequence");
-
             case EmitState.BlockSequenceEntry:
             {
                 WriteIndent();
                 WriteSequenceIdentifier();
-                break;
-            }
-        }
-        
-        switch (machine.Current.State)
-        {
-            case EmitState.BlockSequenceEntry:
-            {
                 machine.IndentationManager.IncreaseIndent();
 
                 // Try writing the tag, if present
@@ -120,20 +105,12 @@ internal class BlockMapKeySerializer : IEmitter
 
         switch (machine.Current.State)
         {
-            case EmitState.BlockMappingSecondaryKey:
-                break;
             case EmitState.BlockSequenceEntry:
                 machine.IndentationManager.DecreaseIndent();
                 break;
-
             case EmitState.BlockMappingValue:
                 machine.IndentationManager.DecreaseIndent();
                 machine.Current = machine.Map(EmitState.BlockMappingKey);
-                break;
-
-            case EmitState.FlowMappingValue:
-                // This case is not implemented, further clarification needed
-                throw new NotImplementedException();
                 break;
         }
     }
