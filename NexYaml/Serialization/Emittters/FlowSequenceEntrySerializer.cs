@@ -42,26 +42,20 @@ internal class FlowSequenceEntrySerializer : IEmitter
     {
         machine.PopState();
         WriteFlowSequenceEnd();
-        var needsLineBreak = false;
         switch (machine.Current.State)
         {
             case EmitState.BlockSequenceEntry:
-                needsLineBreak = true;
+                WriteNewLine();
                 break;
             case EmitState.BlockMappingValue:
                 machine.Current = machine.Map(EmitState.BlockMappingKey);
-                needsLineBreak = true;
+                WriteNewLine();
                 break;
             case EmitState.FlowMappingValue:
                 machine.Current = machine.Map(EmitState.FlowMappingSecondaryKey);
                 break;
             case EmitState.FlowSequenceEntry:
                 break;
-        }
-
-        if (needsLineBreak)
-        {
-            WriteNewLine();
         }
     }
 }
