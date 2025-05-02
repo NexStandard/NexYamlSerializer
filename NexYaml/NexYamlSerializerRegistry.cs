@@ -172,11 +172,6 @@ internal class SerializerRegistry
     };
     internal Dictionary<Type, Type> GenericSerializerBuffer { get; } = new Dictionary<Type, Type>(new GenericEqualityComparer())
     {
-        [typeof(ICollection<>)] = typeof(CollectionInterfaceSerializer<>),
-        [typeof(IEnumerable<>)] = typeof(InterfaceEnumerableSerializer<>),
-        [typeof(IList<>)] = typeof(InterfaceLisSerializer<>),
-        [typeof(IReadOnlyList<>)] = typeof(InterfaceReadOnlyListSerializer<>),
-        [typeof(IReadOnlyCollection<>)] = typeof(InterfaceReadOnlyCollectionSerializer<>),
         [typeof(KeyValuePair<,>)] = typeof(KeyValuePairSerializer<,>),
         [typeof(Tuple<>)] = typeof(TupleSerializer<>),
         [typeof(Tuple<,>)] = typeof(TupleSerializer<,>),
