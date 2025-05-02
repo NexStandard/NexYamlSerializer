@@ -9,7 +9,6 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
 {
     public override void Write(IYamlWriter stream, List<T>? value, DataStyle style)
     {
-        stream.IsRedirected = false;
         bool hasIdentifiable = false;
         if (value.Count == 0)
         {
@@ -39,7 +38,7 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
                 }
             }
             List<IIdentifiable> removedIds = new();
-            
+            stream.WriteTag("!List");
             stream.BeginSequence(style);
             for (var i = 0; i < value.Count; i++)
             {
@@ -73,7 +72,7 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
                 stream.Write(x, style);
             }
         }
-            stream.EndSequence();
+        stream.EndSequence();
     }
 
     public override void Read(IYamlReader stream, ref List<T>? value, ref ParseResult result)

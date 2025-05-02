@@ -11,6 +11,11 @@ internal class FlowSequenceEntrySerializer : IEmitter
 
     public override void Begin()
     {
+        if (machine.TryGetTag(out var tag))
+        {
+            WriteRaw(tag);
+            WriteSpace();
+        }
         switch (machine.Current.State)
         {
             case EmitState.BlockMappingKey:
@@ -25,11 +30,7 @@ internal class FlowSequenceEntrySerializer : IEmitter
                 break;
         }
         machine.Next = machine.Map(State);
-        if (machine.TryGetTag(out var tag))
-        {
-            WriteRaw(tag);
-            WriteSpace();
-        }
+        
     }
 
     public override void WriteScalar(ReadOnlySpan<char> value)
