@@ -9,7 +9,6 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
 {
     public override void Write(IYamlWriter stream, Dictionary<TKey, TValue>? value, DataStyle style = DataStyle.Normal)
     {
-        stream.IsRedirected = false;
         DictionarySerializerFactory.Serialize(stream, value!, style);
     }
 
@@ -54,6 +53,7 @@ internal class DictionarySerializerFactory : IYamlSerializerFactory
                 ((YamlWriter)stream).WriteEmptyMapping("!Dictionary");
                 return;
             }
+            stream.WriteTag("!Dictionary");
             stream.BeginMapping(style);
             foreach (var x in value)
             {

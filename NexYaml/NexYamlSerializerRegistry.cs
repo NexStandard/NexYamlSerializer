@@ -177,8 +177,6 @@ internal class SerializerRegistry
         [typeof(IList<>)] = typeof(InterfaceLisSerializer<>),
         [typeof(IReadOnlyList<>)] = typeof(InterfaceReadOnlyListSerializer<>),
         [typeof(IReadOnlyCollection<>)] = typeof(InterfaceReadOnlyCollectionSerializer<>),
-        [typeof(IDictionary<,>)] = typeof(DictionaryInterfaceSerializer<,>),
-        [typeof(IReadOnlyDictionary<,>)] = typeof(DictionaryReadonlyInterfaceSerializer<,>),
         [typeof(KeyValuePair<,>)] = typeof(KeyValuePairSerializer<,>),
         [typeof(Tuple<>)] = typeof(TupleSerializer<>),
         [typeof(Tuple<,>)] = typeof(TupleSerializer<,>),
