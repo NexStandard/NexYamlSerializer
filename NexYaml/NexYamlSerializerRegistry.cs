@@ -94,8 +94,14 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
         registry.SerializerRegistry = new();
         var serializerFactories = assembly.GetTypes()
             .Where(t => typeof(IYamlSerializerFactory).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
-
+        var standard = typeof(Yaml).Assembly.GetTypes()
+            .Where(t => typeof(IYamlSerializerFactory).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
         foreach (var serializerFactory in serializerFactories)
+        {
+            var instance = (IYamlSerializerFactory)Activator.CreateInstance(serializerFactory)!;
+            instance.Register(registry);
+        }
+        foreach (var serializerFactory in standard)
         {
             var instance = (IYamlSerializerFactory)Activator.CreateInstance(serializerFactory)!;
             instance.Register(registry);
@@ -128,6 +134,7 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
                         instance.Register(Instance);
                     }
                 }
+               
                 IsReady = true;
             }
         }
