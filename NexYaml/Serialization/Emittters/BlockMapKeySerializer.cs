@@ -35,6 +35,7 @@ internal class BlockMapKeySerializer : IEmitter
     /// </summary>
     public override void Begin(TagContext context)
     {
+        bool wroteTag = false;
         switch (machine.Current.State)
         {
             case EmitState.BlockSequenceEntry:
@@ -44,9 +45,10 @@ internal class BlockMapKeySerializer : IEmitter
                 machine.IndentationManager.IncreaseIndent();
 
                 // Try writing the tag, if present
-                if (machine.TryGetTag(out var tag))
+                if (context.NeedsTag)
                 {
-                    WriteRaw(tag);
+                    wroteTag = true;
+                    WriteRaw(context.Tag);
                     WriteRaw(YamlCodes.NewLine);
                     WriteIndent();
                 }
@@ -60,9 +62,10 @@ internal class BlockMapKeySerializer : IEmitter
             {
                 machine.IndentationManager.IncreaseIndent();
                 // Try writing the tag, if present
-                if (machine.TryGetTag(out var tag))
+                if (context.NeedsTag)
                 {
-                    WriteRaw(tag);
+                    wroteTag = true;
+                    WriteRaw(context.Tag);
                 }
                 WriteNewLine();
                 WriteIndent();
@@ -75,9 +78,9 @@ internal class BlockMapKeySerializer : IEmitter
 
         machine.Next = machine.Map(State);
         // Write tag if applicable
-        if (machine.TryGetTag(out var tag2))
+        if (context.NeedsTag && !wroteTag)
         {
-            WriteRaw(tag2);
+            WriteRaw(context.Tag);
             WriteNewLine();
             WriteIndent();
         }

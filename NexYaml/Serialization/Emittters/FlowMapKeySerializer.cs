@@ -25,9 +25,9 @@ internal class FlowMapKeySerializer : IEmitter
             throw new InvalidOperationException($"To start flow-mapping in the {current} is not supported");
         }
         machine.Next = machine.Map(State);
-        if (machine.TryGetTag(out var tag))
+        if (context.NeedsTag)
         {
-            WriteRaw(tag);
+            WriteRaw(context.Tag);
             WriteSpace();
         }
         WriteFlowMappingStart();

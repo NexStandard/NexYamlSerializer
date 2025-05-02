@@ -22,4 +22,12 @@ public interface IResolvePlugin
     /// </returns>
     bool Write<T>(IYamlWriter stream, T value, DataStyle provider);
     bool Read<T>(IYamlReader stream, ref T value, ref ParseResult result);
+    public static List<IResolvePlugin> plugins = new()
+        {
+            new NullPlugin(),
+            new NullablePlugin(),
+            new ArrayPlugin(),
+            new DelegatePlugin(),
+            new ReferencePlugin(),
+        };
 }

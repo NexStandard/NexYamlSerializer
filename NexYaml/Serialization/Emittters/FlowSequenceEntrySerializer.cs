@@ -11,9 +11,9 @@ internal class FlowSequenceEntrySerializer : IEmitter
 
     public override void Begin(TagContext context)
     {
-        if (machine.TryGetTag(out var tag))
+        if (context.NeedsTag)
         {
-            WriteRaw(tag);
+            WriteRaw(context.Tag);
             WriteSpace();
         }
         switch (machine.Current.State)
