@@ -64,7 +64,6 @@ internal abstract class IEmitter(IYamlWriter writer, EmitterStateMachine machine
                 machine.IndentationManager.IncreaseIndent();
                 break;
             case EmitState.BlockMappingValue:
-                writer.WriteRaw(YamlCodes.NewLine);
                 break;
         }
 
