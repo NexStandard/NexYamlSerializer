@@ -9,16 +9,6 @@ internal class NullablePlugin : IResolvePlugin
     private static readonly Type NullableSerializer = typeof(NullableSerializer<>);
     public bool Read<T>(IYamlReader stream, ref T value, ref ParseResult result)
     {
-        var type = typeof(T);
-        Type underlyingType;
-        if ((underlyingType = Nullable.GetUnderlyingType(type)) != null)
-        {
-            var genericSerializer = NullableSerializer.MakeGenericType(underlyingType);
-            // TODO : Nullable makes sense?
-            var f = (YamlSerializer<T?>?)Activator.CreateInstance(genericSerializer)!;
-            f.Read(stream, ref value, ref result);
-            return true;
-        }
         return false;
     }
 
