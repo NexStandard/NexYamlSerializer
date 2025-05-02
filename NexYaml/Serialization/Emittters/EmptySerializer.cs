@@ -9,7 +9,7 @@ internal class EmptySerializer : IEmitter
 {
     }
 
-    public override void Begin()
+    public override void Begin(TagContext context)
     {
     }
 

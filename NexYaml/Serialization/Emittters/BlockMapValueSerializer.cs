@@ -9,7 +9,7 @@ internal class BlockMapValueSerializer : IEmitter
 
     public override EmitState State { get; } = EmitState.BlockMappingValue;
 
-    public override void Begin()
+    public override void Begin(TagContext context)
     {
         throw new NotSupportedException();
     }

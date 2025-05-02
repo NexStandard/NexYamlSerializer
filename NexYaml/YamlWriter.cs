@@ -33,7 +33,7 @@ public class YamlWriter : IYamlWriter
     public void BeginMapping(DataStyle style)
     {
         enforcer.Begin(ref style);
-        StateMachine.BeginNodeMap(style, false).Begin();
+        StateMachine.BeginNodeMap(style, false).Begin(new TagContext());
     }
     public void Reset()
     {
@@ -61,7 +61,7 @@ public class YamlWriter : IYamlWriter
     public void BeginSequence(DataStyle style)
     {
         enforcer.Begin(ref style);
-        StateMachine.BeginNodeMap(style, true).Begin();
+        StateMachine.BeginNodeMap(style, true).Begin(new TagContext());
     }
 
     /// <inheritdoc />

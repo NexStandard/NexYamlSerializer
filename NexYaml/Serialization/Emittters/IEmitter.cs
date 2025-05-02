@@ -38,12 +38,7 @@ internal abstract class IEmitter(IYamlWriter writer, EmitterStateMachine machine
     /// <summary>
     /// Begins a new YAML structure.
     /// </summary>
-    public abstract void Begin();
-
-    public virtual void Begin(string tag)
-    {
-
-    }
+    public abstract void Begin(TagContext context);
 
     /// <summary>
     /// Writes a scalar value to the YAML document.

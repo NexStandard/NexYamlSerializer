@@ -9,7 +9,7 @@ internal class BlockSequenceEntrySerializer : IEmitter
 
     public override EmitState State { get; } = EmitState.BlockSequenceEntry;
 
-    public override void Begin()
+    public override void Begin(TagContext context)
     { 
         if (machine.TryGetTag(out var tag))
         {

@@ -9,7 +9,7 @@ internal class FlowMapKeySerializer : IEmitter
 
     public override EmitState State { get; } = EmitState.FlowMappingKey;
 
-    public override void Begin()
+    public override void Begin(TagContext context)
     {
         var current = machine.Current.State;
         if (current is EmitState.BlockSequenceEntry)

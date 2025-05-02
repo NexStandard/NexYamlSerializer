@@ -9,7 +9,7 @@ internal class FlowSequenceEntrySerializer : IEmitter
 
     public override EmitState State { get; } = EmitState.FlowSequenceEntry;
 
-    public override void Begin()
+    public override void Begin(TagContext context)
     {
         if (machine.TryGetTag(out var tag))
         {
