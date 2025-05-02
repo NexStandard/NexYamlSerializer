@@ -86,7 +86,7 @@ internal class DictionarySerializerFactory : IYamlSerializerFactory
         resolver.Register(this, typeof(Dictionary<,>), typeof(Dictionary<,>));
         resolver.RegisterGenericSerializer(typeof(Dictionary<,>), typeof(DictionarySerializer<,>));
         resolver.RegisterSerializer(typeof(Dictionary<,>));
-
+        resolver.RegisterTag("Dictionary", typeof(Dictionary<,>));
         resolver.Register(this, typeof(Dictionary<,>), typeof(IDictionary<,>));
         resolver.Register(this, typeof(Dictionary<,>), typeof(IReadOnlyDictionary<,>));
 

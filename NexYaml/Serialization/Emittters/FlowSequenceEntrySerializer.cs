@@ -25,15 +25,15 @@ internal class FlowSequenceEntrySerializer : IEmitter
                 break;
         }
         machine.Next = machine.Map(State);
-    }
-
-    public override void WriteScalar(ReadOnlySpan<char> value)
-    {
         if (machine.TryGetTag(out var tag))
         {
             WriteRaw(tag);
             WriteSpace();
         }
+    }
+
+    public override void WriteScalar(ReadOnlySpan<char> value)
+    {
         machine.Current = machine.Map(EmitState.FlowSequenceSecondaryEntry);
         WriteRaw(value);
     }

@@ -83,6 +83,10 @@ internal class BlockMapKeySerializer : IEmitter
         }
     }
 
+    public override void Begin(string tag)
+    {
+
+    }
     /// <summary>
     /// Writes the scalar value of the key to the YAML output. This method handles the writing of the key in a block mapping,
     /// applying the correct indentation, writing any applicable tags, and writing the key itself.
