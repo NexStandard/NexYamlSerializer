@@ -32,8 +32,22 @@ public class YamlWriter : IYamlWriter
     /// <inheritdoc />
     public void BeginMapping(DataStyle style)
     {
+        var context = new TagContext()
+        {
+
+        };
+        if (IsRedirected)
+        {
+            StateMachine.TryGetTag(out var tag);
+            context = new TagContext()
+            {
+                NeedsTag = IsRedirected,
+                Tag = tag,
+            };
+            IsRedirected = false;
+        }
         enforcer.Begin(ref style);
-        StateMachine.BeginNodeMap(style, false).Begin(new TagContext());
+        StateMachine.BeginNodeMap(style, false).Begin(context);
     }
     public void Reset()
     {
@@ -60,8 +74,22 @@ public class YamlWriter : IYamlWriter
     /// <inheritdoc />
     public void BeginSequence(DataStyle style)
     {
+        var context = new TagContext()
+        {
+
+        };
+        if (IsRedirected)
+        {
+            StateMachine.TryGetTag(out var tag);
+            context = new TagContext()
+            {
+                NeedsTag = IsRedirected,
+                Tag = tag,
+            };
+            IsRedirected = false;
+        }
         enforcer.Begin(ref style);
-        StateMachine.BeginNodeMap(style, true).Begin(new TagContext());
+        StateMachine.BeginNodeMap(style, true).Begin(context);
     }
 
     /// <inheritdoc />
@@ -195,8 +223,7 @@ public class YamlWriter : IYamlWriter
         {
             var fulTag = tag;
             StateMachine.Tag(ref fulTag);
-            IsRedirected = false;
         }
     }
-    }
+}
 
