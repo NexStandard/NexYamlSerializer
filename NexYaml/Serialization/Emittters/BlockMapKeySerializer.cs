@@ -90,19 +90,10 @@ internal class BlockMapKeySerializer : IEmitter
     public override void End()
     {
         machine.PopState();
-        // TODO what happens here?
-        Debug.Assert(machine.Current.State == EmitState.None, "When is it not EmitState.None?");
-        /*
-        switch (machine.Current.State)
+
+        if (machine.Current.State != EmitState.None)
         {
-            case EmitState.BlockSequenceEntry:
-                machine.IndentationManager.DecreaseIndent();
-                break;
-            case EmitState.BlockMappingValue:
-                machine.IndentationManager.DecreaseIndent();
-                machine.Current = machine.Map(EmitState.BlockMappingKey);
-                break;
+            throw new YamlException($"Unexpected end state for {State}: {machine.Current.State}");
         }
-        */
     }
 }
