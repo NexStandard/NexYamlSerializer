@@ -3,14 +3,15 @@
 namespace NexYaml.Serialization.Emittters;
 internal class EmptySerializer : IEmitter
 {
-    public override EmitState State { get; } = EmitState.None;
+    public override EmitState State => EmitState.None;
 
     public EmptySerializer(YamlWriter writer, EmitterStateMachine machine) : base(writer, machine)
 {
     }
 
-    public override void Begin(TagContext context)
+    public override BeginResult Begin(BeginContext context)
     {
+        return new BeginResult(this);
     }
 
     public override void WriteScalar(ReadOnlySpan<char> output)

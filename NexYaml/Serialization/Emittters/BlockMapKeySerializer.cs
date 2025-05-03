@@ -28,20 +28,20 @@ internal class BlockMapKeySerializer : IEmitter
     /// <summary>
     /// Gets the current emission state, which is <see cref="EmitState.BlockMappingKey"/> for this serializer.
     /// </summary>
-    public override EmitState State { get; } = EmitState.BlockMappingKey;
+    public override EmitState State => EmitState.BlockMappingKey;
 
     /// <summary>
     /// Begins the serialization of the block mapping key. This method determines the correct course of action 
     /// depending on the previous state in the state machine, ensuring that the appropriate format is applied.
     /// </summary>
-    public override void Begin(TagContext context)
+    public override BeginResult Begin(BeginContext context)
     {
-        switch (machine.Current.State)
+        switch (context.Emitter.State)
         {
             case EmitState.BlockSequenceEntry:
                 WriteIndent();
                 WriteSequenceIdentifier();
-                machine.IndentationManager.IncreaseIndent();
+                context.Indentation.IncreaseIndent();
 
                 // Try writing the tag, if present
                 if (context.NeedsTag)
@@ -52,12 +52,12 @@ internal class BlockMapKeySerializer : IEmitter
                 }
                 else
                 {
-                    WriteIndent(machine.IndentationManager.IndentWidth - 2);
+                    WriteIndent(context.Indentation.IndentWidth - 2);
                 }
                 break;
             case EmitState.BlockMappingValue:
 
-                machine.IndentationManager.IncreaseIndent();
+                context.Indentation.IncreaseIndent();
                 if (context.NeedsTag)
                 {
                     WriteRaw(context.Tag);
@@ -77,7 +77,7 @@ internal class BlockMapKeySerializer : IEmitter
             default:
                 throw new YamlException($"Unexpected state {machine.Current.State} for next state {State}");
         }
-        machine.Next = machine.Map(State);
+        return new BeginResult(this);
     }
 
     public override void WriteScalar(ReadOnlySpan<char> output)

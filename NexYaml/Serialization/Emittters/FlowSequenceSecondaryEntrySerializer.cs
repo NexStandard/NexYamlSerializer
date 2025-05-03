@@ -11,7 +11,7 @@ internal class FlowSequenceSecondaryEntrySerializer : FlowSequenceEntrySerialize
     public FlowSequenceSecondaryEntrySerializer(YamlWriter writer, EmitterStateMachine machine) : base(writer, machine)
     {
     }
-    public override EmitState State => EmitState.FlowSequenceSecondaryEntry; 
+    public override EmitState State => EmitState.FlowSequenceSecondaryEntry;
     public override void WriteScalar(ReadOnlySpan<char> value)
     {
         WriteFlowSequenceSeparator();

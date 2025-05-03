@@ -9,34 +9,28 @@ internal class FlowSequenceEntrySerializer : IEmitter
 
     public override EmitState State { get; } = EmitState.FlowSequenceEntry;
 
-    public override void Begin(TagContext context)
+    public override BeginResult Begin(BeginContext context)
     {
         if (context.NeedsTag)
         {
             WriteRaw(context.Tag);
             WriteSpace();
         }
-        switch (machine.Current.State)
+        switch (context.Emitter.State)
         {
-            case EmitState.BlockMappingKey:
-                throw new YamlException("To start block-mapping in the mapping key is not supported.");
-            case EmitState.BlockMappingValue:
-            {
-                WriteFlowSequenceStart();
-            }
-            break;
+            case EmitState.BlockMappingKey or EmitState.FlowMappingKey or EmitState.FlowMappingSecondaryKey or EmitState.BlockMappingSecondaryKey:
+                throw new YamlException("To start flow-sequence in the mapping key is not supported.");
             default:
                 WriteFlowSequenceStart();
-                break;
+            break;
         }
-        machine.Next = machine.Map(State);
-        
+        return new BeginResult(this);
     }
 
     public override void WriteScalar(ReadOnlySpan<char> value)
     {
-        machine.Current = machine.Map(EmitState.FlowSequenceSecondaryEntry);
         WriteRaw(value);
+        machine.Current = machine.Map(EmitState.FlowSequenceSecondaryEntry);
     }
 
     public override void End()

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using NexYaml.Core;
+using NexYaml.Serialization.Emittters;
 
 namespace NexYaml.Serialization;
-internal readonly record struct TagContext(bool NeedsTag, string Tag);
+internal readonly record struct BeginContext(bool NeedsTag, string Tag, IEmitter Emitter, IndentationManager Indentation);

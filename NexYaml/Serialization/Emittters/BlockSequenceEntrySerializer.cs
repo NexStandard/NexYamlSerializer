@@ -7,27 +7,27 @@ internal class BlockSequenceEntrySerializer : IEmitter
     {
     }
 
-    public override EmitState State { get; } = EmitState.BlockSequenceEntry;
+    public override EmitState State => EmitState.BlockSequenceEntry;
 
-    public override void Begin(TagContext context)
-    { 
+    public override BeginResult Begin(BeginContext context)
+    {
         if (context.NeedsTag)
         {
             WriteRaw(context.Tag);
             WriteNewLine();
         }
-        switch (machine.Current.State)
+        switch (context.Emitter.State)
         {
             case EmitState.BlockSequenceEntry:
                 WriteBlockSequenceEntryHeader();
-                machine.IndentationManager.IncreaseIndent();
+                context.Indentation.IncreaseIndent();
                 WriteNewLine();
                 break;
             case EmitState.BlockMappingValue:
                 WriteNewLine();
                 break;
         }
-        machine.Next = machine.Map(State);
+        return new BeginResult(this);
     }
 
     public override void WriteScalar(ReadOnlySpan<char> output)

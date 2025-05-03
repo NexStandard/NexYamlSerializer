@@ -7,30 +7,30 @@ internal class FlowMapKeySerializer : IEmitter
     {
     }
 
-    public override EmitState State { get; } = EmitState.FlowMappingKey;
+    public override EmitState State => EmitState.FlowMappingKey;
 
-    public override void Begin(TagContext context)
+    public override BeginResult Begin(BeginContext context)
     {
-        var current = machine.Current.State;
+        var current = context.Emitter.State;
         if (current is EmitState.BlockSequenceEntry)
         {
             WriteBlockSequenceEntryHeader();
         }
         else if (current is EmitState.FlowSequenceSecondaryEntry)
         {
-                 WriteFlowSequenceSeparator();
+            WriteFlowSequenceSeparator();
         }
         else if (current is EmitState.BlockMappingKey)
         {
             throw new InvalidOperationException($"To start flow-mapping in the {current} is not supported");
         }
-        machine.Next = machine.Map(State);
         if (context.NeedsTag)
         {
             WriteRaw(context.Tag);
             WriteSpace();
         }
         WriteFlowMappingStart();
+        return new BeginResult(this);
     }
 
     public override void WriteScalar(ReadOnlySpan<char> value)

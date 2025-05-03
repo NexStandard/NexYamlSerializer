@@ -32,22 +32,25 @@ public class YamlWriter : IYamlWriter
     /// <inheritdoc />
     public void BeginMapping(DataStyle style)
     {
-        var context = new TagContext()
+        var context = new BeginContext()
         {
-
+            Emitter = StateMachine.Current,
+            Indentation = StateMachine.IndentationManager
         };
         if (IsRedirected)
         {
             StateMachine.TryGetTag(out var tag);
-            context = new TagContext()
+            context = new BeginContext()
             {
                 NeedsTag = IsRedirected,
                 Tag = tag,
+                Emitter = StateMachine.Current,
+                Indentation = StateMachine.IndentationManager
             };
             IsRedirected = false;
         }
         enforcer.Begin(ref style);
-        StateMachine.BeginNodeMap(style, false).Begin(context);
+        StateMachine.Next = StateMachine.BeginNodeMap(style, false).Begin(context).Emitter;
     }
     public void Reset()
     {
@@ -74,22 +77,25 @@ public class YamlWriter : IYamlWriter
     /// <inheritdoc />
     public void BeginSequence(DataStyle style)
     {
-        var context = new TagContext()
+        var context = new BeginContext()
         {
-
+            Emitter = StateMachine.Current,
+            Indentation = StateMachine.IndentationManager
         };
         if (IsRedirected)
         {
             StateMachine.TryGetTag(out var tag);
-            context = new TagContext()
+            context = new BeginContext()
             {
                 NeedsTag = IsRedirected,
                 Tag = tag,
+                Emitter = StateMachine.Current,
+                Indentation = StateMachine.IndentationManager
             };
             IsRedirected = false;
         }
         enforcer.Begin(ref style);
-        StateMachine.BeginNodeMap(style, true).Begin(context);
+        StateMachine.Next = StateMachine.BeginNodeMap(style, true).Begin(context).Emitter;
     }
 
     /// <inheritdoc />
