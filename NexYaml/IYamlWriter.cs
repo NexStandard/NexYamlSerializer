@@ -9,11 +9,6 @@ using Stride.Core;
 public interface IYamlWriter
 {
     /// <summary>
-    /// Gets or sets a flag indicating whether the output is redirected to another stream or writer.
-    /// </summary>
-    public bool IsRedirected { get; set; }
-
-    /// <summary>
     /// Writes a YAML tag for the object type, depending on its serialization context. 
     /// Tags are used to specify the type of an object within YAML data.
     /// </summary>

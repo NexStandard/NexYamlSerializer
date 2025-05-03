@@ -12,7 +12,7 @@ public class YamlWriter : IYamlWriter
     /// Tracks whether the tag has to be written.
     /// Default to True as the first element always has to be written
     /// </summary>
-    public bool IsRedirected { get; set; } = true;
+    private bool IsRedirected { get; set; } = true;
     public HashSet<Guid> References { get; private set; } = new();
     private ICollection<IResolvePlugin> Plugins;
     public IYamlSerializerResolver Resolver { get; init; }
