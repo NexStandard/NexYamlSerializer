@@ -9,9 +9,9 @@ internal class EmptySerializer : IEmitter
 {
     }
 
-    public override BeginResult Begin(BeginContext context)
+    public override EmitResult Begin(BeginContext context)
     {
-        return new BeginResult(this);
+        return new EmitResult(this);
     }
 
     public override void WriteScalar(ReadOnlySpan<char> output)

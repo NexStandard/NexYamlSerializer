@@ -6,18 +6,18 @@ namespace NexYaml;
 
 public static class YamlWriterExtensions
 {
-    public static MappingScopeDisposable MappingScope(this IYamlWriter stream, DataStyle style) => new(stream, style);
+    public static MappingScopeDisposable MappingScope(this IYamlWriter stream, string tag, DataStyle style) => new(stream, tag, style);
     
-    public static SequenceScopeDisposable SequenceScope(this IYamlWriter stream, DataStyle style) => new(stream, style);
+    public static SequenceScopeDisposable SequenceScope(this IYamlWriter stream, string tag, DataStyle style) => new(stream, tag, style);
 
     public struct SequenceScopeDisposable : IDisposable
     {
         private IYamlWriter _stream;
         
-        public SequenceScopeDisposable(IYamlWriter stream, DataStyle style)
+        public SequenceScopeDisposable(IYamlWriter stream, string tag, DataStyle style)
         {
             _stream = stream;
-            _stream.BeginSequence(style);
+            _stream.BeginSequence(tag, style);
         }
 
         public void Dispose() => _stream.EndSequence();
@@ -27,10 +27,10 @@ public static class YamlWriterExtensions
     {
         private IYamlWriter _stream;
         
-        public MappingScopeDisposable(IYamlWriter stream, DataStyle style)
+        public MappingScopeDisposable(IYamlWriter stream, string tag, DataStyle style)
         {
             _stream = stream;
-            _stream.BeginMapping(style);
+            _stream.BeginMapping(tag, style);
         }
 
         public void Dispose() => _stream.EndMapping();

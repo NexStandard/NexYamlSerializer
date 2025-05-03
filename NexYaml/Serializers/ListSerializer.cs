@@ -38,8 +38,7 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
                 }
             }
             List<IIdentifiable> removedIds = new();
-            stream.WriteTag("!List");
-            stream.BeginSequence(style);
+            stream.BeginSequence("List", style);
             for (var i = 0; i < value.Count; i++)
             {
                 var element = value[i];
@@ -55,8 +54,7 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
             stream.EndSequence();
             return;
         }
-        stream.WriteTag("!List");
-        stream.BeginSequence(style);
+        stream.BeginSequence("!List",style);
         if (typeof(T).IsValueType)
         {
             var structSerializer = stream.Resolver.GetSerializer<T>();

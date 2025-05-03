@@ -30,7 +30,7 @@ public class YamlWriter : IYamlWriter
     }
 
     /// <inheritdoc />
-    public void BeginMapping(DataStyle style)
+    public void BeginMapping(string tag, DataStyle style)
     {
         var context = new BeginContext()
         {
@@ -39,7 +39,6 @@ public class YamlWriter : IYamlWriter
         };
         if (IsRedirected)
         {
-            StateMachine.TryGetTag(out var tag);
             context = new BeginContext()
             {
                 NeedsTag = IsRedirected,
@@ -75,7 +74,7 @@ public class YamlWriter : IYamlWriter
     }
 
     /// <inheritdoc />
-    public void BeginSequence(DataStyle style)
+    public void BeginSequence(string tag, DataStyle style)
     {
         var context = new BeginContext()
         {
@@ -84,7 +83,6 @@ public class YamlWriter : IYamlWriter
         };
         if (IsRedirected)
         {
-            StateMachine.TryGetTag(out var tag);
             context = new BeginContext()
             {
                 NeedsTag = IsRedirected,
@@ -221,14 +219,6 @@ public class YamlWriter : IYamlWriter
             {
                 Resolver.GetSerializer<T>().Write(this, value!, style);
             }
-        }
-    }
-    public void WriteTag(string tag)
-    {
-        if (IsRedirected)
-        {
-            var fulTag = tag;
-            StateMachine.Tag(ref fulTag);
         }
     }
 }

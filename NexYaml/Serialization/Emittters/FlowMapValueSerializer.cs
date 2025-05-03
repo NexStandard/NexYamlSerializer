@@ -9,7 +9,7 @@ internal class FlowMapValueSerializer : IEmitter
 
     public override EmitState State { get; } = EmitState.FlowMappingValue;
 
-    public override BeginResult Begin(BeginContext context)
+    public override EmitResult Begin(BeginContext context)
     {
         throw new InvalidOperationException($"Can't start a {State} as Mapping");
     }

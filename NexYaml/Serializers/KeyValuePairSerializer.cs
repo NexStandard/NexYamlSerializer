@@ -9,7 +9,7 @@ public class KeyValuePairSerializer<TKey, TValue> : YamlSerializer<KeyValuePair<
     public override void Write(IYamlWriter stream, KeyValuePair<TKey, TValue> value, DataStyle style)
     {
         var x = value.Key;
-        using (stream.SequenceScope(style))
+        using (stream.SequenceScope("!KeyValue", style))
         {
             stream.Write(value.Key, style);
             stream.Write(value.Value, style);

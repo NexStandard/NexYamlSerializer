@@ -6,4 +6,4 @@ using System.Threading.Tasks;
 using NexYaml.Serialization.Emittters;
 
 namespace NexYaml.Serialization;
-internal readonly record struct BeginResult(IEmitter Emitter);
+internal readonly record struct EmitResult(IEmitter Emitter);

@@ -66,7 +66,7 @@ internal class DelegatePlugin : IResolvePlugin
     {
         if (value is Delegate @delegate)
         {
-            stream.BeginSequence(style);
+            stream.BeginSequence("!!del", style);
             var invocations = @delegate.GetInvocationList();
             foreach (var invocation in invocations)
             {

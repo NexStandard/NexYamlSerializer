@@ -9,14 +9,6 @@ using Stride.Core;
 public interface IYamlWriter
 {
     /// <summary>
-    /// Writes a YAML tag for the object type, depending on its serialization context. 
-    /// Tags are used to specify the type of an object within YAML data.
-    /// </summary>
-    /// <param name="tag">The YAML tag identifying the object's type.</param>
-    /// <param name="force">If set to true, the tag will be written regardless of the context.</param>
-    void WriteTag(string tag);
-
-    /// <summary>
     /// Maintains a cache of references used during serialization to prevent duplication 
     /// of the same object or value within the YAML data.
     /// </summary>
@@ -33,7 +25,7 @@ public interface IYamlWriter
     /// A sequence represents a list of values in YAML.
     /// </summary>
     /// <param name="style">The style to use for formatting the sequence.</param>
-    void BeginSequence(DataStyle style);
+    void BeginSequence(string tag, DataStyle style);
 
     /// <summary>
     /// Ends the YAML sequence that was started by <see cref="BeginSequence(DataStyle)"/>.
@@ -45,7 +37,7 @@ public interface IYamlWriter
     /// A mapping represents a set of key-value pairs in YAML.
     /// </summary>
     /// <param name="style">The style to use for formatting the mapping.</param>
-    void BeginMapping(DataStyle style);
+    void BeginMapping(string tag, DataStyle style);
 
     /// <summary>
     /// Ends the YAML mapping that was started by <see cref="BeginMapping(DataStyle)"/>.

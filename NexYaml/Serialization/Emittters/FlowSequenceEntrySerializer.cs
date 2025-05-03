@@ -9,7 +9,7 @@ internal class FlowSequenceEntrySerializer : IEmitter
 
     public override EmitState State { get; } = EmitState.FlowSequenceEntry;
 
-    public override BeginResult Begin(BeginContext context)
+    public override EmitResult Begin(BeginContext context)
     {
         if (context.NeedsTag)
         {
@@ -24,7 +24,7 @@ internal class FlowSequenceEntrySerializer : IEmitter
                 WriteFlowSequenceStart();
             break;
         }
-        return new BeginResult(this);
+        return new EmitResult(this);
     }
 
     public override void WriteScalar(ReadOnlySpan<char> value)

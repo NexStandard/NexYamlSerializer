@@ -24,7 +24,6 @@ internal class EmitterStateMachine
     public int CurrentIndentLevel => IndentationManager.CurrentIndentLevel;
     public ExpandBuffer<IEmitter> StateStack { get; private set; } = new ExpandBuffer<IEmitter>(4);
     internal IndentationManager IndentationManager { get; } = new();
-    protected ExpandBuffer<string> tagStack = new(4);
     public EmitterStateMachine(YamlWriter stream)
     {
         blockMapKeySerializer = new BlockMapKeySerializer(stream, this);
@@ -102,18 +101,10 @@ internal class EmitterStateMachine
         }
     }
     public IEmitter Previous => StateStack.Previous;
-    public bool TryGetTag(out string tag)
-    {
-        return tagStack.TryPop(out tag);
-    }
+
     public void PopState()
     {
         StateStack.Pop();
-    }
-
-    public void Tag(ref string value)
-    {
-        tagStack.Add(value);
     }
     
     public virtual void Reset()
@@ -128,19 +119,10 @@ internal class EmitterStateMachine
             StateStack.Clear();
         }
         StateStack.Add(Map(EmitState.None));
-        if (tagStack is null)
-        {
-            tagStack = new ExpandBuffer<string>(4);
-        }
-        else
-        {
-            tagStack.Clear();
-        }
     }
     public virtual void Dispose()
     {
         StateStack.Dispose();
-        tagStack.Dispose();
     }
     public void WriteScalar(ReadOnlySpan<char> value)
     {

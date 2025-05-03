@@ -12,7 +12,7 @@ public class ArraySerializer<T> : YamlSerializer<T[]>
             ((YamlWriter)stream).WriteEmptySequence("!Array");
             return;
         }
-        using (stream.SequenceScope(style))
+        using (stream.SequenceScope("!Array",style))
         {
             foreach (var x in value)
             {

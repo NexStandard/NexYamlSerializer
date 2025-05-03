@@ -7,7 +7,7 @@ public class TupleSerializer<T1> : YamlSerializer<Tuple<T1>?>
 {
     public override void Write(IYamlWriter stream, Tuple<T1>? value, DataStyle style)
     {
-        using (stream.SequenceScope(DataStyle.Compact))
+        using (stream.SequenceScope("!Tuple1", DataStyle.Compact))
         {
             stream.Write(value!.Item1, DataStyle.Compact);
         }
@@ -17,7 +17,7 @@ public class TupleSerializer<T1> : YamlSerializer<Tuple<T1>?>
     {
         foreach (var val in stream.ReadAsSequenceOf<T1>())
         {
-            value = new Tuple<T1>(val); 
+            value = new Tuple<T1>(val);
         }
     }
 }
@@ -26,7 +26,7 @@ public class TupleSerializer<T1, T2> : YamlSerializer<Tuple<T1, T2>?>
 {
     public override void Write(IYamlWriter stream, Tuple<T1, T2>? value, DataStyle style)
     {
-        using (stream.SequenceScope(DataStyle.Compact))
+        using (stream.SequenceScope("!Tuple2", DataStyle.Compact))
         {
             stream.Write(value!.Item1, DataStyle.Compact);
             stream.Write(value.Item2, DataStyle.Compact);
@@ -50,7 +50,7 @@ public class TupleSerializer<T1, T2, T3> : YamlSerializer<Tuple<T1, T2, T3>?>
 {
     public override void Write(IYamlWriter stream, Tuple<T1, T2, T3>? value, DataStyle style)
     {
-        using (stream.SequenceScope(DataStyle.Compact))
+        using (stream.SequenceScope("!Tuple3", DataStyle.Compact))
         {
             stream.Write(value!.Item1, DataStyle.Compact);
             stream.Write(value.Item2, DataStyle.Compact);
@@ -77,7 +77,7 @@ public class TupleSerializer<T1, T2, T3, T4> : YamlSerializer<Tuple<T1, T2, T3, 
 {
     public override void Write(IYamlWriter stream, Tuple<T1, T2, T3, T4>? value, DataStyle style)
     {
-        using (stream.SequenceScope(DataStyle.Compact))
+        using (stream.SequenceScope("!Tuple4", DataStyle.Compact))
         {
             stream.Write(value!.Item1, DataStyle.Compact);
             stream.Write(value.Item2, DataStyle.Compact);
@@ -107,7 +107,7 @@ public class TupleSerializer<T1, T2, T3, T4, T5> : YamlSerializer<Tuple<T1, T2, 
 {
     public override void Write(IYamlWriter stream, Tuple<T1, T2, T3, T4, T5>? value, DataStyle style)
     {
-        using (stream.SequenceScope(DataStyle.Compact))
+        using (stream.SequenceScope("!Tuple5", DataStyle.Compact))
         {
             stream.Write(value!.Item1, DataStyle.Compact);
             stream.Write(value.Item2, DataStyle.Compact);
@@ -140,7 +140,7 @@ public class TupleSerializer<T1, T2, T3, T4, T5, T6> : YamlSerializer<Tuple<T1, 
 {
     public override void Write(IYamlWriter stream, Tuple<T1, T2, T3, T4, T5, T6>? value, DataStyle style)
     {
-        using (stream.SequenceScope(DataStyle.Compact))
+        using (stream.SequenceScope("!Tuple6", DataStyle.Compact))
         {
             stream.Write(value!.Item1, DataStyle.Compact);
             stream.Write(value.Item2, DataStyle.Compact);
@@ -176,7 +176,7 @@ public class TupleSerializer<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<Tuple<
 {
     public override void Write(IYamlWriter stream, Tuple<T1, T2, T3, T4, T5, T6, T7>? value, DataStyle style)
     {
-        using (stream.SequenceScope(DataStyle.Compact))
+        using (stream.SequenceScope("!Tuple7", DataStyle.Compact))
         {
             stream.Write(value!.Item1, DataStyle.Compact);
             stream.Write(value.Item2, DataStyle.Compact);
@@ -216,7 +216,7 @@ public class TupleSerializer<T1, T2, T3, T4, T5, T6, T7, T8> : YamlSerializer<Tu
 {
     public override void Write(IYamlWriter stream, Tuple<T1, T2, T3, T4, T5, T6, T7, T8>? value, DataStyle style)
     {
-        using (stream.SequenceScope(DataStyle.Compact))
+        using (stream.SequenceScope("!Tuple8", DataStyle.Compact))
         {
             stream.Write(value!.Item1, DataStyle.Compact);
             stream.Write(value.Item2, DataStyle.Compact);

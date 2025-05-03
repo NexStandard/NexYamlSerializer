@@ -9,7 +9,7 @@ internal class FlowMapKeySerializer : IEmitter
 
     public override EmitState State => EmitState.FlowMappingKey;
 
-    public override BeginResult Begin(BeginContext context)
+    public override EmitResult Begin(BeginContext context)
     {
         var current = context.Emitter.State;
         if (current is EmitState.BlockSequenceEntry)
@@ -30,7 +30,7 @@ internal class FlowMapKeySerializer : IEmitter
             WriteSpace();
         }
         WriteFlowMappingStart();
-        return new BeginResult(this);
+        return new EmitResult(this);
     }
 
     public override void WriteScalar(ReadOnlySpan<char> value)

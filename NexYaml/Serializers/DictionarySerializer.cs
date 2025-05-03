@@ -53,8 +53,7 @@ internal class DictionarySerializerFactory : IYamlSerializerFactory
                 ((YamlWriter)stream).WriteEmptyMapping("!Dictionary");
                 return;
             }
-            stream.WriteTag("!Dictionary");
-            stream.BeginMapping(style);
+            stream.BeginMapping("!Dictionary", style);
             foreach (var x in value)
             {
                 stream.Write(x.Key, style);
@@ -71,7 +70,7 @@ internal class DictionarySerializerFactory : IYamlSerializerFactory
                 return;
             }
             var kvp = new KeyValuePairSerializer<TKey, TValue>();
-            using (stream.SequenceScope(style))
+            using (stream.SequenceScope("!Dictionary", style))
             {
                 foreach (var x in value)
                 {

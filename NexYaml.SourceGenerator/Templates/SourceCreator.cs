@@ -23,8 +23,7 @@ internal static class SourceCreator
         string writeString = isEmpty ? $"stream.WriteEmptyMapping(\"!{tag}\");" :
         $"""
         style = style == DataStyle.Any ? Style : style;
-        stream.WriteTag("!{tag}");
-        stream.BeginMapping(style);
+        stream.BeginMapping("!{tag}",style);
         {package.CreateNewSerializationEmit()}
         stream.EndMapping();
         
