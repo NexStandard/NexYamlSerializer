@@ -46,7 +46,7 @@ internal class BlockMapKeySerializer : IEmitter
                 if (context.NeedsTag)
                 {
                     WriteRaw(context.Tag);
-                    WriteRaw(YamlCodes.NewLine);
+                    WriteNewLine();
                     WriteIndent();
                 }
                 else
