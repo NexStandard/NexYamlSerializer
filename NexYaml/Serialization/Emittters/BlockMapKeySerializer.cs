@@ -35,11 +35,9 @@ internal class BlockMapKeySerializer : IEmitter
     /// </summary>
     public override void Begin(TagContext context)
     {
-        bool wroteTag = false;
         switch (machine.Current.State)
         {
             case EmitState.BlockSequenceEntry:
-            {
                 WriteIndent();
                 WriteSequenceIdentifier();
                 machine.IndentationManager.IncreaseIndent();
@@ -47,7 +45,6 @@ internal class BlockMapKeySerializer : IEmitter
                 // Try writing the tag, if present
                 if (context.NeedsTag)
                 {
-                    wroteTag = true;
                     WriteRaw(context.Tag);
                     WriteRaw(YamlCodes.NewLine);
                     WriteIndent();
@@ -57,40 +54,31 @@ internal class BlockMapKeySerializer : IEmitter
                     WriteIndent(machine.IndentationManager.IndentWidth - 2);
                 }
                 break;
-            }
             case EmitState.BlockMappingValue:
-            {
+
                 machine.IndentationManager.IncreaseIndent();
-                // Try writing the tag, if present
                 if (context.NeedsTag)
                 {
-                    wroteTag = true;
                     WriteRaw(context.Tag);
                 }
                 WriteNewLine();
                 WriteIndent();
-                break;
-            }
-            default:
-                WriteIndent();
-                break;
-        }
 
-        machine.Next = machine.Map(State);
-        // Write tag if applicable
-        if (context.NeedsTag && !wroteTag)
-        {
-            WriteRaw(context.Tag);
-            WriteNewLine();
-            WriteIndent();
+                break;
+            case EmitState.None:
+                if (context.NeedsTag)
+                {
+                    WriteRaw(context.Tag);
+                    WriteNewLine();
+                    WriteIndent();
+                }
+                break;
+            default:
+                throw new YamlException($"Unexpected state {machine.Current.State} for next state {State}");
         }
+        machine.Next = machine.Map(State);
     }
 
-    /// <summary>
-    /// Writes the scalar value of the key to the YAML output. This method handles the writing of the key in a block mapping,
-    /// applying the correct indentation, writing any applicable tags, and writing the key itself.
-    /// </summary>
-    /// <param name="output">The scalar key value to be written to the YAML output.</param>
     public override void WriteScalar(ReadOnlySpan<char> output)
     {
         WriteRaw(output);
@@ -98,10 +86,6 @@ internal class BlockMapKeySerializer : IEmitter
         machine.Current = machine.Map(EmitState.BlockMappingValue);
     }
 
-    /// <summary>
-    /// Ends the serialization of the block mapping key. Handles the transition of the state machine to the next state
-    /// and applies necessary formatting for empty mappings and line breaks.
-    /// </summary>
     public override void End()
     {
         machine.PopState();
