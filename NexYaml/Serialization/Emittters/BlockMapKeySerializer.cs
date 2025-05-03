@@ -1,4 +1,5 @@
-﻿using NexYaml.Core;
+﻿using System.Diagnostics;
+using NexYaml.Core;
 
 namespace NexYaml.Serialization.Emittters;
 /// <summary>
@@ -89,7 +90,9 @@ internal class BlockMapKeySerializer : IEmitter
     public override void End()
     {
         machine.PopState();
-
+        // TODO what happens here?
+        Debug.Assert(machine.Current.State == EmitState.None, "When is it not EmitState.None?");
+        /*
         switch (machine.Current.State)
         {
             case EmitState.BlockSequenceEntry:
@@ -100,5 +103,6 @@ internal class BlockMapKeySerializer : IEmitter
                 machine.Current = machine.Map(EmitState.BlockMappingKey);
                 break;
         }
+        */
     }
 }
