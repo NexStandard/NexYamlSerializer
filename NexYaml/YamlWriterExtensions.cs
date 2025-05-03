@@ -400,7 +400,7 @@ public static class YamlWriterExtensions
         stream.Write(key);
         if (value is null)
         {
-            stream.Write(YamlCodes.NullString);
+            stream.Write(YamlCodes.Null0);
         }
         else
         {

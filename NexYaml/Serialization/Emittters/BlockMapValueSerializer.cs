@@ -23,6 +23,7 @@ internal class BlockMapValueSerializer : IEmitter
 
     public override void End()
     {
+        throw new YamlException($"Can't end on {EmitState.BlockMappingValue.ToString()}");
         // Do nothing
     }
 }

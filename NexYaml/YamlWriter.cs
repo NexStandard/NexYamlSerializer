@@ -143,7 +143,7 @@ public class YamlWriter : IYamlWriter
     {
         if (value is null)
         {
-            WriteScalar(YamlCodes.NullString);
+            WriteScalar(YamlCodes.Null0);
             return;
         }
         var result = EmitStringAnalyzer.Analyze(value);

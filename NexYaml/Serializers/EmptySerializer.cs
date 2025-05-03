@@ -12,7 +12,7 @@ public class EmptySerializer<T> : YamlSerializer<T>
 
     public override void Write(IYamlWriter stream, T value, DataStyle style)
     {
-        stream.Write(YamlCodes.NullString);
+        stream.Write(YamlCodes.Null0);
     }
 
     public override void Read(IYamlReader stream, ref T value, ref ParseResult result)

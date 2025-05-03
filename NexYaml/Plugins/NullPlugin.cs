@@ -10,7 +10,7 @@ internal class NullPlugin : IResolvePlugin
     {
         if (value is null)
         {
-            stream.WriteScalar(YamlCodes.NullString);
+            stream.WriteScalar(YamlCodes.Null0);
             return true;
         }
         return false;
