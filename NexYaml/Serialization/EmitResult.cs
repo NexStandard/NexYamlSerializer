@@ -75,7 +75,7 @@ public static class Writing
         }
         var context = new BeginContext()
         {
-            Emitter = emitter,
+            Emitter = write.Emitter,
             Indentation = emitter.StateMachine.IndentationManager,
             NeedsTag = false
         };
