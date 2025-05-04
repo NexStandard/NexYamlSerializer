@@ -14,16 +14,16 @@ internal class BlockMapValueSerializer : IEmitter
         throw new NotSupportedException();
     }
 
-    public override void WriteScalar(ReadOnlySpan<char> output)
+    public override EmitResult WriteScalar(ReadOnlySpan<char> output)
     {
         WriteRaw(output);
         WriteNewLine();
-        machine.Current = machine.Map(EmitState.BlockMappingSecondaryKey);
+        return new EmitResult(machine.blockMapSecondaryKeySerializer);
     }
 
-    public override void End()
+    public override EmitResult End(IEmitter currentEmitter)
     {
-        throw new YamlException($"Can't end on {EmitState.BlockMappingValue.ToString()}");
+        return new EmitResult(currentEmitter);
         // Do nothing
     }
 }

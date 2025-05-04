@@ -75,25 +75,24 @@ internal class BlockMapKeySerializer : IEmitter
                 }
                 break;
             default:
-                throw new YamlException($"Unexpected state {machine.Current.State} for next state {State}");
+                throw new YamlException($"Unexpected state {context.Emitter.State} for next state {State}");
         }
         return new EmitResult(this);
     }
 
-    public override void WriteScalar(ReadOnlySpan<char> output)
+    public override EmitResult WriteScalar(ReadOnlySpan<char> output)
     {
         WriteRaw(output);
         WriteMappingKeyFooter();
-        machine.Current = machine.Map(EmitState.BlockMappingValue);
+        return new EmitResult(machine.blockMapValueSerializer);
     }
 
-    public override void End()
+    public override EmitResult End(IEmitter currentEmitter)
     {
-        machine.PopState();
-
-        if (machine.Current.State != EmitState.None)
+        if (currentEmitter.State != EmitState.None)
         {
-            throw new YamlException($"Unexpected end state for {State}: {machine.Current.State}");
+            throw new YamlException($"Unexpected end state for {State}: {currentEmitter.State}");
         }
+        return new EmitResult(currentEmitter);
     }
 }

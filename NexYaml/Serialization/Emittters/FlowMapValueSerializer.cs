@@ -14,14 +14,14 @@ internal class FlowMapValueSerializer : IEmitter
         throw new InvalidOperationException($"Can't start a {State} as Mapping");
     }
 
-    public override void WriteScalar(ReadOnlySpan<char> value)
+    public override EmitResult WriteScalar(ReadOnlySpan<char> value)
     {
         WriteRaw(value);
-        machine.Current = machine.Map(EmitState.FlowMappingSecondaryKey);
+        return new EmitResult(machine.flowMapSecondarySerializer);
     }
 
-    public override void End()
+    public override EmitResult End(IEmitter currentEmitter)
     {
-        throw new NotSupportedException();
+        throw new YamlException($"Cant end on {State}");
     }
 }

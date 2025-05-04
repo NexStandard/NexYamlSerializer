@@ -56,7 +56,6 @@ public class YamlWriter : IYamlWriter
         IsRedirected = true;
         enforcer = new();
         References = new();
-        StateMachine.Reset();
     }
 
     /// <inheritdoc />
@@ -64,7 +63,9 @@ public class YamlWriter : IYamlWriter
     {
         if (StateMachine.Current.State is EmitState.BlockMappingKey or EmitState.FlowMappingKey)
         {
-            StateMachine.Current.End();
+            var current = StateMachine.Current;
+            StateMachine.PopState();
+            StateMachine.Current = current.End(StateMachine.Current).Emitter;
             enforcer.End();
         }
         else
@@ -101,7 +102,9 @@ public class YamlWriter : IYamlWriter
     {
         if (StateMachine.Current.State is EmitState.BlockSequenceEntry or EmitState.FlowSequenceEntry or EmitState.FlowSequenceSecondaryEntry)
         {
-            StateMachine.Current.End();
+            var current = StateMachine.Current;
+            StateMachine.PopState();
+            StateMachine.Current = current.End(StateMachine.Current).Emitter;
             enforcer.End();
         }
         else

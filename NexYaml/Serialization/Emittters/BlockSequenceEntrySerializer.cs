@@ -30,20 +30,18 @@ internal class BlockSequenceEntrySerializer : IEmitter
         return new EmitResult(this);
     }
 
-    public override void WriteScalar(ReadOnlySpan<char> output)
+    public override EmitResult WriteScalar(ReadOnlySpan<char> output)
     {
         WriteIndent();
         WriteSequenceSeparator();
         WriteRaw(output);
         WriteNewLine();
-        machine.Current = this;
+        return new EmitResult(this);
     }
 
-    public override void End()
+    public override EmitResult End(IEmitter currentEmitter)
     {
-        machine.PopState();
-
-        switch (machine.Current.State)
+        switch (currentEmitter.State)
         {
             case EmitState.BlockSequenceEntry:
                 machine.IndentationManager.DecreaseIndent();
@@ -53,8 +51,8 @@ internal class BlockSequenceEntrySerializer : IEmitter
                 throw new YamlException("Complex key is not supported.");
 
             case EmitState.BlockMappingValue:
-                machine.Current = machine.Map(EmitState.BlockMappingKey);
-                break;
+                return new EmitResult(machine.blockMapKeySerializer);
         }
+        return new EmitResult(currentEmitter);
     }
 }

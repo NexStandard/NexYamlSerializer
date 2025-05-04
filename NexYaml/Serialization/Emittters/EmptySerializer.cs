@@ -11,15 +11,17 @@ internal class EmptySerializer : IEmitter
 
     public override EmitResult Begin(BeginContext context)
     {
+        throw new YamlException($"Can't Begin on {EmitState.None}");
+    }
+
+    public override EmitResult WriteScalar(ReadOnlySpan<char> output)
+    {
+        WriteRaw(output);
         return new EmitResult(this);
     }
 
-    public override void WriteScalar(ReadOnlySpan<char> output)
+    public override EmitResult End(IEmitter currentEmitter)
     {
-        WriteRaw(output);
-    }
-
-    public override void End()
-    {
+        return new EmitResult(currentEmitter);
     }
 }

@@ -27,30 +27,28 @@ internal class FlowSequenceEntrySerializer : IEmitter
         return new EmitResult(this);
     }
 
-    public override void WriteScalar(ReadOnlySpan<char> value)
+    public override EmitResult WriteScalar(ReadOnlySpan<char> value)
     {
         WriteRaw(value);
-        machine.Current = machine.Map(EmitState.FlowSequenceSecondaryEntry);
+        return new EmitResult(machine.flowSequenceSecondarySerializer);
     }
 
-    public override void End()
+    public override EmitResult End(IEmitter currentEmitter)
     {
-        machine.PopState();
         WriteFlowSequenceEnd();
-        switch (machine.Current.State)
+        switch (currentEmitter.State)
         {
             case EmitState.BlockSequenceEntry:
                 WriteNewLine();
                 break;
             case EmitState.BlockMappingValue:
-                machine.Current = machine.Map(EmitState.BlockMappingKey);
                 WriteNewLine();
-                break;
+                return new EmitResult(machine.blockMapKeySerializer);
             case EmitState.FlowMappingValue:
-                machine.Current = machine.Map(EmitState.FlowMappingSecondaryKey);
-                break;
+                return new EmitResult(machine.flowMapSecondarySerializer);
             case EmitState.FlowSequenceEntry:
                 break;
         }
+        return new EmitResult(currentEmitter);
     }
 }
