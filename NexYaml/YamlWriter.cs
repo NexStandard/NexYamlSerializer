@@ -59,19 +59,12 @@ public class YamlWriter : IYamlWriter
     }
 
     /// <inheritdoc />
-    public void EndMapping()
+    public void End()
     {
-        if (StateMachine.Current.State is EmitState.BlockMappingKey or EmitState.FlowMappingKey)
-        {
-            var current = StateMachine.Current;
-            StateMachine.PopState();
-            StateMachine.Current = current.End(StateMachine.Current).Emitter;
-            enforcer.End();
-        }
-        else
-        {
-            throw new YamlException($"Invalid mapping end: {StateMachine.Current}");
-        }
+        var current = StateMachine.Current;
+        StateMachine.PopState();
+        StateMachine.Current = current.End(StateMachine.Current).Emitter;
+        enforcer.End();
     }
 
     /// <inheritdoc />
@@ -95,22 +88,6 @@ public class YamlWriter : IYamlWriter
         }
         enforcer.Begin(ref style);
         StateMachine.Next = StateMachine.BeginNodeMap(style, true).Begin(context).Emitter;
-    }
-
-    /// <inheritdoc />
-    public void EndSequence()
-    {
-        if (StateMachine.Current.State is EmitState.BlockSequenceEntry or EmitState.FlowSequenceEntry or EmitState.FlowSequenceSecondaryEntry)
-        {
-            var current = StateMachine.Current;
-            StateMachine.PopState();
-            StateMachine.Current = current.End(StateMachine.Current).Emitter;
-            enforcer.End();
-        }
-        else
-        {
-            throw new YamlException($"Current state is not sequence: {StateMachine.Current}");
-        }
     }
 
     public void WriteRaw(ReadOnlySpan<char> value)

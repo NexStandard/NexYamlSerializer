@@ -51,7 +51,7 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
                 }
                 stream.Write(element, style);
             }
-            stream.EndSequence();
+            stream.End();
             return;
         }
         stream.BeginSequence("!List",style);
@@ -70,7 +70,7 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
                 stream.Write(x, style);
             }
         }
-        stream.EndSequence();
+        stream.End();
     }
 
     public override void Read(IYamlReader stream, ref List<T>? value, ref ParseResult result)

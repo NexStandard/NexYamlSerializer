@@ -20,7 +20,7 @@ public static class YamlWriterExtensions
             _stream.BeginSequence(tag, style);
         }
 
-        public void Dispose() => _stream.EndSequence();
+        public void Dispose() => _stream.End();
     }
 
     public struct MappingScopeDisposable : IDisposable
@@ -33,7 +33,7 @@ public static class YamlWriterExtensions
             _stream.BeginMapping(tag, style);
         }
 
-        public void Dispose() => _stream.EndMapping();
+        public void Dispose() => _stream.End();
     }
 
     public static void WriteEmptySequence(this IYamlWriter writer, string tag)

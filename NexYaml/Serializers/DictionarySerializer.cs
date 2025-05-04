@@ -59,7 +59,7 @@ internal class DictionarySerializerFactory : IYamlSerializerFactory
                 stream.Write(x.Key, style);
                 stream.Write(x.Value, style);
             }
-            stream.EndMapping();
+            stream.End();
             return;
         }
         else

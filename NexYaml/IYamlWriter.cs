@@ -27,10 +27,7 @@ public interface IYamlWriter
     /// <param name="style">The style to use for formatting the sequence.</param>
     void BeginSequence(string tag, DataStyle style);
 
-    /// <summary>
-    /// Ends the YAML sequence that was started by <see cref="BeginSequence(DataStyle)"/>.
-    /// </summary>
-    void EndSequence();
+    void End();
 
     /// <summary>
     /// Begins a YAML mapping, formatted according to the specified style. 
@@ -38,11 +35,6 @@ public interface IYamlWriter
     /// </summary>
     /// <param name="style">The style to use for formatting the mapping.</param>
     void BeginMapping(string tag, DataStyle style);
-
-    /// <summary>
-    /// Ends the YAML mapping that was started by <see cref="BeginMapping(DataStyle)"/>.
-    /// </summary>
-    void EndMapping();
 
     /// <summary>
     /// Writes a value of type <typeparamref name="T"/> using the provided formatting style.

@@ -75,7 +75,7 @@ internal class DelegatePlugin : IResolvePlugin
                     stream.Write($"{identifiable.Id}#{invocation.Method.Name}");
                 }
             }
-            stream.EndSequence();
+            stream.End();
             return true;
         }
         return false;
