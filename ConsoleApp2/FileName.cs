@@ -19,26 +19,22 @@ public class Benchmarker
     MemoryStream memoryStream;
     YamlWriter writer;
     StreamWriter s;
+    (WriteContext,StreamWriter) context;
     [GlobalSetup]
     public void Setup()
     {
         resolver = NexYamlSerializerRegistry.Create(typeof(Collections).Assembly);
-
     }
     [IterationSetup]
     public void Init()
     {
-        s = new StreamWriter(memoryStream = new MemoryStream(4000));
-        writer = new YamlWriter(s,resolver,IResolvePlugin.plugins);
-
+        context = Yaml.GetContext();
     }
     [Benchmark(Baseline = true)]
     public void YamlB()
     {
-        writer.Write(values,DataStyle.Compact);
-     
-        s.Flush();
-
+        context.Item1.Write(values, DataStyle.Compact);
+        context.Item2.Flush();
     }
     [Benchmark()]
     public void JsonB()

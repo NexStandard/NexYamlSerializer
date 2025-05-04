@@ -9,4 +9,4 @@ using NexYaml.Core;
 using NexYaml.Serialization.Emittters;
 
 namespace NexYaml.Serialization;
-internal readonly record struct BeginContext(bool NeedsTag, string Tag, IEmitter Emitter, IndentationManager Indentation);
+public readonly record struct BeginContext(bool NeedsTag, string Tag, IEmitter Emitter, IndentationManager Indentation);

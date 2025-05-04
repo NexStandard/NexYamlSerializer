@@ -1,4 +1,5 @@
 using NexYaml.Parser;
+using NexYaml.Serialization;
 using Stride.Core;
 
 namespace NexYaml.Serializers;
@@ -7,9 +8,9 @@ public class UriSerializer : YamlSerializer<Uri>
 {
     public static readonly UriSerializer Instance = new();
 
-    public override void Write(IYamlWriter stream, Uri value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, Uri value, DataStyle style, in WriteContext context)
     {
-        stream.Write(value.ToString());
+        return context.Write(value.ToString());
     }
 
     public override void Read(IYamlReader stream, ref Uri value, ref ParseResult result)

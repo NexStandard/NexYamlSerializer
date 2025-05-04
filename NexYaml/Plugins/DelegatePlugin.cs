@@ -1,5 +1,6 @@
 ﻿using NexYaml.Core;
 using NexYaml.Parser;
+using NexYaml.Serialization;
 using Stride.Core;
 
 namespace NexYaml.Plugins;
@@ -62,22 +63,30 @@ internal class DelegatePlugin : IResolvePlugin
         return false;
     }
 
-    public bool Write<T>(IYamlWriter stream, T value, DataStyle style)
+    public bool Write<T>(IYamlWriter stream, T value, DataStyle style, WriteContext context, out WriteContext newContext)
     {
         if (value is Delegate @delegate)
         {
-            stream.BeginSequence("!!del", style);
+
             var invocations = @delegate.GetInvocationList();
+            if(invocations.Count() == 0)
+            {
+                newContext = context.WriteEmptySequence("!!del");
+                return true;
+            }
+            newContext = context.BeginSequence("!!del", style);
             foreach (var invocation in invocations)
             {
                 if (invocation.Target is IIdentifiable identifiable)
                 {
-                    stream.Write($"{identifiable.Id}#{invocation.Method.Name}");
+                    newContext = newContext.Write($"{identifiable.Id}#{invocation.Method.Name}");
                 }
             }
-            stream.End();
+            newContext = newContext.End(context);
+            
             return true;
         }
+        newContext = default;
         return false;
     }
 }

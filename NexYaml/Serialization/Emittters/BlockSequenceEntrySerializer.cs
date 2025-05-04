@@ -19,7 +19,7 @@ internal class BlockSequenceEntrySerializer : IEmitter
         switch (context.Emitter.State)
         {
             case EmitState.BlockSequenceEntry:
-                WriteBlockSequenceEntryHeader();
+                // WriteBlockSequenceEntryHeader();
                 context.Indentation.IncreaseIndent();
                 WriteNewLine();
                 break;

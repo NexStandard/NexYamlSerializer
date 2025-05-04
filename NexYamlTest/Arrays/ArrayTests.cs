@@ -1,4 +1,5 @@
-﻿using NexYaml;
+﻿using System.Collections.Generic;
+using NexYaml;
 using NexYaml.Core;
 using NexYamlTest.SimpleClasses;
 using Xunit;
@@ -48,12 +49,30 @@ public class ArrayTests
         {
             Value = [ [ 2 ], [ 1 ]]
         };
-        var stringArrayString = Yaml.Write(array);
+        var stringArrayString = Yaml.Write(array, Stride.Core.DataStyle.Compact);
+        throw new System.Exception(stringArrayString);
         var stringArrayDeserialized = Yaml.Read<Generics<int[][]>>(stringArrayString);
         Assert.NotNull(stringArrayDeserialized);
         Assert.NotNull(stringArrayDeserialized.Value);
         Assert.Equal([ 2 ], stringArrayDeserialized.Value[0]);
         Assert.Equal([ 1 ], stringArrayDeserialized.Value[1]);
+    }
+    [Fact]
+    public void G()
+    {
+        Setup();
+        var array = new List<List<int>>()
+        {
+            new List<int>() { 1 },
+            new List<int>() { 2 },
+        };
+        var stringArrayString = Yaml.Write(array, Stride.Core.DataStyle.Compact);
+        throw new System.Exception(stringArrayString);
+        var stringArrayDeserialized = Yaml.Read<Generics<int[][]>>(stringArrayString);
+        Assert.NotNull(stringArrayDeserialized);
+        Assert.NotNull(stringArrayDeserialized.Value);
+        Assert.Equal([2], stringArrayDeserialized.Value[0]);
+        Assert.Equal([1], stringArrayDeserialized.Value[1]);
     }
     [Fact]
     public void Pass_On_Wrong_Generic_Type_but_Equal_Output()

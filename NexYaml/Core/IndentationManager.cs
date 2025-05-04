@@ -2,7 +2,7 @@
 /// <summary>
 /// Manages indentation levels for YAML or similar text formatting.
 /// </summary>
-internal class IndentationManager
+public class IndentationManager
 {
     /// <summary>
     /// Gets the current level of indentation.

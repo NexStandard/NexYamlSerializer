@@ -32,8 +32,17 @@ public class Yaml
             new ReferencePlugin(),
         };
         var stream = new YamlWriter(writer, options, plugins);
+        var emitter = new EmptySerializer(stream, stream.StateMachine);
+        var c = new WriteContext()
+        {
+            Emitter = emitter,
+            Indent = 0,
+            IsRedirected = true,
+            Stream = stream
+        };
 
-            stream.Write(value, style);
+        c.Write(value, style);
+           // stream.Write(value, style);
             var result = "";
             writer.Flush();
             memoryStream.Seek(0, SeekOrigin.Begin);
@@ -42,6 +51,31 @@ public class Yaml
                 result = reader.ReadToEnd();
             }
             return result;
+    }
+    public static (WriteContext,StreamWriter) GetContext()
+    {
+        var options = IYamlSerializerResolver.Default;
+        var memoryStream = new MemoryStream();
+        var writer = new StreamWriter(memoryStream);
+        List<IResolvePlugin> plugins = new()
+        {
+            new NullPlugin(),
+            new NullablePlugin(),
+            new ArrayPlugin(),
+            new DelegatePlugin(),
+            new ReferencePlugin(),
+        };
+        var stream = new YamlWriter(writer, options, plugins);
+        var emitter = new EmptySerializer(stream, stream.StateMachine);
+        var c = new WriteContext()
+        {
+            Emitter = emitter,
+            Indent = 0,
+            IsRedirected = true,
+            Stream = stream
+        };
+
+        return (c,writer);
     }
 
     /// <summary>

@@ -1,5 +1,6 @@
 using NexYaml.Core;
 using NexYaml.Parser;
+using NexYaml.Serialization;
 using Stride.Core;
 
 namespace NexYaml.Serializers;
@@ -7,9 +8,9 @@ namespace NexYaml.Serializers;
 public class NullableStringSerializer : YamlSerializer<string?>
 {
     public static readonly NullableStringSerializer Instance = new();
-    public override void Write(IYamlWriter stream, string? value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, string? value, DataStyle style, in WriteContext context)
     {
-        stream.Write(value!);
+        return context.Write(value);
     }
 
     public override void Read(IYamlReader stream, ref string? value, ref ParseResult result)

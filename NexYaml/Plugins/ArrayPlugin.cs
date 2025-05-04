@@ -1,11 +1,12 @@
 ﻿using NexYaml.Parser;
+using NexYaml.Serialization;
 using NexYaml.Serializers;
 using Stride.Core;
 
 namespace NexYaml.Plugins;
 internal class ArrayPlugin : IResolvePlugin
 {
-    public bool Write<T>(IYamlWriter stream, T value, DataStyle style)
+    public bool Write<T>(IYamlWriter stream, T value, DataStyle style, WriteContext context, out WriteContext newContext)
     {
         if (value is Array)
         {
@@ -13,9 +14,10 @@ internal class ArrayPlugin : IResolvePlugin
             var arraySerializerType = typeof(ArraySerializer<>).MakeGenericType(t);
             var arraySerializer = (YamlSerializer)Activator.CreateInstance(arraySerializerType)!;
 
-            arraySerializer.Write(stream, value, style);
+            newContext = arraySerializer.Write(stream, value, style, context);
             return true;
         }
+        newContext = default;
         return false;
     }
     public bool Read<T>(IYamlReader stream, ref T value, ref ParseResult result)

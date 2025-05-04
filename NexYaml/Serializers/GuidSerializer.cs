@@ -1,5 +1,6 @@
 using NexYaml.Core;
 using NexYaml.Parser;
+using NexYaml.Serialization;
 using Stride.Core;
 using System.Buffers.Text;
 
@@ -9,13 +10,13 @@ public class GuidSerializer : YamlSerializer<Guid>
 {
     public static readonly GuidSerializer Instance = new();
 
-    public override void Write(IYamlWriter stream, Guid value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, Guid value, DataStyle style, in WriteContext context)
     {
         // nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn
         Span<byte> buf = stackalloc byte[64];
         if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten))
         {
-            stream.Write(buf[..bytesWritten]);
+            return context.Write(buf[..bytesWritten]);
         }
         else
         {

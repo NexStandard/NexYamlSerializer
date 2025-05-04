@@ -11,7 +11,7 @@ public static class YamlCodes
     public static readonly byte[] CrLf = [Cr, Lf];
 
     public static readonly byte[] Null0 = [(byte)'!', (byte)'!', (byte)'n', (byte)'u', (byte)'l', (byte)'l'];
-
+    public static readonly string Null = "!!null";
     public static readonly byte[] True0 = [(byte)'t', (byte)'r', (byte)'u', (byte)'e'];
     public static readonly byte[] True1 = [(byte)'T', (byte)'r', (byte)'u', (byte)'e'];
     public static readonly byte[] True2 = [(byte)'T', (byte)'R', (byte)'U', (byte)'E'];

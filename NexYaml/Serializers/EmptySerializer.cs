@@ -1,5 +1,6 @@
 ﻿using NexYaml.Core;
 using NexYaml.Parser;
+using NexYaml.Serialization;
 using Stride.Core;
 
 namespace NexYaml.Serializers;
@@ -10,9 +11,9 @@ public class EmptySerializer<T> : YamlSerializer<T>
         return new EmptySerializer<T>();
     }
 
-    public override void Write(IYamlWriter stream, T value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, T value, DataStyle style, in WriteContext context)
     {
-        stream.Write(YamlCodes.Null0);
+        return context.WriteScalar(YamlCodes.Null);
     }
 
     public override void Read(IYamlReader stream, ref T value, ref ParseResult result)

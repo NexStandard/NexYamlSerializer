@@ -1,5 +1,6 @@
 using NexYaml.Core;
 using NexYaml.Parser;
+using NexYaml.Serialization;
 using Stride.Core;
 using System.Buffers.Text;
 using System.Globalization;
@@ -11,9 +12,9 @@ public class Int64Serializer : YamlSerializer<long>
 {
     public static readonly Int64Serializer Instance = new();
 
-    public override void Write(IYamlWriter stream, long value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, long value, DataStyle style, in WriteContext context)
     {
-        stream.Write(value, style);
+        return context.Write(value, style);
     }
 
     public override void Read(IYamlReader stream, ref long value, ref ParseResult result)

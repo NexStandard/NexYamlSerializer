@@ -1,5 +1,6 @@
 using NexYaml.Core;
 using NexYaml.Parser;
+using NexYaml.Serialization;
 using Stride.Core;
 using System.Buffers.Text;
 
@@ -9,13 +10,13 @@ public class TimeSpanSerializer : YamlSerializer<TimeSpan>
 {
     public static readonly TimeSpanSerializer Instance = new();
 
-    public override void Write(IYamlWriter stream, TimeSpan value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, TimeSpan value, DataStyle style, in WriteContext context)
     {
         Span<char> buf = stackalloc char[32];
         
         if (value.TryFormat(buf, out var bytesWritten))
         {
-            stream.Write(buf[..bytesWritten]);
+            return context.Write(buf[..bytesWritten]);
         }
         else
         {

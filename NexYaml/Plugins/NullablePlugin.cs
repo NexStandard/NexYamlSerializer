@@ -1,4 +1,5 @@
 ﻿using NexYaml.Parser;
+using NexYaml.Serialization;
 using NexYaml.Serializers;
 using Stride.Core;
 
@@ -12,15 +13,16 @@ internal class NullablePlugin : IResolvePlugin
         return false;
     }
 
-    public bool Write<T>(IYamlWriter stream, T value, DataStyle provider)
+    public bool Write<T>(IYamlWriter stream, T value, DataStyle style, WriteContext context, out WriteContext newContext)
     {
         var type = typeof(T);
         Type? targetType = null;
         if ((targetType = Nullable.GetUnderlyingType(type)) is not null)
         {
-            stream.Resolver.GetSerializer(targetType)?.Write(stream, value);
+            newContext = stream.Resolver.GetSerializer(targetType)!.Write(stream, value, context);
             return true;
         }
+        newContext = default;
         return false;
     }
 }

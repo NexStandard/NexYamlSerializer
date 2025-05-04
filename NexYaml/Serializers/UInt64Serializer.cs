@@ -1,5 +1,6 @@
 using NexYaml.Core;
 using NexYaml.Parser;
+using NexYaml.Serialization;
 using Stride.Core;
 using System.Buffers.Text;
 using System.Globalization;
@@ -10,9 +11,9 @@ public class UInt64Serializer : YamlSerializer<ulong>
 {
     public static readonly UInt64Serializer Instance = new();
 
-    public override void Write(IYamlWriter stream, ulong value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, ulong value, DataStyle style, in WriteContext context)
     {
-        stream.Write(value, style);
+        return context.Write(value, style);
     }
 
     public override void Read(IYamlReader stream, ref ulong value, ref ParseResult result)

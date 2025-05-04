@@ -78,7 +78,7 @@ public static class YamlWriterExtensions
     /// <param name="style">The data style to use.</param>
     public static void Write<T>(this IYamlWriter stream, T value, DataStyle style)
     {
-        stream.WriteType(value, style);
+        stream.WriteType(value, style,default);
     }
 
     /// <summary>
@@ -162,12 +162,6 @@ public static class YamlWriterExtensions
         stream.Write(span[..written]);
     }
 
-    /// <summary>
-    /// Writes the <paramref name="value"/> of type <see cref="decimal"/> to the stream as scalar
-    /// </summary>
-    /// <param name="stream">The <see cref="IYamlWriter"/> to write to</param>
-    /// <param name="value">The <see cref="decimal"/> to write to the stream</param>
-    /// <param name="style">The <see cref="DataStyle"/> of the scalar</param>
     public static void Write(this IYamlWriter stream, bool value, DataStyle style = DataStyle.Any)
     {
         stream.Write(value ? ['t', 'r', 'u', 'e'] : stackalloc[] { 'f', 'a', 'l', 's', 'e' });
@@ -180,12 +174,6 @@ public static class YamlWriterExtensions
         stream.Write(span[..written]);
     }
 
-    /// <summary>
-    /// Writes the <paramref name="value"/> of type <see cref="byte"/> to the stream as scalar
-    /// </summary>
-    /// <param name="stream">The <see cref="IYamlWriter"/> to write to</param>
-    /// <param name="value">The <see cref="byte"/> to write to the stream</param>
-    /// <param name="style">The <see cref="DataStyle"/> of the scalar</param>
     public static void Write(this IYamlWriter stream, byte value, DataStyle style = DataStyle.Any)
     {
         Span<char> span = stackalloc char[3];
@@ -193,12 +181,6 @@ public static class YamlWriterExtensions
         stream.Write(span[..written]);
     }
 
-    /// <summary>
-    /// Writes the <paramref name="value"/> of type <see cref="sbyte"/> to the stream as scalar
-    /// </summary>
-    /// <param name="stream">The <see cref="IYamlWriter"/> to write to</param>
-    /// <param name="value">The <see cref="sbyte"/> to write to the stream</param>
-    /// <param name="style">The <see cref="DataStyle"/> of the scalar</param>
     public static void Write(this IYamlWriter stream, sbyte value, DataStyle style = DataStyle.Any)
     {
         Span<char> span = stackalloc char[4];
@@ -206,12 +188,6 @@ public static class YamlWriterExtensions
         stream.Write(span[..written]);
     }
 
-    /// <summary>
-    /// Writes the <paramref name="value"/> of type <see cref="decimal"/> to the stream as scalar
-    /// </summary>
-    /// <param name="stream">The <see cref="IYamlWriter"/> to write to</param>
-    /// <param name="value">The <see cref="decimal"/> to write to the stream</param>
-    /// <param name="style">The <see cref="DataStyle"/> of the scalar</param>
     public static void Write(this IYamlWriter stream, decimal value, DataStyle style = DataStyle.Any)
     {
         Span<char> span = stackalloc char[64];
@@ -219,130 +195,60 @@ public static class YamlWriterExtensions
         stream.Write(span[..written]);
     }
     
-    /// <summary>
-    /// Writes the YAML scalar of <paramref name="key"/> and the <paramref name="value"/>
-    /// </summary>
-    /// <param name="stream">The <see cref="IYamlWriter"/> to write to</param>
-    /// <param name="key">The key of the scalar</param>
-    /// <param name="value">The value of the scalar</param>
-    /// <param name="style">The <see cref="DataStyle"/> of the scalar</param>
     public static void Write(this IYamlWriter stream, string key, uint value, DataStyle style = DataStyle.Any)
     {
         stream.Write(key);
         stream.Write(value, style);
     }
 
-    /// <summary>
-    /// Writes the YAML scalar of <paramref name="key"/> and the <paramref name="value"/>
-    /// </summary>
-    /// <param name="stream">The <see cref="IYamlWriter"/> to write to</param>
-    /// <param name="key">The key of the scalar</param>
-    /// <param name="value">The value of the scalar</param>
-    /// <param name="style">The <see cref="DataStyle"/> of the scalar</param>
     public static void Write(this IYamlWriter stream, string key, long value, DataStyle style = DataStyle.Any)
     {
         stream.Write(key);
         stream.Write(value, style);
     }
 
-    /// <summary>
-    /// Writes the YAML scalar of <paramref name="key"/> and the <paramref name="value"/>
-    /// </summary>
-    /// <param name="stream">The <see cref="IYamlWriter"/> to write to</param>
-    /// <param name="key">The key of the scalar</param>
-    /// <param name="value">The value of the scalar</param>
-    /// <param name="style">The <see cref="DataStyle"/> of the scalar</param>
     public static void Write(this IYamlWriter stream, string key, float value, DataStyle style = DataStyle.Any)
     {
         stream.Write(key);
         stream.Write(value, style);
     }
 
-    /// <summary>
-    /// Writes the YAML scalar of <paramref name="key"/> and the <paramref name="value"/>
-    /// </summary>
-    /// <param name="stream">The <see cref="IYamlWriter"/> to write to</param>
-    /// <param name="key">The key of the scalar</param>
-    /// <param name="value">The value of the scalar</param>
-    /// <param name="style">The <see cref="DataStyle"/> of the scalar</param>
     public static void Write(this IYamlWriter stream, string key, double value, DataStyle style = DataStyle.Any)
     {
         stream.Write(key);
         stream.Write(value, style);
     }
 
-    /// <summary>
-    /// Writes the YAML scalar of <paramref name="key"/> and the <paramref name="value"/>
-    /// </summary>
-    /// <param name="stream">The <see cref="IYamlWriter"/> to write to</param>
-    /// <param name="key">The key of the scalar</param>
-    /// <param name="value">The value of the scalar</param>
-    /// <param name="style">The <see cref="DataStyle"/> of the scalar</param>
     public static void Write(this IYamlWriter stream, string key, bool value, DataStyle style = DataStyle.Any)
     {
         stream.Write(key);
         stream.Write(value, style);
     }
 
-    /// <summary>
-    /// Writes the YAML scalar of <paramref name="key"/> and the <paramref name="value"/>
-    /// </summary>
-    /// <param name="stream">The <see cref="IYamlWriter"/> to write to</param>
-    /// <param name="key">The key of the scalar</param>
-    /// <param name="value">The value of the scalar</param>
-    /// <param name="style">The <see cref="DataStyle"/> of the scalar</param>
     public static void Write(this IYamlWriter stream, string key, short value, DataStyle style = DataStyle.Any)
     {
         stream.Write(key);
         stream.Write(value, style);
     }
 
-    /// <summary>
-    /// Writes the YAML scalar of <paramref name="key"/> and the <paramref name="value"/>
-    /// </summary>
-    /// <param name="stream">The <see cref="IYamlWriter"/> to write to</param>
-    /// <param name="key">The key of the scalar</param>
-    /// <param name="value">The value of the scalar</param>
-    /// <param name="style">The <see cref="DataStyle"/> of the scalar</param>
     public static void Write(this IYamlWriter stream, string key, ushort value, DataStyle style = DataStyle.Any)
     {
         stream.Write(key);
         stream.Write(value, style);
     }
 
-    /// <summary>
-    /// Writes the YAML scalar of <paramref name="key"/> and the <paramref name="value"/>
-    /// </summary>
-    /// <param name="stream">The <see cref="IYamlWriter"/> to write to</param>
-    /// <param name="key">The key of the scalar</param>
-    /// <param name="value">The value of the scalar</param>
-    /// <param name="style">The <see cref="DataStyle"/> of the scalar</param>
     public static void Write(this IYamlWriter stream, string key, byte value, DataStyle style = DataStyle.Any)
     {
         stream.Write(key);
         stream.Write(value, style);
     }
 
-    /// <summary>
-    /// Writes the YAML scalar of <paramref name="key"/> and the <paramref name="value"/>
-    /// </summary>
-    /// <param name="stream">The <see cref="IYamlWriter"/> to write to</param>
-    /// <param name="key">The key of the scalar</param>
-    /// <param name="value">The value of the scalar</param>
-    /// <param name="style">The <see cref="DataStyle"/> of the scalar</param>
     public static void Write(this IYamlWriter stream, string key, sbyte value, DataStyle style = DataStyle.Any)
     {
         stream.Write(key);
         stream.Write(value, style);
     }
 
-    /// <summary>
-    /// Writes the YAML scalar of <paramref name="key"/> and the <paramref name="value"/>
-    /// </summary>
-    /// <param name="stream">The <see cref="IYamlWriter"/> to write to</param>
-    /// <param name="key">The key of the scalar</param>
-    /// <param name="value">The value of the scalar</param>
-    /// <param name="style">The <see cref="DataStyle"/> of the scalar</param>
     public static void Write(this IYamlWriter stream, string key, decimal value, DataStyle style = DataStyle.Any)
     {
         stream.Write(key);

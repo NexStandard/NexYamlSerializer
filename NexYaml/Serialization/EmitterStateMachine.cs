@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NexYaml.Serialization;
-internal class EmitterStateMachine
+public class EmitterStateMachine
 {
     internal IEmitter blockMapKeySerializer;
     internal IEmitter blockMapSecondaryKeySerializer;
@@ -23,9 +23,11 @@ internal class EmitterStateMachine
     internal IEmitter flowSequenceSecondarySerializer;
     public int CurrentIndentLevel => IndentationManager.CurrentIndentLevel;
     public ExpandBuffer<IEmitter> StateStack { get; private set; } = new ExpandBuffer<IEmitter>(4);
+    public StyleEnforcer StyleEnforcer { get; private set; }
     internal IndentationManager IndentationManager { get; } = new();
     public EmitterStateMachine(YamlWriter stream)
     {
+        StyleEnforcer = stream.enforcer;
         blockMapKeySerializer = new BlockMapKeySerializer(stream, this);
         blockMapSecondaryKeySerializer = new BlockMapSecondKeySerializer(stream, this);
         flowMapKeySerializer = new FlowMapKeySerializer(stream, this);

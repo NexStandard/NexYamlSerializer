@@ -1,4 +1,6 @@
-﻿using NexYaml.Parser;
+﻿using NexYaml.Core;
+using NexYaml.Parser;
+using NexYaml.Serialization;
 using Stride.Core;
 using System;
 using System.Collections.Generic;
@@ -9,15 +11,15 @@ using System.Threading.Tasks;
 namespace NexYaml.Serializers;
 public class NullableSerializer<T> : YamlSerializer<T?> where T : struct
 {
-    public override void Write(IYamlWriter stream, T? value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, T? value, DataStyle style, in WriteContext context)
     {
         if (value is null)
         {
-            stream.Write("!!null");
+            return context.Write(YamlCodes.Null);
         }
         else
         {
-            stream.Write(value.Value, style);
+            return context.Write(value.Value, style);
         }
     }
 

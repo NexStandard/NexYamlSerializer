@@ -6,14 +6,12 @@ namespace NexYaml.Serializers;
 
 public class KeyValuePairSerializer<TKey, TValue> : YamlSerializer<KeyValuePair<TKey, TValue>>
 {
-    public override void Write(IYamlWriter stream, KeyValuePair<TKey, TValue> value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, KeyValuePair<TKey, TValue> value, DataStyle style, in WriteContext context)
     {
-        var x = value.Key;
-        using (stream.SequenceScope("!KeyValue", style))
-        {
-            stream.Write(value.Key, style);
-            stream.Write(value.Value, style);
-        }
+        return context.BeginSequence("!KeyValue", style)
+            .Write(value.Key, style)
+            .Write(value.Value, style)
+            .End(context);
     }
 
     public override void Read(IYamlReader stream, ref KeyValuePair<TKey, TValue> value, ref ParseResult result)

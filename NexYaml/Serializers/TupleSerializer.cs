@@ -1,16 +1,16 @@
 using NexYaml.Parser;
+using NexYaml.Serialization;
 using Stride.Core;
 
 namespace NexYaml.Serializers;
 
 public class TupleSerializer<T1> : YamlSerializer<Tuple<T1>?>
 {
-    public override void Write(IYamlWriter stream, Tuple<T1>? value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, Tuple<T1>? value, DataStyle style, in WriteContext context)
     {
-        using (stream.SequenceScope("!Tuple1", DataStyle.Compact))
-        {
-            stream.Write(value!.Item1, DataStyle.Compact);
-        }
+        return context.BeginSequence("!Tuple1", style)
+            .Write(value!.Item1, DataStyle.Compact)
+            .End(context);
     }
 
     public override void Read(IYamlReader stream, ref Tuple<T1>? value, ref ParseResult result)
@@ -24,13 +24,12 @@ public class TupleSerializer<T1> : YamlSerializer<Tuple<T1>?>
 
 public class TupleSerializer<T1, T2> : YamlSerializer<Tuple<T1, T2>?>
 {
-    public override void Write(IYamlWriter stream, Tuple<T1, T2>? value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, Tuple<T1, T2>? value, DataStyle style, in WriteContext context)
     {
-        using (stream.SequenceScope("!Tuple2", DataStyle.Compact))
-        {
-            stream.Write(value!.Item1, DataStyle.Compact);
-            stream.Write(value.Item2, DataStyle.Compact);
-        }
+        return context.BeginSequence("!Tuple1", style)
+            .Write(value!.Item1, DataStyle.Compact)
+            .Write(value.Item2, DataStyle.Compact)
+        .End(context);
     }
 
     public override void Read(IYamlReader stream, ref Tuple<T1, T2>? value, ref ParseResult result)
@@ -48,14 +47,13 @@ public class TupleSerializer<T1, T2> : YamlSerializer<Tuple<T1, T2>?>
 
 public class TupleSerializer<T1, T2, T3> : YamlSerializer<Tuple<T1, T2, T3>?>
 {
-    public override void Write(IYamlWriter stream, Tuple<T1, T2, T3>? value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, Tuple<T1, T2, T3>? value, DataStyle style, in WriteContext context)
     {
-        using (stream.SequenceScope("!Tuple3", DataStyle.Compact))
-        {
-            stream.Write(value!.Item1, DataStyle.Compact);
-            stream.Write(value.Item2, DataStyle.Compact);
-            stream.Write(value.Item3, DataStyle.Compact);
-        }
+        return context.BeginSequence("!Tuple1", style)
+            .Write(value!.Item1, DataStyle.Compact)
+            .Write(value.Item2, DataStyle.Compact)
+            .Write(value.Item3, DataStyle.Compact)
+            .End(context);
     }
 
     public override void Read(IYamlReader stream, ref Tuple<T1, T2, T3>? value, ref ParseResult result)
@@ -75,15 +73,14 @@ public class TupleSerializer<T1, T2, T3> : YamlSerializer<Tuple<T1, T2, T3>?>
 
 public class TupleSerializer<T1, T2, T3, T4> : YamlSerializer<Tuple<T1, T2, T3, T4>?>
 {
-    public override void Write(IYamlWriter stream, Tuple<T1, T2, T3, T4>? value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, Tuple<T1, T2, T3, T4>? value, DataStyle style, in WriteContext context)
     {
-        using (stream.SequenceScope("!Tuple4", DataStyle.Compact))
-        {
-            stream.Write(value!.Item1, DataStyle.Compact);
-            stream.Write(value.Item2, DataStyle.Compact);
-            stream.Write(value.Item3, DataStyle.Compact);
-            stream.Write(value.Item4, DataStyle.Compact);
-        }
+        return context.BeginSequence("!Tuple1", style)
+            .Write(value!.Item1, DataStyle.Compact)
+            .Write(value.Item2, DataStyle.Compact)
+            .Write(value.Item3, DataStyle.Compact)
+            .Write(value.Item4, DataStyle.Compact)
+            .End(context);
     }
 
     public override void Read(IYamlReader stream, ref Tuple<T1, T2, T3, T4>? value, ref ParseResult result)
@@ -105,16 +102,17 @@ public class TupleSerializer<T1, T2, T3, T4> : YamlSerializer<Tuple<T1, T2, T3, 
 
 public class TupleSerializer<T1, T2, T3, T4, T5> : YamlSerializer<Tuple<T1, T2, T3, T4, T5>?>
 {
-    public override void Write(IYamlWriter stream, Tuple<T1, T2, T3, T4, T5>? value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, Tuple<T1, T2, T3, T4, T5>? value, DataStyle style, in WriteContext context)
     {
-        using (stream.SequenceScope("!Tuple5", DataStyle.Compact))
-        {
-            stream.Write(value!.Item1, DataStyle.Compact);
-            stream.Write(value.Item2, DataStyle.Compact);
-            stream.Write(value.Item3, DataStyle.Compact);
-            stream.Write(value.Item4, DataStyle.Compact);
-            stream.Write(value.Item5, DataStyle.Compact);
-        }
+        return context.BeginSequence("!Tuple1", style)
+
+            .Write(value!.Item1, DataStyle.Compact)
+            .Write(value.Item2, DataStyle.Compact)
+            .Write(value.Item3, DataStyle.Compact)
+            .Write(value.Item4, DataStyle.Compact)
+            .Write(value.Item5, DataStyle.Compact)
+            .End(context);
+        
     }
 
     public override void Read(IYamlReader stream, ref Tuple<T1, T2, T3, T4, T5>? value, ref ParseResult result)
@@ -138,17 +136,17 @@ public class TupleSerializer<T1, T2, T3, T4, T5> : YamlSerializer<Tuple<T1, T2, 
 
 public class TupleSerializer<T1, T2, T3, T4, T5, T6> : YamlSerializer<Tuple<T1, T2, T3, T4, T5, T6>?>
 {
-    public override void Write(IYamlWriter stream, Tuple<T1, T2, T3, T4, T5, T6>? value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, Tuple<T1, T2, T3, T4, T5, T6>? value, DataStyle style, in WriteContext context)
     {
-        using (stream.SequenceScope("!Tuple6", DataStyle.Compact))
-        {
-            stream.Write(value!.Item1, DataStyle.Compact);
-            stream.Write(value.Item2, DataStyle.Compact);
-            stream.Write(value.Item3, DataStyle.Compact);
-            stream.Write(value.Item4, DataStyle.Compact);
-            stream.Write(value.Item5, DataStyle.Compact);
-            stream.Write(value.Item6, DataStyle.Compact);
-        }
+        return context.BeginSequence("!Tuple1", style)
+
+            .Write(value!.Item1, DataStyle.Compact)
+            .Write(value.Item2, DataStyle.Compact)
+            .Write(value.Item3, DataStyle.Compact)
+            .Write(value.Item4, DataStyle.Compact)
+            .Write(value.Item5, DataStyle.Compact)
+            .Write(value.Item6, DataStyle.Compact)
+        .End(context);
     }
 
     public override void Read(IYamlReader stream, ref Tuple<T1, T2, T3, T4, T5, T6>? value, ref ParseResult result)
@@ -174,18 +172,17 @@ public class TupleSerializer<T1, T2, T3, T4, T5, T6> : YamlSerializer<Tuple<T1, 
 
 public class TupleSerializer<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<Tuple<T1, T2, T3, T4, T5, T6, T7>?>
 {
-    public override void Write(IYamlWriter stream, Tuple<T1, T2, T3, T4, T5, T6, T7>? value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, Tuple<T1, T2, T3, T4, T5, T6, T7>? value, DataStyle style, in WriteContext context)
     {
-        using (stream.SequenceScope("!Tuple7", DataStyle.Compact))
-        {
-            stream.Write(value!.Item1, DataStyle.Compact);
-            stream.Write(value.Item2, DataStyle.Compact);
-            stream.Write(value.Item3, DataStyle.Compact);
-            stream.Write(value.Item4, DataStyle.Compact);
-            stream.Write(value.Item5, DataStyle.Compact);
-            stream.Write(value.Item6, DataStyle.Compact);
-            stream.Write(value.Item7, DataStyle.Compact);
-        }
+        return context.BeginSequence("!Tuple1", style)
+            .Write(value!.Item1, DataStyle.Compact)
+            .Write(value.Item2, DataStyle.Compact)
+            .Write(value.Item3, DataStyle.Compact)
+            .Write(value.Item4, DataStyle.Compact)
+            .Write(value.Item5, DataStyle.Compact)
+            .Write(value.Item6, DataStyle.Compact)
+            .Write(value.Item7, DataStyle.Compact)
+            .End(context);
     }
 
     public override void Read(IYamlReader stream, ref Tuple<T1, T2, T3, T4, T5, T6, T7>? value, ref ParseResult result)
@@ -214,19 +211,19 @@ public class TupleSerializer<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<Tuple<
 public class TupleSerializer<T1, T2, T3, T4, T5, T6, T7, T8> : YamlSerializer<Tuple<T1, T2, T3, T4, T5, T6, T7, T8>?>
     where T8 : notnull
 {
-    public override void Write(IYamlWriter stream, Tuple<T1, T2, T3, T4, T5, T6, T7, T8>? value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, Tuple<T1, T2, T3, T4, T5, T6, T7, T8>? value, DataStyle style, in WriteContext context)
     {
-        using (stream.SequenceScope("!Tuple8", DataStyle.Compact))
-        {
-            stream.Write(value!.Item1, DataStyle.Compact);
-            stream.Write(value.Item2, DataStyle.Compact);
-            stream.Write(value.Item3, DataStyle.Compact);
-            stream.Write(value.Item4, DataStyle.Compact);
-            stream.Write(value.Item5, DataStyle.Compact);
-            stream.Write(value.Item6, DataStyle.Compact);
-            stream.Write(value.Item7, DataStyle.Compact);
-            stream.Write(value.Rest, DataStyle.Compact);
-        }
+        return context.BeginSequence("!Tuple1", style)
+.Write(value!.Item1, DataStyle.Compact)
+.Write(value.Item2, DataStyle.Compact)
+            .Write(value.Item3, DataStyle.Compact)
+            .Write(value.Item4, DataStyle.Compact)
+            .Write(value.Item5, DataStyle.Compact)
+            .Write(value.Item6, DataStyle.Compact)
+            .Write(value.Item7, DataStyle.Compact)
+            .Write(value.Rest, DataStyle.Compact)
+            .End(context);
+
     }
 
     public override void Read(IYamlReader stream, ref Tuple<T1, T2, T3, T4, T5, T6, T7, T8>? value, ref ParseResult result)
@@ -239,6 +236,7 @@ public class TupleSerializer<T1, T2, T3, T4, T5, T6, T7, T8> : YamlSerializer<Tu
         var item6 = default(T6);
         var item7 = default(T7);
         var item8 = default(T8);
+
         using (stream.SequenceScope())
         {
             stream.Read(ref item1);

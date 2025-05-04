@@ -7,13 +7,12 @@ namespace NexYaml.Serializers;
 
 public class ListSerializer<T> : YamlSerializer<List<T>?>
 {
-    public override void Write(IYamlWriter stream, List<T>? value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, List<T>? value, DataStyle style, in WriteContext context)
     {
         bool hasIdentifiable = false;
         if (value.Count == 0)
         {
-            ((YamlWriter)stream).WriteEmptySequence("!List");
-            return;
+            return context.WriteEmptySequence("!List");
         }
         foreach (var item in value)
         {
@@ -38,7 +37,7 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
                 }
             }
             List<IIdentifiable> removedIds = new();
-            stream.BeginSequence("List", style);
+            var resultContext = context.BeginSequence("!List", style);
             for (var i = 0; i < value.Count; i++)
             {
                 var element = value[i];
@@ -49,28 +48,27 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
                     stream.References.Remove(identifiable.Id);
                     removedIds.Add(identifiable);
                 }
-                stream.Write(element, style);
+                resultContext = resultContext.Write(element, style);
             }
-            stream.End();
-            return;
+            return resultContext.End(context);
         }
-        stream.BeginSequence("!List",style);
+        var result = context.BeginSequence("!List", style);
         if (typeof(T).IsValueType)
         {
             var structSerializer = stream.Resolver.GetSerializer<T>();
             foreach(var x in value)
             {
-                structSerializer.Write(stream, x,style);
+                result = structSerializer.Write(stream, x,style, result);
             }
         }
         else
         {
             foreach (var x in value)
             {
-                stream.Write(x, style);
+                result = result.Write(x, style);
             }
         }
-        stream.End();
+        return result.End(context);
     }
 
     public override void Read(IYamlReader stream, ref List<T>? value, ref ParseResult result)

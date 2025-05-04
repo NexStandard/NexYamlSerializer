@@ -14,14 +14,14 @@ public class YamlWriter : IYamlWriter
     /// </summary>
     private bool IsRedirected { get; set; } = true;
     public HashSet<Guid> References { get; private set; } = new();
-    private ICollection<IResolvePlugin> Plugins;
+    public List<IResolvePlugin> Plugins { get; private set; } 
     public IYamlSerializerResolver Resolver { get; init; }
 
-    private StyleEnforcer enforcer = new();
+    internal StyleEnforcer enforcer = new();
     private readonly StreamWriter writer;
-    private EmitterStateMachine StateMachine { get; }
+    internal EmitterStateMachine StateMachine { get; }
 
-    public YamlWriter(StreamWriter writer,IYamlSerializerResolver resolver, ICollection<IResolvePlugin> plugins)
+    public YamlWriter(StreamWriter writer,IYamlSerializerResolver resolver, List<IResolvePlugin> plugins)
     {
         StateMachine = new EmitterStateMachine(this);
         Plugins = plugins;
@@ -153,53 +153,9 @@ public class YamlWriter : IYamlWriter
     }
 
     /// <inheritdoc />
-    public void WriteType<T>(T value, DataStyle style)
+    public void WriteType<T>(T value, DataStyle style, WriteContext context = default)
     {
-        foreach (var syntax in Plugins)
-        {
-            if (syntax.Write(this, value, style))
-            {
-                return;
-            }
-        }
-        var type = typeof(T);
-
-        if (type.IsValueType || type.IsSealed)
-        {
-            Resolver.GetSerializer<T>().Write(this, value, style);
-        }
-        else if (type.IsInterface || type.IsAbstract || type.IsGenericType || type.IsArray)
-        {
-            var valueType = value!.GetType();
-            var formatt = Resolver.GetSerializer(value!.GetType(), typeof(T));
-            if (valueType != type)
-            {
-                IsRedirected = true;
-            }
-
-            // C# forgets the cast of T when invoking Serialize,
-            // this way we can call the serialize method with the "real type"
-            // that is in the object
-            if (style is DataStyle.Any)
-            {
-                formatt.Write(this, value!);
-            }
-            else
-            {
-                formatt.Write(this, value!, style);
-            }
-        }
-        else
-        {
-            if (style is DataStyle.Any)
-            {
-                Resolver.GetSerializer<T>().Write(this, value!);
-            }
-            else
-            {
-                Resolver.GetSerializer<T>().Write(this, value!, style);
-            }
-        }
+        throw new Exception("Dont call this");
     }
 }
 

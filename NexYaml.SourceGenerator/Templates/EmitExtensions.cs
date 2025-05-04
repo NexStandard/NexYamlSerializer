@@ -12,7 +12,7 @@ internal static class EmitExtensions
         {
             var dataStyle = member.DataStyle == "DataStyle.Any" ? ", style" : $", {member.DataStyle}";
             sb.AppendLine($$"""
-                        stream.Write("{{member.Name}}", value.{{member.Name}}{{dataStyle}});
+                        .Write("{{member.Name}}", value.{{member.Name}}{{dataStyle}})
                 """);
 
         }

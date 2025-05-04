@@ -1,4 +1,5 @@
 ﻿using NexYaml.Parser;
+using NexYaml.Serialization;
 using Stride.Core;
 using System;
 using System.Collections.Generic;
@@ -21,9 +22,9 @@ public class TypeSerializer : YamlSerializer<Type>
         }
     }
 
-    public override void Write(IYamlWriter stream, Type value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, Type value, DataStyle style, in WriteContext context)
     {
         var alias = stream.Resolver.GetTypeAlias(value);
-        stream.Write(alias);
+        return context.Write(alias);
     }
 }

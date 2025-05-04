@@ -1,5 +1,6 @@
 using NexYaml.Core;
 using NexYaml.Parser;
+using NexYaml.Serialization;
 using Stride.Core;
 
 namespace NexYaml.Serializers;
@@ -8,9 +9,9 @@ public class CharSerializer : YamlSerializer<char>
 {
     public static readonly CharSerializer Instance = new();
 
-    public override void Write(IYamlWriter stream, char value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, char value, DataStyle style, in WriteContext context)
     {
-        stream.Write(value, style);
+        return context.Write(value, style);
     }
 
     public override void Read(IYamlReader stream, ref char value, ref ParseResult parseResult)

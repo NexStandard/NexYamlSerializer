@@ -1,5 +1,6 @@
 using NexYaml.Core;
 using NexYaml.Parser;
+using NexYaml.Serialization;
 using Stride.Core;
 using System.Buffers;
 using System.Buffers.Text;
@@ -10,13 +11,13 @@ public class DateTimeOffsetSerializer : YamlSerializer<DateTimeOffset>
 {
     public static readonly DateTimeOffsetSerializer Instance = new();
 
-    public override void Write(IYamlWriter stream, DateTimeOffset value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, DateTimeOffset value, DataStyle style, in WriteContext context)
     {
         Span<byte> buf = stackalloc byte[64];
         if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten, new StandardFormat('O')))
         {
             ReadOnlySpan<byte> bytes = buf[..bytesWritten];
-            stream.Write(bytes);
+            return context.Write(bytes);
         }
         else
         {

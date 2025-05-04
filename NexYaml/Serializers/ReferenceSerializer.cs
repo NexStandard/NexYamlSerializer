@@ -1,4 +1,5 @@
 ﻿using NexYaml.Parser;
+using NexYaml.Serialization;
 using Stride.Core;
 
 namespace NexYaml.Serializers;
@@ -21,8 +22,8 @@ public class ReferenceSerializer<T> : YamlSerializer<T>
         }
     }
 
-    public override void Write(IYamlWriter stream, T value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, T value, DataStyle style, in WriteContext context)
     {
-        stream.Write(("!!ref " + value.Id).AsSpan());
+        return context.Write(("!!ref " + value.Id).AsSpan());
     }
 }

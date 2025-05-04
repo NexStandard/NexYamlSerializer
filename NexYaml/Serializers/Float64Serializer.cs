@@ -1,5 +1,6 @@
 using NexYaml.Core;
 using NexYaml.Parser;
+using NexYaml.Serialization;
 using Stride.Core;
 using System.Globalization;
 
@@ -9,9 +10,9 @@ public class Float64Serializer : YamlSerializer<double>
 {
     public static readonly Float64Serializer Instance = new();
 
-    public override void Write(IYamlWriter stream, double value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, double value, DataStyle style, in WriteContext context)
     {
-        stream.Write(value, style);
+        return context.Write(value, style);
     }
 
     public override void Read(IYamlReader stream, ref double value, ref ParseResult result)

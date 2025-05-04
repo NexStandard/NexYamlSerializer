@@ -1,18 +1,20 @@
 ﻿using NexYaml.Core;
 using NexYaml.Parser;
+using NexYaml.Serialization;
 using Stride.Core;
 
 namespace NexYaml.Plugins;
 
 internal class NullPlugin : IResolvePlugin
 {
-    public bool Write<T>(IYamlWriter stream, T value, DataStyle style)
+    public bool Write<T>(IYamlWriter stream, T value, DataStyle style, WriteContext context, out WriteContext newContext)
     {
         if (value is null)
         {
-            stream.WriteScalar(YamlCodes.Null0);
+            newContext = context.WriteScalar(YamlCodes.Null);
             return true;
         }
+        newContext = default;
         return false;
     }
 

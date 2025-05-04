@@ -1,4 +1,5 @@
-﻿using NexYaml.Serialization;
+﻿using NexYaml.Plugins;
+using NexYaml.Serialization;
 using Stride.Core;
 
 /// <summary>
@@ -8,6 +9,7 @@ using Stride.Core;
 /// </summary>
 public interface IYamlWriter
 {
+    public List<IResolvePlugin> Plugins { get; }
     /// <summary>
     /// Maintains a cache of references used during serialization to prevent duplication 
     /// of the same object or value within the YAML data.
@@ -43,7 +45,7 @@ public interface IYamlWriter
     /// <typeparam name="T">The type of the value to serialize.</typeparam>
     /// <param name="value">The value to serialize.</param>
     /// <param name="style">The style to use for formatting the value.</param>
-    void WriteType<T>(T value, DataStyle style);
+    void WriteType<T>(T value, DataStyle style, WriteContext context);
 
     /// <summary>
     /// Writes a scalar value from a span of bytes to the output, formatted according to YAML syntax settings.

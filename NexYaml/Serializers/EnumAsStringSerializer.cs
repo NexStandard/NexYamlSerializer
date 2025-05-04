@@ -1,5 +1,6 @@
 using NexYaml.Core;
 using NexYaml.Parser;
+using NexYaml.Serialization;
 using Stride.Core;
 using System.Runtime.Serialization;
 
@@ -59,11 +60,11 @@ public class EnumAsStringSerializer<T> : YamlSerializer<T>
         return buf.ToString();
     }
 
-    public override void Write(IYamlWriter stream, T value, DataStyle style)
+    public override WriteContext Write(IYamlWriter stream, T value, DataStyle style, in WriteContext context)
     {
         if (ValueNameMapping.TryGetValue(value, out var name))
         {
-            stream.Write(name);
+            return context.Write(name);
         }
         else
         {

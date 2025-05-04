@@ -7,8 +7,9 @@ namespace NexYaml.Serialization.Emittters;
 /// such as scalars, sequences, and mappings. This class defines the core logic for formatting
 /// and emitting YAML content, including handling indentation, sequence entry headers, and flow sequences.
 /// </summary>
-internal abstract class IEmitter(IYamlWriter writer, EmitterStateMachine machine)
+public abstract class IEmitter(IYamlWriter writer, EmitterStateMachine machine)
 {
+    internal EmitterStateMachine StateMachine { get; } = machine;
     private static ReadOnlySpan<char> whitespaces => new char[]
     {
             ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
