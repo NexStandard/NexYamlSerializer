@@ -51,6 +51,7 @@ internal class BlockSequenceEntrySerializer : IEmitter
                 throw new YamlException("Complex key is not supported.");
 
             case EmitState.BlockMappingValue:
+                machine.IndentationManager.DecreaseIndent();
                 return new EmitResult(machine.blockMapKeySerializer);
         }
         return new EmitResult(currentEmitter);
