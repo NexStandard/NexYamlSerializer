@@ -91,6 +91,6 @@ internal class EmitterStateMachine
 
     public void WriteScalar(ReadOnlySpan<char> value)
     {
-        StateStack.Current = StateStack.Current.WriteScalar(value).Emitter;
+        StateStack.Current = StateStack.Current.WriteScalar(value);
     }
 }

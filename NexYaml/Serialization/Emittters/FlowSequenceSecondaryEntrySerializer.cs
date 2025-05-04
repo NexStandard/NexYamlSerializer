@@ -12,10 +12,10 @@ internal class FlowSequenceSecondaryEntrySerializer : FlowSequenceEntrySerialize
     {
     }
     public override EmitState State => EmitState.FlowSequenceSecondaryEntry;
-    public override EmitResult WriteScalar(ReadOnlySpan<char> value)
+    public override IEmitter WriteScalar(ReadOnlySpan<char> value)
     {
         WriteFlowSequenceSeparator();
         WriteRaw(value);
-        return new EmitResult(machine.flowSequenceSecondarySerializer);
+        return machine.flowSequenceSecondarySerializer;
     }
 }

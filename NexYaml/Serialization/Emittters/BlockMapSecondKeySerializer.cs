@@ -11,14 +11,14 @@ internal class BlockMapSecondKeySerializer : BlockMapKeySerializer
     public BlockMapSecondKeySerializer(YamlWriter writer, EmitterStateMachine machine) : base(writer, machine)
     {
     }
-    public override EmitResult WriteScalar(ReadOnlySpan<char> output)
+    public override IEmitter WriteScalar(ReadOnlySpan<char> output)
     {
         WriteIndent();
         WriteRaw(output);
         WriteMappingKeyFooter();
-        return new EmitResult(machine.blockMapValueSerializer);
+        return machine.blockMapValueSerializer;
     }
-    public override EmitResult End(IEmitter currentEmitter)
+    public override IEmitter End(IEmitter currentEmitter)
     {
         switch (currentEmitter.State)
         {
@@ -27,11 +27,11 @@ internal class BlockMapSecondKeySerializer : BlockMapKeySerializer
                 break;
             case EmitState.BlockMappingValue:
                 machine.IndentationManager.DecreaseIndent();
-                return new EmitResult(machine.blockMapSecondaryKeySerializer);
+                return machine.blockMapSecondaryKeySerializer;
             case EmitState.FlowMappingValue:
                 // TODO: This case is not implemented, further clarification needed
                 throw new NotImplementedException();
         }
-        return new EmitResult(currentEmitter);
+        return currentEmitter;
     }
 }

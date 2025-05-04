@@ -34,7 +34,7 @@ internal class BlockMapKeySerializer : IEmitter
     /// Begins the serialization of the block mapping key. This method determines the correct course of action 
     /// depending on the previous state in the state machine, ensuring that the appropriate format is applied.
     /// </summary>
-    public override EmitResult Begin(BeginContext context)
+    public override IEmitter Begin(BeginContext context)
     {
         switch (context.Emitter.State)
         {
@@ -77,22 +77,22 @@ internal class BlockMapKeySerializer : IEmitter
             default:
                 throw new YamlException($"Unexpected state {context.Emitter.State} for next state {State}");
         }
-        return new EmitResult(this);
+        return this;
     }
 
-    public override EmitResult WriteScalar(ReadOnlySpan<char> output)
+    public override IEmitter WriteScalar(ReadOnlySpan<char> output)
     {
         WriteRaw(output);
         WriteMappingKeyFooter();
-        return new EmitResult(machine.blockMapValueSerializer);
+        return machine.blockMapValueSerializer;
     }
 
-    public override EmitResult End(IEmitter currentEmitter)
+    public override IEmitter End(IEmitter currentEmitter)
     {
         if (currentEmitter.State != EmitState.None)
         {
             throw new YamlException($"Unexpected end state for {State}: {currentEmitter.State}");
         }
-        return new EmitResult(currentEmitter);
+        return currentEmitter;
     }
 }

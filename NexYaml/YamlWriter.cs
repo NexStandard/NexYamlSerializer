@@ -49,7 +49,7 @@ public class YamlWriter : IYamlWriter
             IsRedirected = false;
         }
         enforcer.Begin(ref style);
-        StateMachine.Next = StateMachine.BeginNodeMap(style, false).Begin(context).Emitter;
+        StateMachine.Next = StateMachine.BeginNodeMap(style, false).Begin(context);
     }
     public void Reset()
     {
@@ -63,7 +63,7 @@ public class YamlWriter : IYamlWriter
     {
         var current = StateMachine.Current;
         StateMachine.PopState();
-        StateMachine.Current = current.End(StateMachine.Current).Emitter;
+        StateMachine.Current = current.End(StateMachine.Current);
         enforcer.End();
     }
 
@@ -87,7 +87,7 @@ public class YamlWriter : IYamlWriter
             IsRedirected = false;
         }
         enforcer.Begin(ref style);
-        StateMachine.Next = StateMachine.BeginNodeMap(style, true).Begin(context).Emitter;
+        StateMachine.Next = StateMachine.BeginNodeMap(style, true).Begin(context);
     }
 
     public void WriteRaw(ReadOnlySpan<char> value)

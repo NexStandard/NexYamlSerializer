@@ -9,21 +9,21 @@ internal class BlockMapValueSerializer : IEmitter
 
     public override EmitState State { get; } = EmitState.BlockMappingValue;
 
-    public override EmitResult Begin(BeginContext context)
+    public override IEmitter Begin(BeginContext context)
     {
         throw new NotSupportedException();
     }
 
-    public override EmitResult WriteScalar(ReadOnlySpan<char> output)
+    public override IEmitter WriteScalar(ReadOnlySpan<char> output)
     {
         WriteRaw(output);
         WriteNewLine();
-        return new EmitResult(machine.blockMapSecondaryKeySerializer);
+        return machine.blockMapSecondaryKeySerializer;
     }
 
-    public override EmitResult End(IEmitter currentEmitter)
+    public override IEmitter End(IEmitter currentEmitter)
     {
-        return new EmitResult(currentEmitter);
+        return currentEmitter;
         // Do nothing
     }
 }

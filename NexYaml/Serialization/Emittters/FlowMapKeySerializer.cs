@@ -9,7 +9,7 @@ internal class FlowMapKeySerializer : IEmitter
 
     public override EmitState State => EmitState.FlowMappingKey;
 
-    public override EmitResult Begin(BeginContext context)
+    public override IEmitter Begin(BeginContext context)
     {
         var current = context.Emitter.State;
         if (current is EmitState.BlockSequenceEntry)
@@ -30,17 +30,17 @@ internal class FlowMapKeySerializer : IEmitter
             WriteSpace();
         }
         WriteFlowMappingStart();
-        return new EmitResult(this);
+        return this;
     }
 
-    public override EmitResult WriteScalar(ReadOnlySpan<char> value)
+    public override IEmitter WriteScalar(ReadOnlySpan<char> value)
     {
         WriteRaw(value);
         WriteMappingKeyFooter();
-        return new EmitResult(machine.flowMapValueSerializer);
+        return machine.flowMapValueSerializer;
     }
 
-    public override EmitResult End(IEmitter currentEmitter)
+    public override IEmitter End(IEmitter currentEmitter)
     {
         var needsLineBreak = false;
         switch (currentEmitter.State)
@@ -51,15 +51,15 @@ internal class FlowMapKeySerializer : IEmitter
             case EmitState.BlockMappingValue:
                 WriteFlowMappingEnd();
                 WriteNewLine();
-                return new EmitResult(machine.blockMapKeySerializer);
+                return machine.blockMapKeySerializer;
                 break;
             case EmitState.FlowSequenceEntry:
                 WriteFlowMappingEnd();
-                return new EmitResult(machine.flowSequenceSecondarySerializer);
+                return machine.flowSequenceSecondarySerializer;
                 break;
             case EmitState.FlowMappingValue:
                 WriteFlowMappingEnd();
-                return new EmitResult(machine.flowMapKeySerializer);
+                return machine.flowMapKeySerializer;
                 break;
         }
         WriteFlowMappingEnd();
@@ -68,6 +68,6 @@ internal class FlowMapKeySerializer : IEmitter
         {
             WriteNewLine();
         }
-        return new EmitResult(currentEmitter);
+        return currentEmitter;
     }
 }

@@ -9,7 +9,7 @@ internal class FlowSequenceEntrySerializer : IEmitter
 
     public override EmitState State { get; } = EmitState.FlowSequenceEntry;
 
-    public override EmitResult Begin(BeginContext context)
+    public override IEmitter Begin(BeginContext context)
     {
         if (context.NeedsTag)
         {
@@ -24,16 +24,16 @@ internal class FlowSequenceEntrySerializer : IEmitter
                 WriteFlowSequenceStart();
             break;
         }
-        return new EmitResult(this);
+        return this;
     }
 
-    public override EmitResult WriteScalar(ReadOnlySpan<char> value)
+    public override IEmitter WriteScalar(ReadOnlySpan<char> value)
     {
         WriteRaw(value);
-        return new EmitResult(machine.flowSequenceSecondarySerializer);
+        return machine.flowSequenceSecondarySerializer;
     }
 
-    public override EmitResult End(IEmitter currentEmitter)
+    public override IEmitter End(IEmitter currentEmitter)
     {
         WriteFlowSequenceEnd();
         switch (currentEmitter.State)
@@ -43,12 +43,12 @@ internal class FlowSequenceEntrySerializer : IEmitter
                 break;
             case EmitState.BlockMappingValue:
                 WriteNewLine();
-                return new EmitResult(machine.blockMapKeySerializer);
+                return machine.blockMapKeySerializer;
             case EmitState.FlowMappingValue:
-                return new EmitResult(machine.flowMapSecondarySerializer);
+                return machine.flowMapSecondarySerializer;
             case EmitState.FlowSequenceEntry:
                 break;
         }
-        return new EmitResult(currentEmitter);
+        return currentEmitter;
     }
 }

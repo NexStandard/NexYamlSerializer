@@ -11,11 +11,11 @@ internal class FlowMapSecondKeySerializer : FlowMapKeySerializer
     public FlowMapSecondKeySerializer(YamlWriter writer, EmitterStateMachine machine) : base(writer, machine)
     {
     }
-    public override EmitResult WriteScalar(ReadOnlySpan<char> value)
+    public override IEmitter WriteScalar(ReadOnlySpan<char> value)
     {
         WriteFlowSequenceSeparator();
         WriteRaw(value);
         WriteMappingKeyFooter();
-        return new EmitResult(machine.flowMapValueSerializer);
+        return machine.flowMapValueSerializer;
     }
 }

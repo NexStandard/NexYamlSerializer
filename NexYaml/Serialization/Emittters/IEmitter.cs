@@ -33,18 +33,18 @@ internal abstract class IEmitter(IYamlWriter writer, EmitterStateMachine machine
     /// <summary>
     /// Ends the current YAML structure being emitted (e.g., a sequence or a mapping).
     /// </summary>
-    public abstract EmitResult End(IEmitter currentEmitter);
+    public abstract IEmitter End(IEmitter currentEmitter);
 
     /// <summary>
     /// Begins a new YAML structure.
     /// </summary>
-    public abstract EmitResult Begin(BeginContext context);
+    public abstract IEmitter Begin(BeginContext context);
 
     /// <summary>
     /// Writes a scalar value to the YAML document.
     /// </summary>
     /// <param name="value">The scalar value to be written.</param>
-    public abstract EmitResult WriteScalar(ReadOnlySpan<char> value);
+    public abstract IEmitter WriteScalar(ReadOnlySpan<char> value);
 
     /// <summary>
     /// Writes the header for a block sequence entry, including necessary indentation and a sequence identifier.

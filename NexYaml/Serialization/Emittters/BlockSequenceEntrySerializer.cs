@@ -9,7 +9,7 @@ internal class BlockSequenceEntrySerializer : IEmitter
 
     public override EmitState State => EmitState.BlockSequenceEntry;
 
-    public override EmitResult Begin(BeginContext context)
+    public override IEmitter Begin(BeginContext context)
     {
         if (context.NeedsTag)
         {
@@ -27,19 +27,19 @@ internal class BlockSequenceEntrySerializer : IEmitter
                 WriteNewLine();
                 break;
         }
-        return new EmitResult(this);
+        return this;
     }
 
-    public override EmitResult WriteScalar(ReadOnlySpan<char> output)
+    public override IEmitter WriteScalar(ReadOnlySpan<char> output)
     {
         WriteIndent();
         WriteSequenceSeparator();
         WriteRaw(output);
         WriteNewLine();
-        return new EmitResult(this);
+        return this;
     }
 
-    public override EmitResult End(IEmitter currentEmitter)
+    public override IEmitter End(IEmitter currentEmitter)
     {
         switch (currentEmitter.State)
         {
@@ -52,8 +52,8 @@ internal class BlockSequenceEntrySerializer : IEmitter
 
             case EmitState.BlockMappingValue:
                 machine.IndentationManager.DecreaseIndent();
-                return new EmitResult(machine.blockMapKeySerializer);
+                return machine.blockMapKeySerializer;
         }
-        return new EmitResult(currentEmitter);
+        return currentEmitter;
     }
 }

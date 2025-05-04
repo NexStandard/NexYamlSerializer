@@ -9,18 +9,18 @@ internal class FlowMapValueSerializer : IEmitter
 
     public override EmitState State { get; } = EmitState.FlowMappingValue;
 
-    public override EmitResult Begin(BeginContext context)
+    public override IEmitter Begin(BeginContext context)
     {
         throw new InvalidOperationException($"Can't start a {State} as Mapping");
     }
 
-    public override EmitResult WriteScalar(ReadOnlySpan<char> value)
+    public override IEmitter WriteScalar(ReadOnlySpan<char> value)
     {
         WriteRaw(value);
-        return new EmitResult(machine.flowMapSecondarySerializer);
+        return machine.flowMapSecondarySerializer;
     }
 
-    public override EmitResult End(IEmitter currentEmitter)
+    public override IEmitter End(IEmitter currentEmitter)
     {
         throw new YamlException($"Cant end on {State}");
     }
