@@ -87,20 +87,7 @@ public class Yaml
     /// <returns>A read-only memory containing the serialized value.</returns>
     public static void Write<T>(T value, StreamWriter streamWriter, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
     {
-        options ??= IYamlSerializerResolver.Default;
-
-        List<IResolvePlugin> plugins = new()
-        {
-            new NullPlugin(),
-            new NullablePlugin(),
-            new ArrayPlugin(),
-            new DelegatePlugin(),
-            new ReferencePlugin(),
-        };
-        var stream = new YamlWriter(streamWriter, options, plugins);
-        stream.Write(value, style);
-
-        streamWriter.Flush();
+       throw new NotImplementedException();
     }
 
 

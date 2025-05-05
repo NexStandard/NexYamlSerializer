@@ -22,7 +22,6 @@ public class EmitterStateMachine
     internal IEmitter flowMapValueSerializer;
     internal IEmitter flowSequenceSecondarySerializer;
     public int CurrentIndentLevel => IndentationManager.CurrentIndentLevel;
-    public ExpandBuffer<IEmitter> StateStack { get; private set; } = new ExpandBuffer<IEmitter>(4);
     public StyleEnforcer StyleEnforcer { get; private set; }
     internal IndentationManager IndentationManager { get; } = new();
     public EmitterStateMachine(YamlWriter stream)
@@ -38,61 +37,5 @@ public class EmitterStateMachine
         flowMapValueSerializer = new FlowMapValueSerializer(stream, this);
         flowSequenceSecondarySerializer = new FlowSequenceSecondaryEntrySerializer(stream, this);
         emptySerializer = new EmptySerializer(stream,this);
-        if (StateStack.Length == 0)
-        {
-            StateStack.Add(emptySerializer);
-        }
-    }
-
-    public IEmitter BeginNodeMap(DataStyle style, bool isSequence)
-    {
-        if (isSequence)
-        {
-
-            if (style is DataStyle.Normal or DataStyle.Any)
-            {
-                return blockSequenceEntrySerializer;
-            }
-            else if (style is DataStyle.Compact)
-            {
-                return flowSequenceEntrySerializer;
-            }
-        }
-        else
-        {
-            if (style is DataStyle.Normal or DataStyle.Any)
-            {
-                return blockMapKeySerializer;
-            }
-            else if (style is DataStyle.Compact)
-            {
-                return flowMapKeySerializer;
-            }
-        }
-        throw new ArgumentException();
-    }
-
-    public IEmitter Current
-    {
-        get => StateStack.Current;
-        set => StateStack.Current = value;
-    }
-
-    public IEmitter Next
-    {
-        set
-        {
-            StateStack.Add(value);
-        }
-    }
-
-    public void PopState()
-    {
-        StateStack.Pop();
-    }
-
-    public void WriteScalar(ReadOnlySpan<char> value)
-    {
-        StateStack.Current = StateStack.Current.WriteScalar(value);
     }
 }
