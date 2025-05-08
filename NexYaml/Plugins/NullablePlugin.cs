@@ -13,6 +13,11 @@ internal class NullablePlugin : IResolvePlugin
         return false;
     }
 
+    public bool Read<T>(IYamlReader stream, T value, ParseContext<T> result)
+    {
+        return false;
+    }
+
     public bool Write<T>(IYamlWriter stream, T value, DataStyle style, WriteContext context, out WriteContext newContext)
     {
         var type = typeof(T);

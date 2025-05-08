@@ -39,8 +39,8 @@ public abstract class YamlSerializer<T> : YamlSerializer
     {
         return await Read(stream, (ParseContext<T>)(object)parseResult);
     }
-    public virtual ValueTask<T?> Read(IYamlReader stream, ParseContext<T> parseResult)
+    public virtual async ValueTask<T?> Read(IYamlReader stream, ParseContext<T> parseResult)
     {
-        return new ValueTask<T?>();
+        return default;
     }
 }

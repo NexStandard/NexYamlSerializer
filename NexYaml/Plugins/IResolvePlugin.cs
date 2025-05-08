@@ -23,6 +23,7 @@ public interface IResolvePlugin
     /// </returns>
     bool Write<T>(IYamlWriter stream, T value, DataStyle provider, WriteContext context, out WriteContext newContext);
     bool Read<T>(IYamlReader stream, ref T value, ref ParseResult result);
+    bool Read<T>(IYamlReader stream, T value, ParseContext<T?> result);
     public static List<IResolvePlugin> plugins = new()
         {
             new NullPlugin(),

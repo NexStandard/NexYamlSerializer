@@ -22,7 +22,7 @@ internal struct MyStruct { public ClassB MyRef; }
 internal class ReferenceClass : IIdentifiable
 {
     public Guid Id { get; set; }
-    public ReferenceScript ReferenceScript { get; init; }
+    public ReferenceScript ReferenceScript { get; set; }
     public int Test {  get; set; }
 }
 [DataContract]

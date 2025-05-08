@@ -28,6 +28,11 @@ internal class ReferencePlugin : IResolvePlugin
         return false;
     }
 
+    public bool Read<T>(IYamlReader stream, T value, ParseContext<T> result)
+    {
+        return false;
+    }
+
     public bool Write<T>(IYamlWriter stream, T value, DataStyle style, WriteContext context, out WriteContext newContext)
     {
         if (value is IIdentifiable id)

@@ -133,7 +133,7 @@ public class CollectionTest
     [DataContract]
     internal class C
     {
-        public IEnumerable<int> Foo { get; init; }
+        public IEnumerable<int> Foo { get; set; }
     }
     [Fact(Skip ="Collection initializer? it doesnt redirect to ienumerable")]
     public void EnumerableTest()
