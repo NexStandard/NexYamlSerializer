@@ -11,7 +11,7 @@ using Stride.Core;
 
 namespace NexYaml.Serialization;
 internal readonly record struct EmitResult(IEmitter Emitter);
-public readonly record struct WriteContext(IEmitter Emitter, int Indent, bool IsRedirected, IYamlWriter Stream)
+public readonly record struct WriteContext(IEmitter Emitter, int Indent, bool IsRedirected, IYamlWriter Stream, DataStyle StyleScope)
 {
 
 }
@@ -28,14 +28,15 @@ public static class Writing
     public static WriteContext BeginMapping(in this WriteContext write, string tag, DataStyle style)
     {
         IEmitter emitter = null!;
-        write.Emitter.StateMachine.StyleEnforcer.Begin(ref style);
-        if (style is DataStyle.Normal or DataStyle.Any)
-        {
-            emitter = write.Emitter.StateMachine.blockMapKeySerializer;
-        }
-        else if (style is DataStyle.Compact)
+        if (style is DataStyle.Compact || write.StyleScope is DataStyle.Compact)
         {
             emitter = write.Emitter.StateMachine.flowMapKeySerializer;
+            style = DataStyle.Compact;
+        }
+        else if (style is DataStyle.Normal or DataStyle.Any)
+        {
+            emitter = write.Emitter.StateMachine.blockMapKeySerializer;
+            style = DataStyle.Normal;
         }
         var context = new BeginContext()
         {
@@ -64,14 +65,15 @@ public static class Writing
     public static WriteContext BeginSequence(in this WriteContext write, string tag, DataStyle style)
     {
         IEmitter emitter = null!;
-        write.Emitter.StateMachine.StyleEnforcer.Begin(ref style);
+        if (style is DataStyle.Compact || write.StyleScope is DataStyle.Compact)
+        {
+            emitter = write.Emitter.StateMachine.flowSequenceEntrySerializer;
+            style = DataStyle.Compact;
+        }
         if (style is DataStyle.Normal or DataStyle.Any)
         {
             emitter = write.Emitter.StateMachine.blockSequenceEntrySerializer;
-        }
-        else if (style is DataStyle.Compact)
-        {
-            emitter = write.Emitter.StateMachine.flowSequenceEntrySerializer;
+            style = DataStyle.Normal;
         }
         var context = new BeginContext()
         {
@@ -94,13 +96,13 @@ public static class Writing
         {
             IsRedirected = false,
             Emitter = emitter,
-            Indent = write.Indent + 2
+            Indent = write.Indent + 2,
+            StyleScope = style,
         };
     }
     public static WriteContext End(in this WriteContext context,in WriteContext current)
     {
         var result = context.Emitter.End(current.Emitter);
-        current.Emitter.StateMachine.StyleEnforcer.End();
         return context with { Emitter = result };
     }
     public static WriteContext WriteEmptySequence(in this WriteContext context, string tag)

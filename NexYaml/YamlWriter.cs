@@ -12,7 +12,6 @@ public class YamlWriter : IYamlWriter
     public List<IResolvePlugin> Plugins { get; private set; } 
     public IYamlSerializerResolver Resolver { get; init; }
 
-    internal StyleEnforcer enforcer = new();
     private readonly StreamWriter writer;
     internal EmitterStateMachine StateMachine { get; }
 
@@ -37,4 +36,3 @@ public class YamlWriter : IYamlWriter
         writer.Write(value);
     }
 }
-
