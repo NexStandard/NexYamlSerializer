@@ -59,7 +59,8 @@ public static class Writing
         {
             IsRedirected = false,
             Emitter = emitter,
-            Indent = write.Indent + 2
+            Indent = write.Indent + 2,
+            StyleScope = style
         };
     }
     public static WriteContext BeginSequence(in this WriteContext write, string tag, DataStyle style)
