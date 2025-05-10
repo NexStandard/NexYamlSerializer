@@ -48,16 +48,6 @@ public abstract class IEmitter(IYamlWriter writer, EmitterStateMachine machine)
     public abstract IEmitter WriteScalar(ReadOnlySpan<char> value);
 
     /// <summary>
-    /// Writes the header for a block sequence entry, including necessary indentation and a sequence identifier.
-    /// This method handles the logic for managing line breaks and indentation before writing the sequence entry.
-    /// </summary>
-    protected void WriteBlockSequenceEntryHeader()
-    {
-        WriteIndent();
-        WriteSequenceIdentifier();
-    }
-
-    /// <summary>
     /// Writes indentation to the YAML document. The indentation is determined by the current indentation level
     /// and can optionally be forced to a specific width.
     /// </summary>

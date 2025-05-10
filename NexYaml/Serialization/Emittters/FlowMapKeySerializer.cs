@@ -14,7 +14,8 @@ internal class FlowMapKeySerializer : IEmitter
         var current = context.Emitter.State;
         if (current is EmitState.BlockSequenceEntry)
         {
-            WriteBlockSequenceEntryHeader();
+            WriteIndent();
+            WriteSequenceIdentifier();
         }
         else if (current is EmitState.FlowSequenceSecondaryEntry)
         {
