@@ -22,11 +22,9 @@ public class EmitterStateMachine
     internal IEmitter flowMapValueSerializer;
     internal IEmitter flowSequenceSecondarySerializer;
     public int CurrentIndentLevel => IndentationManager.CurrentIndentLevel;
-    public StyleEnforcer StyleEnforcer { get; private set; }
     internal IndentationManager IndentationManager { get; } = new();
     public EmitterStateMachine(YamlWriter stream)
     {
-        StyleEnforcer = stream.enforcer;
         blockMapKeySerializer = new BlockMapKeySerializer(stream, this);
         blockMapSecondaryKeySerializer = new BlockMapSecondKeySerializer(stream, this);
         flowMapKeySerializer = new FlowMapKeySerializer(stream, this);
