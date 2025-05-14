@@ -32,7 +32,7 @@ abstract class Sequence : Node
     public abstract Context<Sequence> Write<T>(T value, Context<Sequence> context);
 }
 
-internal readonly record struct Context<T>(int Indent, bool IsRedirected, IYamlWriter Stream, DataStyle StyleScope, T Node) where T : Node;
+internal record Context<T>(int Indent, bool IsRedirected, IYamlWriter Stream, DataStyle StyleScope, T Node) where T : Node;
 
 abstract class Serializer<T>
 {
@@ -42,36 +42,36 @@ abstract class Serializer<T>
 
 static class Extensions
 {
-    public static Context<Mapping> BeginMapping<T>(in this Context<T> mapping, string tag, DataStyle style)
+    public static Context<Mapping> BeginMapping<T>(this Context<T> mapping, string tag, DataStyle style)
         where T : Node
     {
         return mapping.Node.BeginMapping(mapping,tag, style);
     }
 
-    public static Context<Sequence> BeginSequence<T>(in this Context<T> mapping, string tag, DataStyle style)
+    public static Context<Sequence> BeginSequence<T>(this Context<T> mapping, string tag, DataStyle style)
         where T : Node
     {
         return mapping.Node.BeginSequence(mapping,tag, style);
     }
 
 
-    public static void End<T,X>(in this Context<T> context, in Context<X> current)
+    public static void End<T,X>(this Context<T> context, in Context<X> current)
         where T : Node
         where X : Node
     {
         context.Node.End(current);
     }
 
-    public static void WriteScalar<T>(in this Context<T> mapping, ReadOnlySpan<char> text)
+    public static void WriteScalar<T>(this Context<T> mapping, ReadOnlySpan<char> text)
         where T : Node
     {
         mapping.Node.WriteScalar(text, mapping);
     }
-    public static Context<Mapping> Write<T>(in this Context<Mapping> mapping, string key ,T value)
+    public static Context<Mapping> Write<T>(this Context<Mapping> mapping, string key ,T value)
     {
         return mapping.Node.Write(key, value, mapping);
     }
-    public static Context<Sequence> Write<T>(in this Context<Sequence> mapping, T value)
+    public static Context<Sequence> Write<T>(this Context<Sequence> mapping, T value)
     {
         return mapping.Node.Write(value, mapping);
     }
@@ -88,10 +88,21 @@ class TestSerializer : Serializer<TestS>
 {
     public override void Write<X>(TestS value, Context<X> context)
     {
-        context.BeginMapping("!Test", DataStyle.Compact)
+        context.BeginMapping("!Test", DataStyle.Normal)
             .Write("Help", "me")
-            .Write("Secondary", "Element")
             .End(context);
+    }
+}
+class ListSerializer : Serializer<List<TestS>>
+{
+    public override void Write<X>(List<TestS> value, Context<X> context)
+    {
+        var tempContext = context.BeginSequence("!List", context.StyleScope);
+        foreach(var x in value)
+        {
+            tempContext = tempContext.Write(x);
+        }
+        tempContext.End(context);
     }
 }
 class TestS

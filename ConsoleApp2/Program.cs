@@ -31,14 +31,13 @@ class Program
 
     static void Main()
     {
-        var context = new Context<Mapping>() { Node = new FlowMapping() };
-        new FlowSequence().BeginSequence(context, "!Sequence", DataStyle.Compact)
-            .Write("Hi")
-            .Write(new TestS())
-            .Write("Hompty")
-            .Write("Help")
-            .End(context);
-        // Yaml.Write(new Collections() { });
-        // BenchmarkRunner.Run<Benchmarker>();
+
+        var context = new Context<Mapping>(-2, false, null, DataStyle.Normal, new BlockMapping());
+        new BlockMapping()
+            .BeginMapping(context, "!Temp", DataStyle.Normal)
+            .Write("hi", new TestS())
+            .Write("hi2", new TestS())
+            .Write("hi4", new TestS())
+            .Write("hi3", new TestS());
     }
 }

@@ -14,13 +14,7 @@ class FlowSequence : Sequence
     public override Context<Sequence> BeginSequence<T>(Context<T> context, string tag, DataStyle style)
     {
         Console.Write(tag+ " [");
-        return new Context<Sequence>()
-        {
-            Indent = context.Indent,
-            Node = new FlowSequence(),
-            Stream = context.Stream,
-            StyleScope = DataStyle.Compact,
-        };
+        return new Context<Sequence>(context.Indent, false, null, context.StyleScope, new FlowSequence());
     }
 
     public override Context<Sequence> Write<T>(T value, Context<Sequence> context)
@@ -56,21 +50,12 @@ class FlowMapping : Mapping
     public override Context<Mapping> BeginMapping<T>(Context<T> context, string tag, DataStyle style)
     {
         Console.Write(tag+ " {");
-        return new Context<Mapping>()
-        {
-            Indent = context.Indent,
-            Node = this,
-            Stream = context.Stream,
-            StyleScope = DataStyle.Compact,
-        };
+        return new Context<Mapping>(context.Indent, false, null, context.StyleScope, this);
     }
 
     public override Context<Sequence> BeginSequence<T>(Context<T> context, string tag, DataStyle style)
     {
-        return new Context<Sequence>()
-        {
-            Node = new FlowSequence()
-        };
+        return new Context<Sequence>(context.Indent, false, null, context.StyleScope, new FlowSequence());
     }
 
     public override Context<Mapping> Write<T>(string key, T value, Context<Mapping> context)
@@ -101,5 +86,50 @@ class FlowMappingSecondary : FlowMapping
     {
         Console.Write(", ");
         return base.Write(key, value, context);
+    }
+}
+class BlockMapping : Mapping
+{
+    public override Context<Mapping> BeginMapping<T>(Context<T> context, string tag, DataStyle style)
+    {
+        if (style is DataStyle.Any or DataStyle.Normal)
+        {
+            Console.Write(tag);
+            return new Context<Mapping>(context.Indent+2, false, null, context.StyleScope, this);
+        }
+        else
+        {
+            return new FlowMapping().BeginMapping(context, tag, style);
+        }
+    }
+
+    public override Context<Sequence> BeginSequence<T>(Context<T> context, string tag, DataStyle style)
+    {
+        if(style is DataStyle.Any or DataStyle.Normal)
+        {
+            throw new NotImplementedException();
+        }
+        else
+        {
+            return new FlowSequence().BeginSequence(context, tag, style);
+        }
+    }
+
+    public override Context<Mapping> Write<T>(string key, T value, Context<Mapping> context)
+    {
+        Console.WriteLine();
+        Console.Write(new string(' ',context.Indent));
+        Console.Write($"{key} : ");
+
+        if (value is string s)
+        {
+            new StringSerializer().Write(s, context);
+        }
+        else if (value is TestS t)
+        {
+            new TestSerializer().Write(t, context);
+        }
+
+        return context;
     }
 }
