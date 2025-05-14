@@ -29,7 +29,7 @@ abstract class Sequence : Node
     public abstract Context<Sequence> Write<T>(T value, Context<Sequence> context);
 }
 
-internal readonly record struct Context<T>(int Indent, bool IsRedirected, IYamlWriter Stream, DataStyle StyleScope, T Node, bool IsFirst) where T : Node;
+internal readonly record struct Context<T>(int Indent, bool IsRedirected, IYamlWriter Stream, DataStyle StyleScope, T Node) where T : Node;
 
 abstract class Serializer<T>
 {
