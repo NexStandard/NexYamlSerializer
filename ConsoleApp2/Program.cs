@@ -8,6 +8,8 @@ using Test;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using ConsoleApp2;
+using Silk.NET.OpenXR;
 [DataContract]
 public partial class Data
 {
@@ -29,7 +31,12 @@ class Program
 
     static void Main()
     {
+        var context = new Context<Mapping>() { Node = new FlowMapping() };
+        new FlowSequence().BeginSequence(context, "!Sequence", DataStyle.Compact)
+            .Write("Hi")
+            .Write(new TestS())
+            .End(context);
         // Yaml.Write(new Collections() { });
-        BenchmarkRunner.Run<Benchmarker>();
+        // BenchmarkRunner.Run<Benchmarker>();
     }
 }
