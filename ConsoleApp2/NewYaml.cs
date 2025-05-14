@@ -18,7 +18,7 @@ abstract class Node
     {
         // standard do nothing
     }
-    public abstract Node WriteScalar<T>(ReadOnlySpan<char> text, in Context<T> context) where T : Node;
+    public abstract void WriteScalar<T>(ReadOnlySpan<char> text, in Context<T> context) where T : Node;
 }
 abstract class Mapping : Node
 {
@@ -59,10 +59,10 @@ static class Extensions
         context.Node.End(current);
     }
 
-    public static Node WriteScalar<T>(in this Context<T> mapping, ReadOnlySpan<char> text)
+    public static void WriteScalar<T>(in this Context<T> mapping, ReadOnlySpan<char> text)
         where T : Node
     {
-        return mapping.Node.WriteScalar(text, mapping);
+        mapping.Node.WriteScalar(text, mapping);
     }
     public static Context<Mapping> Write<T>(in this Context<Mapping> mapping, string key ,T value)
     {
