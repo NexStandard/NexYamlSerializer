@@ -38,12 +38,6 @@ class FlowSequence : Sequence
             Node = new FlowSequenceSecondary(),
         };
     }
-
-    public override Node WriteScalar<T>(ReadOnlySpan<char> text, in Context<T> context)
-    {
-        Console.Write(text.ToString());
-        return context.Node;
-    }
     public override void End<T>(in Context<T> context)
     {
         Console.Write("]");
@@ -55,11 +49,6 @@ class FlowSequenceSecondary : FlowSequence
     {
         Console.Write("; ");
         return base.Write(value, context);
-    }
-    public override Node WriteScalar<T>(ReadOnlySpan<char> text, in Context<T> context)
-    {
-        Console.Write("; ");
-        return base.WriteScalar(text, context);
     }
 }
 class FlowMapping : Mapping
@@ -101,12 +90,6 @@ class FlowMapping : Mapping
         };
     }
 
-    public override Node WriteScalar<T>(ReadOnlySpan<char> text, in Context<T> context)
-    {
-        Console.Write(text.ToString());
-        return new FlowMappingSecondary();
-
-    }
     public override void End<T>(in Context<T> context)
     {
         Console.Write("}");
@@ -118,9 +101,5 @@ class FlowMappingSecondary : FlowMapping
     {
         Console.Write(", ");
         return base.Write(key, value, context);
-    }
-    public override Node WriteScalar<T>(ReadOnlySpan<char> text, in Context<T> context)
-    {
-        return base.WriteScalar(text, context);
     }
 }

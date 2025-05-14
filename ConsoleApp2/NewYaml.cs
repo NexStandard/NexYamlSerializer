@@ -18,7 +18,10 @@ abstract class Node
     {
         // standard do nothing
     }
-    public abstract void WriteScalar<T>(ReadOnlySpan<char> text, in Context<T> context) where T : Node;
+    public virtual void WriteScalar<T>(ReadOnlySpan<char> text, in Context<T> context) where T : Node
+    {
+        Console.Write(text.ToString());
+    }
 }
 abstract class Mapping : Node
 {

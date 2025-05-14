@@ -35,6 +35,8 @@ class Program
         new FlowSequence().BeginSequence(context, "!Sequence", DataStyle.Compact)
             .Write("Hi")
             .Write(new TestS())
+            .Write("Hompty")
+            .Write("Help")
             .End(context);
         // Yaml.Write(new Collections() { });
         // BenchmarkRunner.Run<Benchmarker>();
