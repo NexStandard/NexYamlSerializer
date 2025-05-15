@@ -14,13 +14,13 @@ abstract class Node
         where T : Node;
     public abstract Context<Sequence> BeginSequence<T>(Context<T> context, string tag, DataStyle style)
         where T : Node;
-    public virtual void End<T>(in Context<T> context) where T : Node
+    public virtual void End<T>(Context<T> context) where T : Node
     {
         // standard do nothing
     }
-    public virtual void WriteScalar<T>(ReadOnlySpan<char> text, in Context<T> context) where T : Node
+    public virtual void WriteScalar<T>(Context<T> context,ReadOnlySpan<char> text) where T : Node
     {
-        Console.Write(text.ToString());
+        context.Writer.Write(text);
     }
 }
 abstract class Mapping : Node
@@ -32,8 +32,20 @@ abstract class Sequence : Node
     public abstract Context<Sequence> Write<T>(T value, Context<Sequence> context);
 }
 
-internal record Context<T>(int Indent, bool IsRedirected, IYamlWriter Stream, DataStyle StyleScope, T Node) where T : Node;
+internal record Context<T>(int Indent, bool IsRedirected, DataStyle StyleScope, T Node, IWriter Writer) where T : Node;
 
+interface IWriter
+{
+    void Write(ReadOnlySpan<char> text);
+}
+delegate void WriteDelegate(ReadOnlySpan<char> text);
+class Writer(WriteDelegate write) : IWriter
+{
+    public void Write(ReadOnlySpan<char> text)
+    {
+        write.Invoke(text);
+    }
+}
 abstract class Serializer<T>
 {
     public abstract void Write<X>(T value, Context<X> context)
@@ -65,7 +77,15 @@ static class Extensions
     public static void WriteScalar<T>(this Context<T> mapping, ReadOnlySpan<char> text)
         where T : Node
     {
-        mapping.Node.WriteScalar(text, mapping);
+        mapping.Node.WriteScalar(mapping,text);
+    }
+    public static void WriteEmpty(this Context<Mapping> context, string tag)
+    {
+        context.WriteScalar(tag + " { }");
+    }
+    public static void WriteEmpty(this Context<Sequence> context, string tag)
+    {
+        context.WriteScalar(tag + " [ ]");
     }
     public static Context<Mapping> Write<T>(this Context<Mapping> mapping, string key ,T value)
     {
