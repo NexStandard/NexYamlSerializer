@@ -74,6 +74,7 @@ public class ReferenceTest
         Assert.Equal(d.List[0], d.List[1]);
         Assert.Equal(d.List[0], d.List[2]);
     }
+#if NET9_0_OR_GREATER
     [Fact]
     public void ResolveListReferences_DeepStructure()
     {
@@ -115,6 +116,7 @@ public class ReferenceTest
         var d = Yaml.Read<ReferenceScriptList>(s);
         Assert.Equal(d.List[1], d.List[0].Reference.ReferenceScript);
     }
+#endif
     [Fact(Skip = "this is bugged with obj=>struct=>iidentifiable")]
     public void StructsLinkedWithinReference()
     {
