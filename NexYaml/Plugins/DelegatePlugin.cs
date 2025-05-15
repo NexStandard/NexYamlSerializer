@@ -63,18 +63,19 @@ internal class DelegatePlugin : IResolvePlugin
         return false;
     }
 
-    public bool Write<T>(IYamlWriter stream, T value, DataStyle style, WriteContext context, out WriteContext newContext)
+    public bool Write<T, X>(WriteContext<X> context, T value, DataStyle style)
+        where X : Node
     {
         if (value is Delegate @delegate)
         {
 
             var invocations = @delegate.GetInvocationList();
-            if(invocations.Count() == 0)
+            if(invocations.Length is 0)
             {
-                newContext = context.WriteEmptySequence("!!del");
+                context.WriteEmptySequence("!!del");
                 return true;
             }
-            newContext = context.BeginSequence("!!del", style);
+            var newContext = context.BeginSequence("!!del", style);
             foreach (var invocation in invocations)
             {
                 if (invocation.Target is IIdentifiable identifiable)
@@ -82,11 +83,9 @@ internal class DelegatePlugin : IResolvePlugin
                     newContext = newContext.Write($"{identifiable.Id}#{invocation.Method.Name}");
                 }
             }
-            newContext = newContext.End(context);
-            
+            newContext.End(context);
             return true;
         }
-        newContext = default;
         return false;
     }
 }

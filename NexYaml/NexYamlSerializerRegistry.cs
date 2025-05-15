@@ -191,22 +191,9 @@ internal class SerializerRegistry
     };
     internal Dictionary<string, Type> TypeMap { get; } = new()
     {
-        ["!int"] = typeof(int),
-        ["!long"] = typeof(long),
-        ["!float"] = typeof(float),
-        ["!double"] = typeof(double),
-        ["!boolean"] = typeof(bool),
-        ["!string"] = typeof(string),
-        ["!!del"] = typeof(Action)
     };
     internal Dictionary<Type, string> AliasMap { get; } = new()
     {
-        [typeof(int)] = "!int",
-        [typeof(long)] = "!long",
-        [typeof(float)] = "!float",
-        [typeof(double)] = "!double",
-        [typeof(bool)] = "!boolean",    
-        [typeof(string)] = "!string",
     };
     internal Dictionary<Type, YamlSerializer> DefinedSerializers { get; } = new Dictionary<Type, YamlSerializer>()
     {
@@ -235,6 +222,5 @@ internal class SerializerRegistry
             { typeof(Guid), GuidSerializer.Instance },
             { typeof(Guid?), GuidSerializer.Instance },
             { typeof(Uri), UriSerializer.Instance },
-            { typeof(Type), TypeSerializer.Instance }
     };
 }

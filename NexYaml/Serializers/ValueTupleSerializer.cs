@@ -6,11 +6,11 @@ namespace NexYaml.Serializers;
 
 public class ValueTupleSerializer<T1> : YamlSerializer<ValueTuple<T1>>
 {
-    public override WriteContext Write(IYamlWriter stream, ValueTuple<T1> value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, ValueTuple<T1> value, DataStyle style)
     {
-        return context.BeginSequence("!ValueTuple", style)
-.Write(value.Item1, DataStyle.Compact)
-        .End(context);
+        context.BeginSequence("!ValueTuple", style)
+            .Write(value.Item1, DataStyle.Compact)
+            .End(context);
     }
 
     public override void Read(IYamlReader stream, ref ValueTuple<T1> value, ref ParseResult result)
@@ -26,10 +26,10 @@ public class ValueTupleSerializer<T1> : YamlSerializer<ValueTuple<T1>>
 
 public class ValueTupleSerializer<T1, T2> : YamlSerializer<ValueTuple<T1, T2>>
 {
-    public override WriteContext Write(IYamlWriter stream, (T1, T2) value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, ValueTuple<T1, T2> value, DataStyle style)
     {
 
-        return context.BeginSequence("!ValueTuple", style)
+        context.BeginSequence("!ValueTuple", style)
             .Write(value.Item1, DataStyle.Compact)
             .Write(value.Item2, DataStyle.Compact)
             .End(context);
@@ -51,11 +51,10 @@ public class ValueTupleSerializer<T1, T2> : YamlSerializer<ValueTuple<T1, T2>>
 
 public class ValueTupleSerializer<T1, T2, T3> : YamlSerializer<ValueTuple<T1, T2, T3>>
 {
-    public override WriteContext Write(IYamlWriter stream, (T1, T2, T3) value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, ValueTuple<T1, T2, T3> value, DataStyle style)
     {
-
-        return context.BeginSequence("!ValueTuple", style)
-.Write(value.Item1, DataStyle.Compact)
+        context.BeginSequence("!ValueTuple", style)
+            .Write(value.Item1, DataStyle.Compact)
             .Write(value.Item2, DataStyle.Compact)
             .Write(value.Item3, DataStyle.Compact)
             .End(context);
@@ -76,14 +75,12 @@ public class ValueTupleSerializer<T1, T2, T3> : YamlSerializer<ValueTuple<T1, T2
         value = new ValueTuple<T1, T2, T3>(item1, item2, item3);
     }
 }
-
 public class ValueTupleSerializer<T1, T2, T3, T4> : YamlSerializer<ValueTuple<T1, T2, T3, T4>>
 {
-    public override WriteContext Write(IYamlWriter stream, (T1, T2, T3, T4) value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, ValueTuple<T1, T2, T3, T4> value, DataStyle style)
     {
-
-        return context.BeginSequence("!ValueTuple", style)
-.Write(value.Item1, DataStyle.Compact)
+        context.BeginSequence("!ValueTuple", style)
+            .Write(value.Item1, DataStyle.Compact)
             .Write(value.Item2, DataStyle.Compact)
             .Write(value.Item3, DataStyle.Compact)
             .Write(value.Item4, DataStyle.Compact)
@@ -110,11 +107,10 @@ public class ValueTupleSerializer<T1, T2, T3, T4> : YamlSerializer<ValueTuple<T1
 
 public class ValueTupleSerializer<T1, T2, T3, T4, T5> : YamlSerializer<ValueTuple<T1, T2, T3, T4, T5>>
 {
-    public override WriteContext Write(IYamlWriter stream, (T1, T2, T3, T4, T5) value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, ValueTuple<T1, T2, T3, T4, T5> value, DataStyle style)
     {
-
-        return context.BeginSequence("!ValueTuple", style)
-.Write(value.Item1, DataStyle.Compact)
+        context.BeginSequence("!ValueTuple", style)
+            .Write(value.Item1, DataStyle.Compact)
             .Write(value.Item2, DataStyle.Compact)
             .Write(value.Item3, DataStyle.Compact)
             .Write(value.Item4, DataStyle.Compact)
@@ -144,11 +140,10 @@ public class ValueTupleSerializer<T1, T2, T3, T4, T5> : YamlSerializer<ValueTupl
 public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6> : YamlSerializer<ValueTuple<T1, T2, T3, T4, T5, T6>>
 {
 
-    public override WriteContext Write(IYamlWriter stream, (T1, T2, T3, T4, T5, T6) value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, ValueTuple<T1, T2, T3, T4, T5, T6> value, DataStyle style)
     {
-
-        return context.BeginSequence("!ValueTuple", style)
-.Write(value.Item1, DataStyle.Compact)
+        context.BeginSequence("!ValueTuple", style)
+            .Write(value.Item1, DataStyle.Compact)
             .Write(value.Item2, DataStyle.Compact)
             .Write(value.Item3, DataStyle.Compact)
             .Write(value.Item4, DataStyle.Compact)
@@ -180,11 +175,10 @@ public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6> : YamlSerializer<Value
 
 public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<ValueTuple<T1, T2, T3, T4, T5, T6, T7>>
 {
-    public override WriteContext Write(IYamlWriter stream, (T1, T2, T3, T4, T5, T6, T7) value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, ValueTuple<T1, T2, T3, T4, T5, T6, T7> value, DataStyle style)
     {
-
-        return context.BeginSequence("!ValueTuple", style)
-.Write(value.Item1, DataStyle.Compact)
+        context.BeginSequence("!ValueTuple", style)
+            .Write(value.Item1, DataStyle.Compact)
             .Write(value.Item2, DataStyle.Compact)
             .Write(value.Item3, DataStyle.Compact)
             .Write(value.Item4, DataStyle.Compact)
@@ -219,9 +213,9 @@ public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<V
 public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6, T7, TRest> : YamlSerializer<ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest>>
     where TRest : struct
 {
-    public override WriteContext Write(IYamlWriter stream, ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest> value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest> value, DataStyle style)
     {
-        return context.BeginSequence("!ValueTuple", style)
+        context.BeginSequence("!ValueTuple", style)
             .Write(value.Item1, DataStyle.Compact)
             .Write(value.Item2, DataStyle.Compact)
             .Write(value.Item3, DataStyle.Compact)

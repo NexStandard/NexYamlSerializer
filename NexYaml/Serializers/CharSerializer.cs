@@ -9,9 +9,9 @@ public class CharSerializer : YamlSerializer<char>
 {
     public static readonly CharSerializer Instance = new();
 
-    public override WriteContext Write(IYamlWriter stream, char value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, char value, DataStyle style)
     {
-        return context.Write(value, style);
+        context.WriteScalar(['\'', value, '\'']);
     }
 
     public override void Read(IYamlReader stream, ref char value, ref ParseResult parseResult)

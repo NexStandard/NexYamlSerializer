@@ -19,7 +19,6 @@ internal static class SerializerExtensions
                type == typeof(decimal) ||
                type == typeof(string) ||
                type == typeof(DateTime) ||
-               type == typeof(Type) ||
                type == typeof(TimeSpan);
     }
 }

@@ -17,18 +17,9 @@ public class DateTimeSerializer : YamlSerializer<DateTime>
     /// </summary>
     private const int FormatOMaxLength = 33;
 
-    public override WriteContext Write(IYamlWriter stream, DateTime value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, DateTime value, DataStyle style)
     {
-        Span<byte> buf = stackalloc byte[FormatOMaxLength];
-        if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten, new StandardFormat('O')))
-        {
-            ReadOnlySpan<byte> bytes = buf[..bytesWritten];
-            return context.Write(bytes);
-        }
-        else
-        {
-            throw new YamlException($"Cannot format {value}");
-        }
+        context.WriteType(value.ToString(), style);
     }
 
     public override void Read(IYamlReader stream, ref DateTime value, ref ParseResult result)

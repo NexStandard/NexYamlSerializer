@@ -7,14 +7,14 @@ namespace NexYaml.Plugins;
 
 internal class NullPlugin : IResolvePlugin
 {
-    public bool Write<T>(IYamlWriter stream, T value, DataStyle style, WriteContext context, out WriteContext newContext)
+    public bool Write<T, X>(WriteContext<X> context, T value, DataStyle style)
+        where X : Node
     {
         if (value is null)
         {
-            newContext = context.WriteScalar(YamlCodes.Null);
+            context.WriteScalar(YamlCodes.Null);
             return true;
         }
-        newContext = default;
         return false;
     }
 

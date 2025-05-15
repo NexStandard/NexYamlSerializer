@@ -10,9 +10,11 @@ public class UInt16Serializer : YamlSerializer<ushort>
 {
     public static readonly UInt16Serializer Instance = new();
 
-    public override WriteContext Write(IYamlWriter stream, ushort value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, ushort value, DataStyle style)
     {
-        return context.Write(value, style);
+        Span<char> span = stackalloc char[5];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        context.WriteScalar(span[..written]);
     }
 
     public override void Read(IYamlReader stream, ref ushort value, ref ParseResult result)

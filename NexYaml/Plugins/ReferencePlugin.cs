@@ -1,4 +1,5 @@
-﻿using NexYaml.Parser;
+﻿using System.IO;
+using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
 
@@ -28,21 +29,20 @@ internal class ReferencePlugin : IResolvePlugin
         return false;
     }
 
-    public bool Write<T>(IYamlWriter stream, T value, DataStyle style, WriteContext context, out WriteContext newContext)
+    public bool Write<T, X>(WriteContext<X> context, T value, DataStyle style) where X : Node
     {
         if (value is IIdentifiable id)
         {
-            if (stream.References.Contains(id.Id))
+            if (context.Writer.References.Contains(id.Id))
             {
-                newContext = context.WriteScalar("!!ref " + id.Id);
+                context.WriteScalar("!!ref " + id.Id);
                 return true;
             }
             else
             {
-                stream.References.Add(id.Id);
+                context.Writer.References.Add(id.Id);
             }
         }
-        newContext = default;
         return false;
     }
 }

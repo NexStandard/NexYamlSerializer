@@ -17,9 +17,7 @@ public class Benchmarker
     IYamlSerializerResolver resolver;
     Collections values = new Collections();
     MemoryStream memoryStream;
-    YamlWriter writer;
     StreamWriter s;
-    (WriteContext,StreamWriter) context;
     [GlobalSetup]
     public void Setup()
     {
@@ -28,13 +26,10 @@ public class Benchmarker
     [IterationSetup]
     public void Init()
     {
-        context = Yaml.GetContext();
     }
     [Benchmark(Baseline = true)]
     public void YamlB()
     {
-        context.Item1.Write(values, DataStyle.Compact);
-        context.Item2.Flush();
     }
     [Benchmark()]
     public void JsonB()
