@@ -34,6 +34,7 @@ public class Benchmarker
     public void YamlB()
     {
         Yaml.Write(values, (ReadOnlySpan<char> text) => s.Append(text), DataStyle.Compact, resolver);
+        var x = s.ToString();
     }
     [Benchmark()]
     public void JsonB()
