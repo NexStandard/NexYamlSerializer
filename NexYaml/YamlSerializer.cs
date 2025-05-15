@@ -11,21 +11,24 @@ namespace NexYaml;
 public abstract class YamlSerializer
 {
     protected virtual DataStyle Style { get; } = DataStyle.Any;
-    public abstract WriteContext Write(IYamlWriter stream, object value, DataStyle style, in WriteContext context);
-    public abstract WriteContext Write(IYamlWriter stream, object value, in WriteContext context);
+    public abstract void Write<X>(WriteContext<X> context, object value, DataStyle style)
+        where X : Node;
+    public abstract void Write<X>(WriteContext<X> context, object value)
+        where X : Node;
     public abstract void ReadUnknown(IYamlReader stream, ref object? value, ref ParseResult parseResult);
     public abstract ValueTask<object?> ReadUnknown(IYamlReader stream, ParseContext<object?> parseResult);
 
 }
 public abstract class YamlSerializer<T> : YamlSerializer
 {
-    public override WriteContext Write(IYamlWriter stream, object value,in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, object value)
     {
-        return Write(stream, (T)value, Style, context);
+        var x = typeof(T).GetType().Name;
+        Write(context,(T)value, Style);
     }
-    public override WriteContext Write(IYamlWriter stream, object value, DataStyle style,in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, object value, DataStyle style)
     {
-        return Write(stream, (T)value, style, context);
+        Write(context, (T)value, style);
     }
     public override void ReadUnknown(IYamlReader stream, ref object? value, ref ParseResult parseResult)
     {
@@ -33,7 +36,8 @@ public abstract class YamlSerializer<T> : YamlSerializer
         Read(stream, ref val, ref parseResult);
         value = val;
     }
-    public abstract WriteContext Write(IYamlWriter stream, T value, DataStyle style, in WriteContext context);
+    public abstract void Write<X>(WriteContext<X> context, T value, DataStyle style)
+     where X : Node;
     public abstract void Read(IYamlReader stream, ref T value, ref ParseResult parseResult);
     public override async ValueTask<object?> ReadUnknown(IYamlReader stream, ParseContext<object?> parseResult)
     {

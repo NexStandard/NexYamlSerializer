@@ -1,13 +1,9 @@
-﻿using BenchmarkDotNet.Running;
-using NexYaml.Serialization;
-using NexYaml;
+﻿
+using BenchmarkDotNet.Running;
 using Stride.Core;
-using System.IO;
-using System.Runtime.CompilerServices;
-using Test;
-using System.Diagnostics;
 using System.Text.Json.Serialization;
-using System.Text.Json;
+using Test;
+
 [DataContract]
 public partial class Data
 {
@@ -29,7 +25,6 @@ class Program
 
     static void Main()
     {
-        // Yaml.Write(new Collections() { });
         BenchmarkRunner.Run<Benchmarker>();
     }
 }

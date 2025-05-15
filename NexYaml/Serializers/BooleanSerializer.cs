@@ -8,9 +8,9 @@ public class BooleanSerializer : YamlSerializer<bool>
 {
     public static readonly BooleanSerializer Instance = new();
 
-    public override WriteContext Write(IYamlWriter stream, bool value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, bool value, DataStyle style)
     {
-        return context.Write(value, style);
+        context.WriteScalar(value ? ['t', 'r', 'u', 'e'] : [ 'f', 'a', 'l', 's', 'e' ]);
     }
 
     public override void Read(IYamlReader stream, ref bool value, ref ParseResult result)

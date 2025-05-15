@@ -11,9 +11,9 @@ public class EmptySerializer<T> : YamlSerializer<T>
         return new EmptySerializer<T>();
     }
 
-    public override WriteContext Write(IYamlWriter stream, T value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, T value, DataStyle style)
     {
-        return context.WriteScalar(YamlCodes.Null);
+        context.WriteScalar(YamlCodes.Null);
     }
 
     public override void Read(IYamlReader stream, ref T value, ref ParseResult result)

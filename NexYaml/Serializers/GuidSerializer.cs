@@ -10,13 +10,13 @@ public class GuidSerializer : YamlSerializer<Guid>
 {
     public static readonly GuidSerializer Instance = new();
 
-    public override WriteContext Write(IYamlWriter stream, Guid value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, Guid value, DataStyle style)
     {
         // nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn
-        Span<byte> buf = stackalloc byte[64];
-        if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten))
+        Span<char> buf = stackalloc char[36];
+        if (value.TryFormat(buf, out var bytesWritten))
         {
-            return context.Write(buf[..bytesWritten]);
+            context.WriteScalar(buf[..bytesWritten]);
         }
         else
         {

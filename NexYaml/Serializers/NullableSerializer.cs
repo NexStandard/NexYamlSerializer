@@ -11,15 +11,15 @@ using System.Threading.Tasks;
 namespace NexYaml.Serializers;
 public class NullableSerializer<T> : YamlSerializer<T?> where T : struct
 {
-    public override WriteContext Write(IYamlWriter stream, T? value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, T? value, DataStyle style)
     {
         if (value is null)
         {
-            return context.Write(YamlCodes.Null);
+            context.WriteScalar(YamlCodes.Null);
         }
         else
         {
-            return context.Write(value.Value, style);
+            context.WriteType(value.Value, style);
         }
     }
 

@@ -11,9 +11,11 @@ public class UInt64Serializer : YamlSerializer<ulong>
 {
     public static readonly UInt64Serializer Instance = new();
 
-    public override WriteContext Write(IYamlWriter stream, ulong value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, ulong value, DataStyle style)
     {
-        return context.Write(value, style);
+        Span<char> span = stackalloc char[20];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        context.WriteScalar(span[..written]);
     }
 
     public override void Read(IYamlReader stream, ref ulong value, ref ParseResult result)
@@ -22,7 +24,7 @@ public class UInt64Serializer : YamlSerializer<ulong>
         {
             if (ulong.TryParse(span, CultureInfo.InvariantCulture, out var temp))
             {
-                value = temp; 
+                value = temp;
                 stream.Move();
             }
             else if (FormatHelper.TryDetectHex(span, out var hexNumber))

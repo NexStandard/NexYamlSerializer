@@ -22,8 +22,8 @@ public class ReferenceSerializer<T> : YamlSerializer<T>
         }
     }
 
-    public override WriteContext Write(IYamlWriter stream, T value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, T value, DataStyle style)
     {
-        return context.Write(("!!ref " + value.Id).AsSpan());
+        context.WriteScalar(("!!ref " + value.Id).AsSpan());
     }
 }

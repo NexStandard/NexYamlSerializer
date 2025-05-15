@@ -1,3 +1,4 @@
+using System.IO;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
@@ -7,9 +8,40 @@ namespace NexYaml.Serializers;
 public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey, TValue>?>
     where TKey : notnull
 {
-    public override WriteContext Write(IYamlWriter stream, Dictionary<TKey, TValue>? value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, Dictionary<TKey, TValue>? value, DataStyle style)
     {
-        return DictionarySerializerFactory.Serialize(stream, value!, style, context);
+        if (SerializerExtensions.IsPrimitive(typeof(TKey)))
+        {
+            if (value!.Count == 0)
+            {
+                context.WriteEmptyMapping("!Dictionary");
+            }
+            else
+            {
+                var resultContext = context.BeginMapping("!Dictionary", style);
+
+                foreach (var x in value)
+                {
+                    resultContext = resultContext.Write(x.Key.ToString(), x.Value,style);
+                }
+                resultContext.End(context);
+            }
+        }
+        else
+        {
+            if (value?.Count == 0)
+            {
+                context.WriteEmptySequence("!Dictionary");
+            }
+            else
+            {
+                var serializer = new ListSerializer<KeyValuePair<TKey, TValue>>()
+                {
+                    CustomTag = "!Dictionary"
+                };
+                serializer.Write(context, value.ToList(), style);
+            }
+        }
     }
 
     public override void Read(IYamlReader stream, ref Dictionary<TKey, TValue>? value, ref ParseResult parseResult)
@@ -43,39 +75,6 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
 }
 internal class DictionarySerializerFactory : IYamlSerializerFactory
 {
-    public static WriteContext Serialize<TKey, TValue>(IYamlWriter stream, Dictionary<TKey, TValue> value, DataStyle style, in WriteContext context)
-        where TKey : notnull
-    {
-        if (SerializerExtensions.IsPrimitive(typeof(TKey)))
-        {
-            if (value.Count == 0)
-            {
-                return context.WriteEmptyMapping("!Dictionary");
-            }
-            var resultContext = context.BeginMapping("!Dictionary", style);
-            foreach (var x in value)
-            {
-                resultContext = resultContext.Write(x.Key, style);
-                resultContext = resultContext.Write(x.Value, style);
-            }
-            return resultContext.End(context);
-        }
-        else
-        {
-            if (value?.Count == 0)
-            {
-                return context.WriteEmptySequence("!Dictionary");
-            }
-            var kvp = new KeyValuePairSerializer<TKey, TValue>();
-            var resultContext = context.BeginSequence("!Dictionary", style);
-            foreach (var x in value)
-            {
-                resultContext = kvp.Write(stream, x, resultContext);
-            }
-            return resultContext.End(context);
-        }
-    }
-
     public void Register(IYamlSerializerResolver resolver)
     {
         resolver.Register(this, typeof(Dictionary<,>), typeof(Dictionary<,>));
@@ -84,7 +83,6 @@ internal class DictionarySerializerFactory : IYamlSerializerFactory
         resolver.RegisterTag("Dictionary", typeof(Dictionary<,>));
         resolver.Register(this, typeof(Dictionary<,>), typeof(IDictionary<,>));
         resolver.Register(this, typeof(Dictionary<,>), typeof(IReadOnlyDictionary<,>));
-
     }
 
     public YamlSerializer Instantiate(Type type)
@@ -113,4 +111,3 @@ internal class DictionarySerializerFactory : IYamlSerializerFactory
         return (YamlSerializer)Activator.CreateInstance(fillGen)!;
     }
 }
-

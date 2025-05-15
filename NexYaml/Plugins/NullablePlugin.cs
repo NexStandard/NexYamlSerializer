@@ -13,16 +13,16 @@ internal class NullablePlugin : IResolvePlugin
         return false;
     }
 
-    public bool Write<T>(IYamlWriter stream, T value, DataStyle style, WriteContext context, out WriteContext newContext)
+    public bool Write<T, X>(WriteContext<X> context, T value, DataStyle style)
+        where X : Node
     {
         var type = typeof(T);
         Type? targetType = null;
         if ((targetType = Nullable.GetUnderlyingType(type)) is not null)
         {
-            newContext = stream.Resolver.GetSerializer(targetType)!.Write(stream, value, context);
+            context.Writer.Resolver.GetSerializer(targetType)!.Write(context, value, style);
             return true;
         }
-        newContext = default;
         return false;
     }
 }

@@ -7,10 +7,9 @@ namespace NexYaml.Serializers;
 public class UriSerializer : YamlSerializer<Uri>
 {
     public static readonly UriSerializer Instance = new();
-
-    public override WriteContext Write(IYamlWriter stream, Uri value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, Uri value, DataStyle style)
     {
-        return context.Write(value.ToString());
+        context.WriteScalar(value.ToString());
     }
 
     public override void Read(IYamlReader stream, ref Uri value, ref ParseResult result)

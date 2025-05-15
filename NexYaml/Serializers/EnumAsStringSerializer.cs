@@ -60,11 +60,11 @@ public class EnumAsStringSerializer<T> : YamlSerializer<T>
         return buf.ToString();
     }
 
-    public override WriteContext Write(IYamlWriter stream, T value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, T value, DataStyle style)
     {
         if (ValueNameMapping.TryGetValue(value, out var name))
         {
-            return context.Write(name);
+            context.WriteScalar(name);
         }
         else
         {

@@ -10,10 +10,11 @@ namespace NexYaml.Serializers;
 public class Int16Serializer : YamlSerializer<short>
 {
     public static readonly Int16Serializer Instance = new();
-
-    public override WriteContext Write(IYamlWriter stream, short value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, short value, DataStyle style)
     {
-        return context.Write(value, style);
+        Span<char> span = stackalloc char[6];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        context.WriteScalar(span[..written]);
     }
 
     public override void Read(IYamlReader stream, ref short value, ref ParseResult result)

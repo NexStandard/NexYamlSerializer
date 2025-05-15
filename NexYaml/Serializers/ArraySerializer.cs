@@ -6,11 +6,11 @@ namespace NexYaml.Serializers;
 
 public class ArraySerializer<T> : YamlSerializer<T[]>
 {
-    public override WriteContext Write(IYamlWriter stream, T[] value, DataStyle style,in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, T[] value, DataStyle style)
     {
         if (value.Length == 0)
         {
-            return context.WriteEmptySequence("!Array");
+            context.WriteEmptySequence("!Array");
         }
         var result = context.BeginSequence("!Array", style);
 
@@ -19,8 +19,7 @@ public class ArraySerializer<T> : YamlSerializer<T[]>
             var val = x;
             result = result.Write(x, style);
         }
-
-        return result.End(context);
+        result.End(context);
     }
 
     public override void Read(IYamlReader stream, ref T[] value, ref ParseResult result)

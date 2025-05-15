@@ -10,9 +10,11 @@ public class ByteSerializer : YamlSerializer<byte>
 {
     public static readonly ByteSerializer Instance = new();
 
-    public override WriteContext Write(IYamlWriter stream, byte value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, byte value, DataStyle style)
     {
-        return context.Write(value, style);
+        Span<char> span = stackalloc char[3];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        context.WriteScalar(span[..written]);
     }
 
     public override void Read(IYamlReader stream, ref byte value, ref ParseResult parseResult)

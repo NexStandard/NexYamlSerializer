@@ -11,18 +11,9 @@ public class DateTimeOffsetSerializer : YamlSerializer<DateTimeOffset>
 {
     public static readonly DateTimeOffsetSerializer Instance = new();
 
-    public override WriteContext Write(IYamlWriter stream, DateTimeOffset value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, DateTimeOffset value, DataStyle style)
     {
-        Span<byte> buf = stackalloc byte[64];
-        if (Utf8Formatter.TryFormat(value, buf, out var bytesWritten, new StandardFormat('O')))
-        {
-            ReadOnlySpan<byte> bytes = buf[..bytesWritten];
-            return context.Write(bytes);
-        }
-        else
-        {
-            throw new YamlException($"Cannot format {value}");
-        }
+        context.WriteType(value.ToString(), style);
     }
 
     public override void Read(IYamlReader stream, ref DateTimeOffset value, ref ParseResult result)

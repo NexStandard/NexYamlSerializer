@@ -10,13 +10,13 @@ public class TimeSpanSerializer : YamlSerializer<TimeSpan>
 {
     public static readonly TimeSpanSerializer Instance = new();
 
-    public override WriteContext Write(IYamlWriter stream, TimeSpan value, DataStyle style, in WriteContext context)
+    public override void Write<X>(WriteContext<X> context, TimeSpan value, DataStyle style)
     {
         Span<char> buf = stackalloc char[32];
         
         if (value.TryFormat(buf, out var bytesWritten))
         {
-            return context.Write(buf[..bytesWritten]);
+            context.WriteScalar(buf[..bytesWritten]);
         }
         else
         {

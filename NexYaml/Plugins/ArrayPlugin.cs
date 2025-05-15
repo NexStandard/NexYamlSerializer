@@ -6,7 +6,8 @@ using Stride.Core;
 namespace NexYaml.Plugins;
 internal class ArrayPlugin : IResolvePlugin
 {
-    public bool Write<T>(IYamlWriter stream, T value, DataStyle style, WriteContext context, out WriteContext newContext)
+    public bool Write<T,X>(WriteContext<X> context, T value, DataStyle style)
+        where X : Node
     {
         if (value is Array)
         {
@@ -14,10 +15,9 @@ internal class ArrayPlugin : IResolvePlugin
             var arraySerializerType = typeof(ArraySerializer<>).MakeGenericType(t);
             var arraySerializer = (YamlSerializer)Activator.CreateInstance(arraySerializerType)!;
 
-            newContext = arraySerializer.Write(stream, value, style, context);
+            arraySerializer.Write(context, value, style);
             return true;
         }
-        newContext = default;
         return false;
     }
     public bool Read<T>(IYamlReader stream, ref T value, ref ParseResult result)

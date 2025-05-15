@@ -7,12 +7,14 @@ namespace NexYaml.Serializers;
 
 public class ListSerializer<T> : YamlSerializer<List<T>?>
 {
-    public override WriteContext Write(IYamlWriter stream, List<T>? value, DataStyle style, in WriteContext context)
+    public string? CustomTag { get; init; }
+    public override void Write<X>(WriteContext<X> context, List<T>? value, DataStyle style)
     {
         bool hasIdentifiable = false;
         if (value.Count == 0)
         {
-            return context.WriteEmptySequence("!List");
+            context.WriteEmptySequence(CustomTag ?? "!List");
+            return;
         }
         foreach (var item in value)
         {
@@ -30,14 +32,14 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
             {
                 var element = value[i];
                 if (element is IIdentifiable identifiable
-                    && !stream.References.Contains(identifiable.Id))
+                    && !context.Writer.References.Contains(identifiable.Id))
                 {
-                    stream.References.Add(identifiable.Id);
+                    context.Writer.References.Add(identifiable.Id);
                     reservedIds.Add(identifiable);
                 }
             }
             List<IIdentifiable> removedIds = new();
-            var resultContext = context.BeginSequence("!List", style);
+            var resultContext = context.BeginSequence(CustomTag ?? "!List", style);
             for (var i = 0; i < value.Count; i++)
             {
                 var element = value[i];
@@ -45,30 +47,21 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
                     && reservedIds.Contains(identifiable) &&
                     !removedIds.Contains(identifiable))
                 {
-                    stream.References.Remove(identifiable.Id);
+                    context.Writer.References.Remove(identifiable.Id);
                     removedIds.Add(identifiable);
                 }
                 resultContext = resultContext.Write(element, style);
             }
-            return resultContext.End(context);
+            resultContext.End(context);
+            return;
         }
-        var result = context.BeginSequence("!List", style);
-        if (typeof(T).IsValueType)
+        var result = context.BeginSequence(CustomTag ?? "!List", style);
+
+        foreach (var x in value)
         {
-            var structSerializer = stream.Resolver.GetSerializer<T>();
-            foreach(var x in value)
-            {
-                result = structSerializer.Write(stream, x,style, result);
-            }
+            result = result.Write(x, style);
         }
-        else
-        {
-            foreach (var x in value)
-            {
-                result = result.Write(x, style);
-            }
-        }
-        return result.End(context);
+        result.End(context);
     }
 
     public override void Read(IYamlReader stream, ref List<T>? value, ref ParseResult result)

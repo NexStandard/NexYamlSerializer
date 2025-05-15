@@ -21,7 +21,8 @@ public interface IResolvePlugin
     /// True if the value was successfully handled and written by this method; 
     /// false if the value was not processed and should be handled by the default serializers.
     /// </returns>
-    bool Write<T>(IYamlWriter stream, T value, DataStyle provider, WriteContext context, out WriteContext newContext);
+    bool Write<T,X>(WriteContext<X> context,T value, DataStyle style)
+        where X : Node;
     bool Read<T>(IYamlReader stream, ref T value, ref ParseResult result);
     public static List<IResolvePlugin> plugins = new()
         {
