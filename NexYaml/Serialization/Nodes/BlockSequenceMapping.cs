@@ -2,7 +2,7 @@
 
 namespace NexYaml.Serialization.Nodes;
 
-class SequenceBlockMapping : BlockMapping
+class BlockSequenceMapping : BlockMapping
 {
     public override WriteContext<Mapping> Write<T>(string key, T value, WriteContext<Mapping> context, DataStyle style)
     {

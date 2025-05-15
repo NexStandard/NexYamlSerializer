@@ -6,6 +6,7 @@ using NexYaml.Serialization;
 using NexYaml.Serializers;
 using SharpFont;
 using Stride.Core;
+using System.Buffers;
 using System.IO;
 using System.Text;
 using System.Text.Json;
@@ -16,8 +17,8 @@ public class Benchmarker
 {
     IYamlSerializerResolver resolver;
     Collections values = new Collections();
-    MemoryStream memoryStream;
-    StreamWriter s;
+    StringBuilder s = new();
+
     [GlobalSetup]
     public void Setup()
     {
@@ -26,10 +27,13 @@ public class Benchmarker
     [IterationSetup]
     public void Init()
     {
+        s = new();
     }
+
     [Benchmark(Baseline = true)]
     public void YamlB()
     {
+        Yaml.Write(values, (ReadOnlySpan<char> text) => s.Append(text), DataStyle.Compact, resolver);
     }
     [Benchmark()]
     public void JsonB()

@@ -8,7 +8,7 @@ class BlockMapping : Mapping
     {
         if (context.StyleScope is DataStyle.Compact || style is DataStyle.Compact)
         {
-            return new FlowMapping().BeginMapping(context, tag, DataStyle.Compact);
+            return CommonNodes.FlowMapping.BeginMapping(context, tag, DataStyle.Compact);
         }
         if (context.IsRedirected)
         {
@@ -21,9 +21,9 @@ class BlockMapping : Mapping
     {
         if (context.StyleScope is DataStyle.Compact || style is DataStyle.Compact)
         {
-            return new FlowSequence().BeginSequence(context, tag, DataStyle.Compact);
+            return CommonNodes.FlowSequence.BeginSequence(context, tag, DataStyle.Compact);
         }
-        return new BlockSequence().BeginSequence(context, tag, DataStyle.Normal);
+        return CommonNodes.BlockSequence.BeginSequence(context, tag, DataStyle.Normal);
     }
 
     public override WriteContext<Mapping> Write<T>(string key, T value, WriteContext<Mapping> context, DataStyle style)

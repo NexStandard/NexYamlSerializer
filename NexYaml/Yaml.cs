@@ -18,11 +18,9 @@ public class Yaml
     /// <param name="value">The value to serialize.</param>
     /// <param name="options">The serializer options (optional).</param>
     /// <returns>A read-only memory containing the serialized value.</returns>
-    public static string Write<T>(T value, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
+    public static void Write<T>(T value, WriteDelegate writing, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
     {
         options ??= IYamlSerializerResolver.Default;
-        using var memoryStream = new MemoryStream();
-        using var writer = new StreamWriter(memoryStream);
         List<IResolvePlugin> plugins = new()
         {
             new NullPlugin(),
@@ -33,35 +31,10 @@ public class Yaml
         };
         WriteContext<Node> node;
 
-            node = new WriteContext<Node>(-2, true, style, new BlockMapping(), new DelegateWriter(IYamlSerializerResolver.Default, plugins, (ReadOnlySpan<char> text) => {
-                Console.Write(text.ToString());
-                writer.Write(text);
-            } ));
-
+        node = new WriteContext<Node>(-2, true, style, new BlockMapping(), new DelegateWriter(options, plugins, writing));
 
         node.WriteType(value, style);
-        var result = "";
-        writer.Flush();
-        memoryStream.Seek(0, SeekOrigin.Begin);
-        using (var reader = new StreamReader(memoryStream))
-        {
-            result = reader.ReadToEnd();
-        }
-        return result;
     }
-
-    /// <summary>
-    /// Serializes the specified value to a <see cref="ReadOnlyMemory{T}"/> using YAML format.
-    /// </summary>
-    /// <typeparam name="T">The type of the value to serialize.</typeparam>
-    /// <param name="value">The value to serialize.</param>
-    /// <param name="options">The serializer options (optional).</param>
-    /// <returns>A read-only memory containing the serialized value.</returns>
-    public static void Write<T>(T value, StreamWriter streamWriter, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
-    {
-        throw new NotImplementedException();
-    }
-
 
     public static T? Read<T>(ReadOnlyMemory<char> memory, IYamlSerializerResolver? options = null)
     {

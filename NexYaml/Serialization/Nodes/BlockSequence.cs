@@ -8,15 +8,15 @@ class BlockSequence : Sequence
     {
         if (context.StyleScope is DataStyle.Compact || style is DataStyle.Compact)
         {
-            return new FlowMapping().BeginMapping(context, tag, DataStyle.Compact);
+            return CommonNodes.FlowMapping.BeginMapping(context, tag, DataStyle.Compact);
         }
         if (context.IsRedirected)
         {
-            return new BlockMapping().BeginMapping(context, tag, DataStyle.Normal);
+            return CommonNodes.BlockMapping.BeginMapping(context, tag, DataStyle.Normal);
         }
         else
         {
-            return new SequenceBlockMapping().BeginMapping(context, tag, DataStyle.Normal);
+            return CommonNodes.BlockSequenceMapping.BeginMapping(context, tag, DataStyle.Normal);
         }
     }
 

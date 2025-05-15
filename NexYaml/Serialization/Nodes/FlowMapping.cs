@@ -12,7 +12,7 @@ class FlowMapping : Mapping
 
     public override WriteContext<Sequence> BeginSequence<T>(WriteContext<T> context, string tag, DataStyle style)
     {
-        return new WriteContext<Sequence>(context.Indent, false, DataStyle.Compact, new FlowSequence(), context.Writer)
+        return new WriteContext<Sequence>(context.Indent, false, DataStyle.Compact, CommonNodes.FlowSequence, context.Writer)
             .BeginSequence(tag,DataStyle.Compact);
     }
 

@@ -4,4 +4,4 @@ using Stride.Core;
 
 namespace NexYaml.Serialization;
 
-delegate void WriteDelegate(ReadOnlySpan<char> text);
+public delegate void WriteDelegate(ReadOnlySpan<char> text);

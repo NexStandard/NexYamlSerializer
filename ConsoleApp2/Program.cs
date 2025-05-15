@@ -1,6 +1,8 @@
 ﻿
+using BenchmarkDotNet.Running;
 using Stride.Core;
 using System.Text.Json.Serialization;
+using Test;
 
 [DataContract]
 public partial class Data
@@ -23,6 +25,6 @@ class Program
 
     static void Main()
     {
-
+        BenchmarkRunner.Run<Benchmarker>();
     }
 }
