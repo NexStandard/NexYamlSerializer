@@ -10,6 +10,8 @@ class BlockSequence : Sequence
         {
             return CommonNodes.FlowMapping.BeginMapping(context, tag, DataStyle.Compact);
         }
+
+        //  When no tag is provided, BlockMapping introduce an extra faulty newline.
         if (context.IsRedirected)
         {
             return CommonNodes.BlockMapping.BeginMapping(context, tag, DataStyle.Normal);
@@ -35,6 +37,12 @@ class BlockSequence : Sequence
 
     public override WriteContext<Sequence> Write<T>(WriteContext<Sequence> context, T value, DataStyle style)
     {
+        // "{KEY}: {OPTIONAL TAG}" OR "- {OPTIONAL TAG}"
+        // "{NEWLINE}{INDENT}- {OUTPUT FROM WriteType}"
+        // Special rule:
+        // - The sequence identifier ("- ") does NOT use increased indentation.
+        // - The indent can NOT be below 0
+        // - Only the subsequent nodes follow deeper indentation levels.
         context.WriteScalar("\n" + new string(' ', Math.Max(context.Indent - 2, 0)) + "- ");
         context.WriteType(value, style);
         return context;
