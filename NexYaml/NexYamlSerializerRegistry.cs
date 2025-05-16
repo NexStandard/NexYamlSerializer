@@ -66,7 +66,7 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
         {
             return serializer1;
         }
-        // search if there is a 
+        // search if there is a Factory
         if (SerializerRegistry.SerializerFactory.TryGetValue(origin, out var serializer))
         {
             serializer.TryGetValue(type, out var t);
@@ -139,15 +139,6 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
             }
         }
 
-    }
-
-    public YamlSerializer? GetSerializer(Type type)
-    {
-        if (SerializerRegistry.DefinedSerializers.TryGetValue(type, out var value))
-        {
-            return value;
-        }
-        return null;
     }
 
     public void RegisterSerializer<T>(YamlSerializer<T> serializer)

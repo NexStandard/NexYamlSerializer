@@ -15,13 +15,6 @@ public interface IYamlSerializerResolver
     YamlSerializer<T> GetSerializer<T>();
 
     /// <summary>
-    /// Retrieves the serializer for the specified type, or null if no serializer is found.
-    /// </summary>
-    /// <param name="type">The <see cref="Type"/> of the object to serialize.</param>
-    /// <returns>The <see cref="YamlSerializer"/> for the specified type, or null if not found.</returns>
-    public YamlSerializer? GetSerializer(Type type);
-
-    /// <summary>
     /// Retrieves the serializer for the specified type and its origin, 
     /// which is useful for resolving inheritance or interfaces.
     /// </summary>

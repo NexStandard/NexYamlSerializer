@@ -101,13 +101,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
             else
             {
                 var alias = Resolver.GetAliasType(tag.Handle);
-                serializer = Resolver.GetSerializer(alias);
-                serializer ??= Resolver.GetSerializer(alias, type);
-                if (serializer == null)
-                {
-                    value = default;
-                    return;
-                }
+                serializer = Resolver.GetSerializer(alias, type);
                 var valueObject = (object?)value;
                 serializer.ReadUnknown(this, ref valueObject, ref parseResult);
                 value = (T?)valueObject;

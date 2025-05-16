@@ -20,7 +20,7 @@ internal class NullablePlugin : IResolvePlugin
         Type? targetType = null;
         if ((targetType = Nullable.GetUnderlyingType(type)) is not null)
         {
-            context.Writer.Resolver.GetSerializer(targetType)!.Write(context, value, style);
+            context.Writer.Resolver.GetSerializer(targetType, targetType)!.Write(context, value, style);
             return true;
         }
         return false;
