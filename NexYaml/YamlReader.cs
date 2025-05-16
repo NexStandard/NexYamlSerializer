@@ -92,7 +92,6 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
                     Resolver.GetSerializer<T>().Read(this, ref value!, ref parseResult);
                     return;
                 }
-
                 else
                 {
                     Read(formatt, ref parser, ref value, ref parseResult);
@@ -101,15 +100,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
             }
             else
             {
-                Type alias;
-                // TODO: Problem is that !!null etc gets consumed as Tag on collections instead of a scalar value
-                if (parser.IsNullScalar())
-                {
-                    parser.Read();
-                    value = default;
-                    return;
-                }
-                alias = Resolver.GetAliasType(tag.Handle);
+                var alias = Resolver.GetAliasType(tag.Handle);
                 serializer = Resolver.GetSerializer(alias);
                 serializer ??= Resolver.GetSerializer(alias, type);
                 if (serializer == null)
