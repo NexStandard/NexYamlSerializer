@@ -28,7 +28,9 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
         {
             return (YamlSerializer<T>)serializer;
         }
-        return EmptySerializer<T>.EmptyS();
+        var s = EmptySerializer<T>.EmptyS();
+        SerializerRegistry.DefinedSerializers.Add(typeof(T), s);
+        return s;
     }
 
     public YamlSerializer<T>? GetGenericSerializer<T>()
@@ -64,17 +66,15 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
         {
             return serializer1;
         }
-        if(SerializerRegistry.DefinedSerializers.TryGetValue(origin, out var serializer2))
-        {
-            return serializer2;
-        }
         // search if there is a 
         if (SerializerRegistry.SerializerFactory.TryGetValue(origin, out var serializer))
         {
             serializer.TryGetValue(type, out var t);
             if (t is not null)
             {
-                return t.Instantiate(origin);
+                var tempSerializer = t.Instantiate(origin);
+                SerializerRegistry.DefinedSerializers[origin] = tempSerializer;
+                return tempSerializer;
             }
         }
         var genericSerializer = typeof(EmptySerializer<>);
