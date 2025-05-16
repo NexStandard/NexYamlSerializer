@@ -29,6 +29,29 @@ internal static class SourceCreator
         var ifStatement = new StringBuilder();
         var awaits = new StringBuilder();
         var map = package.MemberSymbols;
+<<<<<<< HEAD
+=======
+        
+        objTempVariables.AppendLine($"\t\tvar res = new {info.NameDefinition}();");
+        
+
+        foreach (var member in package.MemberSymbols)
+        {
+            objTempVariables.AppendLine($"\t\tvar var_{member.Name} = default(ValueTask<{(member.IsArray ? member.Type + "[]" : member.Type)}>);");
+            objTempVariables.AppendLine($"\t\tvar context_{member.Name} = new ParseContext<{(member.IsArray ? member.Type + "[]" : member.Type)}>();");
+            awaits.AppendLine($"\t\tres.{member.Name} = await var_{member.Name};");
+            ifStatement.AppendLine($"\t\t\tif (key.SequenceEqual(UTF8{member.Name})){{stream.Move();var_{member.Name} = stream.ReadAsync(context_{member.Name}); continue; }}");
+        }
+        ifStatement.AppendLine("\t\t\tstream.SkipRead();");
+
+        ///
+        string writeString = isEmpty ? $"return context.WriteEmptyMapping(\"!{tag}\");" :
+        $"""
+        style = style == DataStyle.Any ? Style : style;
+        return context.BeginMapping("!{tag}",style)
+        {package.CreateNewSerializationEmit()}
+        .End(context);
+>>>>>>> 1d072fd9cf40e0531369f2ee24bfbf904c91a917
         
         objTempVariables.AppendLine($"\t\tvar res = new {info.NameDefinition}();");
         
@@ -92,6 +115,7 @@ file sealed class {{info.GeneratorName + info.TypeParameterArguments}} : YamlSer
         {{writeString}}
     }
 
+<<<<<<< HEAD
     public override void Read(IYamlReader stream, ref {{info.NameDefinition}} value, ref ParseResult parseResult)
     {
         {{package.CreateDeserialize()}}
@@ -112,6 +136,43 @@ file sealed class {{info.GeneratorName + info.TypeParameterArguments}} : YamlSer
 }
 
 """;
+    }
+
+    private static void AppendMember(MemberApi.SymbolInfo symbol, StringBuilder switchBuilder)
+    {
+        switchBuilder.AppendLine($"// \t\t\t\t!stream.TryRead(ref __TEMP__{symbol.Name}, in key, {"UTF8" + symbol.Name}, ref __TEMP__RESULT__{symbol.Name}) &&");
+    }
+    public static string MapPropertiesToSwitch(IEnumerable<MemberApi.SymbolInfo> properties)
+    {
+        var switchBuilder = new StringBuilder();
+        foreach (var prop in properties)
+        {
+            AppendMember(prop, switchBuilder);
+        }
+        var result = switchBuilder.ToString();
+        result = result.TrimEnd('\r', '\n');
+        result = result.TrimEnd('&');
+        return result;
+=======
+    public override void Read(IYamlReader stream, ref {info.NameDefinition} value, ref ParseResult parseResult)
+    {{
+{package.CreateDeserialize()}
+    }}
+    public override async ValueTask<{info.NameDefinition}> Read(IYamlReader stream, ParseContext<{info.NameDefinition}> context)
+    {{
+{objTempVariables}
+        stream.Move(ParseEventType.MappingStart);
+        while(stream.HasMapping(out var key,false))
+        {{
+{ifStatement}
+        }}
+        stream.Move(ParseEventType.MappingEnd);
+{awaits}
+        return default;
+    }}
+}}
+";
+>>>>>>> 1d072fd9cf40e0531369f2ee24bfbf904c91a917
     }
 
     private static void AppendMember(MemberApi.SymbolInfo symbol, StringBuilder switchBuilder)

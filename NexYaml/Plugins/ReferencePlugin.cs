@@ -34,7 +34,11 @@ internal class ReferencePlugin : IResolvePlugin
         return false;
     }
 
+<<<<<<< HEAD
     public bool Write<T, X>(WriteContext<X> context, T value, DataStyle style) where X : Node
+=======
+    public bool Write<T>(IYamlWriter stream, T value, DataStyle style, WriteContext context, out WriteContext newContext)
+>>>>>>> 1d072fd9cf40e0531369f2ee24bfbf904c91a917
     {
         if (value is IIdentifiable id)
         {

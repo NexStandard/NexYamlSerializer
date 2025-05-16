@@ -90,7 +90,15 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
             YamlSerializer? serializer;
             if (tag == null)
             {
+<<<<<<< HEAD
                 var formatt = Resolver.GetSerializer<T>();
+=======
+                var formatt = Resolver.GetGenericSerializer<T>();
+                if (formatt == null)
+                {
+                    formatt = Resolver.GetSerializer<T>();
+                }
+>>>>>>> 1d072fd9cf40e0531369f2ee24bfbf904c91a917
                 result = formatt.Read(this, parseResult);
             }
             else
