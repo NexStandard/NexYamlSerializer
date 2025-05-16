@@ -40,7 +40,20 @@ public class ComplexTests
         // Expect to have an Invocation in the Delegate
         Assert.Single(t.Action.GetInvocationList());
     }
-
+    [Fact]
+    public void Delegate_Serialization_On_Empty_Delegate()
+    {
+        Setup();
+        var g = new Delegates();
+        g.Action = null;
+        var x = Yaml.Write(g, Stride.Core.DataStyle.Compact);
+        throw new Exception(x);
+        var t = Yaml.Read<Delegates>(x);
+        // Expect Delegate to not be empty
+        Assert.NotNull(t);
+        // Expect to have an Invocation in the Delegate
+        Assert.Single(t.Action.GetInvocationList());
+    }
     [Fact]
     public void Generic_Serialization_Same_Count_Generic_Parameters_Than_Interface()
     {

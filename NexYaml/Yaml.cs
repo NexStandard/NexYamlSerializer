@@ -11,13 +11,6 @@ namespace NexYaml;
 
 public class Yaml
 {
-    /// <summary>
-    /// Serializes the specified value to a <see cref="ReadOnlyMemory{T}"/> using YAML format.
-    /// </summary>
-    /// <typeparam name="T">The type of the value to serialize.</typeparam>
-    /// <param name="value">The value to serialize.</param>
-    /// <param name="options">The serializer options (optional).</param>
-    /// <returns>A read-only memory containing the serialized value.</returns>
     public static void Write<T>(T value, WriteDelegate writing, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
     {
         options ??= IYamlSerializerResolver.Default;
@@ -34,6 +27,13 @@ public class Yaml
         node = new WriteContext<Node>(-2, true, style, new BlockMapping(), new DelegateWriter(options, plugins, writing));
 
         node.WriteType(value, style);
+    }
+
+    public static string Write<T>(T value, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
+    {
+        StringBuilder sb = new StringBuilder();
+        Yaml.Write(value, (ReadOnlySpan<char> text) => sb.Append(text), style, options);
+        return sb.ToString();
     }
 
     public static T? Read<T>(ReadOnlyMemory<char> memory, IYamlSerializerResolver? options = null)
