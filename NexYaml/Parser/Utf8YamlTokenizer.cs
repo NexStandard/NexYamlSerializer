@@ -1,4 +1,5 @@
 using NexYaml.Core;
+using Silk.NET.OpenXR;
 using System.Buffers;
 
 namespace NexYaml.Parser;
@@ -643,7 +644,7 @@ public class Utf8YamlTokenizer
                 }
             }
 
-            if (YamlCodes.IsEmpty(currentCode) || reader.End)
+            if (IsEmptyOrComma(currentCode) || reader.End)
             {
                 // ex 7.2, an empty scalar can follow a secondary tag
                 tokens.Enqueue(new Token(TokenType.Tag, new Tag(handle.ToString(), suffix.ToString())));
@@ -660,7 +661,11 @@ public class Utf8YamlTokenizer
             scalarPool.Return(suffix);
         }
     }
-
+    public static bool IsEmptyOrComma(byte code)
+    {
+        // skip comma for !!null,
+        return code is YamlCodes.Space or YamlCodes.Tab or YamlCodes.Lf or YamlCodes.Cr or YamlCodes.Comma;
+    }
     private void ConsumeTagHandle(bool directive, Scalar buf, ref SequenceReader<byte> reader)
     {
         if (currentCode != '!')
@@ -714,6 +719,12 @@ public class Utf8YamlTokenizer
             if (currentCode == '%')
             {
                 uri.WriteUnicodeCodepoint(ConsumeUriEscapes(ref reader));
+            }
+            // in flow, it may be the case that its !!null, and this would match an assembly tag without assembly so this case has to be skipped
+            // assembly tag without assembly is not valid like "!class,"
+            else if(currentCode == ',' && TryPeek(1,out var nextCode,ref reader) && !YamlCodes.IsAlphaNumericDashOrUnderscore(nextCode))
+            {
+                break;
             }
             else
             {

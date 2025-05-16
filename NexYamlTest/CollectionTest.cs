@@ -146,7 +146,16 @@ public class CollectionTest
         var s = Yaml.Write(c);
         throw new System.Exception(s);
     }
-
+    [Fact]
+    public void ListWithNullValues()
+    {
+        var list = new List<IIdentifiable>() { null, null };
+        NexYamlSerializerRegistry.Init();
+        var s = Yaml.Write(list,DataStyle.Compact);
+        var d = Yaml.Read<List<IIdentifiable>>(s);
+        Assert.NotNull(d);
+        Assert.Equal(2, list.Count);
+    }
     [Fact]
     public void InterfaceList()
     {
