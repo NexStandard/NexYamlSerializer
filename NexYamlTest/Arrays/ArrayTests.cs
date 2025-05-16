@@ -61,7 +61,7 @@ public class ArrayTests
         Assert.Equal([ 1 ], stringArrayDeserialized.Value[1]);
     }
 
-    [Fact(Skip = "Compact Mapping on double sequence")]
+    [Fact]
     public void Generic_Nested_Int_Array_Compact()
     {
         Setup();
@@ -70,7 +70,6 @@ public class ArrayTests
             Value = [[2], [1]]
         };
         var stringArrayString = Yaml.Write(array, Stride.Core.DataStyle.Compact);
-        throw new System.Exception(stringArrayString);
         var stringArrayDeserialized = Yaml.Read<Generics<int[][]>>(stringArrayString);
         Assert.NotNull(stringArrayDeserialized);
         Assert.NotNull(stringArrayDeserialized.Value);
@@ -78,8 +77,8 @@ public class ArrayTests
         Assert.Equal([1], stringArrayDeserialized.Value[1]);
     }
 
-    [Fact(Skip = "Compact Mapping on double sequence")]
-    public void G()
+    [Fact]
+    public void Generic_Nested_Int_List_Compact()
     {
         Setup();
         var array = new List<List<int>>()
@@ -88,7 +87,6 @@ public class ArrayTests
             new List<int>() { 2 },
         };
         var stringArrayString = Yaml.Write(array, Stride.Core.DataStyle.Compact);
-
         var stringArrayDeserialized = Yaml.Read<List<List<int>>>(stringArrayString);
         Assert.NotNull(stringArrayDeserialized);
         Assert.NotNull(stringArrayDeserialized[0]);
@@ -96,7 +94,7 @@ public class ArrayTests
         Assert.Equal(1, stringArrayDeserialized[0][0]);
         Assert.Equal(2, stringArrayDeserialized[1][0]);
     }
-    [Fact(Skip = "Compact Mapping on double sequence")]
+    [Fact]
     public void Pass_On_Wrong_Generic_Type_but_Equal_Output()
     {
         Setup();

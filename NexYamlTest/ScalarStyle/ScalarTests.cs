@@ -41,8 +41,7 @@ namespace NexYamlTest.ScalarStyle
             var w = new StringWrapper()
             {
                 Value = "\n\n!{[ ] \n, # ` \" \' &*?|-><=%@."
-            }
-            ;
+            };
             var s = Yaml.Write(w);
             Assert.Contains("|+", s);
         }
