@@ -4,6 +4,8 @@ using Stride.Core;
 using System.Text.Json.Serialization;
 using Test;
 
+BenchmarkRunner.Run<Benchmarker>();
+
 [DataContract]
 public partial class Data
 {
@@ -17,14 +19,4 @@ public partial class Wrapper
 {
     [JsonInclude]
     public Data[] Data;
-}
-
-
-class Program
-{
-
-    static void Main()
-    {
-        BenchmarkRunner.Run<Benchmarker>();
-    }
 }

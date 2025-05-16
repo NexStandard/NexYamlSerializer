@@ -1,4 +1,6 @@
-﻿using NexYaml.SourceGenerator.MemberApi.Data;
+﻿using Microsoft.CodeAnalysis;
+using NexYaml.SourceGenerator.MemberApi;
+using NexYaml.SourceGenerator.MemberApi.Data;
 using System.IO;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
@@ -19,7 +21,27 @@ internal static class SourceCreator
         var tag = package.ClassInfo.AliasTag?.Length == 0 ?
             $"{info.NameSpace}.{info.TypeName},{info.NameSpace.Split('.')[0]}" :
             $"{package.ClassInfo.AliasTag}";
+        ///////
+        ///
+        var objectCreation = new StringBuilder();
+        var setResults = new StringBuilder();
+        var objTempVariables = new StringBuilder();
+        var ifStatement = new StringBuilder();
+        var awaits = new StringBuilder();
+        var map = package.MemberSymbols;
+        
+        objTempVariables.AppendLine($"\t\tvar res = new {info.NameDefinition}();");
+        
+        foreach (var member in package.MemberSymbols)
+        {
+            objTempVariables.AppendLine($"\t\tvar var_{member.Name} = default(ValueTask<{(member.IsArray ? member.Type + "[]" : member.Type)}>);");
+            objTempVariables.AppendLine($"\t\tvar context_{member.Name} = new ParseContext<{(member.IsArray ? member.Type + "[]" : member.Type)}>();");
+            awaits.AppendLine($"\t\tres.{member.Name} = await var_{member.Name};");
+            ifStatement.AppendLine($"\t\t\tif (key.SequenceEqual(UTF8{member.Name})){{stream.Move();var_{member.Name} = stream.ReadAsync(context_{member.Name}); continue; }}");
+        }
+        ifStatement.AppendLine("\t\t\tstream.SkipRead();");
 
+        ///
         string writeString = isEmpty ? $"       context.WriteEmptyMapping(\"!{tag}\");" :
         $"""
         context.BeginMapping("!{tag}",style)
@@ -40,6 +62,7 @@ using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace NexYaml;
 [System.CodeDom.Compiler.GeneratedCode("NexVYaml","1.0.0.0")]
@@ -71,10 +94,40 @@ file sealed class {{info.GeneratorName + info.TypeParameterArguments}} : YamlSer
 
     public override void Read(IYamlReader stream, ref {{info.NameDefinition}} value, ref ParseResult parseResult)
     {
-{{package.CreateDeserialize()}}
+        {{package.CreateDeserialize()}}
+    }
+
+    public override async ValueTask<{{info.NameDefinition}}> Read(IYamlReader stream, ParseContext<{{info.NameDefinition}}> context)
+    {
+{{objTempVariables}}
+        stream.Move(ParseEventType.MappingStart);
+        while(stream.HasMapping(out var key,false))
+        {
+{{ifStatement}}
+        }
+        stream.Move(ParseEventType.MappingEnd);
+{{awaits}}
+        return default;
     }
 }
 
 """;
+    }
+
+    private static void AppendMember(MemberApi.SymbolInfo symbol, StringBuilder switchBuilder)
+    {
+        switchBuilder.AppendLine($"// \t\t\t\t!stream.TryRead(ref __TEMP__{symbol.Name}, in key, {"UTF8" + symbol.Name}, ref __TEMP__RESULT__{symbol.Name}) &&");
+    }
+    public static string MapPropertiesToSwitch(IEnumerable<MemberApi.SymbolInfo> properties)
+    {
+        var switchBuilder = new StringBuilder();
+        foreach (var prop in properties)
+        {
+            AppendMember(prop, switchBuilder);
+        }
+        var result = switchBuilder.ToString();
+        result = result.TrimEnd('\r', '\n');
+        result = result.TrimEnd('&');
+        return result;
     }
 }

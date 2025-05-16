@@ -33,6 +33,12 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
     {
         return parser.HasMapping(out mappingKey);
     }
+    public bool HasMapping(out byte[] mappingKey, bool proxy)
+    {
+        var x = parser.HasMapping(out var map);
+        mappingKey = map.ToArray();
+        return x;
+    }
 
     public bool IsNullScalar()
     {
@@ -59,6 +65,70 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         {
             ReferenceResolvingMap.Add(id, new () { resolution });
         }
+    }
+
+    public ValueTask<T> ReadAsync<T>(ParseContext<T> parseResult)
+    {
+        ValueTask<T> result = default;
+        if (IsNullScalar())
+        {
+            Move();
+            return new ValueTask<T>(default(T));
+        }
+        foreach (var syntax in plugins)
+        {
+            if (syntax.Read(this, parseResult.Value,  parseResult))
+            {
+                // TODO
+                return new ValueTask<T>(default(T));
+            }
+        }
+        Type type = typeof(T);
+        if (type.IsInterface || type.IsAbstract || type.IsGenericType)
+        {
+            TryGetCurrentTag(out var tag);
+            YamlSerializer? serializer;
+            if (tag == null)
+            {
+                var formatt = Resolver.GetSerializer<T>();
+                result = formatt.Read(this, parseResult);
+            }
+            else
+            {
+                /*
+                Type alias;
+                // TODO: Problem is that !!null etc gets consumed as Tag on collections instead of a scalar value
+                if (parser.IsNullScalar())
+                {
+                    parser.Read();
+                    value = default;
+                    return;
+                }
+                alias = Resolver.GetAliasType(tag.Handle);
+                serializer = Resolver.GetSerializer(alias);
+                serializer ??= Resolver.GetSerializer(alias, type);
+                if (serializer == null)
+                {
+                    value = default;
+                    return;
+                }
+                var valueObject = (object?)value;
+                serializer.ReadUnknown(this, ref valueObject, ref parseResult);
+                value = (T?)valueObject;
+            */
+                throw new NotImplementedException();
+            }
+        }
+        else
+        {
+            result = Resolver.GetSerializer<T>().Read(this, parseResult);
+        }
+        // TODO
+        // if (value is IIdentifiable identifiable and not null)
+        // {
+        //     Identifiables.Add(identifiable);
+        // }
+        return result;
     }
     public void Read<T>(ref T? value, ref ParseResult parseResult)
     {
@@ -198,4 +268,5 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
     {
         return parser.TryGetCurrentTag(out tag);
     }
+
 }
