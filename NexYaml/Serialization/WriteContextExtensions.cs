@@ -56,9 +56,9 @@ public static class WriteContextExtensions
     {
         return sequence.Node.Write(value, sequence, style);
     }
-    public static void WriteString<X>(this WriteContext<X> context, string value)
+    public static void WriteString<X>(this WriteContext<X> context, string value, DataStyle style = DataStyle.Compact)
         where X : Node
     {
-        context.Writer.WriteString(context,value);
+        context.Writer.WriteString(context,value, style);
     }
 }

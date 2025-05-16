@@ -13,13 +13,13 @@ public class PrimitiveSerializerTest
         {
             // Assigning example values
             IntField = 42,
-
+            StringField = "#:;",
             FloatField = 3.14f,
 
             DoubleField = 2.718,
             DecimalField = 123.456m,
 
-            CharField = 'A',
+            CharField = ':',
 
             BoolField = true,
 
@@ -43,14 +43,14 @@ public class PrimitiveSerializerTest
 
             DecimalProperty = 789.012m,
 
-            CharProperty = 'B',
+            CharProperty = '#',
 
             BoolProperty = false,
 
             ByteProperty = 127,
 
             SByteProperty = 127,
-
+            StringProperty = "\n#::##\n\n",
             ShortProperty = 32767,
 
             UShortProperty = 12345,
@@ -117,7 +117,12 @@ public class PrimitiveSerializerTest
         Assert.Equal(x.LongProperty, d.LongProperty);
 
         Assert.Equal(x.ULongProperty, d.ULongProperty);
+
         Assert.Equal(x.Time, d.Time);
+
+        Assert.Equal(x.StringField, d.StringField);
+        
+        Assert.Equal(x.StringProperty, d.StringProperty);
 
     }
     [Fact]
@@ -247,7 +252,6 @@ public class PrimitiveSerializerTest
 
         Assert.Equal(x.ULongProperty, d.ULongProperty);
         Assert.Equal(x.Time, d.Time);
-
     }
     [Fact]
     public void BaseNullables()

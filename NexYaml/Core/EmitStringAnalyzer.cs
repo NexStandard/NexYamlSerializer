@@ -56,19 +56,8 @@ internal static class EmitStringAnalyzer
 
     public static StringBuilder BuildLiteralScalar(ReadOnlySpan<char> originalValue, int indentCharCount)
     {
-        var chompHint = '\0';
-        if (originalValue.Length > 0 && originalValue[^1] == '\n')
-        {
-            if (originalValue[^2] == '\n' ||
-                (originalValue[^2] == '\r' && originalValue[^3] == '\n'))
-            {
-                chompHint = '+';
-            }
-        }
-        else
-        {
-            chompHint = '-';
-        }
+        var chompHint = '+';
+
 
         var stringBuilder = new StringBuilder();
         stringBuilder.Append('|');
@@ -85,8 +74,6 @@ internal static class EmitStringAnalyzer
                 AppendWhiteSpace(stringBuilder, indentCharCount);
         }
 
-        if (chompHint == '-')
-            stringBuilder.Append('\n');
         return stringBuilder;
     }
 
