@@ -93,7 +93,6 @@ file sealed class {{info.GeneratorName + info.TypeParameterArguments}} : YamlSer
         {{writeString}}
     }
 
-<<<<<<< HEAD
     public override void Read(IYamlReader stream, ref {{info.NameDefinition}} value, ref ParseResult parseResult)
     {
         {{package.CreateDeserialize()}}
@@ -112,7 +111,6 @@ file sealed class {{info.GeneratorName + info.TypeParameterArguments}} : YamlSer
         return default;
     }
 }
-
 """;
     }
 
