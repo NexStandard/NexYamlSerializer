@@ -33,17 +33,6 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
         return s;
     }
 
-    public YamlSerializer<T>? GetGenericSerializer<T>()
-    {
-        var type = typeof(T);
-
-        var genericSerializer = SerializerRegistry.GenericSerializerBuffer.FindAssignableType(type);
-        if (genericSerializer is null)
-            return null;
-        var genericType = genericSerializer.MakeGenericType(type.GenericTypeArguments);
-        return (YamlSerializer<T>?)Activator.CreateInstance(genericType);
-    }
-
     public void Register(IYamlSerializerFactory yamlFactory, Type target, Type interfaceType)
     {
         var tar = target.IsGenericType ? target.GetGenericTypeDefinition() : target;

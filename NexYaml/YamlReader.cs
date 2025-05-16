@@ -86,17 +86,8 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
             YamlSerializer? serializer;
             if (tag == null)
             {
-                var formatt = Resolver.GetGenericSerializer<T>();
-                if (formatt == null)
-                {
-                    Resolver.GetSerializer<T>().Read(this, ref value!, ref parseResult);
-                    return;
-                }
-                else
-                {
-                    Read(formatt, ref parser, ref value, ref parseResult);
-                    return;
-                }
+                Resolver.GetSerializer<T>().Read(this, ref value!, ref parseResult);
+                return;
             }
             else
             {

@@ -24,13 +24,6 @@ public interface IYamlSerializerResolver
     YamlSerializer GetSerializer(Type type, Type origin);
 
     /// <summary>
-    /// Retrieves a generic serializer for the specified type.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to serialize.</typeparam>
-    /// <returns>The <see cref="YamlSerializer{T}"/> for the specified type, or null if no generic serializer is found.</returns>
-    YamlSerializer<T>? GetGenericSerializer<T>();
-
-    /// <summary>
     /// Retrieves the alias type associated with the specified alias.
     /// </summary>
     /// <param name="alias">The alias string.</param>

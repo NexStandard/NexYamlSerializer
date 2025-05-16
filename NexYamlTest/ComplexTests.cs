@@ -183,6 +183,20 @@ public class ComplexTests
         var deserialized = Yaml.Read<UnregisteredBase>(s);
         Assert.Null(deserialized);
     }
+    [Fact]
+    public void Generic_Inside_A_Generic()
+    {
+        Setup();
+        var x = new Generics<Generics<int>>
+        {
+            Value = new() { Value = 1 }
+        };
+        var s = Yaml.Write(x);
+        var d = Yaml.Read<Generics<Generics<int>>>(s);
+        Assert.NotNull(d);
+        Assert.NotNull(d.Value);
+        Assert.Equal(1, d.Value.Value);
+    }
     [Fact()]
     public void GenericNullableTest()
     {
