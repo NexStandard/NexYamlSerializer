@@ -4,9 +4,9 @@ namespace NexYaml.Serialization.Nodes;
 
 class FlowMappingSecondary : FlowMapping
 {
-    public override WriteContext<Mapping> Write<T>(string key, T value, WriteContext<Mapping> context, DataStyle style)
+    public override WriteContext<Mapping> Write<T>(WriteContext<Mapping> context, string key, T value, DataStyle style)
     {
         context.WriteScalar(", ");
-        return base.Write(key, value, context, style);
+        return base.Write(context, key, value, style);
     }
 }

@@ -15,7 +15,7 @@ public abstract class Node
     /// <param name="context">The current serialization <see cref="WriteContext{T}"/>.</param>
     /// <param name="tag">The YAML tag associated with this <see cref="Mapping"/>.</param>
     /// <param name="style">The <see cref="DataStyle"/></param>
-    /// <returns>A new context for the next upcomming <see cref="Node"/>.</returns>
+    /// <returns>A new <see cref="WriteContext{T}"/> for the next upcomming <see cref="Node"/>.</returns>
     public abstract WriteContext<Mapping> BeginMapping<T>(WriteContext<T> context, string tag, DataStyle style)
         where T : Node;
     /// <summary>
@@ -25,7 +25,7 @@ public abstract class Node
     /// <param name="context">The current serialization <see cref="WriteContext{T}"/>.</param>
     /// <param name="tag">The YAML tag associated with this <see cref="Sequence"/>.</param>
     /// <param name="style">The <see cref="DataStyle"/></param>
-    /// <returns>A new context for the next upcomming <see cref="Node"/>.</returns>
+    /// <returns>A new <see cref="WriteContext{T}"/> for the next upcomming <see cref="Node"/>.</returns>
     public abstract WriteContext<Sequence> BeginSequence<T>(WriteContext<T> context, string tag, DataStyle style)
         where T : Node;
     /// <summary>
@@ -34,7 +34,7 @@ public abstract class Node
     /// While this process can occur implicitly, some <see cref="Node"/> types may require an explicit ending.
     /// </summary>
     /// <typeparam name="T">The node type.</typeparam>
-    /// <param name="context">The context to be finalized.</param>
+    /// <param name="context">The <see cref="WriteContext{T}"/> to be finalized.</param>
     public virtual void End<T>(WriteContext<T> context) where T : Node
     {
         // standard do nothing

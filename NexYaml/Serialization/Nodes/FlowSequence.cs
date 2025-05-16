@@ -15,7 +15,7 @@ class FlowSequence : Sequence
         return new WriteContext<Sequence>(context.Indent, false, DataStyle.Compact, this, context.Writer);
     }
 
-    public override WriteContext<Sequence> Write<T>(T value, WriteContext<Sequence> context, DataStyle style)
+    public override WriteContext<Sequence> Write<T>(WriteContext<Sequence> context, T value, DataStyle style)
     {
         context.WriteType(value, style);
         return context with

@@ -26,7 +26,7 @@ class BlockMapping : Mapping
         return CommonNodes.BlockSequence.BeginSequence(context, tag, DataStyle.Normal);
     }
 
-    public override WriteContext<Mapping> Write<T>(string key, T value, WriteContext<Mapping> context, DataStyle style)
+    public override WriteContext<Mapping> Write<T>(WriteContext<Mapping> context, string key, T value, DataStyle style)
     {
         context.WriteScalar("\n"+ new string(' ', context.Indent));
         context.WriteString($"{key}");

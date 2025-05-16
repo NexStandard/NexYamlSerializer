@@ -49,12 +49,12 @@ public static class WriteContextExtensions
     }
     public static WriteContext<Mapping> Write<T>(this WriteContext<Mapping> mapping, string key ,T value, DataStyle style = DataStyle.Any)
     {
-        return mapping.Node.Write(key, value, mapping, style);
+        return mapping.Node.Write(mapping, key, value,style);
     }
 
     public static WriteContext<Sequence> Write<T>(this WriteContext<Sequence> sequence, T value, DataStyle style = DataStyle.Any)
     {
-        return sequence.Node.Write(value, sequence, style);
+        return sequence.Node.Write(sequence, value, style);
     }
     public static void WriteString<X>(this WriteContext<X> context, string value, DataStyle style = DataStyle.Compact)
         where X : Node
