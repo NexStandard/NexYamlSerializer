@@ -6,6 +6,7 @@ using NexYaml.Serializers;
 using Stride.Core;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text.Unicode;
 
 namespace NexYaml;
@@ -15,7 +16,11 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
     public bool HasSequence => parser.HasSequence;
     public Marker CurrentMarker => parser.CurrentMark;
     public Dictionary<Guid, List<Action<object>>> ReferenceResolvingMap { get; } = new();
+    
+    private Dictionary<Guid, (TaskCompletionSource<object>? tcs, object? result)> _identifiables = new();
+
     public HashSet<IIdentifiable> Identifiables { get; } = new();
+    
     private List<IResolvePlugin> plugins =
     [
         new NullPlugin(),
@@ -24,6 +29,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         new ArrayPlugin(),
          new ReferencePlugin(),
     ];
+
     public void Dispose()
     {
         parser.Dispose();
@@ -75,6 +81,8 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
             Move();
             return new ValueTask<T>(default(T));
         }
+
+
         foreach (var syntax in plugins)
         {
             if (syntax.Read(this, parseResult.Value,  parseResult))
@@ -83,6 +91,25 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
                 return new ValueTask<T>(default(T));
             }
         }
+
+        // await reference
+        if (TryGetCurrentTag(out var tag1))
+        {
+            var handle = tag1.Handle;
+
+            if (handle == "ref")
+            {
+                Guid? id = null;
+                TryGetScalarAsString(out var idScalar);
+
+                Move(ParseEventType.Scalar);
+                if (idScalar != null)
+                {
+                    return AsyncGetRef<T>(Guid.Parse(idScalar));
+                }
+            }
+        }
+
         Type type = typeof(T);
         if (type.IsInterface || type.IsAbstract || type.IsGenericType)
         {
@@ -149,6 +176,8 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
                 return;
             }
         }
+
+
         Type type = typeof(T);
         if (type.IsInterface || type.IsAbstract || type.IsGenericType)
         {
@@ -269,4 +298,33 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         return parser.TryGetCurrentTag(out tag);
     }
 
+    public void RegisterIdentifiable(Guid guid, IIdentifiable identifiable)
+    {
+        ref var field = ref CollectionsMarshal.GetValueRefOrAddDefault(_identifiables, guid, out _);
+        if (field.tcs is not null) // Something is waiting, notify it;
+            field.tcs.SetResult(identifiable);
+        else // Nothing was waiting on this one, set the field
+            field.result = identifiable;
+    }
+
+    public async ValueTask<T> AsyncGetRef<T>(Guid guid)
+    {
+
+        (TaskCompletionSource<object>? tcs, object? result) tcs;
+        if(_identifiables.TryGetValue(guid, out var value))
+        {
+            if (value.result is not null)
+            {
+                return (T)value.result;
+            }
+            tcs = value;
+        }
+        else
+        {
+            tcs = new();
+            _identifiables.Add(guid, tcs);
+        }
+        await tcs.tcs.Task;
+        return (T)tcs.tcs.Task.Result;
+    }
 }

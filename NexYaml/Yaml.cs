@@ -32,7 +32,7 @@ public class Yaml
     public static string Write<T>(T value, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
     {
         StringBuilder sb = new StringBuilder();
-        Yaml.Write(value, (ReadOnlySpan<char> text) => sb.Append(text), style, options);
+        Yaml.Write(value, (ReadOnlySpan<char> text) => { sb.Append(text); Console.Write(text.ToString()); }, style, options);
         return sb.ToString();
     }
 

@@ -47,7 +47,33 @@ public class CollectionTest
         Assert.IsType<GenericAbstractImlementationLessParams<int>>(d[0]);
         Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
     }
+    [Fact]
+    public void CompactCollection_InCOllection()
+    {
+        IList<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>> list = new List<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>()
+        {
+            new List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>()
+            {
+                new()
+            },
+            new List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>()
+            {
+                new()
+            },
+        };
+        NexYamlSerializerRegistry.Init();
+        var s = Yaml.Write(list, DataStyle.Compact);
+        var d = Yaml.Read<IList<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>>(s);
+        Assert.NotNull(d);
+        Assert.IsType<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>(d[0]);
+        Assert.IsType< List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>(d[1]);
 
+        var s2 = Yaml.Write(list, DataStyle.Normal);
+        var d2 = Yaml.Read<IList<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>>(s2);
+        Assert.NotNull(d2);
+        Assert.IsType<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>(d2[0]);
+        Assert.IsType<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>(d2[1]);
+    }
     [Fact]
     public void EmitMixedCollectionCompact()
     {

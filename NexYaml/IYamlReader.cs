@@ -136,5 +136,6 @@ public interface IYamlReader
     bool TryGetScalarAsString(out string? value);
     
     public bool TryRead<T>(ref T? target, in ReadOnlySpan<byte> key, byte[] mappingKey, ref ParseResult parseResult);
+    void RegisterIdentifiable(Guid guid, IIdentifiable identifiable);
+    ValueTask<T> AsyncGetRef<T>(Guid guid);
 }
-
