@@ -26,13 +26,13 @@ class BlockSequence : Sequence
     {
         if (context.StyleScope is DataStyle.Compact || style is DataStyle.Compact)
         {
-            return new FlowSequence().BeginSequence(context, tag, DataStyle.Compact);
+            return CommonNodes.FlowSequence.BeginSequence(context, tag, DataStyle.Compact);
         }
         if (context.IsRedirected)
         {
             context.WriteScalar(tag);
         }
-        return new WriteContext<Sequence>(context.Indent + 2, false, DataStyle.Normal, this, context.Writer);
+        return new WriteContext<Sequence>(Math.Max(0,context.Indent) + 2, false, DataStyle.Normal, this, context.Writer);
     }
 
     public override WriteContext<Sequence> Write<T>(WriteContext<Sequence> context, T value, DataStyle style)
