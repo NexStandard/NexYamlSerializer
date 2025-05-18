@@ -125,6 +125,6 @@ public class Yaml
         var value = default(T);
         var x = await reader.ReadAsync<T>(new());
         reader.ResolveReferences();
-        return value;
+        return x;
     }
 }
