@@ -32,12 +32,22 @@ internal static class SourceCreator
 
         ///
         objTempVariables.AppendLine($"\t\tvar res = new {info.NameDefinition}();");
-        
+
+        if (package.MemberSymbols.Any(x => x.Name == "Id" && x.Type == "System.Guid"))
+        {
+            awaits.AppendLine("\t\tvar id = await var_Id;");
+            awaits.AppendLine("\t\tstream.RegisterIdentifiable(id, res);");
+            awaits.AppendLine("\t\tres.Id = id;");
+        }
+
         foreach (var member in package.MemberSymbols)
         {
             objTempVariables.AppendLine($"\t\tvar var_{member.Name} = default(ValueTask<{(member.IsArray ? member.Type + "[]" : member.Type)}>);");
             objTempVariables.AppendLine($"\t\tvar context_{member.Name} = new ParseContext();");
-            awaits.AppendLine($"\t\tres.{member.Name} = await var_{member.Name};");
+            
+            if ((member.Name == "Id" && member.Type == "System.Guid") == false)
+                awaits.AppendLine($"\t\tres.{member.Name} = await var_{member.Name};");
+
             ifStatement.AppendLine($"\t\t\tif (key.SequenceEqual(UTF8{member.Name})){{stream.Move();var_{member.Name} = stream.ReadAsync<{(member.IsArray ? member.Type + "[]" : member.Type)}>(context_{member.Name}); continue; }}");
         }
         ifStatement.AppendLine("\t\t\tstream.SkipRead();");

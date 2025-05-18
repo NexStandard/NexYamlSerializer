@@ -132,10 +132,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         {
             result = Resolver.GetSerializer<T>().Read(this, parseResult);
         }
-        if (result.Result is IIdentifiable identifiable and not null)
-        {
-            RegisterIdentifiable(identifiable.Id, identifiable);
-        }
+
         return result;
     }
     public async ValueTask<T> Convert<T>(ValueTask<object> t)
