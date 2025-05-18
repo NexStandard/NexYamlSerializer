@@ -81,8 +81,8 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
             Move();
             return new ValueTask<T>(default(T));
         }
-
-
+        ValueTask<T> value = default;
+        Type type = typeof(T);
         foreach (var syntax in plugins)
         {
             if (syntax.Read(this, parseResult.Value,  parseResult))
@@ -110,7 +110,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
             }
         }
 
-        Type type = typeof(T);
+
         if (type.IsInterface || type.IsAbstract || type.IsGenericType)
         {
             TryGetCurrentTag(out var tag);
@@ -122,24 +122,26 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
             }
             else
             {
-                
                 Type alias = Resolver.GetAliasType(tag.Handle);
                 serializer = Resolver.GetSerializer(alias, type);
 
-                serializer.ReadUnknown(this, parseResult);
-            
+                var res = serializer.ReadUnknown(this, parseResult);
+                result = Convert<T>(res);
             }
         }
         else
         {
             result = Resolver.GetSerializer<T>().Read(this, parseResult);
         }
-        // TODO
-        // if (value is IIdentifiable identifiable and not null)
-        // {
-        //     Identifiables.Add(identifiable);
-        // }
+        if (value is IIdentifiable identifiable and not null)
+        {
+            RegisterIdentifiable(identifiable.Id, identifiable);
+        }
         return result;
+    }
+    public async ValueTask<T> Convert<T>(ValueTask<object> t)
+    {
+        return (T)(await t);
     }
     public void Read<T>(ref T? value, ref ParseResult parseResult)
     {
@@ -212,6 +214,8 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
             }
         }
     }
+
+    // For handling anchors, max need it for !TAG &PARENT_ANCHOR 
     private void Read<T>(YamlSerializer<T> serializer, ref YamlParser parser, ref T value, ref ParseResult parseResult)
     {
         if (parser.TryResolveCurrentAlias<T>(ref parser, out var aliasValue))
@@ -306,9 +310,9 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         else
         {
             tcs = new();
+            tcs.tcs = new TaskCompletionSource<object>();
             _identifiables.Add(guid, tcs);
         }
-        await tcs.tcs.Task;
-        return (T)tcs.tcs.Task.Result;
+        return (T)(await tcs.tcs.Task);
     }
 }

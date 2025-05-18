@@ -4,16 +4,13 @@ using NexYaml;
 using Stride.Core;
 using System.Text.Json.Serialization;
 using Test;
-IList<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>> list = new List<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>()
-        {
-            new List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>(),
-            new List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>(),
-        };
-NexYamlSerializerRegistry.Init();
-var s = Yaml.Write(list, DataStyle.Compact);
-Console.WriteLine(s);
-var d = Yaml.Read<IList<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>>(s);
 
+TempData sd = new TempData();
+NexYamlSerializerRegistry.Init();
+var s = Yaml.Write(sd);
+
+var d = await Yaml.ReadAsync<TempData>(s);
+Console.WriteLine(d);
 [DataContract]
 public partial class Data
 {

@@ -12,7 +12,7 @@ namespace NexYamlTest.References;
 public class ReferenceTest
 {
     [Fact]
-    public void ResolveClassReferences()
+    public async Task ResolveClassReferences()
     {
         NexYamlSerializerRegistry.Init();
         Guid guid = Guid.NewGuid();
@@ -28,7 +28,7 @@ public class ReferenceTest
             Reference2 = refData
         };
         var s = Yaml.Write(refScript);
-        var d = Yaml.Read<ReferenceScript>(s);
+        var d = await Yaml.ReadAsync<ReferenceScript>(s);
         Assert.NotNull(d);
         Assert.Equal(d.Reference, d.Reference1);
         Assert.Equal(d.Reference, d.Reference2);

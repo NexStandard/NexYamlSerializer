@@ -12,6 +12,10 @@ public ref struct ParseResult
     public bool IsReference;
     public DataMemberMode DataMemberMode = DataMemberMode.Assign;
 }
+public class ParseParam<T>
+{
+    public ValueTask<T> Value;
+}
 public struct ParseContext
 {
     public ParseContext()
