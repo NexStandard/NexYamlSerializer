@@ -73,7 +73,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         }
     }
 
-    public ValueTask<T> ReadAsync<T>(ParseContext<T> parseResult)
+    public ValueTask<T> ReadAsync<T>(ParseContext parseResult)
     {
         ValueTask<T> result = default;
         if (IsNullScalar())
@@ -122,28 +122,12 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
             }
             else
             {
-                /*
-                Type alias;
-                // TODO: Problem is that !!null etc gets consumed as Tag on collections instead of a scalar value
-                if (parser.IsNullScalar())
-                {
-                    parser.Read();
-                    value = default;
-                    return;
-                }
-                alias = Resolver.GetAliasType(tag.Handle);
-                serializer = Resolver.GetSerializer(alias);
-                serializer ??= Resolver.GetSerializer(alias, type);
-                if (serializer == null)
-                {
-                    value = default;
-                    return;
-                }
-                var valueObject = (object?)value;
-                serializer.ReadUnknown(this, ref valueObject, ref parseResult);
-                value = (T?)valueObject;
-            */
-                throw new NotImplementedException();
+                
+                Type alias = Resolver.GetAliasType(tag.Handle);
+                serializer = Resolver.GetSerializer(alias, type);
+
+                serializer.ReadUnknown(this, parseResult);
+            
             }
         }
         else

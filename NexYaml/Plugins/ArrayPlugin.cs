@@ -36,7 +36,7 @@ internal class ArrayPlugin : IResolvePlugin
         return false;
     }
 
-    public bool Read<T>(IYamlReader stream, T value, ParseContext<T> result)
+    public bool Read<T>(IYamlReader stream, T value, ParseContext result)
     {
         if (typeof(T).IsArray)
         {

@@ -120,7 +120,7 @@ public interface IYamlReader
     /// Skips the current read operation without storing the result.
     /// </summary>
     void SkipRead();
-    public ValueTask<T> ReadAsync<T>(ParseContext<T> parseResult);
+    public ValueTask<T> ReadAsync<T>(ParseContext parseResult);
     /// <summary>
     /// Attempts to get the current scalar value as a span of bytes.
     /// </summary>

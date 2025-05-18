@@ -29,7 +29,7 @@ internal class ReferencePlugin : IResolvePlugin
         return false;
     }
 
-    public bool Read<T>(IYamlReader stream, T value, ParseContext<T> result)
+    public bool Read<T>(IYamlReader stream, T value, ParseContext result)
     {
         return false;
     }

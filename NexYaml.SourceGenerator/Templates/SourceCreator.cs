@@ -36,9 +36,9 @@ internal static class SourceCreator
         foreach (var member in package.MemberSymbols)
         {
             objTempVariables.AppendLine($"\t\tvar var_{member.Name} = default(ValueTask<{(member.IsArray ? member.Type + "[]" : member.Type)}>);");
-            objTempVariables.AppendLine($"\t\tvar context_{member.Name} = new ParseContext<{(member.IsArray ? member.Type + "[]" : member.Type)}>();");
+            objTempVariables.AppendLine($"\t\tvar context_{member.Name} = new ParseContext();");
             awaits.AppendLine($"\t\tres.{member.Name} = await var_{member.Name};");
-            ifStatement.AppendLine($"\t\t\tif (key.SequenceEqual(UTF8{member.Name})){{stream.Move();var_{member.Name} = stream.ReadAsync(context_{member.Name}); continue; }}");
+            ifStatement.AppendLine($"\t\t\tif (key.SequenceEqual(UTF8{member.Name})){{stream.Move();var_{member.Name} = stream.ReadAsync<{(member.IsArray ? member.Type + "[]" : member.Type)}>(context_{member.Name}); continue; }}");
         }
         ifStatement.AppendLine("\t\t\tstream.SkipRead();");
 
@@ -98,7 +98,7 @@ file sealed class {{info.GeneratorName + info.TypeParameterArguments}} : YamlSer
         {{package.CreateDeserialize()}}
     }
 
-    public override async ValueTask<{{info.NameDefinition}}> Read(IYamlReader stream, ParseContext<{{info.NameDefinition}}> context)
+    public override async ValueTask<{{info.NameDefinition}}> Read(IYamlReader stream, ParseContext context)
     {
 {{objTempVariables}}
         stream.Move(ParseEventType.MappingStart);
