@@ -108,7 +108,7 @@ file sealed class {{info.GeneratorName + info.TypeParameterArguments}} : YamlSer
         }
         stream.Move(ParseEventType.MappingEnd);
 {{awaits}}
-        return default;
+        return res;
     }
 }
 """;

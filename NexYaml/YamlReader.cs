@@ -81,7 +81,6 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
             Move();
             return new ValueTask<T>(default(T));
         }
-        ValueTask<T> value = default;
         Type type = typeof(T);
         foreach (var syntax in plugins)
         {
@@ -133,7 +132,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         {
             result = Resolver.GetSerializer<T>().Read(this, parseResult);
         }
-        if (value is IIdentifiable identifiable and not null)
+        if (result.Result is IIdentifiable identifiable and not null)
         {
             RegisterIdentifiable(identifiable.Id, identifiable);
         }
