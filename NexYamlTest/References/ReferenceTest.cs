@@ -34,6 +34,20 @@ public class ReferenceTest
         Assert.Equal(d.Reference, d.Reference2);
     }
     [Fact]
+    public async Task ResolveRefAtLaterPoint()
+    {
+        NexYamlSerializerRegistry.Init();
+        var s = "!NexYamlTest.References.ReferenceScript,NexYamlTest\nReference1: !!ref a2c132c6-7761-425a-9cf6-b7ced923074f\nReference: !!ref a2c132c6-7761-425a-9cf6-b7ced923074f\nReference2: \n  Id: a2c132c6-7761-425a-9cf6-b7ced923074f\r\n  ReferenceScript: !!null\n  Test: 10\n";
+        var d = await Yaml.ReadAsync<ReferenceScript>(s);
+        Assert.NotNull(d);
+        Assert.NotNull(d.Reference);
+        Assert.NotNull(d.Reference1);
+        Assert.NotNull(d.Reference2);
+        Assert.Equal(d.Reference, d.Reference1);
+        Assert.Equal(d.Reference, d.Reference2);
+        Assert.Equal(d.Reference.Id, d.Reference1.Id);
+    }
+    [Fact]
     public void ResolveRecordReferences()
     {
         NexYamlSerializerRegistry.Init();

@@ -3,10 +3,7 @@ using NexYaml.Serialization;
 using Stride.Core;
 
 namespace NexYaml.Plugins;
-/// <summary>
-/// Provides the <see cref="IYamlWriter"/> with Syntax options to handle special cases during type resolution
-/// Plugins resolve before any redirection, any plugin will be passed as long as the value is not consumed
-/// </summary>
+
 public interface IResolvePlugin
 {
     /// <summary>
