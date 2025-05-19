@@ -40,4 +40,21 @@ public class GuidSerializer : YamlSerializer<Guid>
             YamlException.ThrowExpectedTypeParseException(typeof(Guid), text, stream.CurrentMarker);
         }
     }
+    public override ValueTask<Guid> Read(IYamlReader stream, ParseContext parseResult)
+    {
+        if (stream.TryGetScalarAsSpan(out var span) &&
+              Utf8Parser.TryParse(span, out Guid guid, out var bytesConsumed) &&
+              bytesConsumed == span.Length)
+        {
+            stream.Move();
+            return new ValueTask<Guid>(guid);
+        }
+        else
+        {
+            stream.TryGetScalarAsString(out var text);
+            YamlException.ThrowExpectedTypeParseException(typeof(Guid), text, stream.CurrentMarker);
+            stream.Move();
+            return new ValueTask<Guid>(Guid.Empty);
+        }
+    }
 }

@@ -1,3 +1,4 @@
+using System;
 using Microsoft.CodeAnalysis;
 
 namespace NexYaml.SourceGenerator.Core;
@@ -23,7 +24,22 @@ internal class ReferencePackage(Compilation compilation)
             },
         };
     }
-
+    public bool IsIIdentifiable(ITypeSymbol typeSymbol)
+    {
+        return typeSymbol is
+        {
+            MetadataName: "IIdentifiable",
+            ContainingNamespace:
+            {
+                Name: "Core",
+                ContainingNamespace:
+                {
+                    Name: "Stride",
+                    ContainingNamespace.IsGlobalNamespace: true,
+                },
+            },
+        };
+    }
     public INamedTypeSymbol DataMemberIgnoreAttribute { get; } =
         compilation.GetTypeByMetadataName("Stride.Core.DataMemberIgnoreAttribute");
 

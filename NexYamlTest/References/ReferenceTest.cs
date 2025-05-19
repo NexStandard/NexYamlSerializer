@@ -12,7 +12,7 @@ namespace NexYamlTest.References;
 public class ReferenceTest
 {
     [Fact]
-    public void ResolveClassReferences()
+    public async Task ResolveClassReferences()
     {
         NexYamlSerializerRegistry.Init();
         Guid guid = Guid.NewGuid();
@@ -28,7 +28,7 @@ public class ReferenceTest
             Reference2 = refData
         };
         var s = Yaml.Write(refScript);
-        var d = Yaml.Read<ReferenceScript>(s);
+        var d = await Yaml.ReadAsync<ReferenceScript>(s);
         Assert.NotNull(d);
         Assert.Equal(d.Reference, d.Reference1);
         Assert.Equal(d.Reference, d.Reference2);
@@ -56,7 +56,7 @@ public class ReferenceTest
         Assert.Equal(d.Reference, d.Reference2);
     }
     [Fact]
-    public void ResolveListReferences_SameReferences()
+    public async Task ResolveListReferences_SameReferences()
     {
         NexYamlSerializerRegistry.Init();
         var list = new ReferenceList();
@@ -70,7 +70,10 @@ public class ReferenceTest
         list.List.Add(refData);
         list.List.Add(refData);
         var s = Yaml.Write(list);
-        var d = Yaml.Read<ReferenceList>(s);
+        var d = await Yaml.ReadAsync<ReferenceList>(s);
+        Assert.NotNull(d);
+        Assert.NotNull(d.List[0]);
+        Assert.NotNull(d.List[1]);
         Assert.Equal(d.List[0], d.List[1]);
         Assert.Equal(d.List[0], d.List[2]);
     }
@@ -117,15 +120,15 @@ public class ReferenceTest
         Assert.Equal(d.List[1], d.List[0].Reference.ReferenceScript);
     }
 #endif
-    [Fact(Skip = "this is bugged with obj=>struct=>iidentifiable")]
-    public void StructsLinkedWithinReference()
+    [Fact]
+    public async Task StructsLinkedWithinReference()
     {
         NexYamlSerializerRegistry.Init();
         var a = new ClassA();
         a.Id = Guid.NewGuid();
         a.MyStruct = new MyStruct() { MyRef = new ClassB() { Id = a.Id } };
         var s = Yaml.Write<ClassA>(a);
-        var d = Yaml.Read<ClassA>(s);
+        var d = await Yaml.ReadAsync<ClassA>(s);
         Assert.NotNull(d);
         Assert.Equal(a.Id, d.Id);
         Assert.Equal(a.MyStruct.MyRef.Id,d.MyStruct.MyRef.Id);

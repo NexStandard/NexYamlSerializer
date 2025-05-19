@@ -48,7 +48,7 @@ internal class Collections
     [JsonInclude]
     public TempData values = new TempData
     {
-        Id = 2,
+        Id = Guid.NewGuid(),
         Name = $"Name_1",
     };
 
@@ -65,11 +65,11 @@ internal partial class MyJsonContext : JsonSerializerContext
 }
 
 [DataContract]
-public struct TempData
+public struct TempData : IIdentifiable
 {
     [DataMember]
     public string Name { get; set; }
 
     [DataMember]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 }

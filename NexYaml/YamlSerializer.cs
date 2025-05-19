@@ -16,8 +16,10 @@ public abstract class YamlSerializer
     public abstract void Write<X>(WriteContext<X> context, object value)
         where X : Node;
     public abstract void ReadUnknown(IYamlReader stream, ref object? value, ref ParseResult parseResult);
-    public abstract ValueTask<object?> ReadUnknown(IYamlReader stream, ParseContext<object?> parseResult);
-
+    public virtual async ValueTask<object> ReadUnknown(IYamlReader stream, ParseContext parseResult)
+    {
+        throw new NotSupportedException();
+    }
 }
 public abstract class YamlSerializer<T> : YamlSerializer
 {
@@ -39,12 +41,12 @@ public abstract class YamlSerializer<T> : YamlSerializer
     public abstract void Write<X>(WriteContext<X> context, T value, DataStyle style)
      where X : Node;
     public abstract void Read(IYamlReader stream, ref T value, ref ParseResult parseResult);
-    public override async ValueTask<object?> ReadUnknown(IYamlReader stream, ParseContext<object?> parseResult)
+    public override async ValueTask<object> ReadUnknown(IYamlReader stream, ParseContext parseResult)
     {
-        return await Read(stream, (ParseContext<T>)(object)parseResult);
+        return await Read(stream, parseResult);
     }
-    public virtual ValueTask<T?> Read(IYamlReader stream, ParseContext<T> parseResult)
+    public virtual async ValueTask<T?> Read(IYamlReader stream, ParseContext parseResult)
     {
-        return new ValueTask<T?>();
+        throw new NotSupportedException();
     }
 }

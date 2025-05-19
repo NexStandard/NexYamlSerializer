@@ -68,6 +68,7 @@ public interface IYamlReader
     /// <returns><c>true</c> if there is a mapping key; otherwise, <c>false</c>.</returns>
     bool HasMapping(out ReadOnlySpan<byte> mappingKey);
 
+    bool HasMapping(out byte[] mappingKey,bool proxy);
     /// <summary>
     /// Resolves any references in the YAML stream that have been added to the <see cref="ReferenceResolvingMap"/>.
     /// </summary>
@@ -104,7 +105,6 @@ public interface IYamlReader
     /// </summary>
     /// <param name="eventType">The expected event type to read.</param>
     void Move(ParseEventType eventType);
-
     /// <summary>
     /// Resets the reader, clearing any state.
     /// </summary>
@@ -120,7 +120,7 @@ public interface IYamlReader
     /// Skips the current read operation without storing the result.
     /// </summary>
     void SkipRead();
-
+    public ValueTask<T> ReadAsync<T>(ParseContext parseResult);
     /// <summary>
     /// Attempts to get the current scalar value as a span of bytes.
     /// </summary>
@@ -136,6 +136,6 @@ public interface IYamlReader
     bool TryGetScalarAsString(out string? value);
     
     public bool TryRead<T>(ref T? target, in ReadOnlySpan<byte> key, byte[] mappingKey, ref ParseResult parseResult);
-
+    void RegisterIdentifiable(Guid guid, IIdentifiable identifiable);
+    ValueTask<T> AsyncGetRef<T>(Guid guid);
 }
-

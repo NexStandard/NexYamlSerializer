@@ -48,6 +48,29 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
             dictionary.TryAdd(target, yamlFactory);
         }
     }
+    public YamlSerializer GetSerializer<T>(Type type, Type origin)
+    {
+        // search if the actual type is in the standard serializers
+        if (SerializerRegistry.DefinedSerializers.TryGetValue(type, out var serializer1))
+        {
+            return serializer1;
+        }
+        // search if there is a Factory
+        if (SerializerRegistry.SerializerFactory.TryGetValue(origin, out var serializer))
+        {
+            serializer.TryGetValue(type, out var t);
+            if (t is not null)
+            {
+                var tempSerializer = t.Instantiate(origin);
+                SerializerRegistry.DefinedSerializers[origin] = tempSerializer;
+                return tempSerializer;
+            }
+        }
+        var genericSerializer = typeof(EmptySerializer<>);
+        var genericType = genericSerializer.MakeGenericType(origin);
+        var emptySerializer = (YamlSerializer?)Activator.CreateInstance(genericType);
+        return emptySerializer!;
+    }
     public YamlSerializer GetSerializer(Type type, Type origin)
     {
         // search if the actual type is in the standard serializers

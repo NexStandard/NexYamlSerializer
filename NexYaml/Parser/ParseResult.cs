@@ -12,7 +12,11 @@ public ref struct ParseResult
     public bool IsReference;
     public DataMemberMode DataMemberMode = DataMemberMode.Assign;
 }
-public struct ParseContext<T>
+public class ParseParam<T>
+{
+    public ValueTask<T> Value;
+}
+public struct ParseContext
 {
     public ParseContext()
     {
@@ -21,5 +25,5 @@ public struct ParseContext<T>
     public Guid Reference;
     public bool IsReference;
     public DataMemberMode DataMemberMode = DataMemberMode.Assign;
-    public T? Value;
+    public object? Value;
 }

@@ -16,8 +16,8 @@ public abstract class Node
     /// <param name="tag">The YAML tag associated with this <see cref="Mapping"/>.</param>
     /// <param name="style">The <see cref="DataStyle"/></param>
     /// <returns>A new <see cref="WriteContext{T}"/> for the next upcomming <see cref="Node"/>.</returns>
-    public abstract WriteContext<Mapping> BeginMapping<T>(WriteContext<T> context, string tag, DataStyle style)
-        where T : Node;
+    public abstract WriteContext<Mapping> BeginMapping<T>(WriteContext<T> context, string tag, DataStyle style) where T : Node;
+
     /// <summary>
     /// Begins a new <see cref="Sequence"/> node.
     /// </summary>
@@ -26,8 +26,8 @@ public abstract class Node
     /// <param name="tag">The YAML tag associated with this <see cref="Sequence"/>.</param>
     /// <param name="style">The <see cref="DataStyle"/></param>
     /// <returns>A new <see cref="WriteContext{T}"/> for the next upcomming <see cref="Node"/>.</returns>
-    public abstract WriteContext<Sequence> BeginSequence<T>(WriteContext<T> context, string tag, DataStyle style)
-        where T : Node;
+    public abstract WriteContext<Sequence> BeginSequence<T>(WriteContext<T> context, string tag, DataStyle style) where T : Node;
+
     /// <summary>
     /// Ends the current <see cref="Node"/> context, preventing further traversal deeper into the <see cref="Node"/> tree.
     /// This effectively causes the context to bubble up to the active parent <see cref="Node"/>.
