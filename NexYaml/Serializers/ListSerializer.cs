@@ -83,6 +83,18 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
         stream.Move(ParseEventType.SequenceEnd);
         value = list;
     }
+    public override async ValueTask<List<T>?> Read(IYamlReader stream, ParseContext parseResult)
+    {
+        var list = new List<T>();
+        var tasks = new List<Task<T>>();
+        stream.Move(ParseEventType.SequenceStart);
+        while (stream.HasSequence)
+        {
+            tasks.Add(stream.ReadAsync<T>(parseResult).AsTask());
+        }
+        stream.Move(ParseEventType.SequenceEnd);
+        return (await Task.WhenAll(tasks)).ToList();
+    }
 }
 public class ListSerializerFactory : IYamlSerializerFactory
 {

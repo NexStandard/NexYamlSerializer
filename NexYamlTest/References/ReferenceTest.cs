@@ -71,6 +71,9 @@ public class ReferenceTest
         list.List.Add(refData);
         var s = Yaml.Write(list);
         var d = await Yaml.ReadAsync<ReferenceList>(s);
+        Assert.NotNull(d);
+        Assert.NotNull(d.List[0]);
+        Assert.NotNull(d.List[1]);
         Assert.Equal(d.List[0], d.List[1]);
         Assert.Equal(d.List[0], d.List[2]);
     }

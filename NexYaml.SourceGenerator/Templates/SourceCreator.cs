@@ -29,15 +29,21 @@ internal static class SourceCreator
         var ifStatement = new StringBuilder();
         var awaits = new StringBuilder();
         var map = package.MemberSymbols;
-
+        // needs ID at first place to avoid deadlock on awaits for reference resolving
+        var orderedSymbols = package.MemberSymbols.OrderByDescending(s => s.Name == "Id").ToList();
         ///
         objTempVariables.AppendLine($"\t\tvar res = new {info.NameDefinition}();");
         
-        foreach (var member in package.MemberSymbols)
+        foreach (var member in orderedSymbols)
         {
             objTempVariables.AppendLine($"\t\tvar var_{member.Name} = default(ValueTask<{(member.IsArray ? member.Type + "[]" : member.Type)}>);");
             objTempVariables.AppendLine($"\t\tvar context_{member.Name} = new ParseContext();");
+
             awaits.AppendLine($"\t\tres.{member.Name} = await var_{member.Name};");
+            if (package.ClassInfo.IsIIdentifiable && member.Name == "Id")
+            {
+                awaits.AppendLine("\t\tstream.RegisterIdentifiable(res.Id, res);");
+            }
             ifStatement.AppendLine($"\t\t\tif (key.SequenceEqual(UTF8{member.Name})){{stream.Move();var_{member.Name} = stream.ReadAsync<{(member.IsArray ? member.Type + "[]" : member.Type)}>(context_{member.Name}); continue; }}");
         }
         ifStatement.AppendLine("\t\t\tstream.SkipRead();");

@@ -40,6 +40,7 @@ internal record ClassInfo
     internal Accessibility Accessibility { get; private set; }
     internal ClassInfo() { }
     internal bool IsGeneric { get; private set; }
+    internal bool IsIIdentifiable { get; private set; } = false;
     internal TypeKind TypeKind { get; private set; }
     /// <summary>
     /// i.e. AssemblyName.Namespace.Namespace.Namespace
@@ -101,8 +102,20 @@ internal record ClassInfo
             TypeKind = namedType.TypeKind,
             AllInterfaces = GetDataPackages(namedType.AllInterfaces),
             AllAbstracts = GetDataPackages(namedType.FindBase(package)),
-            GeneratorName = CreateGeneratorName(namedType)
+            GeneratorName = CreateGeneratorName(namedType),
+            IsIIdentifiable = FillIsIIdentifiable(namedType.AllInterfaces, package),
         };
+    }
+    private static bool FillIsIIdentifiable(ImmutableArray<INamedTypeSymbol> interfaces, ReferencePackage package)
+    {
+        foreach (var i in interfaces)
+        {
+            if (package.IsIIdentifiable(i))
+            {
+                return true;
+            }
+        }
+        return false;
     }
     private static ImmutableList<DataPackage> GetDataPackages(ImmutableArray<INamedTypeSymbol> types)
     {
