@@ -18,7 +18,7 @@ public class EmptyClassesTest
 
         // Act
         var serializedData = Yaml.Write(data);
-        var deserializedData = await Yaml.ReadAsync<T>(serializedData);
+        var deserializedData = await Yaml.Read<T>(serializedData);
 
         // Assert
         Assert.Equal(data, deserializedData);

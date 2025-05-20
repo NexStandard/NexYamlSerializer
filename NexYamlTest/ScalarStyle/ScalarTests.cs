@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NexYaml;
+using Stride.Core;
 using Xunit;
 
 namespace NexYamlTest.ScalarStyle
@@ -44,6 +45,17 @@ namespace NexYamlTest.ScalarStyle
             };
             var s = Yaml.Write(w);
             Assert.Contains("|+", s);
+        }
+        [Fact(Skip = "\\n doesnt get translated to \n")]
+        public void LiteralCompactScalar()
+        {
+            NexYamlSerializerRegistry.Init();
+            var w = new StringWrapper()
+            {
+                Value = "\n\n!{[ ] \n, # ` \" \' &*?|-><=%@."
+            };
+            var s = Yaml.Write(w, DataStyle.Compact);
+            Assert.Contains("\n\n!{[ ] \n, # ` \" ' &*?|-><=%@.", s);
         }
     }
 }

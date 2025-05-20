@@ -28,7 +28,7 @@ public class ReferenceTest
             Reference2 = refData
         };
         var s = Yaml.Write(refScript);
-        var d = await Yaml.ReadAsync<ReferenceScript>(s);
+        var d = await Yaml.Read<ReferenceScript>(s);
         Assert.NotNull(d);
         Assert.Equal(d.Reference, d.Reference1);
         Assert.Equal(d.Reference, d.Reference2);
@@ -38,7 +38,7 @@ public class ReferenceTest
     {
         NexYamlSerializerRegistry.Init();
         var s = "!NexYamlTest.References.ReferenceScript,NexYamlTest\nReference1: !!ref a2c132c6-7761-425a-9cf6-b7ced923074f\nReference: !!ref a2c132c6-7761-425a-9cf6-b7ced923074f\nReference2: \n  Id: a2c132c6-7761-425a-9cf6-b7ced923074f\r\n  ReferenceScript: !!null\n  Test: 10\n";
-        var d = await Yaml.ReadAsync<ReferenceScript>(s);
+        var d = await Yaml.Read<ReferenceScript>(s);
         Assert.NotNull(d);
         Assert.NotNull(d.Reference);
         Assert.NotNull(d.Reference1);
@@ -64,7 +64,7 @@ public class ReferenceTest
             Reference2 = refData
         };
         var s = Yaml.Write(refScript);
-        var d = await Yaml.ReadAsync<ReferenceScript>(s);
+        var d = await Yaml.Read<ReferenceScript>(s);
         Assert.NotNull(d);
         Assert.Equal(d.Reference, d.Reference1);
         Assert.Equal(d.Reference, d.Reference2);
@@ -84,7 +84,7 @@ public class ReferenceTest
         list.List.Add(refData);
         list.List.Add(refData);
         var s = Yaml.Write(list);
-        var d = await Yaml.ReadAsync<ReferenceList>(s);
+        var d = await Yaml.Read<ReferenceList>(s);
         Assert.NotNull(d);
         Assert.NotNull(d.List[0]);
         Assert.NotNull(d.List[1]);
@@ -130,7 +130,7 @@ public class ReferenceTest
         list.List.Add(refScript2);
         list.List.Add(refScript3);
         var s = Yaml.Write(list);
-        var d = await Yaml.ReadAsync<ReferenceScriptList>(s);
+        var d = await Yaml.Read<ReferenceScriptList>(s);
         Assert.Equal(d.List[1], d.List[0].Reference.ReferenceScript);
     }
 #endif
@@ -142,7 +142,7 @@ public class ReferenceTest
         a.Id = Guid.NewGuid();
         a.MyStruct = new MyStruct() { MyRef = new ClassB() { Id = a.Id } };
         var s = Yaml.Write<ClassA>(a);
-        var d = await Yaml.ReadAsync<ClassA>(s);
+        var d = await Yaml.Read<ClassA>(s);
         Assert.NotNull(d);
         Assert.Equal(a.Id, d.Id);
         Assert.Equal(a.MyStruct.MyRef.Id,d.MyStruct.MyRef.Id);

@@ -43,16 +43,13 @@ public class Yaml
     /// <param name="stream">The Stream containing the YAML content to be deserialized.</param>
     /// <param name="options">Optional settings for customizing the YAML deserialization process.</param>
     /// <returns>A ValueTask representing the asynchronous operation, with the result being an object of type <typeparamref name="T"/> representing the deserialized YAML content.</returns>
-    public static async ValueTask<T?> ReadAsync<T>(string s, IYamlSerializerResolver? options = null)
+    public static async ValueTask<T?> Read<T>(string s, IYamlSerializerResolver? options = null)
     {
         var sequence = new ReadOnlySequence<byte>(Encoding.UTF8.GetBytes(s));
         var parser = YamlParser.FromSequence(sequence, options ?? IYamlSerializerResolver.Default);
-        YamlReader reader = new YamlReader(parser, options ?? IYamlSerializerResolver.Default);
-        options ??= IYamlSerializerResolver.Default;
+        var reader = new YamlReader(parser, options ?? IYamlSerializerResolver.Default);
 
         parser.SkipAfter(ParseEventType.DocumentStart);
-        var value = default(T);
-        var x = await reader.Read<T>(new());
-        return x;
+        return await reader.Read<T>(new());
     }
 }

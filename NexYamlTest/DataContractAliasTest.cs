@@ -29,7 +29,7 @@ public class DataContractAliasTest
             Id = 1,
         };
         var s = Yaml.Write(aliased);
-        var deserialized = await Yaml.ReadAsync<DataContractAlias>(s);
+        var deserialized = await Yaml.Read<DataContractAlias>(s);
         Assert.NotNull(deserialized);
         Assert.Equal(aliased.Id, deserialized.Id);
     }
@@ -42,7 +42,7 @@ public class DataContractAliasTest
             Id = 1,
         };
         var s = Yaml.Write(aliased);
-        var deserialized = await Yaml.ReadAsync<IDInterface>(s);
+        var deserialized = await Yaml.Read<IDInterface>(s);
         Assert.NotNull(deserialized);
         Assert.Equal(aliased.Id, deserialized.Id);
     }

@@ -21,7 +21,7 @@ public class RedirectionTest
             Id = 10235
         };
         var s = Yaml.Write(dInterface);
-        var deserialized = await Yaml.ReadAsync<IDInterface>(s);
+        var deserialized = await Yaml.Read<IDInterface>(s);
         Assert.NotNull(deserialized);
         Assert.Equal(dInterface.Id, deserialized.Id);
     }
@@ -34,7 +34,7 @@ public class RedirectionTest
             Id = 10235
         };
         var s = Yaml.Write(dInterface);
-        var deserialized = await Yaml.ReadAsync<IDAbstract>(s);
+        var deserialized = await Yaml.Read<IDAbstract>(s);
         Assert.NotNull(deserialized);
         Assert.Equal(dInterface.Id, deserialized.Id);
     }
@@ -47,7 +47,7 @@ public class RedirectionTest
             Value = 10235
         };
         var s = Yaml.Write(generic);
-        var deserialized = await Yaml.ReadAsync<Generics<int>>(s);
+        var deserialized = await Yaml.Read<Generics<int>>(s);
         Assert.NotNull(deserialized);
         Assert.Equal(generic.Value, deserialized.Value);
     }
@@ -60,7 +60,7 @@ public class RedirectionTest
             Value = new Generics<int>() { Value = 1 }
         };
         var s = Yaml.Write(generic);
-        var deserialized = await Yaml.ReadAsync<GenericWithRestriction<Generics<int>>>(s);
+        var deserialized = await Yaml.Read<GenericWithRestriction<Generics<int>>>(s);
         Assert.NotNull(deserialized);
         Assert.Equal(generic.Value.Value, deserialized.Value.Value);
     }
@@ -73,7 +73,7 @@ public class RedirectionTest
             Value = 43
         };
         var s = Yaml.Write(generic);
-        var deserialized = await Yaml.ReadAsync<Generics<int>>(s);
+        var deserialized = await Yaml.Read<Generics<int>>(s);
         Assert.NotNull(deserialized);
         Assert.Equal(generic.Value, deserialized.Value);
     }
@@ -87,7 +87,7 @@ public class RedirectionTest
             X = 1234
         };
         var s = Yaml.Write<Base>(generic);
-        var deserialized = await Yaml.ReadAsync<Base>(s);
+        var deserialized = await Yaml.Read<Base>(s);
         Assert.NotNull(deserialized);
         Assert.Equal(generic.X, deserialized.X);
     }

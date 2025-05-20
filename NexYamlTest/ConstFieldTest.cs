@@ -19,7 +19,7 @@ public class ConstFieldTest
             Normal = 1,
         };
         var s = Yaml.Write(aliased);
-        var deserialized = await Yaml.ReadAsync<ClassWithConstField>(s);
+        var deserialized = await Yaml.Read<ClassWithConstField>(s);
         Assert.NotNull(deserialized);
         Assert.Equal(aliased.Normal, deserialized.Normal);
     }
