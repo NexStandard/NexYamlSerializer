@@ -10,14 +10,13 @@ namespace NexYamlTest.DataMemberContentMode;
 public class ContentModeTest
 {
     [Fact]
-    public void DataMemberContentModeNotIgnored()
+    public async Task DataMemberContentModeNotIgnored()
     {
         NexYamlSerializerRegistry.Init();
         var x = new ContentModeClass();
         var s = Yaml.Write(x);
-        var d = Yaml.Read<ContentModeClass>(s);
+        var d = await Yaml.ReadAsync<ContentModeClass>(s);
         Assert.NotNull(d);
         Assert.Equal(12, d.Content.Generics);
-
     }
 }

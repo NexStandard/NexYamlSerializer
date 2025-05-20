@@ -17,39 +17,15 @@ public class Int16Serializer : YamlSerializer<short>
         context.WriteScalar(span[..written]);
     }
 
-    public override void Read(IYamlReader stream, ref short value, ref ParseResult result)
+    public override ValueTask<short> Read(IYamlReader stream, ParseContext parseResult)
     {
-        if (stream.TryGetScalarAsSpan(out var span))
+        if (stream.TryGetScalarAsString(out var span) && short.TryParse(span, CultureInfo.InvariantCulture, out var value))
         {
-            if (int.TryParse(span, CultureInfo.InvariantCulture, out var temp))
-            {
-                value = checked((short)temp);
-                stream.Move();
-                return;
-            }
-
-            if (FormatHelper.TryDetectHex(span, out var hexNumber))
-            {
-                if (Utf8Parser.TryParse(hexNumber, out int hexTemp, out var bytesConsumed1, 'x') &&
-                       bytesConsumed1 == hexNumber.Length)
-                {
-                    value = checked((short)hexTemp);
-                    stream.Move();
-                    return;
-                }
-            }
-
-            if (FormatHelper.TryDetectHexNegative(span, out hexNumber) &&
-                Utf8Parser.TryParse(hexNumber, out int negativeHexTemp, out var bytesConsumed, 'x') &&
-                bytesConsumed == hexNumber.Length)
-            {
-                value = checked((short)negativeHexTemp);
-                value *= -1;
-                stream.Move();
-                return;
-            }
-            stream.TryGetScalarAsString(out var text);
-            YamlException.ThrowExpectedTypeParseException(typeof(short), text, stream.CurrentMarker);
+            stream.Move();
+            return new(value);
         }
+        stream.Move();
+        YamlException.ThrowExpectedTypeParseException(typeof(short), span, stream.CurrentMarker);
+        return new(default(short));
     }
 }

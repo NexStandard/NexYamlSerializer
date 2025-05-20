@@ -37,76 +37,6 @@ public class Yaml
         return sb.ToString();
     }
 
-    public static T? Read<T>(ReadOnlyMemory<char> memory, IYamlSerializerResolver? options = null)
-    {
-        return Read<T>(Encoding.UTF8.GetBytes(memory.Span.ToArray()), options);
-    }
-
-    /// <summary>
-    /// Deserializes the YAML content from the specified <paramref name="memory"/> to an object of type <typeparamref name="T"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to be deserialized.</typeparam>
-    /// <param name="memory">The ReadOnlyMemory containing the YAML content to be deserialized.</param>
-    /// <param name="options">Optional settings for customizing the YAML deserialization process.</param>
-    /// <returns>An object of type <typeparamref name="T"/> representing the deserialized YAML content.</returns>
-    public static T? Read<T>(ReadOnlyMemory<byte> memory, IYamlSerializerResolver? options = null)
-    {
-        var parser = YamlParser.FromSequence(new ReadOnlySequence<byte>(memory), options ?? IYamlSerializerResolver.Default);
-        IYamlReader reader = new YamlReader(parser, options ?? IYamlSerializerResolver.Default);
-        return Read<T?>(reader, options);
-    }
-
-    /// <summary>
-    /// Deserializes the YAML content from the specified <paramref name="yaml"/> string to an object of type <typeparamref name="T"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to be deserialized.</typeparam>
-    /// <param name="yaml">The string containing the YAML content to be deserialized.</param>
-    /// <param name="options">Optional settings for customizing the YAML deserialization process.</param>
-    /// <returns>An object of type <typeparamref name="T"/> representing the deserialized YAML content.</returns>
-    public static T? Read<T>(string yaml, IYamlSerializerResolver? options = null)
-    {
-        return Read<T?>(Encoding.UTF8.GetBytes(yaml), options);
-    }
-
-    /// <summary>
-    /// Deserializes the YAML content from the specified <paramref name="sequence"/> to an object of type <typeparamref name="T"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to be deserialized.</typeparam>
-    /// <param name="sequence">The ReadOnlySequence containing the YAML content to be deserialized.</param>
-    /// <param name="options">Optional settings for customizing the YAML deserialization process.</param>
-    /// <returns>An object of type <typeparamref name="T"/> representing the deserialized YAML content.</returns>
-    public static T? Read<T>(in ReadOnlySequence<byte> sequence, IYamlSerializerResolver? options = null)
-    {
-        var parser = YamlParser.FromSequence(sequence, options ?? IYamlSerializerResolver.Default);
-        IYamlReader reader = new YamlReader(parser, options ?? IYamlSerializerResolver.Default);
-        return Read<T?>(reader, options);
-    }
-
-    /// <summary>
-    /// Deserializes the YAML content using the provided <paramref name="stream"/> to an object of type <typeparamref name="T"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to be deserialized.</typeparam>
-    /// <param name="stream">The YamlParser used for deserializing the YAML content.</param>
-    /// <param name="options">Optional settings for customizing the YAML deserialization process.</param>
-    /// <returns>An object of type <typeparamref name="T"/> representing the deserialized YAML content.</returns>
-    public static T? Read<T>(IYamlReader stream, IYamlSerializerResolver? options = null)
-    {
-        try
-        {
-            options ??= IYamlSerializerResolver.Default;
-
-            stream.SkipAfter(ParseEventType.DocumentStart);
-            var value = default(T);
-            stream.Read(ref value);
-            stream.ResolveReferences();
-            return value;
-        }
-        finally
-        {
-            stream.Dispose();
-        }
-    }
-
     /// <summary>
     /// Asynchronously deserializes the YAML content from the specified <paramref name="stream"/> to an object of type <typeparamref name="T"/>.
     /// </summary>
@@ -123,8 +53,7 @@ public class Yaml
 
         parser.SkipAfter(ParseEventType.DocumentStart);
         var value = default(T);
-        var x = await reader.ReadAsync<T>(new());
-        reader.ResolveReferences();
+        var x = await reader.Read<T>(new());
         return x;
     }
 }

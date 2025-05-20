@@ -22,6 +22,6 @@ internal class ContentModeData
         Generics = generics;
     }
 
-    [DataMember(DataMemberMode.Never)]
+    [DataMember(DataMemberMode.Content)]
     public int Generics { get; set; } = 10;
 }

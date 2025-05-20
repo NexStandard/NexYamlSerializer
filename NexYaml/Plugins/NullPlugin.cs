@@ -18,7 +18,7 @@ internal class NullPlugin : IResolvePlugin
         return false;
     }
 
-    public bool Read<T>(IYamlReader stream, ref T value, ref ParseResult result)
+    public bool Read<T>(IYamlReader stream, out ValueTask<T> value, ParseContext result)
     {
         if (stream.IsNullScalar())
         {
@@ -26,17 +26,7 @@ internal class NullPlugin : IResolvePlugin
             stream.Move();
             return true;
         }
-        return false;
-    }
-
-    public bool Read<T>(IYamlReader stream, T value, ParseContext result)
-    {
-        if (stream.IsNullScalar())
-        {
-            value = default;
-            stream.Move();
-            return true;
-        }
+        value = default;
         return false;
     }
 }

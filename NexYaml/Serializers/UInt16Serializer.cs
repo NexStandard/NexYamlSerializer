@@ -1,3 +1,4 @@
+using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
@@ -17,23 +18,15 @@ public class UInt16Serializer : YamlSerializer<ushort>
         context.WriteScalar(span[..written]);
     }
 
-    public override void Read(IYamlReader stream, ref ushort value, ref ParseResult result)
+    public override ValueTask<ushort> Read(IYamlReader stream, ParseContext parseResult)
     {
-        if (stream.TryGetScalarAsSpan(out var span))
+        if (stream.TryGetScalarAsString(out var span) && ushort.TryParse(span, CultureInfo.InvariantCulture, out var value))
         {
-            if (uint.TryParse(span, CultureInfo.InvariantCulture, out var temp))
-            {
-                value = checked((ushort)temp);
-            }
-            else if (FormatHelper.TryDetectHex(span, out var hexNumber))
-            {
-                if (Utf8Parser.TryParse(hexNumber, out uint temp2, out var bytesConsumed, 'x') &&
-                       bytesConsumed == hexNumber.Length)
-                {
-                    value = checked((ushort)temp2);
-                }
-            }
+            stream.Move();
+            return new(value);
         }
         stream.Move();
+        YamlException.ThrowExpectedTypeParseException(typeof(ushort), span, stream.CurrentMarker);
+        return new(default(ushort));
     }
 }

@@ -183,7 +183,6 @@ internal class SerializerRegistry
     internal Dictionary<Type, Type> GenericSerializerBuffer { get; } = new Dictionary<Type, Type>(new GenericEqualityComparer())
     {
         [typeof(KeyValuePair<,>)] = typeof(KeyValuePairSerializer<,>),
-        [typeof(Tuple<>)] = typeof(TupleSerializer<>),
         [typeof(Tuple<,>)] = typeof(TupleSerializer<,>),
         [typeof(Tuple<,,>)] = typeof(TupleSerializer<,,>),
         [typeof(Tuple<,,,>)] = typeof(TupleSerializer<,,,>),

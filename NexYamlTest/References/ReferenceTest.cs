@@ -34,7 +34,21 @@ public class ReferenceTest
         Assert.Equal(d.Reference, d.Reference2);
     }
     [Fact]
-    public void ResolveRecordReferences()
+    public async Task ResolveRefAtLaterPoint()
+    {
+        NexYamlSerializerRegistry.Init();
+        var s = "!NexYamlTest.References.ReferenceScript,NexYamlTest\nReference1: !!ref a2c132c6-7761-425a-9cf6-b7ced923074f\nReference: !!ref a2c132c6-7761-425a-9cf6-b7ced923074f\nReference2: \n  Id: a2c132c6-7761-425a-9cf6-b7ced923074f\r\n  ReferenceScript: !!null\n  Test: 10\n";
+        var d = await Yaml.ReadAsync<ReferenceScript>(s);
+        Assert.NotNull(d);
+        Assert.NotNull(d.Reference);
+        Assert.NotNull(d.Reference1);
+        Assert.NotNull(d.Reference2);
+        Assert.Equal(d.Reference, d.Reference1);
+        Assert.Equal(d.Reference, d.Reference2);
+        Assert.Equal(d.Reference.Id, d.Reference1.Id);
+    }
+    [Fact]
+    public async Task ResolveRecordReferences()
     {
         NexYamlSerializerRegistry.Init();
         Guid guid = Guid.NewGuid();
@@ -50,7 +64,7 @@ public class ReferenceTest
             Reference2 = refData
         };
         var s = Yaml.Write(refScript);
-        var d = Yaml.Read<ReferenceScript>(s);
+        var d = await Yaml.ReadAsync<ReferenceScript>(s);
         Assert.NotNull(d);
         Assert.Equal(d.Reference, d.Reference1);
         Assert.Equal(d.Reference, d.Reference2);
@@ -79,7 +93,7 @@ public class ReferenceTest
     }
 #if NET9_0_OR_GREATER
     [Fact]
-    public void ResolveListReferences_DeepStructure()
+    public async Task ResolveListReferences_DeepStructure()
     {
         NexYamlSerializerRegistry.Init();
         var list = new ReferenceScriptList();
@@ -116,7 +130,7 @@ public class ReferenceTest
         list.List.Add(refScript2);
         list.List.Add(refScript3);
         var s = Yaml.Write(list);
-        var d = Yaml.Read<ReferenceScriptList>(s);
+        var d = await Yaml.ReadAsync<ReferenceScriptList>(s);
         Assert.Equal(d.List[1], d.List[0].Reference.ReferenceScript);
     }
 #endif

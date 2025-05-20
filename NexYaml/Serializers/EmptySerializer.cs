@@ -16,8 +16,8 @@ public class EmptySerializer<T> : YamlSerializer<T>
         context.WriteScalar(YamlCodes.Null);
     }
 
-    public override void Read(IYamlReader stream, ref T value, ref ParseResult result)
+    public override ValueTask<T?> Read(IYamlReader stream, ParseContext parseResult)
     {
-        value = default!;
+        return default;
     }
 }

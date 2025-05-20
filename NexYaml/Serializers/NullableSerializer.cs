@@ -23,10 +23,8 @@ public class NullableSerializer<T> : YamlSerializer<T?> where T : struct
         }
     }
 
-    public override void Read(IYamlReader stream, ref T? value, ref ParseResult result)
+    public override async ValueTask<T?> Read(IYamlReader stream, ParseContext parseResult)
     {
-        var val = default(T);
-        stream.Read(ref val);
-        value = new T?(val);
+        return new T?(await stream.Read<T>(parseResult));
     }
 }

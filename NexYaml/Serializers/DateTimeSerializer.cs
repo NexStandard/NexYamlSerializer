@@ -10,41 +10,21 @@ namespace NexYaml.Serializers;
 
 public class DateTimeSerializer : YamlSerializer<DateTime>
 {
-    public static readonly DateTimeSerializer Instance = new();
-    /// <summary>
-    /// See DateTime source which sets FormatOMaxLength to 33
-    /// https://source.dot.net/#System.Private.CoreLib/src/libraries/System.Private.CoreLib/src/System/Globalization/DateTimeFormat.cs,135
-    /// </summary>
-    private const int FormatOMaxLength = 33;
-
+    public static YamlSerializer<DateTime> Instance = new DateTimeSerializer();
     public override void Write<X>(WriteContext<X> context, DateTime value, DataStyle style)
     {
         context.WriteType(value.ToString(), style);
     }
 
-    public override void Read(IYamlReader stream, ref DateTime value, ref ParseResult result)
+    public override ValueTask<DateTime> Read(IYamlReader stream, ParseContext parseResult)
     {
-        if (stream.TryGetScalarAsSpan(out var span) &&
-      Utf8Parser.TryParse(span, out DateTime dateTime, out var bytesConsumed, 'O') &&
-      bytesConsumed == span.Length)
+        if (stream.TryGetScalarAsString(out var span) && DateTime.TryParse(span, out var value))
         {
             stream.Move();
-            value = dateTime;
-            return;
+            return new(value);
         }
-        // fallback
-        if (stream.TryGetScalarAsString(out var scalarString))
-        {
-            if (DateTime.TryParse(scalarString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out dateTime))
-            {
-                stream.Move();
-                value = dateTime;
-                return;
-            }
-            stream.TryGetScalarAsString(out var text);
-            YamlException.ThrowExpectedTypeParseException(typeof(DateTime), text, stream.CurrentMarker);
-        }
-        
+        stream.Move();
+        YamlException.ThrowExpectedTypeParseException(typeof(DateTime), span, stream.CurrentMarker);
+        return new(default(DateTime));
     }
 }
-

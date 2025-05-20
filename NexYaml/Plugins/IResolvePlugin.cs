@@ -3,10 +3,7 @@ using NexYaml.Serialization;
 using Stride.Core;
 
 namespace NexYaml.Plugins;
-/// <summary>
-/// Provides the <see cref="IYamlWriter"/> with Syntax options to handle special cases during type resolution
-/// Plugins resolve before any redirection, any plugin will be passed as long as the value is not consumed
-/// </summary>
+
 public interface IResolvePlugin
 {
     /// <summary>
@@ -23,8 +20,7 @@ public interface IResolvePlugin
     /// </returns>
     bool Write<T,X>(WriteContext<X> context,T value, DataStyle style)
         where X : Node;
-    bool Read<T>(IYamlReader stream, ref T value, ref ParseResult result);
-    bool Read<T>(IYamlReader stream, T value, ParseContext result);
+    bool Read<T>(IYamlReader stream, out ValueTask<T> value, ParseContext result);
     public static List<IResolvePlugin> plugins = new()
         {
             new NullPlugin(),

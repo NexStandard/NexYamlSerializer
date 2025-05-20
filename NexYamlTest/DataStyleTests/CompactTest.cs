@@ -1,4 +1,5 @@
-﻿using NexYaml;
+﻿using System.Threading.Tasks;
+using NexYaml;
 using NexYamlTest.Helper;
 using NexYamlTest.SimpleClasses;
 using Stride.Core;
@@ -8,7 +9,7 @@ namespace NexYamlTest.DataStyleTests;
 public class CompactTest
 {
     [Fact]
-    public void Compact_Class()
+    public async Task Compact_Class()
     {
         var compact = new CompactClass()
         {
@@ -16,15 +17,15 @@ public class CompactTest
             X = 1,
             Y = 2,
         };
-        YamlHelper.Run(compact);
+        await YamlHelper.Run(compact);
     }
     [Fact]
-    public void EmptyCompactClass()
+    public async Task EmptyCompactClass()
     {
         NexYamlSerializerRegistry.Init();
         var compact = new EmptyClass();
         var s = Yaml.Write(compact, DataStyle.Any);
-        var d = Yaml.Read<EmptyClass>(s);
+        var d = await Yaml.ReadAsync<EmptyClass>(s);
         Assert.NotNull(d);
         Assert.IsType<EmptyClass>(d);
     }
@@ -40,14 +41,14 @@ public class CompactTest
         Assert.Equal("!NexYamlTest.DataStyleTests.CompactRecordWithCompactMember,NexYamlTest { CompactMember: !NexYamlTest.DataStyleTests.CompactRecord,NexYamlTest { X: 0, Y: 0, W: !!null } }", s);
     }
     [Fact]
-    public void Compact_List()
+    public async Task Compact_List()
     {
         var compact = new CompactList()
         {
         };
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(compact);
-        var d = Yaml.Read<CompactList>(s);
+        var d = await Yaml.ReadAsync<CompactList>(s);
         Assert.True(d!.Lists[0] is not null);
         Assert.True(d.Lists[1] is not null);
     }
@@ -63,7 +64,7 @@ public class CompactTest
     }
 
     [Fact]
-    public void Compact_Struct()
+    public async Task Compact_Struct()
     {
         var compact = new CompactStruct()
         {
@@ -71,10 +72,10 @@ public class CompactTest
             X = 1,
             Y = 2,
         };
-        YamlHelper.Run(compact);
+        await YamlHelper.Run(compact);
     }
     [Fact]
-    public void Compact_Record()
+    public async Task Compact_Record()
     {
         var compact = new CompactStruct()
         {
@@ -82,20 +83,20 @@ public class CompactTest
             X = 1,
             Y = 2,
         };
-        YamlHelper.Run(compact);
+        await YamlHelper.Run(compact);
     }
     [Fact]
-    public void Compact_Members()
+    public async Task Compact_Members()
     {
         var compact = new CompactMembers()
         {
             NonCompactClass = new() { W = "st", Y = 20 },
             X = new() { X = 1 },
         };
-        YamlHelper.Run(compact);
+        await YamlHelper.Run(compact);
     }
     [Fact]
-    public void Compact_Array()
+    public async Task Compact_Array()
     {
         YamlHelper.SetUp();
         var compact = new CompactArray()
@@ -103,7 +104,8 @@ public class CompactTest
             Ints = [8, 7, 5]
         };
         var serialized = Yaml.Write(compact);
-        var deserialized = Yaml.Read<CompactArray>(serialized);
+        var deserialized = await Yaml.ReadAsync<CompactArray>(serialized);
+        Assert.NotNull(deserialized);
         Assert.Equal(compact.Ints[0], deserialized.Ints[0]);
         Assert.Equal(compact.Ints[1], deserialized.Ints[1]);
         Assert.Equal(compact.Ints[2], deserialized.Ints[2]);

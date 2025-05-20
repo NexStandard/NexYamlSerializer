@@ -17,57 +17,15 @@ public class Float64Serializer : YamlSerializer<double>
         context.WriteScalar(span[..written]);
     }
 
-    public override void Read(IYamlReader stream, ref double value, ref ParseResult result)
+    public override ValueTask<double> Read(IYamlReader stream, ParseContext parseResult)
     {
-        if (stream.TryGetScalarAsSpan(out var span))
+        if (stream.TryGetScalarAsString(out var span) && double.TryParse(span, CultureInfo.InvariantCulture, out var value))
         {
-            if (double.TryParse(span, CultureInfo.InvariantCulture, out value))
-            {
-                stream.Move();
-                return;
-            }
-
-            switch (span.Length)
-            {
-                case 4:
-                    if (span.SequenceEqual(YamlCodes.Inf0) ||
-                        span.SequenceEqual(YamlCodes.Inf1) ||
-                        span.SequenceEqual(YamlCodes.Inf2))
-                    {
-                        value = double.PositiveInfinity;
-                        stream.Move();
-                        return;
-                    }
-
-                    if (span.SequenceEqual(YamlCodes.Nan0) ||
-                        span.SequenceEqual(YamlCodes.Nan1) ||
-                        span.SequenceEqual(YamlCodes.Nan2))
-                    {
-                        value = double.NaN;
-                        stream.Move();
-                        return;
-                    }
-                    break;
-                case 5:
-                    if (span.SequenceEqual(YamlCodes.Inf3) ||
-                        span.SequenceEqual(YamlCodes.Inf4) ||
-                        span.SequenceEqual(YamlCodes.Inf5))
-                    {
-                        value = double.PositiveInfinity;
-                        return;
-                    }
-                    if (span.SequenceEqual(YamlCodes.NegInf0) ||
-                        span.SequenceEqual(YamlCodes.NegInf1) ||
-                        span.SequenceEqual(YamlCodes.NegInf2))
-                    {
-                        value = double.NegativeInfinity;
-                        stream.Move();
-                        return;
-                    }
-                    break;
-            }
-            stream.TryGetScalarAsString(out var text);
-            YamlException.ThrowExpectedTypeParseException(typeof(double), text, stream.CurrentMarker);
+            stream.Move();
+            return new(value);
         }
+        stream.Move();
+        YamlException.ThrowExpectedTypeParseException(typeof(double), span, stream.CurrentMarker);
+        return new(default(double));
     }
 }

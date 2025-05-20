@@ -1,4 +1,5 @@
-﻿using NexYaml;
+﻿using System.Threading.Tasks;
+using NexYaml;
 using Stride.Core;
 using Xunit;
 
@@ -11,7 +12,7 @@ public class AttributeTest
     }
 
     [Fact]
-    public void BaseAttributesTest()
+    public async Task BaseAttributesTest()
     {
         Setup();
         var dat = new Attribute()
@@ -21,7 +22,8 @@ public class AttributeTest
             Z = 200,
         };
         var s = Yaml.Write(dat);
-        var d = Yaml.Read<Attribute>(s);
+        var d = await Yaml.ReadAsync<Attribute>(s);
+        Assert.NotNull(d);
         Assert.Equal(100, d.InternalVisible);
         Assert.Equal(101, d.X);
         Assert.Equal(101, d.Z);

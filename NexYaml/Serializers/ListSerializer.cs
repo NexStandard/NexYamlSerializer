@@ -64,25 +64,6 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
         result.End(context);
     }
 
-    public override void Read(IYamlReader stream, ref List<T>? value, ref ParseResult result)
-    {
-        var list = new List<T>();
-        stream.Move(ParseEventType.SequenceStart);
-        while (stream.HasSequence)
-        {
-            var val = default(T);
-            var parseResult = new ParseResult();
-            stream.Read(ref val, ref parseResult);
-            var counter = list.Count;
-            if (parseResult.IsReference)
-            {
-                stream.AddReference(parseResult.Reference, (obj) => list[counter] = (T)obj);
-            }
-            list.Add(val!);
-        }
-        stream.Move(ParseEventType.SequenceEnd);
-        value = list;
-    }
     public override async ValueTask<List<T>?> Read(IYamlReader stream, ParseContext parseResult)
     {
         var list = new List<T>();
@@ -90,7 +71,7 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
         stream.Move(ParseEventType.SequenceStart);
         while (stream.HasSequence)
         {
-            tasks.Add(stream.ReadAsync<T>(parseResult).AsTask());
+            tasks.Add(stream.Read<T>(parseResult).AsTask());
         }
         stream.Move(ParseEventType.SequenceEnd);
         return (await Task.WhenAll(tasks)).ToList();

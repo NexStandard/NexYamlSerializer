@@ -1,4 +1,5 @@
-﻿using NexYaml;
+﻿using System.Threading.Tasks;
+using NexYaml;
 using NexYamlTest.SimpleClasses;
 using Xunit;
 
@@ -10,14 +11,14 @@ public class EmptyClassesTest
     {
         NexYamlSerializerRegistry.Init();
     }
-    private static void Compare<T>(T data)
+    private static async Task Compare<T>(T data)
     {
         // Arrange
         Setup();
 
         // Act
         var serializedData = Yaml.Write(data);
-        var deserializedData = Yaml.Read<T>(serializedData);
+        var deserializedData = await Yaml.ReadAsync<T>(serializedData);
 
         // Assert
         Assert.Equal(data, deserializedData);
@@ -26,50 +27,50 @@ public class EmptyClassesTest
     /// Tests the serialization and deserialization of an <see cref="EmptyRecord"/>.
     /// </summary>
     [Fact]
-    public void EmptyRecord()
+    public async Task EmptyRecord()
     {
-        Compare(new EmptyRecord());
+        await Compare(new EmptyRecord());
     }
 
     /// <summary>
     /// Tests the serialization and deserialization of an <see cref="EmptyClass"/>.
     /// </summary>
     [Fact]
-    public void EmptyClass()
+    public async Task EmptyClass()
     {
-        Compare(new EmptyClass());
+        await Compare(new EmptyClass());
     }
 
     /// <summary>
     /// Tests the serialization and deserialization of an <see cref="EmptyStruct"/>.
     /// </summary>
     [Fact]
-    public void EmptyStruct()
+    public async Task EmptyStruct()
     {
-        Compare(new EmptyStruct());
+        await Compare(new EmptyStruct());
     }
     /// <summary>
     /// Tests the serialization and deserialization of an <see cref="InternalEmptyStruct"/>.
     /// </summary>
     [Fact]
-    public void InternalEmptyStruct()
+    public async Task InternalEmptyStruct()
     {
-        Compare(new InternalEmptyStruct());
+        await Compare(new InternalEmptyStruct());
     }
     /// <summary>
     /// Tests the serialization and deserialization of an <see cref="InternalEmptyStruct"/>.
     /// </summary>
     [Fact]
-    public void InternalEmptyClass()
+    public async Task InternalEmptyClass()
     {
-        Compare(new InternalEmptyClass());
+        await Compare(new InternalEmptyClass());
     }
     /// <summary>
     /// Tests the serialization and deserialization of an <see cref="InternalEmptyStruct"/>.
     /// </summary>
     [Fact]
-    public void InternalEmptyRecord()
+    public async Task InternalEmptyRecord()
     {
-        Compare(new InternalEmptyRecord());
+        await Compare(new InternalEmptyRecord());
     }
 }

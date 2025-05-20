@@ -14,16 +14,19 @@ public class KeyValuePairSerializer<TKey, TValue> : YamlSerializer<KeyValuePair<
             .End(context);
     }
 
-    public override void Read(IYamlReader stream, ref KeyValuePair<TKey, TValue> value, ref ParseResult result)
+    public override async ValueTask<KeyValuePair<TKey, TValue>> Read(IYamlReader stream, ParseContext parseResult)
     {
-        var key = default(TKey);
-        var val = default(TValue);
-        using (stream.SequenceScope())
-        {
-            stream.Read(ref key);
-            stream.Read(ref val);
-        }
-        value = new KeyValuePair<TKey, TValue>(key!, val!);
+        List<Task<KeyValuePair<TKey, TValue>>> tasks = new();
+        stream.Move(ParseEventType.SequenceStart);
+
+        var key = stream.Read<TKey>(new ParseContext());
+        var value = stream.Read<TValue>(new ParseContext());
+
+        stream.Move(ParseEventType.SequenceEnd);
+        var k = await key;
+        var v = await value;
+
+        return new KeyValuePair<TKey, TValue>(k, v);
     }
 }
 file sealed class KeyValuePairSerializerFactory : IYamlSerializerFactory

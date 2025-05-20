@@ -1,3 +1,5 @@
+using System.Globalization;
+using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
@@ -12,13 +14,15 @@ public class UriSerializer : YamlSerializer<Uri>
         context.WriteScalar(value.ToString());
     }
 
-    public override void Read(IYamlReader stream, ref Uri value, ref ParseResult result)
+    public override ValueTask<Uri?> Read(IYamlReader stream, ParseContext parseResult)
     {
         if (stream.TryGetScalarAsString(out var scalar) && scalar != null)
         {
             var uri = new Uri(scalar, UriKind.RelativeOrAbsolute);
             stream.Move();
-            value = uri;
+            return new(uri);
         }
+        YamlException.ThrowExpectedTypeParseException(typeof(Uri), scalar, stream.CurrentMarker);
+        return new(default(Uri));
     }
 }

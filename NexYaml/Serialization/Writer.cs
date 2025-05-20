@@ -22,7 +22,7 @@ public abstract class Writer(IYamlSerializerResolver resolver, IEnumerable<IReso
         }
         var type = typeof(T);
 
-        if (type.IsValueType || type.IsSealed)
+        if ((type.IsValueType || type.IsSealed) && !type.IsGenericType)
         {
             resolver.GetSerializer<T>().Write(context, value, style);
             return;

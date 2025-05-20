@@ -1,4 +1,5 @@
-﻿using NexYaml;
+﻿using System.Threading.Tasks;
+using NexYaml;
 using NexYamlTest.SimpleClasses;
 using Xunit;
 
@@ -9,14 +10,14 @@ public class UnregisteredClassTest
     {
         NexYamlSerializerRegistry.Init();
     }
-    private static void Compare<T>(T data)
+    private static async Task Compare<T>(T data)
     {
         // Arrange
         Setup();
 
         // Act
         var serializedData = Yaml.Write(data);
-        var deserializedData = Yaml.Read<T>(serializedData);
+        var deserializedData = await Yaml.ReadAsync<T>(serializedData);
 
         // Assert
         Assert.Equal(default, deserializedData);
@@ -25,24 +26,24 @@ public class UnregisteredClassTest
     /// Tests the serialization and deserialization of an <see cref="InternalUnregisteredClass"/>.
     /// </summary>
     [Fact]
-    public void InternalUnregisteredClassTest()
+    public async Task InternalUnregisteredClassTest()
     {
-        Compare(new InternalUnregisteredClass());
+        await Compare(new InternalUnregisteredClass());
     }
     /// <summary>
     /// Tests the serialization and deserialization of an <see cref="InternalUnregisteredStruct"/>.
     /// </summary>
     [Fact]
-    public void InternalUnregisteredStructTest()
+    public async Task InternalUnregisteredStructTest()
     {
-        Compare(new InternalUnregisteredStruct());
+        await Compare(new InternalUnregisteredStruct());
     }
     /// <summary>
     /// Tests the serialization and deserialization of an <see cref="InternalUnregisteredRecord"/>.
     /// </summary>
     [Fact]
-    public void InternalUnregisteredRecordTest()
+    public async Task InternalUnregisteredRecordTest()
     {
-        Compare(new InternalUnregisteredRecord());
+        await Compare(new InternalUnregisteredRecord());
     }
 }

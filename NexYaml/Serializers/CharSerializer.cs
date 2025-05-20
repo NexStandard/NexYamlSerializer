@@ -14,24 +14,19 @@ public class CharSerializer : YamlSerializer<char>
         context.WriteScalar(['\'', value, '\'']);
     }
 
-    public override void Read(IYamlReader stream, ref char value, ref ParseResult parseResult)
+    public override ValueTask<char> Read(IYamlReader stream, ParseContext parseResult)
     {
-        if (stream.TryGetScalarAsString(out var result))
+        if (stream.TryGetScalarAsString(out var span) && char.TryParse(span, out var value))
         {
-            if (result is not null && result.Length == 1)
+            if (span.Length == 1)
             {
-                if (result.Length == 1)
-                {
-                    value = result[0];
-                    stream.Move(ParseEventType.Scalar);
-                }
-            }
-            else
-            {
-                stream.TryGetScalarAsString(out var text);
-                YamlException.ThrowExpectedTypeParseException(typeof(int), text, stream.CurrentMarker);
+                value = span[0];
+                stream.Move(ParseEventType.Scalar);
+                return new(value);
             }
         }
-
+        stream.Move();
+        YamlException.ThrowExpectedTypeParseException(typeof(DateTime), span, stream.CurrentMarker);
+        return new('?');
     }
 }
