@@ -25,7 +25,7 @@ public class CompactTest
         NexYamlSerializerRegistry.Init();
         var compact = new EmptyClass();
         var s = Yaml.Write(compact, DataStyle.Any);
-        var d = await Yaml.ReadAsync<EmptyClass>(s);
+        var d = await Yaml.Read<EmptyClass>(s);
         Assert.NotNull(d);
         Assert.IsType<EmptyClass>(d);
     }
@@ -48,7 +48,7 @@ public class CompactTest
         };
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(compact);
-        var d = await Yaml.ReadAsync<CompactList>(s);
+        var d = await Yaml.Read<CompactList>(s);
         Assert.True(d!.Lists[0] is not null);
         Assert.True(d.Lists[1] is not null);
     }
@@ -104,7 +104,7 @@ public class CompactTest
             Ints = [8, 7, 5]
         };
         var serialized = Yaml.Write(compact);
-        var deserialized = await Yaml.ReadAsync<CompactArray>(serialized);
+        var deserialized = await Yaml.Read<CompactArray>(serialized);
         Assert.NotNull(deserialized);
         Assert.Equal(compact.Ints[0], deserialized.Ints[0]);
         Assert.Equal(compact.Ints[1], deserialized.Ints[1]);

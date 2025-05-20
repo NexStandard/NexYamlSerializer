@@ -28,7 +28,7 @@ public class CollectionTest
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(collection);
         
-        var d = await Yaml.ReadAsync<NullDictionary>(s);
+        var d = await Yaml.Read<NullDictionary>(s);
         Assert.NotNull(d);
         Assert.Null(d.dict);
     }
@@ -43,7 +43,7 @@ public class CollectionTest
         };
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(list);
-        var d = await Yaml.ReadAsync<List<GenericAbstract<int, int>>>(s);
+        var d = await Yaml.Read<List<GenericAbstract<int, int>>>(s);
         Assert.NotNull(d);
         Assert.IsType<GenericAbstractImlementationLessParams<int>>(d[0]);
         Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
@@ -64,13 +64,13 @@ public class CollectionTest
         };
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(list, DataStyle.Compact);
-        var d = await Yaml.ReadAsync<IList<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>>(s);
+        var d = await Yaml.Read<IList<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>>(s);
         Assert.NotNull(d);
         Assert.IsType<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>(d[0]);
         Assert.IsType< List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>(d[1]);
 
         var s2 = Yaml.Write(list, DataStyle.Normal);
-        var d2 = await Yaml.ReadAsync<IList<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>>(s2);
+        var d2 = await Yaml.Read<IList<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>>(s2);
         Assert.NotNull(d2);
         Assert.IsType<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>(d2[0]);
         Assert.IsType<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>(d2[1]);
@@ -85,7 +85,7 @@ public class CollectionTest
         };
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(list, DataStyle.Compact);
-        var d = await Yaml.ReadAsync<List<GenericAbstract<int, int>>>(s);
+        var d = await Yaml.Read<List<GenericAbstract<int, int>>>(s);
         Assert.NotNull(d);
         Assert.IsType<GenericAbstractImlementationLessParams<int>>(d[0]);
         Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
@@ -100,7 +100,7 @@ public class CollectionTest
         };
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(list, DataStyle.Compact);
-        var d = await Yaml.ReadAsync<List<GenericAbstract<int, int>>>(s);
+        var d = await Yaml.Read<List<GenericAbstract<int, int>>>(s);
         Assert.NotNull(d);
         Assert.IsType<GenericAbstractImlementationLessParamsEmpty<int>>(d[0]);
         Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
@@ -115,7 +115,7 @@ public class CollectionTest
         data.Dictionary.Add(new TempData() { Id = 2, Name = "2"}, new TempData());
 
         var s = Yaml.Write(data);
-        var d = await Yaml.ReadAsync<ComplexDictionary>(s);
+        var d = await Yaml.Read<ComplexDictionary>(s);
     }
     [DataContract]
     internal class C
@@ -139,7 +139,7 @@ public class CollectionTest
         var list = new List<IIdentifiable>() { null, null };
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(list,DataStyle.Compact);
-        var d = await Yaml.ReadAsync<List<IIdentifiable>>(s);
+        var d = await Yaml.Read<List<IIdentifiable>>(s);
         Assert.NotNull(d);
         Assert.Equal(2, list.Count);
     }
@@ -161,7 +161,7 @@ public class CollectionTest
 
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(data1);
-        var d = await Yaml.ReadAsync<CollectionInterfaces>(s);
+        var d = await Yaml.Read<CollectionInterfaces>(s);
         Assert.Equal(data1.Collection.Count, d.Collection.Count);
     }
 }

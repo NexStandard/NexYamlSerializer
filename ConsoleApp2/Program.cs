@@ -9,7 +9,7 @@ TempData sd = new TempData();
 NexYamlSerializerRegistry.Init();
 var s = Yaml.Write(sd);
 
-var d = await Yaml.ReadAsync<TempData>(s);
+var d = await Yaml.Read<TempData>(s);
 Console.WriteLine(d);
 [DataContract]
 public partial class Data

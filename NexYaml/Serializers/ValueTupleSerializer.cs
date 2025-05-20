@@ -9,7 +9,7 @@ public class ValueTupleSerializer<T1, T2> : YamlSerializer<ValueTuple<T1, T2>>
     public override void Write<X>(WriteContext<X> context, ValueTuple<T1, T2> value, DataStyle style)
     {
 
-        context.BeginSequence("!ValueTuple", style)
+        context.BeginSequence("!ValueTuple2", style)
             .Write(value.Item1, DataStyle.Compact)
             .Write(value.Item2, DataStyle.Compact)
             .End(context);
@@ -25,17 +25,32 @@ public class ValueTupleSerializer<T1, T2> : YamlSerializer<ValueTuple<T1, T2>>
         return new ValueTuple<T1, T2>(await item1, await item2);
     }
 }
-
+public struct ValueTuple2Factory : IYamlSerializerFactory
+{
+    public void Register(IYamlSerializerResolver resolver)
+    {
+        resolver.RegisterSerializer(typeof(ValueTuple<,>));
+        resolver.RegisterTag("ValueTuple2", typeof(ValueTuple<,>));
+        resolver.Register(this, typeof(ValueTuple<,>), typeof(ValueTuple<,>));
+        resolver.Register(this, typeof(ValueTuple<,>), typeof(System.ValueType));
+    }
+    public YamlSerializer Instantiate(Type type)
+    {
+        var gen = typeof(ValueTupleSerializer<,>);
+        var genParams = type.GenericTypeArguments;
+        var fillGen = gen.MakeGenericType(genParams);
+        return (YamlSerializer)Activator.CreateInstance(fillGen)!;
+    }
+}
 public class ValueTupleSerializer<T1, T2, T3> : YamlSerializer<ValueTuple<T1, T2, T3>>
 {
     public override void Write<X>(WriteContext<X> context, ValueTuple<T1, T2, T3> value, DataStyle style)
     {
-        context.BeginSequence("!ValueTuple", style)
+        context.BeginSequence("!ValueTuple3", style)
             .Write(value.Item1, DataStyle.Compact)
             .Write(value.Item2, DataStyle.Compact)
             .Write(value.Item3, DataStyle.Compact)
             .End(context);
-
     }
 
     public override async ValueTask<(T1, T2, T3)> Read(IYamlReader stream, ParseContext parseResult)
@@ -48,17 +63,33 @@ public class ValueTupleSerializer<T1, T2, T3> : YamlSerializer<ValueTuple<T1, T2
         return new ValueTuple<T1, T2, T3>(await item1, await item2, await item3);
     }
 }
+public struct ValueTuple3Factory : IYamlSerializerFactory
+{
+    public void Register(IYamlSerializerResolver resolver)
+    {
+        resolver.RegisterSerializer(typeof(ValueTuple<,,>));
+        resolver.RegisterTag("ValueTuple3", typeof(ValueTuple<,,>));
+        resolver.Register(this, typeof(ValueTuple<,,>), typeof(ValueTuple<,,>));
+        resolver.Register(this, typeof(ValueTuple<,,>), typeof(System.ValueType));
+    }
+    public YamlSerializer Instantiate(Type type)
+    {
+        var gen = typeof(ValueTupleSerializer<,,>);
+        var genParams = type.GenericTypeArguments;
+        var fillGen = gen.MakeGenericType(genParams);
+        return (YamlSerializer)Activator.CreateInstance(fillGen)!;
+    }
+}
 public class ValueTupleSerializer<T1, T2, T3, T4> : YamlSerializer<ValueTuple<T1, T2, T3, T4>>
 {
     public override void Write<X>(WriteContext<X> context, ValueTuple<T1, T2, T3, T4> value, DataStyle style)
     {
-        context.BeginSequence("!ValueTuple", style)
+        context.BeginSequence("!ValueTuple4", style)
             .Write(value.Item1, DataStyle.Compact)
             .Write(value.Item2, DataStyle.Compact)
             .Write(value.Item3, DataStyle.Compact)
             .Write(value.Item4, DataStyle.Compact)
             .End(context);
-
     }
     public override async ValueTask<(T1, T2, T3, T4)> Read(IYamlReader stream, ParseContext parseResult)
     {
@@ -71,12 +102,28 @@ public class ValueTupleSerializer<T1, T2, T3, T4> : YamlSerializer<ValueTuple<T1
         return new ValueTuple<T1, T2, T3, T4>(await item1, await item2, await item3, await item4);
     }
 }
-
+public struct ValueTuple4Factory : IYamlSerializerFactory
+{
+    public void Register(IYamlSerializerResolver resolver)
+    {
+        resolver.RegisterSerializer(typeof(ValueTuple<,,,>));
+        resolver.RegisterTag("ValueTuple4", typeof(ValueTuple<,,,>));
+        resolver.Register(this, typeof(ValueTuple<,,,>), typeof(ValueTuple<,,,>));
+        resolver.Register(this, typeof(ValueTuple<,,,>), typeof(System.ValueType));
+    }
+    public YamlSerializer Instantiate(Type type)
+    {
+        var gen = typeof(ValueTupleSerializer<,,,>);
+        var genParams = type.GenericTypeArguments;
+        var fillGen = gen.MakeGenericType(genParams);
+        return (YamlSerializer)Activator.CreateInstance(fillGen)!;
+    }
+}
 public class ValueTupleSerializer<T1, T2, T3, T4, T5> : YamlSerializer<ValueTuple<T1, T2, T3, T4, T5>>
 {
     public override void Write<X>(WriteContext<X> context, ValueTuple<T1, T2, T3, T4, T5> value, DataStyle style)
     {
-        context.BeginSequence("!ValueTuple", style)
+        context.BeginSequence("!ValueTuple5", style)
             .Write(value.Item1, DataStyle.Compact)
             .Write(value.Item2, DataStyle.Compact)
             .Write(value.Item3, DataStyle.Compact)
@@ -97,13 +144,29 @@ public class ValueTupleSerializer<T1, T2, T3, T4, T5> : YamlSerializer<ValueTupl
         return new ValueTuple<T1, T2, T3, T4, T5>(await item1, await item2, await item3, await item4, await item5);
     }
 }
-
+public struct ValueTuple5Factory : IYamlSerializerFactory
+{
+    public void Register(IYamlSerializerResolver resolver)
+    {
+        resolver.RegisterSerializer(typeof(ValueTuple<,,,,>));
+        resolver.RegisterTag("ValueTuple5", typeof(ValueTuple<,,,,>));
+        resolver.Register(this, typeof(ValueTuple<,,,,>), typeof(ValueTuple<,,,,>));
+        resolver.Register(this, typeof(ValueTuple<,,,,>), typeof(System.ValueType));
+    }
+    public YamlSerializer Instantiate(Type type)
+    {
+        var gen = typeof(ValueTupleSerializer<,,,,>);
+        var genParams = type.GenericTypeArguments;
+        var fillGen = gen.MakeGenericType(genParams);
+        return (YamlSerializer)Activator.CreateInstance(fillGen)!;
+    }
+}
 public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6> : YamlSerializer<ValueTuple<T1, T2, T3, T4, T5, T6>>
 {
 
     public override void Write<X>(WriteContext<X> context, ValueTuple<T1, T2, T3, T4, T5, T6> value, DataStyle style)
     {
-        context.BeginSequence("!ValueTuple", style)
+        context.BeginSequence("!ValueTuple6", style)
             .Write(value.Item1, DataStyle.Compact)
             .Write(value.Item2, DataStyle.Compact)
             .Write(value.Item3, DataStyle.Compact)
@@ -126,12 +189,28 @@ public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6> : YamlSerializer<Value
         return new ValueTuple<T1, T2, T3, T4, T5, T6>(await item1, await item2, await item3, await item4, await item5, await item6);
     }
 }
-
+public struct ValueTuple6Factory : IYamlSerializerFactory
+{
+    public void Register(IYamlSerializerResolver resolver)
+    {
+        resolver.RegisterSerializer(typeof(ValueTuple<,,,,,>));
+        resolver.RegisterTag("ValueTuple6", typeof(ValueTuple<,,,,,>));
+        resolver.Register(this, typeof(ValueTuple<,,,,,>), typeof(ValueTuple<,,,,,>));
+        resolver.Register(this, typeof(ValueTuple<,,,,,>), typeof(System.ValueType));
+    }
+    public YamlSerializer Instantiate(Type type)
+    {
+        var gen = typeof(ValueTupleSerializer<,,,,,>);
+        var genParams = type.GenericTypeArguments;
+        var fillGen = gen.MakeGenericType(genParams);
+        return (YamlSerializer)Activator.CreateInstance(fillGen)!;
+    }
+}
 public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<ValueTuple<T1, T2, T3, T4, T5, T6, T7>>
 {
     public override void Write<X>(WriteContext<X> context, ValueTuple<T1, T2, T3, T4, T5, T6, T7> value, DataStyle style)
     {
-        context.BeginSequence("!ValueTuple", style)
+        context.BeginSequence("!ValueTuple7", style)
             .Write(value.Item1, DataStyle.Compact)
             .Write(value.Item2, DataStyle.Compact)
             .Write(value.Item3, DataStyle.Compact)
@@ -153,5 +232,22 @@ public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<V
         var item7 = stream.Read<T7>(new ParseContext());
         stream.Move(ParseEventType.SequenceEnd);
         return new ValueTuple<T1, T2, T3, T4, T5, T6, T7>(await item1, await item2, await item3, await item4, await item5, await item6, await item7);
+    }
+}
+public struct ValueTuple7Factory : IYamlSerializerFactory
+{
+    public void Register(IYamlSerializerResolver resolver)
+    {
+        resolver.RegisterSerializer(typeof(ValueTuple<,,,,,,>));
+        resolver.RegisterTag("ValueTuple7", typeof(ValueTuple<,,,,,,>));
+        resolver.Register(this, typeof(ValueTuple<,,,,,,>), typeof(ValueTuple<,,,,,,>));
+        resolver.Register(this, typeof(ValueTuple<,,,,,,>), typeof(System.ValueType));
+    }
+    public YamlSerializer Instantiate(Type type)
+    {
+        var gen = typeof(ValueTupleSerializer<,,,,,,>);
+        var genParams = type.GenericTypeArguments;
+        var fillGen = gen.MakeGenericType(genParams);
+        return (YamlSerializer)Activator.CreateInstance(fillGen)!;
     }
 }

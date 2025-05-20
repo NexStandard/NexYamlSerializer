@@ -40,7 +40,6 @@ internal static class SourceCreator
             if(member.Context.Mode == MemberApi.UniversalAnalyzers.MemberMode.Content)
             {
                 objTempVariables.AppendLine($"\t\tvar context_{member.Name} = new ParseContext() {{ Value = res.{member.Name} }};");
-
             }
             else
             {

@@ -68,11 +68,6 @@ public abstract class Writer(IYamlSerializerResolver resolver, IEnumerable<IReso
     public void WriteString<X>(WriteContext<X> context,string? value, DataStyle style)
         where X : Node
     {
-        if (value is null)
-        {
-            context.WriteScalar(YamlCodes.Null);
-            return;
-        }
         var result = EmitStringAnalyzer.Analyze(value);
         var scalarStyle = result.SuggestScalarStyle();
         if(scalarStyle is ScalarStyle.Literal && style is DataStyle.Compact)
@@ -94,7 +89,8 @@ public abstract class Writer(IYamlSerializerResolver resolver, IEnumerable<IReso
         }
         else if (ScalarStyle.DoubleQuoted == scalarStyle)
         {
-            context.WriteScalar("\"" + value + "\"");
+            
+            context.WriteScalar("\"" + value.Replace("\n", "\\n") + "\"");
             return;
         }
         else if (ScalarStyle.Literal == scalarStyle)

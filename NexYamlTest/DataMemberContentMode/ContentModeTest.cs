@@ -15,7 +15,7 @@ public class ContentModeTest
         NexYamlSerializerRegistry.Init();
         var x = new ContentModeClass();
         var s = Yaml.Write(x);
-        var d = await Yaml.ReadAsync<ContentModeClass>(s);
+        var d = await Yaml.Read<ContentModeClass>(s);
         Assert.NotNull(d);
         Assert.Equal(12, d.Content.Generics);
     }
