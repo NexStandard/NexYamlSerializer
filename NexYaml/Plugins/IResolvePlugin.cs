@@ -26,7 +26,6 @@ public interface IResolvePlugin
             new NullPlugin(),
             new NullablePlugin(),
             new ArrayPlugin(),
-            new DelegatePlugin(),
             new ReferencePlugin(),
         };
 }

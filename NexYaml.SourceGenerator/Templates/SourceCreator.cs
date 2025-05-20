@@ -107,7 +107,7 @@ file sealed class {{info.GeneratorName + info.TypeParameterArguments}} : YamlSer
         {{writeString}}
     }
 
-    public override async ValueTask<{{info.NameDefinition}}?> Read(IYamlReader stream, ParseContext context)
+    public override async ValueTask<{{info.NameDefinition}}> Read(IYamlReader stream, ParseContext context)
     {
 {{objTempVariables}}
         stream.Move(ParseEventType.MappingStart);

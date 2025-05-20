@@ -29,32 +29,7 @@ public class ComplexTests
             Assert.Equal(list[i], deserialized[i]);
         }
     }
-    [Fact(Skip = "Delegate Plugin doesnt work yet")]
-    public async Task Delegate_Serialization_Preserves_Single_Invocation()
-    {
-        Setup();
-        var g = new Delegates();
-        var x = Yaml.Write(g);
-        var t = await Yaml.ReadAsync<Delegates>(x);
-        // Expect Delegate to not be empty
-        Assert.NotNull(t);
-        // Expect to have an Invocation in the Delegate
-        Assert.Single(t.Action.GetInvocationList());
-    }
 
-    [Fact]
-    public async Task Delegate_Serialization_On_Empty_Delegate()
-    {
-        Setup();
-        var g = new Delegates();
-        g.Action = null;
-        var x = Yaml.Write(g, Stride.Core.DataStyle.Compact);
-        var t = await Yaml.ReadAsync<Delegates>(x);
-        // Expect Delegate to not be empty
-        Assert.NotNull(t);
-        // Expect to have an Invocation in the Delegate
-        Assert.Null(t.Action);
-    }
     [Fact]
     public async Task Generic_Serialization_Same_Count_Generic_Parameters_Than_Interface()
     {

@@ -20,7 +20,6 @@ public class Yaml
             new NullPlugin(),
             new NullablePlugin(),
             new ArrayPlugin(),
-            new DelegatePlugin(),
             new ReferencePlugin(),
         };
         WriteContext<Node> node;
