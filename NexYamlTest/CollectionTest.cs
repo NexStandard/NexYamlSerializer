@@ -91,6 +91,23 @@ public class CollectionTest
         Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
     }
     [Fact]
+    public async Task EmitDoubleCompactList()
+    {
+        IList<IList<int>> list = 
+        [
+            [1],
+            [2]
+        ];
+        NexYamlSerializerRegistry.Init();
+        var s = Yaml.Write(list, DataStyle.Compact);
+        var d = await Yaml.Read<IList<IList<int>>>(s);
+        Assert.NotNull(d);
+        Assert.IsType<List<int>>(d[0]);
+        Assert.IsType<List<int>>(d[1]);
+        Assert.Equal(1, d[0][0]);
+        Assert.Equal(2, d[1][0]);
+    }
+    [Fact]
     public async Task EmitMixedCollectionCompacWithEmptyType()
     {
         var list = new List<GenericAbstract<int, int>>
