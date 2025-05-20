@@ -58,7 +58,8 @@ internal static class SourceCreator
         ///
         string writeString = isEmpty ? $"       context.WriteEmptyMapping(\"!{tag}\");" :
         $"""
-        context.BeginMapping("!{tag}",style)
+        var preferedStyle = style is DataStyle.Any or DataStyle.Normal ? Style : style;
+        context.BeginMapping("!{tag}",preferedStyle)
         {package.CreateNewSerializationEmit()}
                 .End(context);
         """;
@@ -108,6 +109,7 @@ file sealed class {{info.GeneratorName + info.TypeParameterArguments}} : YamlSer
 
     public override async ValueTask<{{info.NameDefinition}}> Read(IYamlReader stream, ParseContext context)
     {
+
 {{objTempVariables}}
         stream.Move(ParseEventType.MappingStart);
         while(stream.HasMapping(out var key,false))

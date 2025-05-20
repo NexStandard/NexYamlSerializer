@@ -3,24 +3,6 @@
 namespace NexYaml;
 
 /// <summary>
-/// Provides an extension method for <see cref="Dictionary{TKey, TValue}"/> to find an assignable type
-/// associated with a given key type.
-/// </summary>
-internal static class DictionaryExtension
-{
-    /// <summary>
-    /// Tries to find the type in the dictionary that is assignable to the specified type.
-    /// </summary>
-    /// <param name="dictionary">The dictionary containing mappings from types to other types.</param>
-    /// <param name="type">The <see cref="Type"/> to search for in the dictionary as a key.</param>
-    /// <returns>The value type associated with the given key type if found, or <c>null</c> if not found.</returns>
-    internal static Type FindAssignableType(this Dictionary<Type, Type> dictionary, Type type)
-    {
-        return dictionary.TryGetValue(type, out var value) ? value : null;
-    }
-}
-
-/// <summary>
 /// A custom equality comparer for <see cref="Type"/> objects that compares generic type definitions.
 /// </summary>
 internal class GenericEqualityComparer : IEqualityComparer<Type>

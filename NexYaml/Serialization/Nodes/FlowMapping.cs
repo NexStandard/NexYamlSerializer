@@ -9,8 +9,12 @@ class FlowMapping : Mapping
         if (context.IsRedirected)
         {
             context.WriteScalar(tag);
+            context.WriteScalar(" { ");
         }
-        context.WriteScalar(" { ");
+        else
+        {
+            context.WriteScalar("{ ");
+        }
         // inside a flow, only new flows can be created, no block is allowed
         return new WriteContext<Mapping>(context.Indent, false, DataStyle.Compact, this, context.Writer);
     }

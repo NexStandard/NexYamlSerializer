@@ -1,6 +1,7 @@
 ﻿using NexYaml;
 using NexYaml.Serialization;
 using NexYamlTest.ComplexCases;
+using NexYamlTest.DataStyleTests;
 using NexYamlTest.SimpleClasses;
 using SharpFont;
 using Stride.Core;
@@ -121,6 +122,20 @@ public class CollectionTest
         Assert.NotNull(d);
         Assert.IsType<GenericAbstractImlementationLessParamsEmpty<int>>(d[0]);
         Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
+    }
+    [Fact]
+    public async Task EmitCollectionWithCompact()
+    {
+        var list = new List<CompactStruct>
+        {
+            new(),
+            new()
+        };
+        NexYamlSerializerRegistry.Init();
+        var s = Yaml.Write(list, DataStyle.Any);
+        var d = await Yaml.Read<List<CompactStruct>>(s);
+        Assert.NotNull(d);
+        Assert.Contains("- { ",s);
     }
 
     [Fact]

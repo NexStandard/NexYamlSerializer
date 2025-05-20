@@ -17,7 +17,6 @@ public class Yaml
         options ??= IYamlSerializerResolver.Default;
         List<IResolvePlugin> plugins = new()
         {
-            new NullPlugin(),
             new NullablePlugin(),
             new ArrayPlugin(),
             new ReferencePlugin(),

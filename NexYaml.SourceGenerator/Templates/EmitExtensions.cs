@@ -10,7 +10,7 @@ internal static class EmitExtensions
         var sb = new StringBuilder();
         foreach (var member in package.MemberSymbols)
         {
-            var dataStyle = member.DataStyle == "DataStyle.Any" ? ", style" : $", {member.DataStyle}";
+            var dataStyle = ", preferedStyle";
             sb.AppendLine($$"""
                         .Write("{{member.Name}}", value.{{member.Name}}{{dataStyle}})
                 """);

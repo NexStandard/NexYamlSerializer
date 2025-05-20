@@ -9,8 +9,12 @@ class FlowSequenceSecondary : FlowSequence
         if (context.IsRedirected)
         {
             context.WriteScalar(tag);
+            context.WriteScalar(" [ ");
         }
-        context.WriteScalar(" [ ");
+        else
+        {
+            context.WriteScalar("[ ");
+        }
         return new WriteContext<Sequence>(context.Indent, false, DataStyle.Compact, CommonNodes.FlowSequence, context.Writer);
     }
     public override WriteContext<Sequence> Write<T>(WriteContext<Sequence> context, T value, DataStyle style)

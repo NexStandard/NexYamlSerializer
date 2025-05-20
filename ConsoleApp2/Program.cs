@@ -5,12 +5,8 @@ using Stride.Core;
 using System.Text.Json.Serialization;
 using Test;
 
-TempData sd = new TempData();
-NexYamlSerializerRegistry.Init();
-var s = Yaml.Write(sd);
+BenchmarkRunner.Run<Benchmarker>();
 
-var d = await Yaml.Read<TempData>(s);
-Console.WriteLine(d);
 [DataContract]
 public partial class Data
 {

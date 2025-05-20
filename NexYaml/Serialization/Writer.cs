@@ -13,7 +13,12 @@ public abstract class Writer(IYamlSerializerResolver resolver, IEnumerable<IReso
     public void WriteType<X, T>(WriteContext<X> context, T value, DataStyle style)
         where X : Node
     {
-        foreach(var plugin in plugins)
+        if (value is null)
+        {
+            context.WriteScalar(YamlCodes.Null);
+            return;
+        }
+        foreach (var plugin in plugins)
         {
             if (plugin.Write(context, value, context.StyleScope))
             {
