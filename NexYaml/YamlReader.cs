@@ -16,18 +16,17 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
     public bool HasSequence => parser.HasSequence;
     public Marker CurrentMarker => parser.CurrentMark;
     public Dictionary<Guid, List<Action<object>>> ReferenceResolvingMap { get; } = new();
-    
+
     private Dictionary<Guid, (TaskCompletionSource<object>? tcs, object? result)> _identifiables = new();
 
     public HashSet<IIdentifiable> Identifiables { get; } = new();
-    
+
     private List<IResolvePlugin> plugins =
     [
         new NullPlugin(),
-        new DelegatePlugin(),
         new NullablePlugin(),
         new ArrayPlugin(),
-         new ReferencePlugin(),
+        new ReferencePlugin(),
     ];
 
     public void Dispose()
@@ -73,7 +72,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
 
         foreach (var syntax in plugins)
         {
-            if (syntax.Read<T>(this, out var t,  parseResult))
+            if (syntax.Read<T>(this, out var t, parseResult))
             {
                 // TODO
                 return t;
@@ -198,7 +197,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
     {
 
         (TaskCompletionSource<object>? tcs, object? result) tcs;
-        if(_identifiables.TryGetValue(guid, out var value))
+        if (_identifiables.TryGetValue(guid, out var value))
         {
             if (value.result is not null)
             {

@@ -39,7 +39,7 @@ public abstract class YamlSerializer<T> : YamlSerializer
     {
         return await Read(stream, parseResult);
     }
-    public virtual async ValueTask<T?> Read(IYamlReader stream, ParseContext parseResult)
+    public virtual async ValueTask<T> Read(IYamlReader stream, ParseContext parseResult)
     {
         throw new NotSupportedException();
     }
