@@ -1,13 +1,14 @@
 ﻿using NexYaml;
 using NexYamlTest.SimpleClasses;
 using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace NexYamlTest;
 public class PrimitiveSerializerTest
 {
     [Fact]
-    public void PrimitiveSerializer_NonNullable()
+    public async Task PrimitiveSerializer_NonNullable()
     {
         var x = new BaseSerializerTest()
         {
@@ -64,7 +65,7 @@ public class PrimitiveSerializerTest
         };
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(x);
-        var d = Yaml.Read<BaseSerializerTest>(s);
+        var d = await Yaml.ReadAsync<BaseSerializerTest>(s);
         // Assert
         Assert.Equal(x.IntField, d.IntField);
 
@@ -126,7 +127,7 @@ public class PrimitiveSerializerTest
 
     }
     [Fact]
-    public void PrimitiveNullableWithValues()
+    public async Task PrimitiveNullableWithValues()
     {
         var x = new BaseSerializerNullable()
         {
@@ -134,11 +135,11 @@ public class PrimitiveSerializerTest
         };
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(x);
-        var d = Yaml.Read<BaseSerializerTest>(s);
+        var d = await Yaml.ReadAsync<BaseSerializerTest>(s);
         Assert.Equal(x.IntField, d.IntField);
     }
     [Fact]
-    public void BaseSerializerWithNullables()
+    public async Task BaseSerializerWithNullables()
     {
         var x = new BaseSerializerTest()
         {
@@ -194,7 +195,7 @@ public class PrimitiveSerializerTest
         };
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(x);
-        var d = Yaml.Read<BaseSerializerTest>(s);
+        var d = await Yaml.ReadAsync<BaseSerializerTest>(s);
         // Assert
         Assert.Equal(x.IntField, d.IntField);
 
@@ -254,7 +255,7 @@ public class PrimitiveSerializerTest
         Assert.Equal(x.Time, d.Time);
     }
     [Fact]
-    public void BaseNullables()
+    public async Task BaseNullables()
     {
         var x = new BaseSerializerNullable()
         {
@@ -289,7 +290,7 @@ public class PrimitiveSerializerTest
 
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(x);
-        var d = Yaml.Read<BaseSerializerNullable>(s);
+        var d = await Yaml.ReadAsync<BaseSerializerNullable>(s);
 
         // Assert.Null() for each property to verify they are all initialized to null
         Assert.Null(d.IntField);

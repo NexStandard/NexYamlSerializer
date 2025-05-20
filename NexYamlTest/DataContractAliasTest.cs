@@ -1,4 +1,5 @@
-﻿using NexYaml;
+﻿using System.Threading.Tasks;
+using NexYaml;
 using NexYamlTest.SimpleClasses;
 using Xunit;
 
@@ -20,7 +21,7 @@ public class DataContractAliasTest
 
     }
     [Fact]
-    public void DeserializeWithAlias()
+    public async Task  DeserializeWithAlias()
     {
         Setup();
         var aliased = new DataContractAlias()
@@ -28,11 +29,12 @@ public class DataContractAliasTest
             Id = 1,
         };
         var s = Yaml.Write(aliased);
-        var deserialized = Yaml.Read<DataContractAlias>(s);
+        var deserialized = await Yaml.ReadAsync<DataContractAlias>(s);
+        Assert.NotNull(deserialized);
         Assert.Equal(aliased.Id, deserialized.Id);
     }
     [Fact]
-    public void DeserializeWithAliasOnInterface()
+    public async Task DeserializeWithAliasOnInterface()
     {
         Setup();
         IDInterface aliased = new DataContractAlias()
@@ -40,7 +42,8 @@ public class DataContractAliasTest
             Id = 1,
         };
         var s = Yaml.Write(aliased);
-        var deserialized = Yaml.Read<IDInterface>(s);
+        var deserialized = await Yaml.ReadAsync<IDInterface>(s);
+        Assert.NotNull(deserialized);
         Assert.Equal(aliased.Id, deserialized.Id);
     }
 }

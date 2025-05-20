@@ -1,4 +1,5 @@
-﻿using NexYaml.Core;
+﻿using System.Diagnostics.CodeAnalysis;
+using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
@@ -63,7 +64,7 @@ internal class DelegatePlugin : IResolvePlugin
         return false;
     }
 
-    public bool Read<T>(IYamlReader stream, T value, ParseContext result)
+    public bool Read<T>(IYamlReader stream, [MaybeNullWhen(false)]out ValueTask<T> value, ParseContext result)
     {
         if (typeof(Delegate).IsAssignableFrom(typeof(T)))
         {
@@ -111,7 +112,7 @@ internal class DelegatePlugin : IResolvePlugin
             value = default!;
             return true;
         }
-
+        value = default;
         return false;
     }
 

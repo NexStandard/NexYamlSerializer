@@ -18,29 +18,15 @@ public class UInt64Serializer : YamlSerializer<ulong>
         context.WriteScalar(span[..written]);
     }
 
-    public override void Read(IYamlReader stream, ref ulong value, ref ParseResult result)
+    public override ValueTask<ulong> Read(IYamlReader stream, ParseContext parseResult)
     {
-        if (stream.TryGetScalarAsSpan(out var span))
+        if (stream.TryGetScalarAsString(out var span) && ulong.TryParse(span, CultureInfo.InvariantCulture, out var value))
         {
-            if (ulong.TryParse(span, CultureInfo.InvariantCulture, out var temp))
-            {
-                value = temp;
-                stream.Move();
-            }
-            else if (FormatHelper.TryDetectHex(span, out var hexNumber))
-            {
-                if (Utf8Parser.TryParse(hexNumber, out ulong temp2, out var bytesConsumed, 'x') &&
-                       bytesConsumed == hexNumber.Length)
-                {
-                    value = temp2;
-                    stream.Move();
-                }
-            }
-            else
-            {
-                stream.TryGetScalarAsString(out var text);
-                YamlException.ThrowExpectedTypeParseException(typeof(int), text, stream.CurrentMarker);
-            }
+            stream.Move();
+            return new(value);
         }
+        stream.Move();
+        YamlException.ThrowExpectedTypeParseException(typeof(ulong), span, stream.CurrentMarker);
+        return new(default(ulong));
     }
 }

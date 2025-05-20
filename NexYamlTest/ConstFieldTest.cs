@@ -1,4 +1,5 @@
-﻿using NexYaml;
+﻿using System.Threading.Tasks;
+using NexYaml;
 using NexYamlTest.SimpleClasses;
 using Xunit;
 
@@ -10,7 +11,7 @@ public class ConstFieldTest
         NexYamlSerializerRegistry.Init();
     }
     [Fact]
-    public void ConstField()
+    public async Task ConstField()
     {
         Setup();
         var aliased = new ClassWithConstField()
@@ -18,7 +19,8 @@ public class ConstFieldTest
             Normal = 1,
         };
         var s = Yaml.Write(aliased);
-        var deserialized = Yaml.Read<ClassWithConstField>(s);
+        var deserialized = await Yaml.ReadAsync<ClassWithConstField>(s);
+        Assert.NotNull(deserialized);
         Assert.Equal(aliased.Normal, deserialized.Normal);
     }
 }

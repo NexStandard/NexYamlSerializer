@@ -1,3 +1,4 @@
+using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
@@ -17,15 +18,15 @@ public class DecimalSerializer : YamlSerializer<decimal>
         context.WriteScalar(span[..written]);
     }
 
-    public override void Read(IYamlReader stream, ref decimal value, ref ParseResult result)
+    public override ValueTask<decimal> Read(IYamlReader stream, ParseContext parseResult)
     {
-        if (stream.TryGetScalarAsSpan(out var span) &&
-                   Utf8Parser.TryParse(span, out decimal val, out var bytesConsumed) &&
-                   bytesConsumed == span.Length)
+        if (stream.TryGetScalarAsString(out var span) && decimal.TryParse(span, CultureInfo.InvariantCulture, out var value))
         {
-            value = val;
             stream.Move();
-            return;
+            return new(value);
         }
+        stream.Move();
+        YamlException.ThrowExpectedTypeParseException(typeof(decimal), span, stream.CurrentMarker);
+        return new(default(decimal));
     }
 }

@@ -13,14 +13,15 @@ public class NullableStringSerializer : YamlSerializer<string?>
         context.Writer.WriteString(context,value, style);
     }
 
-    public override void Read(IYamlReader stream, ref string? value, ref ParseResult result)
+    public override ValueTask<string?> Read(IYamlReader stream, ParseContext parseResult)
     {
-        if (stream.TryGetScalarAsString(out value))
+        if (stream.TryGetScalarAsString(out var span))
         {
-            stream.Move(ParseEventType.Scalar);
-            return;
+            stream.Move();
+            return new(span);
         }
-        value = null;
+        stream.Move();
+        YamlException.ThrowExpectedTypeParseException(typeof(short), span, stream.CurrentMarker);
+        return new(default(string));
     }
 }
-

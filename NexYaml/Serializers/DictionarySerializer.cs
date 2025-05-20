@@ -44,33 +44,38 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
         }
     }
 
-    public override void Read(IYamlReader stream, ref Dictionary<TKey, TValue>? value, ref ParseResult parseResult)
+    public override async ValueTask<Dictionary<TKey, TValue>?> Read(IYamlReader stream, ParseContext parseResult)
     {
         var map = new Dictionary<TKey, TValue>();
         if (SerializerExtensions.IsPrimitive(typeof(TKey)))
         {
+            List<Task<KeyValuePair<TKey,TValue>>> tasks = new ();
             stream.Move(ParseEventType.MappingStart);
 
             while (stream.HasKeyMapping)
             {
-                var key = default(TKey);
-                stream.Read(ref key);
-                var val = default(TValue);
-                stream.Read(ref val);
-                map.Add(key!, val!);
+                var key = stream.Read<TKey>(new ParseContext());
+                var value = stream.Read<TValue>(new ParseContext());
+                tasks.Add(ConvertToKeyValuePair(key, value));
             }
-
             stream.Move(ParseEventType.MappingEnd);
-            value = map;
+            return (await Task.WhenAll(tasks)).ToDictionary();
         }
         else
         {
             var listSerializer = new ListSerializer<KeyValuePair<TKey, TValue>>();
-            var keyValuePairs = default(List<KeyValuePair<TKey, TValue>>);
-            listSerializer.Read(stream, ref keyValuePairs, ref parseResult);
-
-            value = keyValuePairs?.ToDictionary() ?? [];
+            return await ConvertToDictionary(listSerializer.Read(stream, new ParseContext()));
         }
+    }
+    private async Task<KeyValuePair<TKey,TValue>> ConvertToKeyValuePair(ValueTask<TKey> key, ValueTask<TValue> value)
+    {
+        var k = await key;
+        var v = await value;
+        return new KeyValuePair<TKey, TValue>(k, v);
+    }
+    private async ValueTask<Dictionary<TKey,TValue>?> ConvertToDictionary(ValueTask<List<KeyValuePair<TKey, TValue>>> list)
+    {
+        return (await list).ToDictionary();
     }
 }
 internal class DictionarySerializerFactory : IYamlSerializerFactory

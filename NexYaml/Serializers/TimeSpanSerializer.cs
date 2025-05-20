@@ -3,6 +3,7 @@ using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
 using System.Buffers.Text;
+using System.Globalization;
 
 namespace NexYaml.Serializers;
 
@@ -24,15 +25,15 @@ public class TimeSpanSerializer : YamlSerializer<TimeSpan>
         }
     }
 
-    public override void Read(IYamlReader stream, ref TimeSpan value, ref ParseResult result)
+    public override ValueTask<TimeSpan> Read(IYamlReader stream, ParseContext parseResult)
     {
-        if (stream.TryGetScalarAsSpan(out var span) &&
-               Utf8Parser.TryParse(span, out TimeSpan timeSpan, out var bytesConsumed) &&
-               bytesConsumed == span.Length)
+        if (stream.TryGetScalarAsString(out var span) && TimeSpan.TryParse(span, CultureInfo.InvariantCulture, out var value))
         {
             stream.Move();
-            value = timeSpan;
-            return;
+            return new(value);
         }
+        stream.Move();
+        YamlException.ThrowExpectedTypeParseException(typeof(TimeSpan), span, stream.CurrentMarker);
+        return new(default(TimeSpan));
     }
 }

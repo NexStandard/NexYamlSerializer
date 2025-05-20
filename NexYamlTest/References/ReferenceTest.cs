@@ -48,7 +48,7 @@ public class ReferenceTest
         Assert.Equal(d.Reference.Id, d.Reference1.Id);
     }
     [Fact]
-    public void ResolveRecordReferences()
+    public async Task ResolveRecordReferences()
     {
         NexYamlSerializerRegistry.Init();
         Guid guid = Guid.NewGuid();
@@ -64,7 +64,7 @@ public class ReferenceTest
             Reference2 = refData
         };
         var s = Yaml.Write(refScript);
-        var d = Yaml.Read<ReferenceScript>(s);
+        var d = await Yaml.ReadAsync<ReferenceScript>(s);
         Assert.NotNull(d);
         Assert.Equal(d.Reference, d.Reference1);
         Assert.Equal(d.Reference, d.Reference2);
@@ -93,7 +93,7 @@ public class ReferenceTest
     }
 #if NET9_0_OR_GREATER
     [Fact]
-    public void ResolveListReferences_DeepStructure()
+    public async Task ResolveListReferences_DeepStructure()
     {
         NexYamlSerializerRegistry.Init();
         var list = new ReferenceScriptList();
@@ -130,7 +130,7 @@ public class ReferenceTest
         list.List.Add(refScript2);
         list.List.Add(refScript3);
         var s = Yaml.Write(list);
-        var d = Yaml.Read<ReferenceScriptList>(s);
+        var d = await Yaml.ReadAsync<ReferenceScriptList>(s);
         Assert.Equal(d.List[1], d.List[0].Reference.ReferenceScript);
     }
 #endif

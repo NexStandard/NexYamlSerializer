@@ -20,35 +20,23 @@ internal class ArrayPlugin : IResolvePlugin
         }
         return false;
     }
-    public bool Read<T>(IYamlReader stream, ref T value, ref ParseResult result)
+
+    public bool Read<T>(IYamlReader stream, out ValueTask<T> value, ParseContext result)
     {
         if (typeof(T).IsArray)
         {
             var t = typeof(T).GetElementType()!;
-            object? val = value;
             var arraySerializerType = typeof(ArraySerializer<>).MakeGenericType(t);
             var arraySerializer = (YamlSerializer)Activator.CreateInstance(arraySerializerType)!;
 
-            arraySerializer.ReadUnknown(stream, ref val, ref result);
-            value = (T)val!;
+            value = Convert<T>(arraySerializer.ReadUnknown(stream, result));
             return true;
         }
+        value = default;
         return false;
     }
-
-    public bool Read<T>(IYamlReader stream, T value, ParseContext result)
+    private async ValueTask<T> Convert<T>(ValueTask<object> value)
     {
-        if (typeof(T).IsArray)
-        {
-            var t = typeof(T).GetElementType()!;
-            object? val = value;
-            var arraySerializerType = typeof(ArraySerializer<>).MakeGenericType(t);
-            var arraySerializer = (YamlSerializer)Activator.CreateInstance(arraySerializerType)!;
-
-            // arraySerializer.ReadUnknown(stream, ref val, ref result);
-            value = (T)val!;
-            return true;
-        }
-        return false;
+        return (T)(await value);
     }
 }

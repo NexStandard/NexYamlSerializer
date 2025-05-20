@@ -72,17 +72,17 @@ public class EnumAsStringSerializer<T> : YamlSerializer<T>
         }
     }
 
-    public override void Read(IYamlReader stream, ref T value, ref ParseResult result)
+    public override ValueTask<T?> Read(IYamlReader stream, ParseContext parseResult)
     {
         if (stream.TryGetScalarAsString(out var scalar))
         {
             if (scalar == null)
             {
-                value = default;
+                return new(default(T?));
             }
             else if (NameValueMapping.TryGetValue(scalar, out var val))
             {
-                value = val;
+                return new(val);
             }
         }
 

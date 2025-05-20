@@ -16,19 +16,15 @@ public class DateTimeOffsetSerializer : YamlSerializer<DateTimeOffset>
         context.WriteType(value.ToString(), style);
     }
 
-    public override void Read(IYamlReader stream, ref DateTimeOffset value, ref ParseResult result)
+    public override ValueTask<DateTimeOffset> Read(IYamlReader stream, ParseContext parseResult)
     {
-        if (stream.TryGetScalarAsSpan(out var span) &&
-             Utf8Parser.TryParse(span, out DateTimeOffset val, out var bytesConsumed) &&
-             bytesConsumed == span.Length)
+        if (stream.TryGetScalarAsString(out var span) && DateTimeOffset.TryParse(span, out var value))
         {
             stream.Move();
-            value = val;
+            return new(value);
         }
-        else
-        {
-            stream.TryGetScalarAsString(out var text);
-            YamlException.ThrowExpectedTypeParseException(typeof(DateTimeOffset), text, stream.CurrentMarker);
-        }
+        stream.Move();
+        YamlException.ThrowExpectedTypeParseException(typeof(DateTimeOffset), span, stream.CurrentMarker);
+        return new(default(DateTimeOffset));
     }
 }

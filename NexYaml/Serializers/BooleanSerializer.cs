@@ -13,25 +13,15 @@ public class BooleanSerializer : YamlSerializer<bool>
         context.WriteScalar(value ? ['t', 'r', 'u', 'e'] : [ 'f', 'a', 'l', 's', 'e' ]);
     }
 
-    public override void Read(IYamlReader stream, ref bool value, ref ParseResult result)
+    public override ValueTask<bool> Read(IYamlReader stream, ParseContext parseResult)
     {
-        if (stream.TryGetScalarAsSpan(out var span))
+        if (stream.TryGetScalarAsString(out var span) && bool.TryParse(span, out var value))
         {
-            switch (span.Length)
-            {
-                case 4 when span.SequenceEqual(YamlCodes.True0) ||
-                            span.SequenceEqual(YamlCodes.True1) ||
-                            span.SequenceEqual(YamlCodes.True2):
-                    value = true;
-                    break;
-
-                case 5 when span.SequenceEqual(YamlCodes.False0) ||
-                            span.SequenceEqual(YamlCodes.False1) ||
-                            span.SequenceEqual(YamlCodes.False2):
-                    value = false;
-                    break;
-            }
+            stream.Move();
+            return new(value);
         }
         stream.Move();
+        YamlException.ThrowExpectedTypeParseException(typeof(DateTime), span, stream.CurrentMarker);
+        return new(false);
     }
 }

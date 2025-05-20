@@ -8,7 +8,7 @@ public static class ParserExtensions
     {
         return (underlyingType = Nullable.GetUnderlyingType(value)) != null;
     }
-
+    /* 
     public static MappingReader ReadMapping(this IYamlReader stream) => new(stream);
 
     public static SequenceScopeStruct SequenceScope(this IYamlReader stream) => new SequenceScopeStruct(stream);
@@ -75,4 +75,5 @@ public static class ParserExtensions
 
         public SequenceReader<T> GetEnumerator() => this;
     }
+    */
 }

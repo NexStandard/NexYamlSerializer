@@ -36,27 +36,6 @@ public interface IYamlReader
     public Dictionary<Guid, List<Action<object>>> ReferenceResolvingMap { get; }
 
     /// <summary>
-    /// Reads the next section from the YAML stream.
-    /// </summary>
-    /// <param name="span">A reference to a span of bytes that will be updated by the reader.</param>
-    void Read(ref ReadOnlySpan<byte> span);
-
-    /// <summary>
-    /// Reads a value of type <typeparamref name="T"/> from the YAML stream.
-    /// </summary>
-    /// <typeparam name="T">The type of value to read.</typeparam>
-    /// <param name="value">The value to read.</param>
-    /// <param name="parseResult">The result of the parsing operation.</param>
-    void Read<T>(ref T? value, ref ParseResult parseResult);
-
-    /// <summary>
-    /// Reads a value of type <typeparamref name="T"/> from the YAML stream.
-    /// </summary>
-    /// <typeparam name="T">The type of value to read.</typeparam>
-    /// <param name="value">The value to read.</param>
-    void Read<T>(ref T? value);
-
-    /// <summary>
     /// Disposes of any resources used by the YAML reader.
     /// </summary>
     void Dispose();
@@ -69,17 +48,6 @@ public interface IYamlReader
     bool HasMapping(out ReadOnlySpan<byte> mappingKey);
 
     bool HasMapping(out byte[] mappingKey,bool proxy);
-    /// <summary>
-    /// Resolves any references in the YAML stream that have been added to the <see cref="ReferenceResolvingMap"/>.
-    /// </summary>
-    void ResolveReferences();
-
-    /// <summary>
-    /// Adds a reference to be resolved, with a specified resolution action.
-    /// </summary>
-    /// <param name="id">The <see cref="Guid"/> identifier for the reference.</param>
-    /// <param name="resolution">The action to perform when resolving the reference.</param>
-    void AddReference(Guid id, Action<object> resolution);
 
     /// <summary>
     /// Tries to get the tag currently associated with the YAML stream.
@@ -120,7 +88,7 @@ public interface IYamlReader
     /// Skips the current read operation without storing the result.
     /// </summary>
     void SkipRead();
-    public ValueTask<T> ReadAsync<T>(ParseContext parseResult);
+    public ValueTask<T?> Read<T>(ParseContext parseResult);
     /// <summary>
     /// Attempts to get the current scalar value as a span of bytes.
     /// </summary>
@@ -135,7 +103,6 @@ public interface IYamlReader
     /// <returns><c>true</c> if the scalar value is successfully retrieved as a string; otherwise, <c>false</c>.</returns>
     bool TryGetScalarAsString(out string? value);
     
-    public bool TryRead<T>(ref T? target, in ReadOnlySpan<byte> key, byte[] mappingKey, ref ParseResult parseResult);
     void RegisterIdentifiable(Guid guid, IIdentifiable identifiable);
     ValueTask<T> AsyncGetRef<T>(Guid guid);
 }

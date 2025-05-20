@@ -1,4 +1,5 @@
-﻿using NexYaml;
+﻿using System.Threading.Tasks;
+using NexYaml;
 using NexYamlTest.SimpleClasses;
 using Xunit;
 
@@ -11,7 +12,7 @@ public class InheritanceTest
     }
 
     [Fact]
-    public void Inheritance_NormalClass_NoOverride()
+    public async Task Inheritance_NormalClass_NoOverride()
     {
         Setup();
         var inherited = new InheritedNormalClass()
@@ -21,7 +22,7 @@ public class InheritanceTest
         };
 
         var s = Yaml.Write(inherited);
-        var deserialized = Yaml.Read<InheritedNormalClass>(s);
+        var deserialized = await Yaml.ReadAsync<InheritedNormalClass>(s);
         Assert.NotNull(deserialized);
         Assert.Equal(100, deserialized.Test);
         Assert.Equal("Bob", deserialized.Name);

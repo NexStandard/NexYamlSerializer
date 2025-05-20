@@ -43,8 +43,4 @@ internal static class EmitExtensions
         }
         return utf8Members.ToString();
     }
-    public static string CreateDeserialize(this ClassPackage package)
-    {
-        return new DeserializeEmitter().Create(package);
-    }
 }

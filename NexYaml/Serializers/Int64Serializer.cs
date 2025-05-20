@@ -19,35 +19,15 @@ public class Int64Serializer : YamlSerializer<long>
         context.WriteScalar(span[..written]);
     }
 
-    public override void Read(IYamlReader stream, ref long value, ref ParseResult result)
+    public override ValueTask<long> Read(IYamlReader stream, ParseContext parseResult)
     {
-        stream.TryGetScalarAsSpan(out var span);
+        if (stream.TryGetScalarAsString(out var span) && long.TryParse(span, CultureInfo.InvariantCulture, out var value))
+        {
+            stream.Move();
+            return new(value);
+        }
         stream.Move();
-
-        if (long.TryParse(span, CultureInfo.InvariantCulture, out var temp))
-        {
-            value = temp;
-        }
-        else if (span.Length > YamlCodes.HexPrefix.Length && span.StartsWith(YamlCodes.HexPrefix))
-        {
-            var slice = span[YamlCodes.HexPrefix.Length..];
-            if (Utf8Parser.TryParse(slice, out long hexVal, out var bytesConsumedHex, 'x') &&
-                   bytesConsumedHex == slice.Length)
-            {
-                value = hexVal;
-            }
-        }
-        else if (span.Length > YamlCodes.HexPrefixNegative.Length && span.StartsWith(YamlCodes.HexPrefixNegative))
-        {
-            var slice = span[YamlCodes.HexPrefixNegative.Length..];
-            if (Utf8Parser.TryParse(slice, out long negativeHexVal, out var bytesConsumedHex, 'x') && bytesConsumedHex == slice.Length)
-            {
-                value = -negativeHexVal;
-            }
-        }
-        else
-        {
-            YamlException.ThrowExpectedTypeParseException(typeof(long), Encoding.UTF8.GetString(span), stream.CurrentMarker);
-        }
+        YamlException.ThrowExpectedTypeParseException(typeof(long), span, stream.CurrentMarker);
+        return new(default(long));
     }
 }

@@ -1,4 +1,5 @@
-﻿using NexYaml;
+﻿using System.Threading.Tasks;
+using NexYaml;
 using NexYamlTest.ComplexCases;
 using NexYamlTest.SimpleClasses;
 using Xunit;
@@ -12,7 +13,7 @@ public class RedirectionTest
     }
 
     [Fact]
-    public void InterfaceTester()
+    public async Task InterfaceTester()
     {
         Setup();
         IDInterface dInterface = new Interfacing()
@@ -20,12 +21,12 @@ public class RedirectionTest
             Id = 10235
         };
         var s = Yaml.Write(dInterface);
-        var deserialized = Yaml.Read<IDInterface>(s);
+        var deserialized = await Yaml.ReadAsync<IDInterface>(s);
         Assert.NotNull(deserialized);
         Assert.Equal(dInterface.Id, deserialized.Id);
     }
     [Fact]
-    public void AbstractTester()
+    public async Task Redirection_Of_Abstract_Class()
     {
         Setup();
         IDAbstract dInterface = new Abstracting()
@@ -33,11 +34,12 @@ public class RedirectionTest
             Id = 10235
         };
         var s = Yaml.Write(dInterface);
-        var deserialized = Yaml.Read<IDAbstract>(s);
+        var deserialized = await Yaml.ReadAsync<IDAbstract>(s);
+        Assert.NotNull(deserialized);
         Assert.Equal(dInterface.Id, deserialized.Id);
     }
     [Fact]
-    public void GenericSimpleTest()
+    public async Task GenericSimpleTest()
     {
         Setup();
         var generic = new Generics<int>()
@@ -45,11 +47,12 @@ public class RedirectionTest
             Value = 10235
         };
         var s = Yaml.Write(generic);
-        var deserialized = Yaml.Read<Generics<int>>(s);
+        var deserialized = await Yaml.ReadAsync<Generics<int>>(s);
+        Assert.NotNull(deserialized);
         Assert.Equal(generic.Value, deserialized.Value);
     }
     [Fact]
-    public void StackedGenericsStack()
+    public async Task StackedGenericsStack()
     {
         Setup();
         var generic = new GenericWithRestriction<Generics<int>>()
@@ -57,11 +60,12 @@ public class RedirectionTest
             Value = new Generics<int>() { Value = 1 }
         };
         var s = Yaml.Write(generic);
-        var deserialized = Yaml.Read<GenericWithRestriction<Generics<int>>>(s);
+        var deserialized = await Yaml.ReadAsync<GenericWithRestriction<Generics<int>>>(s);
+        Assert.NotNull(deserialized);
         Assert.Equal(generic.Value.Value, deserialized.Value.Value);
     }
     [Fact]
-    public void ImplementedGenericsTest()
+    public async Task ImplementedGenericsTest()
     {
         Setup();
         var generic = new GenericWithImplementation()
@@ -69,11 +73,12 @@ public class RedirectionTest
             Value = 43
         };
         var s = Yaml.Write(generic);
-        var deserialized = Yaml.Read<Generics<int>>(s);
+        var deserialized = await Yaml.ReadAsync<Generics<int>>(s);
+        Assert.NotNull(deserialized);
         Assert.Equal(generic.Value, deserialized.Value);
     }
     [Fact]
-    public void InheritanceTest()
+    public async Task InheritanceTest()
     {
         Setup();
         var generic = new Inherited()
@@ -82,7 +87,8 @@ public class RedirectionTest
             X = 1234
         };
         var s = Yaml.Write<Base>(generic);
-        var deserialized = Yaml.Read<Base>(s);
+        var deserialized = await Yaml.ReadAsync<Base>(s);
+        Assert.NotNull(deserialized);
         Assert.Equal(generic.X, deserialized.X);
     }
 }

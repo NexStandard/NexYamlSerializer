@@ -1,4 +1,5 @@
-﻿using NexYaml;
+﻿using System.Threading.Tasks;
+using NexYaml;
 using NexYamlTest.SimpleClasses;
 using Xunit;
 
@@ -11,7 +12,7 @@ public class PartialTest
     }
 
     [Fact]
-    public void SimplePartialTest()
+    public async Task SimplePartialTest()
     {
         Setup();
         var simplePartial1 = new SimplePartial()
@@ -20,7 +21,8 @@ public class PartialTest
             ID2 = 2,
         };
         var s = Yaml.Write(simplePartial1);
-        var deserialized = Yaml.Read<SimplePartial>(s);
+        var deserialized = await Yaml.ReadAsync<SimplePartial>(s);
+        Assert.NotNull(deserialized);
         Assert.Equal(simplePartial1.Id1, deserialized.Id1);
         Assert.Equal(simplePartial1.ID2, deserialized.ID2);
 

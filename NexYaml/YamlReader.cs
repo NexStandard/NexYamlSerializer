@@ -61,33 +61,22 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         return parser.Read();
     }
 
-    public void AddReference(Guid id, Action<object> resolution)
+    public ValueTask<T?> Read<T>(ParseContext parseResult)
     {
-        if (ReferenceResolvingMap.TryGetValue(id, out var action))
-        {
-            action.Add(resolution);
-        }
-        else
-        {
-            ReferenceResolvingMap.Add(id, new () { resolution });
-        }
-    }
-
-    public ValueTask<T> ReadAsync<T>(ParseContext parseResult)
-    {
-        ValueTask<T> result = default;
+        ValueTask<T?> result = default;
         if (IsNullScalar())
         {
             Move();
-            return new ValueTask<T>(default(T));
+            return new ValueTask<T?>(default(T));
         }
         Type type = typeof(T);
+
         foreach (var syntax in plugins)
         {
-            if (syntax.Read(this, parseResult.Value,  parseResult))
+            if (syntax.Read<T>(this, out var t,  parseResult))
             {
                 // TODO
-                return new ValueTask<T>(default(T));
+                return t;
             }
         }
 
@@ -104,7 +93,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
                 Move(ParseEventType.Scalar);
                 if (idScalar != null)
                 {
-                    return AsyncGetRef<T>(Guid.Parse(idScalar));
+                    return AsyncGetRef<T?>(Guid.Parse(idScalar));
                 }
             }
         }
@@ -130,87 +119,17 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         }
         else
         {
-            result = Resolver.GetSerializer<T>().Read(this, parseResult);
+            result = Resolver.GetSerializer<T?>().Read(this, parseResult);
         }
         return result;
     }
-    public async ValueTask<T> Convert<T>(ValueTask<object> t)
+    private async ValueTask<T> Convert<T>(ValueTask<object> t)
     {
         return (T)(await t);
     }
-    public void Read<T>(ref T? value, ref ParseResult parseResult)
-    {
-        if(value is not null)
-        {
-
-        }
-        if (IsNullScalar())
-        {
-            value = default;
-            Move();
-            return;
-        }
-        foreach (var syntax in plugins)
-        {
-            if (syntax.Read(this, ref value, ref parseResult))
-            {
-                return;
-            }
-        }
-
-
-        Type type = typeof(T);
-        if (type.IsInterface || type.IsAbstract || type.IsGenericType)
-        {
-            TryGetCurrentTag(out var tag);
-            YamlSerializer? serializer;
-            if (tag == null)
-            {
-                Resolver.GetSerializer<T>().Read(this, ref value!, ref parseResult);
-                return;
-            }
-            else
-            {
-                var alias = Resolver.GetAliasType(tag.Handle);
-                serializer = Resolver.GetSerializer(alias, type);
-                var valueObject = (object?)value;
-                serializer.ReadUnknown(this, ref valueObject, ref parseResult);
-                value = (T?)valueObject;
-            }
-        }
-        else
-        {
-            Resolver.GetSerializer<T>().Read(this, ref value!, ref parseResult);
-        }
-        if(value is IIdentifiable identifiable and not null)
-        {
-            Identifiables.Add(identifiable);
-        }
-    }
-    public void ResolveReferences()
-    {
-        
-        foreach(var identifiable in Identifiables)
-        {
-            var x = ReferenceResolvingMap;
-            if(ReferenceResolvingMap.TryGetValue(identifiable.Id,out var value))
-            {
-                foreach(var x2 in value)
-                {
-                    if(identifiable is IdentifiableDelegate identifiableDelegate)
-                    {
-                        x2(identifiableDelegate.Func());
-                    }
-                    else
-                    {
-                        x2(identifiable);
-                    }
-                }
-            }
-        }
-    }
 
     // For handling anchors, max need it for !TAG &PARENT_ANCHOR 
+    /*
     private void Read<T>(YamlSerializer<T> serializer, ref YamlParser parser, ref T value, ref ParseResult parseResult)
     {
         if (parser.TryResolveCurrentAlias<T>(ref parser, out var aliasValue))
@@ -221,7 +140,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
 
         var withAnchor = parser.TryGetCurrentAnchor(out var anchor);
 
-        serializer.Read(this, ref value, ref parseResult);
+        // serializer.Read(this, ref value, ref parseResult);
 
         if (withAnchor)
         {
@@ -229,6 +148,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         }
         return;
     }
+    */
 
     public void Move(ParseEventType eventType)
     {
@@ -238,16 +158,6 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
     public void Reset()
     {
         parser.Reset();
-    }
-    public bool TryRead<T>(ref T? target, in ReadOnlySpan<byte> key, byte[] mappingKey, ref ParseResult parseResult)
-    {
-        if (key.SequenceEqual(mappingKey))
-        {
-            Move();
-            Read(ref target, ref parseResult);
-            return true;
-        }
-        return false;
     }
 
     public void SkipAfter(ParseEventType eventType)
@@ -268,12 +178,6 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
     public bool TryGetScalarAsString(out string? value)
     {
         return parser.TryGetScalarAsString(out value);
-    }
-
-    public void Read<T>(ref T? value)
-    {
-        var parseResult = new ParseResult();
-        Read(ref value, ref parseResult);
     }
 
     public bool TryGetCurrentTag(out Tag tag)
