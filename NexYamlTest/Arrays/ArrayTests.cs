@@ -110,6 +110,20 @@ public class ArrayTests
         Assert.Equal(1, stringArrayDeserialized.Value[0]);
         Assert.Equal(2, stringArrayDeserialized.Value[1]);
     }
+    [Fact]
+    public async Task Write_Empty_Array()
+    {
+        Setup();
+        var array = new Generics<string[]>()
+        {
+            Value = [ ]
+        };
+        var stringArrayString = Yaml.Write(array);
+        var stringArrayDeserialized = await Yaml.Read<Generics<int[]>>(stringArrayString);
+        Assert.NotNull(stringArrayDeserialized);
+        Assert.NotNull(stringArrayDeserialized.Value);
+        Assert.Empty(stringArrayDeserialized.Value);
+    }
     [Fact(Skip = "Exception handling fails")]
     public async Task Failure_On_Wrong_Generic_Type()
     {
