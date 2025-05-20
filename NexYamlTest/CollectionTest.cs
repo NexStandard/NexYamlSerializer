@@ -124,7 +124,7 @@ public class CollectionTest
         Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
     }
     [Fact]
-    public async Task EmitCollectionWithCompact()
+    public async Task EmitBlockSequenceWithCompactMapping()
     {
         var list = new List<CompactStruct>
         {
@@ -136,8 +136,26 @@ public class CollectionTest
         var d = await Yaml.Read<List<CompactStruct>>(s);
         Assert.NotNull(d);
         Assert.Contains("- { ",s);
+        Assert.Equal(default, d[0]);
+        Assert.Equal(default, d[1]);
     }
 
+    [Fact]
+    public async Task EmitBlockSequenceWithCompactSequence()
+    {
+        var list = new List<ValueTuple<int,int>>
+        {
+            new(10, 10),
+            new(11, 11)
+        };
+        NexYamlSerializerRegistry.Init();
+        var s = Yaml.Write(list, DataStyle.Any);
+        var d = await Yaml.Read<List<ValueTuple<int, int>>>(s);
+        Assert.NotNull(d);
+        Assert.Contains("- [ ", s);
+        Assert.Equal(new(10,10), d[0]);
+        Assert.Equal(new(11,11), d[1]);
+    }
     [Fact]
     public async Task ComplexDictionary()
     {
