@@ -1,14 +1,13 @@
 using NexYaml.Parser;
 using NexYaml.Serialization;
-using Silk.NET.SDL;
 using Stride.Core;
 
 namespace NexYaml.Serializers;
 
-public class ListSerializer<T> : YamlSerializer<List<T>?>
+public class ListSerializer<T> : YamlSerializer<List<T?>>
 {
     public string? CustomTag { get; init; }
-    public override void Write<X>(WriteContext<X> context, List<T>? value, DataStyle style)
+    public override void Write<X>(WriteContext<X> context, List<T?> value, DataStyle style)
     {
         bool hasIdentifiable = false;
         if (value.Count == 0)
@@ -18,7 +17,7 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
         }
         foreach (var item in value)
         {
-            if(item is IIdentifiable)
+            if (item is IIdentifiable)
             {
                 hasIdentifiable = true;
                 break;
@@ -64,10 +63,10 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
         result.End(context);
     }
 
-    public override async ValueTask<List<T>?> Read(IYamlReader stream, ParseContext parseResult)
+    public override async ValueTask<List<T?>?> Read(IYamlReader stream, ParseContext parseResult)
     {
         var list = new List<T>();
-        var tasks = new List<Task<T>>();
+        var tasks = new List<Task<T?>>();
         stream.Move(ParseEventType.SequenceStart);
         while (stream.HasSequence)
         {

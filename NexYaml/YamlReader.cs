@@ -1,29 +1,25 @@
-﻿using NexYaml.Core;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
+using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Plugins;
 using NexYaml.Serialization;
-using NexYaml.Serializers;
 using Stride.Core;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Text.Unicode;
 
 namespace NexYaml;
-public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : IYamlReader
+public sealed class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : IYamlReader, IDisposable
 {
     public bool HasKeyMapping => parser.HasKeyMapping;
     public bool HasSequence => parser.HasSequence;
     public Marker CurrentMarker => parser.CurrentMark;
-    public Dictionary<Guid, List<Action<object>>> ReferenceResolvingMap { get; } = new();
+    public Dictionary<Guid, List<Action<object>>> ReferenceResolvingMap { get; } = [];
 
-    private Dictionary<Guid, (TaskCompletionSource<object>? tcs, object? result)> _identifiables = new();
+    private readonly Dictionary<Guid, (TaskCompletionSource<object>? tcs, object? result)> _identifiables = [];
 
-    public HashSet<IIdentifiable> Identifiables { get; } = new();
+    public HashSet<IIdentifiable> Identifiables { get; } = [];
 
-    private List<IResolvePlugin> plugins =
+    private readonly List<IResolvePlugin> plugins =
     [
-        new NullablePlugin(),
         new ArrayPlugin(),
         new ReferencePlugin(),
     ];
@@ -61,7 +57,6 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
 
     public ValueTask<T?> Read<T>(ParseContext parseResult)
     {
-        ValueTask<T?> result = default;
         if (IsNullScalar())
         {
             Move();
@@ -73,30 +68,25 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         {
             if (syntax.Read<T>(this, out var t, parseResult))
             {
-                // TODO
                 return t;
             }
         }
 
         // await reference
-        if (TryGetCurrentTag(out var tag1))
+        if (TryGetCurrentTag(out var tag1) && tag1.Handle == "ref")
         {
-            var handle = tag1.Handle;
-
-            if (handle == "ref")
+            if (TryGetScalarAsString(out var idScalar) && Guid.TryParse(idScalar, out var id))
             {
-                Guid? id = null;
-                TryGetScalarAsString(out var idScalar);
-
                 Move(ParseEventType.Scalar);
-                if (idScalar != null)
-                {
-                    return AsyncGetRef<T?>(Guid.Parse(idScalar));
-                }
+                return AsyncGetRef<T?>(id);
+            }
+            else
+            {
+                throw YamlException.ThrowExpectedTypeParseException(typeof(Guid), idScalar, CurrentMarker);
             }
         }
 
-
+        ValueTask<T?> result;
         if (type.IsInterface || type.IsAbstract || type.IsGenericType)
         {
             TryGetCurrentTag(out var tag);
@@ -121,12 +111,12 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         }
         return result;
     }
-    private async ValueTask<T> Convert<T>(ValueTask<object> t)
+    private static async ValueTask<T?> Convert<T>(ValueTask<object?> task)
     {
-        return (T)(await t);
+        return (T?)(await task);
     }
 
-    // For handling anchors, max need it for !TAG &PARENT_ANCHOR 
+    // For handling anchors, may need it for !TAG &PARENT_ANCHOR 
     /*
     private void Read<T>(YamlSerializer<T> serializer, ref YamlParser parser, ref T value, ref ParseResult parseResult)
     {
@@ -194,7 +184,6 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
 
     public async ValueTask<T> AsyncGetRef<T>(Guid guid)
     {
-
         (TaskCompletionSource<object>? tcs, object? result) tcs;
         if (_identifiables.TryGetValue(guid, out var value))
         {
@@ -206,10 +195,12 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         }
         else
         {
-            tcs = new();
-            tcs.tcs = new TaskCompletionSource<object>();
+            tcs = new()
+            {
+                tcs = new TaskCompletionSource<object>()
+            };
             _identifiables.Add(guid, tcs);
         }
-        return (T)(await tcs.tcs.Task);
+        return (T)(await tcs.tcs!.Task);
     }
 }

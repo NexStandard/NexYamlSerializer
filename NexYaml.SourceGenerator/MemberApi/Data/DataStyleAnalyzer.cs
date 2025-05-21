@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 using NexYaml.SourceGenerator.Core;
-using NexYaml.SourceGenerator.MemberApi;
 
 namespace NexYaml.SourceGenerator.MemberApi.Data;
 internal class DataStyleAnalyzer(ISymbol namedType, ReferencePackage package)

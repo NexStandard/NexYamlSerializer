@@ -1,8 +1,8 @@
+using System.Globalization;
 using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
-using System.Globalization;
 
 namespace NexYaml.Serializers;
 
@@ -24,8 +24,7 @@ public class Float32Serializer : YamlSerializer<float>
             stream.Move();
             return new(value);
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(float), span, stream.CurrentMarker);
-        return new(default(float));
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(float), span, stream.CurrentMarker);
     }
 }

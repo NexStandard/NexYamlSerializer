@@ -1,9 +1,8 @@
+using System.Globalization;
 using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
-using System.Buffers.Text;
-using System.Globalization;
 
 namespace NexYaml.Serializers;
 
@@ -13,16 +12,7 @@ public class TimeSpanSerializer : YamlSerializer<TimeSpan>
 
     public override void Write<X>(WriteContext<X> context, TimeSpan value, DataStyle style)
     {
-        Span<char> buf = stackalloc char[32];
-        
-        if (value.TryFormat(buf, out var bytesWritten))
-        {
-            context.WriteScalar(buf[..bytesWritten]);
-        }
-        else
-        {
-            throw new YamlException($"Cannot serialize a value: {value}");
-        }
+        context.WriteString(value.ToString());
     }
 
     public override ValueTask<TimeSpan> Read(IYamlReader stream, ParseContext parseResult)
@@ -32,8 +22,7 @@ public class TimeSpanSerializer : YamlSerializer<TimeSpan>
             stream.Move();
             return new(value);
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(TimeSpan), span, stream.CurrentMarker);
-        return new(default(TimeSpan));
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(TimeSpan), span, stream.CurrentMarker);
     }
 }

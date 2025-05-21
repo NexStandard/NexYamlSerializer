@@ -1,7 +1,7 @@
-﻿using NexYaml.Core;
+﻿using System.Diagnostics.CodeAnalysis;
+using NexYaml.Core;
 using NexYaml.Parser;
 using Stride.Core;
-using System.Diagnostics.CodeAnalysis;
 
 namespace NexYaml;
 /// <summary>
@@ -47,7 +47,7 @@ public interface IYamlReader
     /// <returns><c>true</c> if there is a mapping key; otherwise, <c>false</c>.</returns>
     bool HasMapping(out ReadOnlySpan<byte> mappingKey);
 
-    bool HasMapping(out byte[] mappingKey,bool proxy);
+    bool HasMapping(out byte[] mappingKey, bool proxy);
 
     /// <summary>
     /// Tries to get the tag currently associated with the YAML stream.
@@ -102,7 +102,7 @@ public interface IYamlReader
     /// <param name="value">The scalar value as a string, if found.</param>
     /// <returns><c>true</c> if the scalar value is successfully retrieved as a string; otherwise, <c>false</c>.</returns>
     bool TryGetScalarAsString(out string? value);
-    
+
     void RegisterIdentifiable(Guid guid, IIdentifiable identifiable);
     ValueTask<T> AsyncGetRef<T>(Guid guid);
 }

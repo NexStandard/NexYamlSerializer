@@ -14,15 +14,14 @@ public class ArraySerializer<T> : YamlSerializer<T?[]>
         }
         var result = context.BeginSequence("!Array", style);
 
-        foreach (var x in value)
+        foreach (var element in value)
         {
-            var val = x;
-            result = result.Write(x, style);
+            result = result.Write(element, style);
         }
         result.End(context);
     }
 
-    public override async ValueTask<T?[]> Read(IYamlReader stream, ParseContext parseResult)
+    public override async ValueTask<T?[]?> Read(IYamlReader stream, ParseContext parseResult)
     {
         var tasks = new List<Task<T?>>();
         stream.Move(ParseEventType.SequenceStart);

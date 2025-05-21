@@ -1,23 +1,20 @@
-﻿using NexYaml.Core;
+﻿using System.Buffers;
+using System.Text;
 using NexYaml.Parser;
 using NexYaml.Plugins;
 using NexYaml.Serialization;
 using NexYaml.Serialization.Nodes;
 using Stride.Core;
-using System.Buffers;
-using System.IO;
-using System.Text;
 
 namespace NexYaml;
 
-public class Yaml
+public static class Yaml
 {
     public static void Write<T>(T value, WriteDelegate writing, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
     {
         options ??= IYamlSerializerResolver.Default;
         List<IResolvePlugin> plugins = new()
         {
-            new NullablePlugin(),
             new ArrayPlugin(),
             new ReferencePlugin(),
         };
@@ -45,8 +42,8 @@ public class Yaml
     public static async ValueTask<T?> Read<T>(string s, IYamlSerializerResolver? options = null)
     {
         var sequence = new ReadOnlySequence<byte>(Encoding.UTF8.GetBytes(s));
-        var parser = YamlParser.FromSequence(sequence, options ?? IYamlSerializerResolver.Default);
-        var reader = new YamlReader(parser, options ?? IYamlSerializerResolver.Default);
+        using var parser = YamlParser.FromSequence(sequence, options ?? IYamlSerializerResolver.Default);
+        using var reader = new YamlReader(parser, options ?? IYamlSerializerResolver.Default);
 
         parser.SkipAfter(ParseEventType.DocumentStart);
         return await reader.Read<T>(new());

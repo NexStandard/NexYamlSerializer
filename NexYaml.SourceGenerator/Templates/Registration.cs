@@ -1,6 +1,6 @@
-﻿using NexYaml.SourceGenerator.MemberApi.Data;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Text;
+using NexYaml.SourceGenerator.MemberApi.Data;
 
 namespace NexYaml.SourceGenerator.Templates;
 

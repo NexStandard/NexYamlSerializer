@@ -1,9 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
-using NexYaml.SourceGenerator.MemberApi;
+﻿using System.Text;
 using NexYaml.SourceGenerator.MemberApi.Data;
-using System.IO;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
 
 namespace NexYaml.SourceGenerator.Templates;
 
@@ -33,11 +29,11 @@ internal static class SourceCreator
         var orderedSymbols = package.MemberSymbols.OrderByDescending(s => s.Name == "Id").ToList();
         ///
         objTempVariables.AppendLine($"\t\tvar res = new {info.NameDefinition}();");
-        
+
         foreach (var member in orderedSymbols)
         {
             objTempVariables.AppendLine($"\t\tvar var_{member.Name} = default(ValueTask<{(member.IsArray ? member.Type + "[]" : member.Type)}>);");
-            if(member.Context.Mode == MemberApi.UniversalAnalyzers.MemberMode.Content)
+            if (member.Context.Mode == MemberApi.UniversalAnalyzers.MemberMode.Content)
             {
                 objTempVariables.AppendLine($"\t\tvar context_{member.Name} = new ParseContext() {{ Value = res.{member.Name} }};");
             }

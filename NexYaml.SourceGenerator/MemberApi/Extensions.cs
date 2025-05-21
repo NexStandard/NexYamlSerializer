@@ -1,12 +1,12 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Collections.Immutable;
+using System.Text;
+using Microsoft.CodeAnalysis;
 using NexYaml.SourceGenerator.Core;
 using NexYaml.SourceGenerator.MemberApi.Analyzers;
 using NexYaml.SourceGenerator.MemberApi.Data;
 using NexYaml.SourceGenerator.MemberApi.FieldAnalyzers;
 using NexYaml.SourceGenerator.MemberApi.PropertyAnalyzers;
 using NexYaml.SourceGenerator.MemberApi.UniversalAnalyzers;
-using System.Collections.Immutable;
-using System.Text;
 
 namespace NexYaml.SourceGenerator.MemberApi;
 internal static class Extensions

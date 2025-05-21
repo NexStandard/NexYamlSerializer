@@ -33,7 +33,7 @@ class FlowSequence : Sequence
         // all following Nodes need a prefix
         return context with
         {
-            Node = new FlowSequenceSecondary(),
+            Node = CommonNodes.FlowSequenceSecondary
         };
     }
     public override void End<T>(WriteContext<T> context)

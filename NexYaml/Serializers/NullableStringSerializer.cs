@@ -5,12 +5,12 @@ using Stride.Core;
 
 namespace NexYaml.Serializers;
 
-public class NullableStringSerializer : YamlSerializer<string?>
+public class NullableStringSerializer : YamlSerializer<string>
 {
     public static readonly NullableStringSerializer Instance = new();
-    public override void Write<X>(WriteContext<X> context, string? value, DataStyle style)
+    public override void Write<X>(WriteContext<X> context, string value, DataStyle style)
     {
-        context.Writer.WriteString(context,value, style);
+        context.Writer.WriteString(context, value, style);
     }
 
     public override ValueTask<string?> Read(IYamlReader stream, ParseContext parseResult)
@@ -20,8 +20,7 @@ public class NullableStringSerializer : YamlSerializer<string?>
             stream.Move();
             return new(span);
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(short), span, stream.CurrentMarker);
-        return new(default(string));
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(short), span, stream.CurrentMarker);
     }
 }

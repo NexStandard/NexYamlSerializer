@@ -10,7 +10,7 @@ internal class Generics<T>
 internal class GenericWithRestriction<T>
     where T : class, new()
 {
-    public T Value { get; set; }
+    public T? Value { get; set; }
 }
 [DataContract]
 internal class GenericWithImplementation : Generics<int>

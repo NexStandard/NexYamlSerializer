@@ -1,9 +1,8 @@
+using System.Globalization;
 using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
-using System.Buffers.Text;
-using System.Globalization;
 
 namespace NexYaml.Serializers;
 
@@ -25,8 +24,7 @@ public class ByteSerializer : YamlSerializer<byte>
             stream.Move();
             return new(value);
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(DateTime), span, stream.CurrentMarker);
-        return new(0);
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(DateTime), span, stream.CurrentMarker);
     }
 }

@@ -23,6 +23,14 @@ public class YamlException : Exception
     {
     }
 
+    public YamlException() : base()
+    {
+    }
+
+    public YamlException(string? message, Exception? innerException) : base(message, innerException)
+    {
+    }
+
     /// <summary>
     /// Throws a <see cref="YamlException"/> indicating a failure to parse a value, 
     /// with the expected type and the actual value that failed to parse.
@@ -30,8 +38,8 @@ public class YamlException : Exception
     /// <param name="expectedType">The expected type that was supposed to be parsed.</param>
     /// <param name="parseFailure">The value that could not be parsed.</param>
     /// <param name="marker">The location in the YAML document where the failure occurred.</param>
-    public static void ThrowExpectedTypeParseException(Type expectedType, string parseFailure, Marker marker)
+    public static YamlException ThrowExpectedTypeParseException(Type expectedType, string? parseFailure, Marker marker)
     {
-        throw new YamlException(marker, $"Could not parse: \"{parseFailure}\", expected Type: {expectedType}");
+        return new YamlException(marker, $"Could not parse: \"{parseFailure}\", expected Type: {expectedType}");
     }
 }

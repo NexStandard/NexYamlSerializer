@@ -1,8 +1,7 @@
 ﻿
-using BenchmarkDotNet.Running;
-using NexYaml;
-using Stride.Core;
 using System.Text.Json.Serialization;
+using BenchmarkDotNet.Running;
+using Stride.Core;
 using Test;
 
 BenchmarkRunner.Run<Benchmarker>();

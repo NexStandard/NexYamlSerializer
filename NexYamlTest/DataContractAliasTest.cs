@@ -21,7 +21,7 @@ public class DataContractAliasTest
 
     }
     [Fact]
-    public async Task  DeserializeWithAlias()
+    public async Task DeserializeWithAlias()
     {
         Setup();
         var aliased = new DataContractAlias()

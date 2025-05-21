@@ -1,6 +1,5 @@
-using NexYaml.Core;
-using Silk.NET.OpenXR;
 using System.Buffers;
+using NexYaml.Core;
 
 namespace NexYaml.Parser;
 
@@ -722,7 +721,7 @@ public class Utf8YamlTokenizer
             }
             // in flow, it may be the case that its !!null, and this would match an assembly tag without assembly so this case has to be skipped
             // assembly tag without assembly is not valid like "!class,"
-            else if(currentCode == ',' && TryPeek(1,out var nextCode,ref reader) && !YamlCodes.IsAlphaNumericDashOrUnderscore(nextCode))
+            else if (currentCode == ',' && TryPeek(1, out var nextCode, ref reader) && !YamlCodes.IsAlphaNumericDashOrUnderscore(nextCode))
             {
                 break;
             }

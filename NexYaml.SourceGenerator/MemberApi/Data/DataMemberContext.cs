@@ -1,6 +1,5 @@
 using Microsoft.CodeAnalysis;
 using NexYaml.SourceGenerator.Core;
-using NexYaml.SourceGenerator.MemberApi;
 using NexYaml.SourceGenerator.MemberApi.UniversalAnalyzers;
 
 namespace NexYaml.SourceGenerator.MemberApi.Data;

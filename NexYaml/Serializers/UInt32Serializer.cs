@@ -1,9 +1,8 @@
+using System.Globalization;
 using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
-using System.Buffers.Text;
-using System.Globalization;
 
 namespace NexYaml.Serializers;
 
@@ -25,8 +24,7 @@ public class UInt32Serializer : YamlSerializer<uint>
             stream.Move();
             return new(value);
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(uint), span, stream.CurrentMarker);
-        return new(default(uint));
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(uint), span, stream.CurrentMarker);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using NexYaml;
 using NexYaml.Core;
@@ -13,7 +12,7 @@ public class ArrayTests
     {
         NexYamlSerializerRegistry.Init();
     }
-    
+
     [Fact]
     public async Task Generic_Int_Array()
     {
@@ -52,14 +51,14 @@ public class ArrayTests
         Setup();
         var array = new Generics<int[][]>()
         {
-            Value = [ [ 2 ], [ 1 ]]
+            Value = [[2], [1]]
         };
         var stringArrayString = Yaml.Write(array, Stride.Core.DataStyle.Normal);
         var stringArrayDeserialized = await Yaml.Read<Generics<int[][]>>(stringArrayString);
         Assert.NotNull(stringArrayDeserialized);
         Assert.NotNull(stringArrayDeserialized.Value);
-        Assert.Equal([ 2 ], stringArrayDeserialized.Value[0]);
-        Assert.Equal([ 1 ], stringArrayDeserialized.Value[1]);
+        Assert.Equal([2], stringArrayDeserialized.Value[0]);
+        Assert.Equal([1], stringArrayDeserialized.Value[1]);
     }
 
     [Fact]
@@ -116,7 +115,7 @@ public class ArrayTests
         Setup();
         var array = new Generics<string[]>()
         {
-            Value = [ ]
+            Value = []
         };
         var stringArrayString = Yaml.Write(array);
         var stringArrayDeserialized = await Yaml.Read<Generics<int[]>>(stringArrayString);
@@ -124,7 +123,7 @@ public class ArrayTests
         Assert.NotNull(stringArrayDeserialized.Value);
         Assert.Empty(stringArrayDeserialized.Value);
     }
-    [Fact(Skip = "Exception handling fails")]
+    [Fact]
     public async Task Failure_On_Wrong_Generic_Type()
     {
         Setup();

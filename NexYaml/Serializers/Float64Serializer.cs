@@ -1,8 +1,8 @@
+using System.Globalization;
 using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
-using System.Globalization;
 
 namespace NexYaml.Serializers;
 
@@ -24,8 +24,7 @@ public class Float64Serializer : YamlSerializer<double>
             stream.Move();
             return new(value);
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(double), span, stream.CurrentMarker);
-        return new(default(double));
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(double), span, stream.CurrentMarker);
     }
 }

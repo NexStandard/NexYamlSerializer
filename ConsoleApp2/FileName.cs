@@ -1,21 +1,15 @@
-﻿using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Engines;
-using NexYaml;
-using NexYaml.Plugins;
-using NexYaml.Serialization;
-using NexYaml.Serializers;
-using SharpFont;
-using Stride.Core;
-using System.Buffers;
-using System.IO;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using BenchmarkDotNet.Attributes;
+using NexYaml;
+using NexYaml.Serialization;
+using Stride.Core;
 namespace Test;
 [MemoryDiagnoser()]
 public class Benchmarker
 {
-    IYamlSerializerResolver resolver;
+    IYamlSerializerResolver? resolver;
     Collections values = new Collections();
     StringBuilder s = new();
 
@@ -33,7 +27,7 @@ public class Benchmarker
     [Benchmark(Baseline = true)]
     public void YamlB()
     {
-        Yaml.Write(values, (ReadOnlySpan<char> text) => { s.Append(text); }, DataStyle.Compact, resolver);
+        Yaml.Write(values, (ReadOnlySpan<char> text) => s.Append(text), DataStyle.Compact, resolver);
         var x = s.ToString();
     }
     [Benchmark()]

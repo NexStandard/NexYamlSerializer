@@ -4,9 +4,9 @@ using Stride.Core;
 
 namespace NexYaml.Serializers;
 
-public class KeyValuePairSerializer<TKey, TValue> : YamlSerializer<KeyValuePair<TKey, TValue>>
+public class KeyValuePairSerializer<TKey, TValue> : YamlSerializer<KeyValuePair<TKey?, TValue?>>
 {
-    public override void Write<X>(WriteContext<X> context, KeyValuePair<TKey, TValue> value, DataStyle style)
+    public override void Write<X>(WriteContext<X> context, KeyValuePair<TKey?, TValue?> value, DataStyle style)
     {
         context.BeginSequence("!KeyValue", style)
             .Write(value.Key, style)
@@ -14,7 +14,7 @@ public class KeyValuePairSerializer<TKey, TValue> : YamlSerializer<KeyValuePair<
             .End(context);
     }
 
-    public override async ValueTask<KeyValuePair<TKey, TValue>> Read(IYamlReader stream, ParseContext parseResult)
+    public override async ValueTask<KeyValuePair<TKey?, TValue?>> Read(IYamlReader stream, ParseContext parseResult)
     {
         List<Task<KeyValuePair<TKey, TValue>>> tasks = new();
         stream.Move(ParseEventType.SequenceStart);
@@ -26,7 +26,7 @@ public class KeyValuePairSerializer<TKey, TValue> : YamlSerializer<KeyValuePair<
         var k = await key;
         var v = await value;
 
-        return new KeyValuePair<TKey, TValue>(k, v);
+        return new KeyValuePair<TKey?, TValue?>(k, v);
     }
 }
 file sealed class KeyValuePairSerializerFactory : IYamlSerializerFactory

@@ -2,8 +2,6 @@ using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
-using System.Buffers;
-using System.Buffers.Text;
 
 namespace NexYaml.Serializers;
 
@@ -23,8 +21,7 @@ public class DateTimeOffsetSerializer : YamlSerializer<DateTimeOffset>
             stream.Move();
             return new(value);
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(DateTimeOffset), span, stream.CurrentMarker);
-        return new(default(DateTimeOffset));
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(DateTimeOffset), span, stream.CurrentMarker);
     }
 }

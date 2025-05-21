@@ -1,10 +1,9 @@
-﻿using Stride.Core;
-using System;
+﻿using System;
+using Stride.Core;
 namespace NexYamlTest.SimpleClasses;
 [DataContract]
 internal class BaseSerializerTest
 {
-
     // Fields
     public int IntField;
 
@@ -67,6 +66,8 @@ internal class BaseSerializerTest
     public Guid GuidProperty { get; set; }
     public TimeSpan Time = new();
     public Uri Uri { get; set; } = new Uri("https://www.example.com/path?query=example#fragment");
+    public DateTimeOffset DateTimeOffset { get; set; } = new();
+    public DateTime DateTime { get; set; } = new();
 }
 [DataContract]
 internal class BaseSerializerNullable
@@ -128,4 +129,8 @@ internal class BaseSerializerNullable
     public ulong? ULongProperty { get; set; } = 12094108541289510239;
 
     public TimeSpan? Time { get; set; } = new TimeSpan();
+    public Guid? GuidProperty { get; set; } = null;
+    public Uri? Uri { get; set; } = null;
+    public DateTimeOffset? DateTimeOffset { get; set; } = null;
+    public DateTime? DateTime { get; set; } = null;
 }

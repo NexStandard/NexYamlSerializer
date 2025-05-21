@@ -1,7 +1,8 @@
-﻿using NexYaml;
-using NexYamlTest.SimpleClasses;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using NexYaml;
+using NexYaml.Core;
+using NexYamlTest.SimpleClasses;
 using Xunit;
 
 namespace NexYamlTest;
@@ -66,6 +67,7 @@ public class PrimitiveSerializerTest
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(x);
         var d = await Yaml.Read<BaseSerializerTest>(s);
+        Assert.NotNull(d);
         // Assert
         Assert.Equal(x.IntField, d.IntField);
 
@@ -122,9 +124,11 @@ public class PrimitiveSerializerTest
         Assert.Equal(x.Time, d.Time);
 
         Assert.Equal(x.StringField, d.StringField);
-        
-        Assert.Equal(x.StringProperty, d.StringProperty);
 
+        Assert.Equal(x.StringProperty, d.StringProperty);
+        Assert.Equal(x.DateTime, d.DateTime);
+        Assert.Equal(x.DateTimeOffset, d.DateTimeOffset);
+        Assert.Equal(x.Uri, d.Uri);
     }
     [Fact]
     public async Task PrimitiveNullableWithValues()
@@ -136,6 +140,7 @@ public class PrimitiveSerializerTest
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(x);
         var d = await Yaml.Read<BaseSerializerTest>(s);
+        Assert.NotNull(d);
         Assert.Equal(x.IntField, d.IntField);
     }
     [Fact]
@@ -197,6 +202,8 @@ public class PrimitiveSerializerTest
         var s = Yaml.Write(x);
         var d = await Yaml.Read<BaseSerializerTest>(s);
         // Assert
+        Assert.NotNull(d);
+
         Assert.Equal(x.IntField, d.IntField);
 
         Assert.Equal(x.GuidField, d.GuidField);
@@ -208,6 +215,7 @@ public class PrimitiveSerializerTest
         Assert.Equal(x.DoubleField, d.DoubleField);
 
         Assert.Equal(x.DecimalField, d.DecimalField);
+
         Assert.Equal(x.CharField, d.CharField);
 
         Assert.Equal(x.BoolField, d.BoolField);
@@ -291,7 +299,7 @@ public class PrimitiveSerializerTest
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(x);
         var d = await Yaml.Read<BaseSerializerNullable>(s);
-
+        Assert.NotNull(d);
         // Assert.Null() for each property to verify they are all initialized to null
         Assert.Null(d.IntField);
         Assert.Null(d.FloatField);
@@ -322,5 +330,111 @@ public class PrimitiveSerializerTest
         Assert.Null(d.ULongProperty);
 
         Assert.Null(d.Time);
+    }
+    [Fact]
+    public async Task BaseNullablesNotNull()
+    {
+        var x = new BaseSerializerNullable()
+        {
+            IntField = 10,
+            FloatField = 11.5f,
+            DoubleField = 12.45,
+            DecimalField = 1320458,
+            CharField = 'c',
+            BoolField = true,
+            ByteField = 1,
+            SByteField = 2,
+            ShortField = 3,
+            UShortField = 4,
+            UIntField = 5,
+            LongField = 315451132,
+            ULongField = 13515125315,
+            IntProperty = 12,
+            FloatProperty = 13.0f,
+            DoubleProperty = 132413.124124,
+            DecimalProperty = 120401,
+            CharProperty = ':',
+            BoolProperty = true,
+            ByteProperty = 12,
+            SByteProperty = 13,
+            ShortProperty = 124,
+            UShortProperty = 132,
+            UIntProperty = 135155,
+            LongProperty = 354324,
+            ULongProperty = 3425,
+            Time = new(),
+            GuidProperty = Guid.NewGuid(),
+            DateTime = new(),
+            Uri = new Uri("https://www.example.com/path?query=example#fragment"),
+            DateTimeOffset = null,
+            StringField = "asfd"
+        };
+
+        NexYamlSerializerRegistry.Init();
+        var s = Yaml.Write(x);
+        var d = await Yaml.Read<BaseSerializerNullable>(s);
+        Assert.NotNull(d);
+        Assert.Equal(d.IntField, d.IntField);
+        Assert.Equal(d.FloatField, d.FloatField);
+        Assert.Equal(x.DoubleField, d.DoubleField);
+        Assert.Equal(x.DecimalField, d.DecimalField);
+        Assert.Equal(x.CharField, d.CharField);
+        Assert.Equal(x.BoolField, d.BoolField);
+        Assert.Equal(x.ByteField, d.ByteField);
+        Assert.Equal(x.SByteField, d.SByteField);
+        Assert.Equal(x.ShortField, d.ShortField);
+        Assert.Equal(x.UShortField, d.UShortField);
+        Assert.Equal(x.UIntField, d.UIntField);
+        Assert.Equal(x.LongField, d.LongField);
+        Assert.Equal(x.ULongField, d.ULongField);
+
+        Assert.Equal(x.IntProperty, d.IntProperty);
+        Assert.Equal(x.FloatProperty, d.FloatProperty);
+        Assert.Equal(x.DoubleProperty, d.DoubleProperty);
+        Assert.Equal(x.DecimalProperty, d.DecimalProperty);
+        Assert.Equal(x.CharProperty, d.CharProperty);
+        Assert.Equal(x.BoolProperty, d.BoolProperty);
+        Assert.Equal(x.ByteProperty, d.ByteProperty);
+        Assert.Equal(x.SByteProperty, d.SByteProperty);
+        Assert.Equal(x.ShortProperty, d.ShortProperty);
+        Assert.Equal(x.UShortProperty, d.UShortProperty);
+        Assert.Equal(x.UIntProperty, d.UIntProperty);
+        Assert.Equal(x.LongProperty, d.LongProperty);
+        Assert.Equal(x.ULongProperty, d.ULongProperty);
+
+        Assert.Equal(x.Time, d.Time);
+        Assert.Equal(x.DateTime, d.DateTime);
+        Assert.Equal(x.DateTimeOffset, d.DateTimeOffset);
+        Assert.Equal(x.Uri, d.Uri);
+        Assert.Equal(x.GuidProperty, d.GuidProperty);
+    }
+    [Fact]
+    public async Task Exception_On_Wrong_Primitive_Type()
+    {
+        NexYamlSerializerRegistry.Init();
+        var s = Yaml.Write(new Generics<Generics<int>>()
+        {
+            Value = new()
+        });
+
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<bool>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<byte>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<char>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<DateTimeOffset>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<DateTime>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<decimal>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<float>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<long>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<double>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<short>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<int>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<sbyte>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<ushort>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<uint>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<ulong>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<Guid>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<TimeSpan>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<Uri>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<TimeSpan>(s));
     }
 }

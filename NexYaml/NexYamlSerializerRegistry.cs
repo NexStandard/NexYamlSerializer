@@ -1,8 +1,7 @@
-﻿using NexYaml.Plugins;
+﻿using System.Reflection;
+using NexYaml.Core;
 using NexYaml.Serialization;
 using NexYaml.Serializers;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace NexYaml;
 /// <summary>
@@ -24,6 +23,17 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
         if (SerializerRegistry.DefinedSerializers.TryGetValue(typeof(T), out var serializer))
         {
             return (YamlSerializer<T>)serializer;
+        }
+        // search if there is a Factory
+        if (SerializerRegistry.SerializerFactory.TryGetValue(typeof(T), out var s2))
+        {
+            s2.TryGetValue(typeof(T), out var t);
+            if (t is not null)
+            {
+                var tempSerializer = t.Instantiate(typeof(T));
+                SerializerRegistry.DefinedSerializers[typeof(T)] = tempSerializer;
+                return (YamlSerializer<T>)tempSerializer;
+            }
         }
         var s = EmptySerializer<T>.EmptyS();
         SerializerRegistry.DefinedSerializers.Add(typeof(T), s);
@@ -71,7 +81,7 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
     }
     public static bool IsReady = false;
 #if NET9_0_OR_GREATER
-    static Lock s = new();
+    static readonly Lock s = new();
 #elif NET8_0
     static object s = new object();
 #endif
@@ -121,7 +131,7 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
                         instance.Register(Instance);
                     }
                 }
-               
+
                 IsReady = true;
             }
         }
@@ -136,6 +146,10 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
 
     public void RegisterSerializer(Type serializer)
     {
+        if (serializer.FullName is null)
+        {
+            throw new YamlException("FullName was null: " + serializer);
+        }
         SerializerRegistry.TypeMap[serializer.FullName] = serializer;
     }
 
@@ -181,13 +195,9 @@ internal class SerializerRegistry
             // StandardClassLibrarySerializer
             { typeof(string), NullableStringSerializer.Instance },
             { typeof(decimal), DecimalSerializer.Instance },
-            { typeof(decimal?), DecimalSerializer.Instance },
             { typeof(TimeSpan), TimeSpanSerializer.Instance },
-            { typeof(TimeSpan?), TimeSpanSerializer.Instance },
             { typeof(DateTimeOffset), DateTimeOffsetSerializer.Instance },
-            { typeof(DateTimeOffset?), DateTimeOffsetSerializer.Instance },
             { typeof(Guid), GuidSerializer.Instance },
-            { typeof(Guid?), GuidSerializer.Instance },
             { typeof(Uri), UriSerializer.Instance },
     };
 }
