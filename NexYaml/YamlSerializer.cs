@@ -1,8 +1,6 @@
 using NexYaml.Parser;
 using NexYaml.Serialization;
-using Silk.NET.OpenXR;
 using Stride.Core;
-using System.Diagnostics.CodeAnalysis;
 
 namespace NexYaml;
 /// <summary>
@@ -22,7 +20,7 @@ public abstract class YamlSerializer<T> : YamlSerializer
     public override void Write<X>(WriteContext<X> context, object value)
     {
         var x = typeof(T).GetType().Name;
-        Write(context,(T)value, Style);
+        Write(context, (T)value, Style);
     }
     public override void Write<X>(WriteContext<X> context, object value, DataStyle style)
     {

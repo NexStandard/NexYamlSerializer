@@ -1,5 +1,5 @@
-﻿using NexYaml.Parser;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using NexYaml.Parser;
 
 namespace NexYaml;
 public static class ParserExtensions

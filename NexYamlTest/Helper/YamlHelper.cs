@@ -1,6 +1,6 @@
-﻿using NexYaml;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using NexYaml;
 using Xunit;
 
 namespace NexYamlTest.Helper;

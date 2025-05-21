@@ -10,7 +10,7 @@ public class BooleanSerializer : YamlSerializer<bool>
 
     public override void Write<X>(WriteContext<X> context, bool value, DataStyle style)
     {
-        context.WriteScalar(value ? ['t', 'r', 'u', 'e'] : [ 'f', 'a', 'l', 's', 'e' ]);
+        context.WriteScalar(value ? ['t', 'r', 'u', 'e'] : ['f', 'a', 'l', 's', 'e']);
     }
 
     public override ValueTask<bool> Read(IYamlReader stream, ParseContext parseResult)

@@ -1,9 +1,8 @@
-﻿using NexYaml;
-using NexYaml.Core;
-using NexYaml.Serializers;
-using NexYamlTest.SimpleClasses;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using NexYaml;
+using NexYaml.Core;
+using NexYamlTest.SimpleClasses;
 using Xunit;
 
 namespace NexYamlTest;
@@ -125,12 +124,11 @@ public class PrimitiveSerializerTest
         Assert.Equal(x.Time, d.Time);
 
         Assert.Equal(x.StringField, d.StringField);
-        
+
         Assert.Equal(x.StringProperty, d.StringProperty);
         Assert.Equal(x.DateTime, d.DateTime);
         Assert.Equal(x.DateTimeOffset, d.DateTimeOffset);
         Assert.Equal(x.Uri, d.Uri);
-
     }
     [Fact]
     public async Task PrimitiveNullableWithValues()
@@ -379,8 +377,8 @@ public class PrimitiveSerializerTest
         Assert.Equal(d.IntField, d.IntField);
         Assert.Equal(d.FloatField, d.FloatField);
         Assert.Equal(x.DoubleField, d.DoubleField);
-        Assert.Equal(x.DecimalField,d.DecimalField);
-        Assert.Equal(x.CharField,d.CharField);
+        Assert.Equal(x.DecimalField, d.DecimalField);
+        Assert.Equal(x.CharField, d.CharField);
         Assert.Equal(x.BoolField, d.BoolField);
         Assert.Equal(x.ByteField, d.ByteField);
         Assert.Equal(x.SByteField, d.SByteField);

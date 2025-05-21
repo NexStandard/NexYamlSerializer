@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using NexYaml;
 using Xunit;
@@ -14,8 +11,8 @@ public class TupleTests
     public async Task ValueTuple2()
     {
         NexYamlSerializerRegistry.Init();
-        var t1 = Yaml.Write(new ValueTuple<int,int>(10, 10));
-        var d1 = await Yaml.Read<(int,int)>(t1);
+        var t1 = Yaml.Write(new ValueTuple<int, int>(10, 10));
+        var d1 = await Yaml.Read<(int, int)>(t1);
         Assert.Equal(10, d1.Item1);
         Assert.Equal(10, d1.Item2);
     }
@@ -45,7 +42,7 @@ public class TupleTests
     {
         NexYamlSerializerRegistry.Init();
         var t1 = Yaml.Write(new ValueTuple<int, int, int, int, int>(10, 10, 10, 10, 10));
-        var d1 = await Yaml.Read<(int, int, int, int ,int)>(t1);
+        var d1 = await Yaml.Read<(int, int, int, int, int)>(t1);
         Assert.Equal(10, d1.Item1);
         Assert.Equal(10, d1.Item2);
         Assert.Equal(10, d1.Item3);

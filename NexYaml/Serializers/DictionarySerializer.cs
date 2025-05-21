@@ -1,4 +1,3 @@
-using System.IO;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
@@ -22,7 +21,7 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
 
                 foreach (var x in value)
                 {
-                    resultContext = resultContext.Write(x.Key.ToString(), x.Value,style);
+                    resultContext = resultContext.Write(x.Key.ToString(), x.Value, style);
                 }
                 resultContext.End(context);
             }
@@ -49,7 +48,7 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
         var map = new Dictionary<TKey, TValue>();
         if (SerializerExtensions.IsPrimitive(typeof(TKey)))
         {
-            List<Task<KeyValuePair<TKey,TValue?>>> tasks = new ();
+            List<Task<KeyValuePair<TKey, TValue?>>> tasks = new();
             stream.Move(ParseEventType.MappingStart);
 
             while (stream.HasKeyMapping)
@@ -67,13 +66,13 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
             return await ConvertToDictionary(listSerializer.Read(stream, new ParseContext()));
         }
     }
-    private async Task<KeyValuePair<TKey,TValue?>> ConvertToKeyValuePair(ValueTask<TKey> key, ValueTask<TValue?> value)
+    private async Task<KeyValuePair<TKey, TValue?>> ConvertToKeyValuePair(ValueTask<TKey> key, ValueTask<TValue?> value)
     {
         var k = await key;
         var v = await value;
         return new KeyValuePair<TKey, TValue?>(k, v);
     }
-    private async ValueTask<Dictionary<TKey,TValue?>> ConvertToDictionary(ValueTask<List<KeyValuePair<TKey, TValue?>>> list)
+    private async ValueTask<Dictionary<TKey, TValue?>> ConvertToDictionary(ValueTask<List<KeyValuePair<TKey, TValue?>>> list)
     {
         return (await list ?? []).ToDictionary();
     }

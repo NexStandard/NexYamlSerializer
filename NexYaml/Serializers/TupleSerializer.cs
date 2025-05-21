@@ -140,7 +140,7 @@ public class TupleSerializer<T1, T2, T3, T4, T5> : YamlSerializer<Tuple<T1?, T2?
             .Write(value.Item4, DataStyle.Compact)
             .Write(value.Item5, DataStyle.Compact)
             .End(context);
-        
+
     }
 
     public override async ValueTask<Tuple<T1?, T2?, T3?, T4?, T5?>?> Read(IYamlReader stream, ParseContext parseResult)

@@ -1,16 +1,10 @@
-﻿using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Engines;
-using NexYaml;
-using NexYaml.Plugins;
-using NexYaml.Serialization;
-using NexYaml.Serializers;
-using SharpFont;
-using Stride.Core;
-using System.Buffers;
-using System.IO;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using BenchmarkDotNet.Attributes;
+using NexYaml;
+using NexYaml.Serialization;
+using Stride.Core;
 namespace Test;
 [MemoryDiagnoser()]
 public class Benchmarker

@@ -32,7 +32,7 @@ class BlockSequence : Sequence
         {
             context.WriteScalar(tag);
         }
-        return new WriteContext<Sequence>(Math.Max(0,context.Indent) + 2, false, DataStyle.Normal, this, context.Writer);
+        return new WriteContext<Sequence>(Math.Max(0, context.Indent) + 2, false, DataStyle.Normal, this, context.Writer);
     }
 
     public override WriteContext<Sequence> Write<T>(WriteContext<Sequence> context, T value, DataStyle style)

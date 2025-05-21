@@ -1,6 +1,6 @@
-using NexYaml.Core;
 using System.Buffers;
 using System.Text;
+using NexYaml.Core;
 
 namespace NexYaml.Parser;
 

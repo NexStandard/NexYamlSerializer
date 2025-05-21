@@ -1,11 +1,6 @@
-﻿using NexYaml;
-using Silk.NET.SDL;
-using Stride.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
+using NexYaml;
 using Xunit;
 
 namespace NexYamlTest.References;
@@ -111,10 +106,10 @@ public class ReferenceTest
 
         var refScript = new ReferenceScript()
         {
-            Id= guid,
+            Id = guid,
             Reference = new ReferenceClass()
             {
-                ReferenceScript =  refScript2
+                ReferenceScript = refScript2
             },
         };
 
@@ -145,6 +140,6 @@ public class ReferenceTest
         var d = await Yaml.Read<ClassA>(s);
         Assert.NotNull(d);
         Assert.Equal(a.Id, d.Id);
-        Assert.Equal(a.MyStruct.MyRef.Id,d.MyStruct.MyRef.Id);
+        Assert.Equal(a.MyStruct.MyRef.Id, d.MyStruct.MyRef.Id);
     }
 }

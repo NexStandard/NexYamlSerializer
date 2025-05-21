@@ -1,6 +1,5 @@
 using NexYaml.Parser;
 using NexYaml.Serialization;
-using Silk.NET.SDL;
 using Stride.Core;
 
 namespace NexYaml.Serializers;
@@ -18,7 +17,7 @@ public class ListSerializer<T> : YamlSerializer<List<T?>>
         }
         foreach (var item in value)
         {
-            if(item is IIdentifiable)
+            if (item is IIdentifiable)
             {
                 hasIdentifiable = true;
                 break;

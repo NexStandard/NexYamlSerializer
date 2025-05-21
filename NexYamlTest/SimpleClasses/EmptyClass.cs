@@ -1,5 +1,5 @@
-﻿using Stride.Core;
-using System;
+﻿using System;
+using Stride.Core;
 namespace NexYamlTest.SimpleClasses;
 
 [DataContract]

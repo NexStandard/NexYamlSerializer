@@ -1,5 +1,5 @@
-﻿using NexYaml.SourceGenerator.MemberApi.Data;
-using System.Text;
+﻿using System.Text;
+using NexYaml.SourceGenerator.MemberApi.Data;
 
 namespace NexYaml.SourceGenerator.Templates;
 internal static class CreateFromParent

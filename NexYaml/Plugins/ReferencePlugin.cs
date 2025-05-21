@@ -1,5 +1,4 @@
-﻿using System.IO;
-using NexYaml.Parser;
+﻿using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
 

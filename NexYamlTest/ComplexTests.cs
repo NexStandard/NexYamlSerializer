@@ -1,8 +1,7 @@
-﻿using NexYaml;
+﻿using System.Threading.Tasks;
+using NexYaml;
 using NexYamlTest.ComplexCases;
 using NexYamlTest.SimpleClasses;
-using System;
-using System.Threading.Tasks;
 using Xunit;
 namespace NexYamlTest;
 public class ComplexTests

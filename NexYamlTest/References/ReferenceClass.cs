@@ -1,14 +1,12 @@
-﻿using Stride.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using Stride.Core;
 
 namespace NexYamlTest.References;
 
 [DataContract]
-internal class ClassA : ClassB,IIdentifiable { public MyStruct MyStruct;
+internal class ClassA : ClassB, IIdentifiable
+{
+    public MyStruct MyStruct;
 
 }
 [DataContract]
@@ -23,7 +21,7 @@ internal class ReferenceClass : IIdentifiable
 {
     public Guid Id { get; set; }
     public ReferenceScript ReferenceScript { get; set; }
-    public int Test {  get; set; }
+    public int Test { get; set; }
 }
 [DataContract]
 internal record ReferenceRecordScript

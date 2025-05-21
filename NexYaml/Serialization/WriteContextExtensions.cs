@@ -1,6 +1,4 @@
-﻿using NexYaml.Core;
-using System.IO;
-using Stride.Core;
+﻿using Stride.Core;
 
 namespace NexYaml.Serialization;
 
@@ -14,13 +12,13 @@ public static class WriteContextExtensions
     public static WriteContext<Mapping> BeginMapping<T>(this WriteContext<T> mapping, string tag, DataStyle style)
         where T : Node
     {
-        return mapping.Node.BeginMapping(mapping,tag, style);
+        return mapping.Node.BeginMapping(mapping, tag, style);
     }
 
     public static WriteContext<Sequence> BeginSequence<T>(this WriteContext<T> mapping, string tag, DataStyle style)
         where T : Node
     {
-        return mapping.Node.BeginSequence(mapping,tag, style);
+        return mapping.Node.BeginSequence(mapping, tag, style);
     }
 
     public static void WriteType<T, X>(this WriteContext<T> context, X value, DataStyle style)
@@ -29,7 +27,7 @@ public static class WriteContextExtensions
         context.Writer.WriteType(context, value, style);
     }
 
-    public static void End<T,X>(this WriteContext<T> context, in WriteContext<X> current)
+    public static void End<T, X>(this WriteContext<T> context, in WriteContext<X> current)
         where T : Node
         where X : Node
     {
@@ -47,9 +45,9 @@ public static class WriteContextExtensions
     {
         context.WriteScalar(tag + " [ ]");
     }
-    public static WriteContext<Mapping> Write<T>(this WriteContext<Mapping> mapping, string key ,T value, DataStyle style = DataStyle.Any)
+    public static WriteContext<Mapping> Write<T>(this WriteContext<Mapping> mapping, string key, T value, DataStyle style = DataStyle.Any)
     {
-        return mapping.Node.Write(mapping, key, value,style);
+        return mapping.Node.Write(mapping, key, value, style);
     }
 
     public static WriteContext<Sequence> Write<T>(this WriteContext<Sequence> sequence, T value, DataStyle style = DataStyle.Any)
@@ -59,6 +57,6 @@ public static class WriteContextExtensions
     public static void WriteString<X>(this WriteContext<X> context, string value, DataStyle style = DataStyle.Compact)
         where X : Node
     {
-        context.Writer.WriteString(context,value, style);
+        context.Writer.WriteString(context, value, style);
     }
 }

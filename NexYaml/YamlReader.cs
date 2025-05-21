@@ -1,27 +1,24 @@
-﻿using NexYaml.Core;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
+using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Plugins;
 using NexYaml.Serialization;
-using NexYaml.Serializers;
 using Stride.Core;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Text.Unicode;
 
 namespace NexYaml;
-public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : IYamlReader, IDisposable
+public sealed class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : IYamlReader, IDisposable
 {
     public bool HasKeyMapping => parser.HasKeyMapping;
     public bool HasSequence => parser.HasSequence;
     public Marker CurrentMarker => parser.CurrentMark;
-    public Dictionary<Guid, List<Action<object>>> ReferenceResolvingMap { get; } = new();
+    public Dictionary<Guid, List<Action<object>>> ReferenceResolvingMap { get; } = [];
 
-    private Dictionary<Guid, (TaskCompletionSource<object>? tcs, object? result)> _identifiables = new();
+    private readonly Dictionary<Guid, (TaskCompletionSource<object>? tcs, object? result)> _identifiables = [];
 
-    public HashSet<IIdentifiable> Identifiables { get; } = new();
+    public HashSet<IIdentifiable> Identifiables { get; } = [];
 
-    private List<IResolvePlugin> plugins =
+    private readonly List<IResolvePlugin> plugins =
     [
         new ArrayPlugin(),
         new ReferencePlugin(),
@@ -78,10 +75,10 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         // await reference
         if (TryGetCurrentTag(out var tag1) && tag1.Handle == "ref")
         {
-            if(TryGetScalarAsString(out var idScalar) && Guid.TryParse(idScalar, out var id))
+            if (TryGetScalarAsString(out var idScalar) && Guid.TryParse(idScalar, out var id))
             {
                 Move(ParseEventType.Scalar);
-                return AsyncGetRef<T?>(Guid.Parse(idScalar));
+                return AsyncGetRef<T?>(id);
             }
             else
             {
@@ -114,7 +111,7 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         }
         return result;
     }
-    private async ValueTask<T?> Convert<T>(ValueTask<object?> task)
+    private static async ValueTask<T?> Convert<T>(ValueTask<object?> task)
     {
         return (T?)(await task);
     }
@@ -187,7 +184,6 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
 
     public async ValueTask<T> AsyncGetRef<T>(Guid guid)
     {
-
         (TaskCompletionSource<object>? tcs, object? result) tcs;
         if (_identifiables.TryGetValue(guid, out var value))
         {
@@ -199,8 +195,10 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         }
         else
         {
-            tcs = new();
-            tcs.tcs = new TaskCompletionSource<object>();
+            tcs = new()
+            {
+                tcs = new TaskCompletionSource<object>()
+            };
             _identifiables.Add(guid, tcs);
         }
         return (T)(await tcs.tcs!.Task);

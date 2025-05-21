@@ -23,7 +23,7 @@ class FlowMapping : Mapping
     {
         // inside a flow, only new flows can be created, no block is allowed
         return new WriteContext<Sequence>(context.Indent, false, DataStyle.Compact, CommonNodes.FlowSequence, context.Writer)
-            .BeginSequence(tag,DataStyle.Compact);
+            .BeginSequence(tag, DataStyle.Compact);
     }
 
     public override WriteContext<Mapping> Write<T>(WriteContext<Mapping> context, string key, T value, DataStyle style)
@@ -31,7 +31,7 @@ class FlowMapping : Mapping
         // First Node is {KEY: VALUE}
         context.WriteScalar(key + ": ");
         context.WriteType(value, style);
-        
+
         // all following Nodes need a prefix
         return context with
         {

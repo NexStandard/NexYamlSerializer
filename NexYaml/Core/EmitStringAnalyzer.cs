@@ -1,6 +1,6 @@
-using Stride.Core;
 using System.Buffers;
 using System.Text;
+using Stride.Core;
 
 namespace NexYaml.Core;
 
@@ -20,7 +20,7 @@ internal readonly struct EmitStringInfo(int lines, bool needsQuotes, bool isRese
 
 internal static class EmitStringAnalyzer
 {
-    private static ReadOnlySpan<char> SpecialTokens => [':', '{', '[', ']', ',', '#', '`', '"', ' ','\''];
+    private static ReadOnlySpan<char> SpecialTokens => [':', '{', '[', ']', ',', '#', '`', '"', ' ', '\''];
     private static char[] whiteSpaces =
     [
         ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',

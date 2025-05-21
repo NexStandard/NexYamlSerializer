@@ -6,7 +6,7 @@ using Stride.Core;
 namespace NexYaml.Plugins;
 internal class ArrayPlugin : IResolvePlugin
 {
-    public bool Write<T,X>(WriteContext<X> context, T value, DataStyle style)
+    public bool Write<T, X>(WriteContext<X> context, T value, DataStyle style)
         where X : Node
     {
         if (value is Array)

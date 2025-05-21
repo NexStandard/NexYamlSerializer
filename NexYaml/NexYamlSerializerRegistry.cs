@@ -1,9 +1,7 @@
-﻿using NexYaml.Core;
-using NexYaml.Plugins;
+﻿using System.Reflection;
+using NexYaml.Core;
 using NexYaml.Serialization;
 using NexYaml.Serializers;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace NexYaml;
 /// <summary>
@@ -83,7 +81,7 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
     }
     public static bool IsReady = false;
 #if NET9_0_OR_GREATER
-    static Lock s = new();
+    static readonly Lock s = new();
 #elif NET8_0
     static object s = new object();
 #endif
@@ -133,7 +131,7 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
                         instance.Register(Instance);
                     }
                 }
-               
+
                 IsReady = true;
             }
         }
@@ -150,7 +148,7 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
     {
         if (serializer.FullName is null)
         {
-            throw new YamlException("FullName was null: "+ serializer);
+            throw new YamlException("FullName was null: " + serializer);
         }
         SerializerRegistry.TypeMap[serializer.FullName] = serializer;
     }

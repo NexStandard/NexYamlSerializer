@@ -1,6 +1,5 @@
 ﻿using NexYaml.Core;
 using NexYaml.Plugins;
-using NexYaml.Serialization;
 using Stride.Core;
 
 namespace NexYaml.Serialization;
@@ -70,12 +69,12 @@ public abstract class Writer(IYamlSerializerResolver resolver, IEnumerable<IReso
             }
         }
     }
-    public void WriteString<X>(WriteContext<X> context,string value, DataStyle style)
+    public void WriteString<X>(WriteContext<X> context, string value, DataStyle style)
         where X : Node
     {
         var result = EmitStringAnalyzer.Analyze(value);
         var scalarStyle = result.SuggestScalarStyle();
-        if(scalarStyle is ScalarStyle.Literal && style is DataStyle.Compact)
+        if (scalarStyle is ScalarStyle.Literal && style is DataStyle.Compact)
         {
             scalarStyle = ScalarStyle.DoubleQuoted;
         }

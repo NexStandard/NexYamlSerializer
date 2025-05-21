@@ -1,11 +1,9 @@
-﻿using NexYaml.Serializers;
+﻿using System;
 using Stride.Core;
-using System;
 namespace NexYamlTest.SimpleClasses;
 [DataContract]
 internal class BaseSerializerTest
 {
-
     // Fields
     public int IntField;
 

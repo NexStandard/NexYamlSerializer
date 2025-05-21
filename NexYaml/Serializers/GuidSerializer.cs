@@ -1,9 +1,8 @@
+using System.Globalization;
 using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
-using System.Buffers.Text;
-using System.Globalization;
 
 namespace NexYaml.Serializers;
 
@@ -21,7 +20,7 @@ public class GuidSerializer : YamlSerializer<Guid>
         if (stream.TryGetScalarAsString(out var span) && Guid.TryParse(span, CultureInfo.InvariantCulture, out var value))
         {
             stream.Move();
-            return new (value);
+            return new(value);
         }
         stream.SkipRead();
         throw YamlException.ThrowExpectedTypeParseException(typeof(Guid), span, stream.CurrentMarker);

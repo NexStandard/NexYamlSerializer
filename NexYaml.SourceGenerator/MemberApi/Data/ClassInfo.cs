@@ -1,6 +1,6 @@
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using NexYaml.SourceGenerator.Core;
-using System.Collections.Immutable;
 
 namespace NexYaml.SourceGenerator.MemberApi.Data;
 

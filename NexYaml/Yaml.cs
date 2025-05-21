@@ -1,16 +1,14 @@
-﻿using NexYaml.Core;
+﻿using System.Buffers;
+using System.Text;
 using NexYaml.Parser;
 using NexYaml.Plugins;
 using NexYaml.Serialization;
 using NexYaml.Serialization.Nodes;
 using Stride.Core;
-using System.Buffers;
-using System.IO;
-using System.Text;
 
 namespace NexYaml;
 
-public class Yaml
+public static class Yaml
 {
     public static void Write<T>(T value, WriteDelegate writing, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
     {
