@@ -25,8 +25,7 @@ public class ByteSerializer : YamlSerializer<byte>
             stream.Move();
             return new(value);
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(DateTime), span, stream.CurrentMarker);
-        return new(0);
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(DateTime), span, stream.CurrentMarker);
     }
 }

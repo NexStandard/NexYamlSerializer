@@ -73,7 +73,6 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         {
             if (syntax.Read<T>(this, out var t, parseResult))
             {
-                // TODO
                 return t;
             }
         }

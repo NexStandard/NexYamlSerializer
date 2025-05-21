@@ -19,7 +19,7 @@ internal class NullablePlugin : IResolvePlugin
         }
         return false;
     }
-    public bool Read<T>(IYamlReader stream, out ValueTask<T> value, ParseContext result)
+    public bool Read<T>(IYamlReader stream, out ValueTask<T?> value, ParseContext result)
     {
         // TODO: handling for reading nullables
         value = default;

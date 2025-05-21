@@ -25,8 +25,7 @@ public class SByteSerializer : YamlSerializer<sbyte>
             stream.Move();
             return new(value);
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(sbyte), span, stream.CurrentMarker);
-        return new(default(sbyte));
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(sbyte), span, stream.CurrentMarker);
     }
 }

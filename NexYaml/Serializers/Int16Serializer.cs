@@ -24,8 +24,7 @@ public class Int16Serializer : YamlSerializer<short>
             stream.Move();
             return new(value);
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(short), span, stream.CurrentMarker);
-        return new(default(short));
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(short), span, stream.CurrentMarker);
     }
 }

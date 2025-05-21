@@ -21,7 +21,7 @@ internal class ArrayPlugin : IResolvePlugin
         return false;
     }
 
-    public bool Read<T>(IYamlReader stream, out ValueTask<T> value, ParseContext result)
+    public bool Read<T>(IYamlReader stream, out ValueTask<T?> value, ParseContext result)
     {
         if (typeof(T).IsArray)
         {
@@ -35,8 +35,8 @@ internal class ArrayPlugin : IResolvePlugin
         value = default;
         return false;
     }
-    private async ValueTask<T> Convert<T>(ValueTask<object> value)
+    private async ValueTask<T?> Convert<T>(ValueTask<object> value)
     {
-        return (T)(await value);
+        return (T?)(await value);
     }
 }

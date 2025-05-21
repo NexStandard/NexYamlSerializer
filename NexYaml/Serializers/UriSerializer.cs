@@ -22,7 +22,7 @@ public class UriSerializer : YamlSerializer<Uri>
             stream.Move();
             return new(uri);
         }
-        YamlException.ThrowExpectedTypeParseException(typeof(Uri), scalar, stream.CurrentMarker);
-        return new(default(Uri));
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(Uri), scalar, stream.CurrentMarker);
     }
 }

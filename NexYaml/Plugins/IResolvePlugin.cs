@@ -20,5 +20,5 @@ public interface IResolvePlugin
     /// </returns>
     bool Write<T,X>(WriteContext<X> context,T value, DataStyle style)
         where X : Node;
-    bool Read<T>(IYamlReader stream, out ValueTask<T> value, ParseContext result);
+    bool Read<T>(IYamlReader stream, out ValueTask<T?> value, ParseContext result);
 }

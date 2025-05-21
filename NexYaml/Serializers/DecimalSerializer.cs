@@ -25,8 +25,7 @@ public class DecimalSerializer : YamlSerializer<decimal>
             stream.Move();
             return new(value);
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(decimal), span, stream.CurrentMarker);
-        return new(default(decimal));
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(decimal), span, stream.CurrentMarker);
     }
 }

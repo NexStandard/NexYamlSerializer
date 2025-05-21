@@ -1,4 +1,6 @@
 ﻿using NexYaml;
+using NexYaml.Core;
+using NexYaml.Serializers;
 using NexYamlTest.SimpleClasses;
 using System;
 using System.Threading.Tasks;
@@ -322,5 +324,31 @@ public class PrimitiveSerializerTest
         Assert.Null(d.ULongProperty);
 
         Assert.Null(d.Time);
+    }
+    [Fact]
+    public async Task Exception_On_Wrong_Primitive_Type()
+    {
+        NexYamlSerializerRegistry.Init();
+        var s = Yaml.Write(new Generics<Generics<int>>()
+        {
+            Value = new()
+        });
+
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<bool>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<byte>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<char>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<DateTimeOffset>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<DateTime>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<decimal>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<float>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<long>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<double>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<short>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<int>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<sbyte>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<uint>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<ulong>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<Uri>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<TimeSpan>(s));
     }
 }

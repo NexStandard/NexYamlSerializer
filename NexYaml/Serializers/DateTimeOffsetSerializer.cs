@@ -23,8 +23,7 @@ public class DateTimeOffsetSerializer : YamlSerializer<DateTimeOffset>
             stream.Move();
             return new(value);
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(DateTimeOffset), span, stream.CurrentMarker);
-        return new(default(DateTimeOffset));
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(DateTimeOffset), span, stream.CurrentMarker);
     }
 }

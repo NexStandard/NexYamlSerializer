@@ -25,8 +25,7 @@ public class Int32Serializer : YamlSerializer<int>
             stream.Move();
             return new(value);
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(double), span, stream.CurrentMarker);
-        return new(0);
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(double), span, stream.CurrentMarker);
     }
 }

@@ -26,8 +26,7 @@ public class Int64Serializer : YamlSerializer<long>
             stream.Move();
             return new(value);
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(long), span, stream.CurrentMarker);
-        return new(default(long));
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(long), span, stream.CurrentMarker);
     }
 }

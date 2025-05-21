@@ -20,8 +20,7 @@ public class NullableStringSerializer : YamlSerializer<string?>
             stream.Move();
             return new(span);
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(short), span, stream.CurrentMarker);
-        return new(default(string));
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(short), span, stream.CurrentMarker);
     }
 }

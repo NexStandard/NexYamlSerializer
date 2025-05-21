@@ -25,8 +25,7 @@ public class UInt64Serializer : YamlSerializer<ulong>
             stream.Move();
             return new(value);
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(ulong), span, stream.CurrentMarker);
-        return new(default(ulong));
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(ulong), span, stream.CurrentMarker);
     }
 }

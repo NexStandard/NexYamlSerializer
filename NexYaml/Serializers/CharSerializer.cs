@@ -25,8 +25,7 @@ public class CharSerializer : YamlSerializer<char>
                 return new(value);
             }
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(DateTime), span, stream.CurrentMarker);
-        return new('?');
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(DateTime), span, stream.CurrentMarker);
     }
 }

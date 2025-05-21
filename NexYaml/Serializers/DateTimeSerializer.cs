@@ -23,8 +23,7 @@ public class DateTimeSerializer : YamlSerializer<DateTime>
             stream.Move();
             return new(value);
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(DateTime), span, stream.CurrentMarker);
-        return new(default(DateTime));
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(DateTime), span, stream.CurrentMarker);
     }
 }

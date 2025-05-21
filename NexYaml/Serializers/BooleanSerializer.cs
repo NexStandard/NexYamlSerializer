@@ -20,8 +20,7 @@ public class BooleanSerializer : YamlSerializer<bool>
             stream.Move();
             return new(value);
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(DateTime), span, stream.CurrentMarker);
-        return new(false);
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(DateTime), span, stream.CurrentMarker);
     }
 }

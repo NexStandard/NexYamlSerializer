@@ -22,7 +22,7 @@ internal class ReferencePlugin : IResolvePlugin
         }
         return false;
     }
-    public bool Read<T>(IYamlReader stream, out ValueTask<T> value, ParseContext result)
+    public bool Read<T>(IYamlReader stream, out ValueTask<T?> value, ParseContext result)
     {
         value = default;
         return false;

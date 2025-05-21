@@ -124,7 +124,7 @@ public class ArrayTests
         Assert.NotNull(stringArrayDeserialized.Value);
         Assert.Empty(stringArrayDeserialized.Value);
     }
-    [Fact(Skip = "Exception handling fails")]
+    [Fact]
     public async Task Failure_On_Wrong_Generic_Type()
     {
         Setup();

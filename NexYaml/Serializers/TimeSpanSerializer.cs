@@ -32,8 +32,7 @@ public class TimeSpanSerializer : YamlSerializer<TimeSpan>
             stream.Move();
             return new(value);
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(TimeSpan), span, stream.CurrentMarker);
-        return new(default(TimeSpan));
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(TimeSpan), span, stream.CurrentMarker);
     }
 }

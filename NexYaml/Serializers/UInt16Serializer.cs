@@ -25,8 +25,7 @@ public class UInt16Serializer : YamlSerializer<ushort>
             stream.Move();
             return new(value);
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(ushort), span, stream.CurrentMarker);
-        return new(default(ushort));
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(ushort), span, stream.CurrentMarker);
     }
 }

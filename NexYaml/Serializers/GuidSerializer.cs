@@ -32,8 +32,7 @@ public class GuidSerializer : YamlSerializer<Guid>
             stream.Move();
             return new (value);
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(Guid), span, stream.CurrentMarker);
-        return default;
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(Guid), span, stream.CurrentMarker);
     }
 }

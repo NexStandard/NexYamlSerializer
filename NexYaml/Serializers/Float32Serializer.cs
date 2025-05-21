@@ -24,8 +24,7 @@ public class Float32Serializer : YamlSerializer<float>
             stream.Move();
             return new(value);
         }
-        stream.Move();
-        YamlException.ThrowExpectedTypeParseException(typeof(float), span, stream.CurrentMarker);
-        return new(default(float));
+        stream.SkipRead();
+        throw YamlException.ThrowExpectedTypeParseException(typeof(float), span, stream.CurrentMarker);
     }
 }
