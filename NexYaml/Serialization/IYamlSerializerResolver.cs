@@ -30,12 +30,6 @@ public interface IYamlSerializerResolver
     /// <returns>The <see cref="Type"/> associated with the alias.</returns>
     public Type GetAliasType(string alias);
 
-    /// <summary>
-    /// Retrieves the alias string associated with the specified type.
-    /// </summary>
-    /// <param name="type">The <see cref="Type"/> to retrieve the alias for.</param>
-    /// <returns>The alias string associated with the specified type.</returns>
-    public string GetTypeAlias(Type type);
 
     /// <summary>
     /// Registers a custom YAML serializer factory for a given target type and interface type.

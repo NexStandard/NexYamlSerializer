@@ -23,7 +23,6 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
 
     private List<IResolvePlugin> plugins =
     [
-        new NullPlugin(),
         new NullablePlugin(),
         new ArrayPlugin(),
         new ReferencePlugin(),

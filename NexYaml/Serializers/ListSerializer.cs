@@ -50,7 +50,7 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
                     context.Writer.References.Remove(identifiable.Id);
                     removedIds.Add(identifiable);
                 }
-                resultContext = resultContext.Write(element, style);
+                resultContext = resultContext.Write(element, DataStyle.Any);
             }
             resultContext.End(context);
             return;
@@ -59,7 +59,7 @@ public class ListSerializer<T> : YamlSerializer<List<T>?>
 
         foreach (var x in value)
         {
-            result = result.Write(x, style);
+            result = result.Write(x, DataStyle.Any);
         }
         result.End(context);
     }

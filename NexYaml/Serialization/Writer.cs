@@ -13,7 +13,12 @@ public abstract class Writer(IYamlSerializerResolver resolver, IEnumerable<IReso
     public void WriteType<X, T>(WriteContext<X> context, T value, DataStyle style)
         where X : Node
     {
-        foreach(var plugin in plugins)
+        if (value is null)
+        {
+            context.WriteScalar(YamlCodes.Null);
+            return;
+        }
+        foreach (var plugin in plugins)
         {
             if (plugin.Write(context, value, context.StyleScope))
             {
@@ -74,37 +79,29 @@ public abstract class Writer(IYamlSerializerResolver resolver, IEnumerable<IReso
         {
             scalarStyle = ScalarStyle.DoubleQuoted;
         }
-        if (scalarStyle is ScalarStyle.Plain or ScalarStyle.Any)
+        switch (scalarStyle)
         {
-            context.WriteScalar(value);
-            return;
+            case ScalarStyle.Plain or ScalarStyle.Any:
+                context.WriteScalar(value);
+                return;
+            case ScalarStyle.Folded:
+                throw new NotSupportedException($"The {ScalarStyle.Folded} is not supported.");
+            case ScalarStyle.SingleQuoted:
+                throw new InvalidOperationException("Single Quote is reserved for char");
+            case ScalarStyle.DoubleQuoted:
+                context.WriteScalar("\"" + value.Replace("\n", "\\n") + "\"");
+                return;
+            case ScalarStyle.Literal:
+                {
+                    var indentCharCount = Math.Max(1, (context.Indent + 1) * context.Indent);
+                    var scalarStringBuilt = EmitStringAnalyzer.BuildLiteralScalar(value, indentCharCount).ToString();
+                    if (scalarStringBuilt.EndsWith("\n") && style is not DataStyle.Compact)
+                    {
+                        scalarStringBuilt = scalarStringBuilt.Substring(0, scalarStringBuilt.Length - 1);
+                    }
+                    context.WriteScalar(scalarStringBuilt);
+                    return;
+                }
         }
-        else if (ScalarStyle.Folded == scalarStyle)
-        {
-            throw new NotSupportedException($"The {ScalarStyle.Folded} is not supported.");
-        }
-        else if (ScalarStyle.SingleQuoted == scalarStyle)
-        {
-            throw new InvalidOperationException("Single Quote is reserved for char");
-        }
-        else if (ScalarStyle.DoubleQuoted == scalarStyle)
-        {
-            
-            context.WriteScalar("\"" + value.Replace("\n", "\\n") + "\"");
-            return;
-        }
-        else if (ScalarStyle.Literal == scalarStyle)
-        {
-            var indentCharCount = Math.Max(1,(context.Indent + 1) * context.Indent);
-            var scalarStringBuilt = EmitStringAnalyzer.BuildLiteralScalar(value, indentCharCount).ToString();
-            if (scalarStringBuilt.EndsWith("\n") && style is not DataStyle.Compact)
-            {
-                scalarStringBuilt = scalarStringBuilt.Substring(0, scalarStringBuilt.Length - 1);
-            }
-            context.WriteScalar(scalarStringBuilt);
-            return;
-        }
-        // TODO is this reachable?
-        throw new YamlException("Couldnt get ScalarStyle");
     }
 }

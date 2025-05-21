@@ -15,9 +15,12 @@ class FlowSequence : Sequence
         if (context.IsRedirected)
         {
             context.WriteScalar(tag);
+            context.WriteScalar(" [ ");
         }
-        context.WriteScalar(" [ ");
-
+        else
+        {
+            context.WriteScalar("[ ");
+        }
         // inside a flow, only new flows can be created, no block is allowed
         return new WriteContext<Sequence>(context.Indent, false, DataStyle.Compact, this, context.Writer);
     }

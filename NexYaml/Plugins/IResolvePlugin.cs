@@ -21,11 +21,4 @@ public interface IResolvePlugin
     bool Write<T,X>(WriteContext<X> context,T value, DataStyle style)
         where X : Node;
     bool Read<T>(IYamlReader stream, out ValueTask<T> value, ParseContext result);
-    public static List<IResolvePlugin> plugins = new()
-        {
-            new NullPlugin(),
-            new NullablePlugin(),
-            new ArrayPlugin(),
-            new ReferencePlugin(),
-        };
 }

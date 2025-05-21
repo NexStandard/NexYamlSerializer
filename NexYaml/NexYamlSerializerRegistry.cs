@@ -18,10 +18,7 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
     {
         return SerializerRegistry.TypeMap[alias];
     }
-    public string GetTypeAlias(Type type)
-    {
-        return SerializerRegistry.AliasMap[type];
-    }
+
     public YamlSerializer<T> GetSerializer<T>()
     {
         if (SerializerRegistry.DefinedSerializers.TryGetValue(typeof(T), out var serializer))
@@ -48,29 +45,7 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
             dictionary.TryAdd(target, yamlFactory);
         }
     }
-    public YamlSerializer GetSerializer<T>(Type type, Type origin)
-    {
-        // search if the actual type is in the standard serializers
-        if (SerializerRegistry.DefinedSerializers.TryGetValue(type, out var serializer1))
-        {
-            return serializer1;
-        }
-        // search if there is a Factory
-        if (SerializerRegistry.SerializerFactory.TryGetValue(origin, out var serializer))
-        {
-            serializer.TryGetValue(type, out var t);
-            if (t is not null)
-            {
-                var tempSerializer = t.Instantiate(origin);
-                SerializerRegistry.DefinedSerializers[origin] = tempSerializer;
-                return tempSerializer;
-            }
-        }
-        var genericSerializer = typeof(EmptySerializer<>);
-        var genericType = genericSerializer.MakeGenericType(origin);
-        var emptySerializer = (YamlSerializer?)Activator.CreateInstance(genericType);
-        return emptySerializer!;
-    }
+
     public YamlSerializer GetSerializer(Type type, Type origin)
     {
         // search if the actual type is in the standard serializers
@@ -180,21 +155,7 @@ internal class SerializerRegistry
     internal Dictionary<Type, Dictionary<Type, IYamlSerializerFactory>> SerializerFactory { get; } = new(new GenericEqualityComparer())
     {
     };
-    internal Dictionary<Type, Type> GenericSerializerBuffer { get; } = new Dictionary<Type, Type>(new GenericEqualityComparer())
-    {
-        [typeof(KeyValuePair<,>)] = typeof(KeyValuePairSerializer<,>),
-        [typeof(ValueTuple<,>)] = typeof(ValueTupleSerializer<,>),
-        [typeof(ValueTuple<,,>)] = typeof(ValueTupleSerializer<,,>),
-        [typeof(ValueTuple<,,,>)] = typeof(ValueTupleSerializer<,,,>),
-        [typeof(ValueTuple<,,,,>)] = typeof(ValueTupleSerializer<,,,,>),
-        [typeof(ValueTuple<,,,,,>)] = typeof(ValueTupleSerializer<,,,,,>),
-        [typeof(ValueTuple<,,,,,,>)] = typeof(ValueTupleSerializer<,,,,,,>),
-        [typeof(Tuple<,,>)] = typeof(TupleSerializer<,,>),
-        [typeof(Tuple<,,,>)] = typeof(TupleSerializer<,,,>),
-        [typeof(Tuple<,,,,>)] = typeof(TupleSerializer<,,,,>),
-        [typeof(Tuple<,,,,,>)] = typeof(TupleSerializer<,,,,,>),
-        [typeof(Tuple<,,,,,,>)] = typeof(TupleSerializer<,,,,,,>),
-    };
+    internal Dictionary<Type, Type> GenericSerializerBuffer { get; } = new Dictionary<Type, Type>(new GenericEqualityComparer());
     internal Dictionary<string, Type> TypeMap { get; } = new()
     {
     };

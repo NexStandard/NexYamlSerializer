@@ -1,6 +1,7 @@
 ﻿using NexYaml;
 using NexYaml.Serialization;
 using NexYamlTest.ComplexCases;
+using NexYamlTest.DataStyleTests;
 using NexYamlTest.SimpleClasses;
 using SharpFont;
 using Stride.Core;
@@ -91,6 +92,23 @@ public class CollectionTest
         Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
     }
     [Fact]
+    public async Task EmitDoubleCompactList()
+    {
+        IList<IList<int>> list = 
+        [
+            [1],
+            [2]
+        ];
+        NexYamlSerializerRegistry.Init();
+        var s = Yaml.Write(list, DataStyle.Compact);
+        var d = await Yaml.Read<IList<IList<int>>>(s);
+        Assert.NotNull(d);
+        Assert.IsType<List<int>>(d[0]);
+        Assert.IsType<List<int>>(d[1]);
+        Assert.Equal(1, d[0][0]);
+        Assert.Equal(2, d[1][0]);
+    }
+    [Fact]
     public async Task EmitMixedCollectionCompacWithEmptyType()
     {
         var list = new List<GenericAbstract<int, int>>
@@ -105,7 +123,39 @@ public class CollectionTest
         Assert.IsType<GenericAbstractImlementationLessParamsEmpty<int>>(d[0]);
         Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
     }
+    [Fact]
+    public async Task EmitBlockSequenceWithCompactMapping()
+    {
+        var list = new List<CompactStruct>
+        {
+            new(),
+            new()
+        };
+        NexYamlSerializerRegistry.Init();
+        var s = Yaml.Write(list, DataStyle.Any);
+        var d = await Yaml.Read<List<CompactStruct>>(s);
+        Assert.NotNull(d);
+        Assert.Contains("- { ",s);
+        Assert.Equal(default, d[0]);
+        Assert.Equal(default, d[1]);
+    }
 
+    [Fact]
+    public async Task EmitBlockSequenceWithCompactSequence()
+    {
+        var list = new List<ValueTuple<int,int>>
+        {
+            new(10, 10),
+            new(11, 11)
+        };
+        NexYamlSerializerRegistry.Init();
+        var s = Yaml.Write(list, DataStyle.Any);
+        var d = await Yaml.Read<List<ValueTuple<int, int>>>(s);
+        Assert.NotNull(d);
+        Assert.Contains("- [ ", s);
+        Assert.Equal(new(10,10), d[0]);
+        Assert.Equal(new(11,11), d[1]);
+    }
     [Fact]
     public async Task ComplexDictionary()
     {
