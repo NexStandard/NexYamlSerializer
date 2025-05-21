@@ -1,4 +1,5 @@
-﻿using Stride.Core;
+﻿using NexYaml.Serializers;
+using Stride.Core;
 using System;
 namespace NexYamlTest.SimpleClasses;
 [DataContract]
@@ -67,6 +68,8 @@ internal class BaseSerializerTest
     public Guid GuidProperty { get; set; }
     public TimeSpan Time = new();
     public Uri Uri { get; set; } = new Uri("https://www.example.com/path?query=example#fragment");
+    public DateTimeOffset DateTimeOffset { get; set; } = new();
+    public DateTime DateTime { get; set; } = new();
 }
 [DataContract]
 internal class BaseSerializerNullable

@@ -13,16 +13,7 @@ public class GuidSerializer : YamlSerializer<Guid>
 
     public override void Write<X>(WriteContext<X> context, Guid value, DataStyle style)
     {
-        // nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn
-        Span<char> buf = stackalloc char[36];
-        if (value.TryFormat(buf, out var bytesWritten))
-        {
-            context.WriteScalar(buf[..bytesWritten]);
-        }
-        else
-        {
-            throw new YamlException($"Cannot serialize {value}");
-        }
+        context.WriteString(value.ToString());
     }
 
     public override ValueTask<Guid> Read(IYamlReader stream, ParseContext parseResult)

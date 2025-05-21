@@ -13,16 +13,7 @@ public class TimeSpanSerializer : YamlSerializer<TimeSpan>
 
     public override void Write<X>(WriteContext<X> context, TimeSpan value, DataStyle style)
     {
-        Span<char> buf = stackalloc char[32];
-        
-        if (value.TryFormat(buf, out var bytesWritten))
-        {
-            context.WriteScalar(buf[..bytesWritten]);
-        }
-        else
-        {
-            throw new YamlException($"Cannot serialize a value: {value}");
-        }
+        context.WriteString(value.ToString());
     }
 
     public override ValueTask<TimeSpan> Read(IYamlReader stream, ParseContext parseResult)

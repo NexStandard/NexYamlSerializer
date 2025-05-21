@@ -126,6 +126,9 @@ public class PrimitiveSerializerTest
         Assert.Equal(x.StringField, d.StringField);
         
         Assert.Equal(x.StringProperty, d.StringProperty);
+        Assert.Equal(x.DateTime, d.DateTime);
+        Assert.Equal(x.DateTimeOffset, d.DateTimeOffset);
+        Assert.Equal(x.Uri, d.Uri);
 
     }
     [Fact]
@@ -346,8 +349,11 @@ public class PrimitiveSerializerTest
         await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<short>(s));
         await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<int>(s));
         await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<sbyte>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<ushort>(s));
         await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<uint>(s));
         await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<ulong>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<Guid>(s));
+        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<TimeSpan>(s));
         await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<Uri>(s));
         await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<TimeSpan>(s));
     }
