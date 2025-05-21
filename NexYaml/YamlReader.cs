@@ -61,7 +61,6 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
 
     public ValueTask<T?> Read<T>(ParseContext parseResult)
     {
-        ValueTask<T?> result = default;
         if (IsNullScalar())
         {
             Move();
@@ -78,24 +77,20 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         }
 
         // await reference
-        if (TryGetCurrentTag(out var tag1))
+        if (TryGetCurrentTag(out var tag1) && tag1.Handle == "ref")
         {
-            var handle = tag1.Handle;
-
-            if (handle == "ref")
+            if(TryGetScalarAsString(out var idScalar) && Guid.TryParse(idScalar, out var id))
             {
-                Guid? id = null;
-                TryGetScalarAsString(out var idScalar);
-
                 Move(ParseEventType.Scalar);
-                if (idScalar != null)
-                {
-                    return AsyncGetRef<T?>(Guid.Parse(idScalar));
-                }
+                return AsyncGetRef<T?>(Guid.Parse(idScalar));
+            }
+            else
+            {
+                throw YamlException.ThrowExpectedTypeParseException(typeof(Guid), idScalar, CurrentMarker);
             }
         }
 
-
+        ValueTask<T?> result;
         if (type.IsInterface || type.IsAbstract || type.IsGenericType)
         {
             TryGetCurrentTag(out var tag);
@@ -120,12 +115,12 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
         }
         return result;
     }
-    private async ValueTask<T> Convert<T>(ValueTask<object> t)
+    private async ValueTask<T?> Convert<T>(ValueTask<object?> task)
     {
-        return (T)(await t);
+        return (T?)(await task);
     }
 
-    // For handling anchors, max need it for !TAG &PARENT_ANCHOR 
+    // For handling anchors, may need it for !TAG &PARENT_ANCHOR 
     /*
     private void Read<T>(YamlSerializer<T> serializer, ref YamlParser parser, ref T value, ref ParseResult parseResult)
     {
@@ -209,6 +204,6 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
             tcs.tcs = new TaskCompletionSource<object>();
             _identifiables.Add(guid, tcs);
         }
-        return (T)(await tcs.tcs.Task);
+        return (T)(await tcs.tcs!.Task);
     }
 }

@@ -5,10 +5,10 @@ using Stride.Core;
 
 namespace NexYaml.Serializers;
 
-public class NullableStringSerializer : YamlSerializer<string?>
+public class NullableStringSerializer : YamlSerializer<string>
 {
     public static readonly NullableStringSerializer Instance = new();
-    public override void Write<X>(WriteContext<X> context, string? value, DataStyle style)
+    public override void Write<X>(WriteContext<X> context, string value, DataStyle style)
     {
         context.Writer.WriteString(context,value, style);
     }

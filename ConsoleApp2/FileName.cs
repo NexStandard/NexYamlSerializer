@@ -15,7 +15,7 @@ namespace Test;
 [MemoryDiagnoser()]
 public class Benchmarker
 {
-    IYamlSerializerResolver resolver;
+    IYamlSerializerResolver? resolver;
     Collections values = new Collections();
     StringBuilder s = new();
 
@@ -33,7 +33,7 @@ public class Benchmarker
     [Benchmark(Baseline = true)]
     public void YamlB()
     {
-        Yaml.Write(values, (ReadOnlySpan<char> text) => { s.Append(text); }, DataStyle.Compact, resolver);
+        Yaml.Write(values, (ReadOnlySpan<char> text) => s.Append(text), DataStyle.Compact, resolver);
         var x = s.ToString();
     }
     [Benchmark()]

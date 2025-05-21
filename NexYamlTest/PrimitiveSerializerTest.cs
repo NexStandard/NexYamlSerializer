@@ -68,6 +68,7 @@ public class PrimitiveSerializerTest
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(x);
         var d = await Yaml.Read<BaseSerializerTest>(s);
+        Assert.NotNull(d);
         // Assert
         Assert.Equal(x.IntField, d.IntField);
 
@@ -141,6 +142,7 @@ public class PrimitiveSerializerTest
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(x);
         var d = await Yaml.Read<BaseSerializerTest>(s);
+        Assert.NotNull(d);
         Assert.Equal(x.IntField, d.IntField);
     }
     [Fact]
@@ -202,6 +204,8 @@ public class PrimitiveSerializerTest
         var s = Yaml.Write(x);
         var d = await Yaml.Read<BaseSerializerTest>(s);
         // Assert
+        Assert.NotNull(d);
+
         Assert.Equal(x.IntField, d.IntField);
 
         Assert.Equal(x.GuidField, d.GuidField);
@@ -213,6 +217,7 @@ public class PrimitiveSerializerTest
         Assert.Equal(x.DoubleField, d.DoubleField);
 
         Assert.Equal(x.DecimalField, d.DecimalField);
+
         Assert.Equal(x.CharField, d.CharField);
 
         Assert.Equal(x.BoolField, d.BoolField);
@@ -296,7 +301,7 @@ public class PrimitiveSerializerTest
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(x);
         var d = await Yaml.Read<BaseSerializerNullable>(s);
-
+        Assert.NotNull(d);
         // Assert.Null() for each property to verify they are all initialized to null
         Assert.Null(d.IntField);
         Assert.Null(d.FloatField);

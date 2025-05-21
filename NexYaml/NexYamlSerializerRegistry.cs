@@ -1,4 +1,5 @@
-﻿using NexYaml.Plugins;
+﻿using NexYaml.Core;
+using NexYaml.Plugins;
 using NexYaml.Serialization;
 using NexYaml.Serializers;
 using System.Reflection;
@@ -136,6 +137,10 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
 
     public void RegisterSerializer(Type serializer)
     {
+        if (serializer.FullName is null)
+        {
+            throw new YamlException("FullName was null: "+ serializer);
+        }
         SerializerRegistry.TypeMap[serializer.FullName] = serializer;
     }
 

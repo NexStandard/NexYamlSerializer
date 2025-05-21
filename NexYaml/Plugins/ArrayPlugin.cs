@@ -35,7 +35,7 @@ internal class ArrayPlugin : IResolvePlugin
         value = default;
         return false;
     }
-    private async ValueTask<T?> Convert<T>(ValueTask<object> value)
+    private async ValueTask<T?> Convert<T>(ValueTask<object?> value)
     {
         return (T?)(await value);
     }

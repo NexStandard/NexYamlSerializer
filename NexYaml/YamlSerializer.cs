@@ -36,5 +36,5 @@ public abstract class YamlSerializer<T> : YamlSerializer
     {
         return await Read(stream, parseResult);
     }
-    public abstract ValueTask<T> Read(IYamlReader stream, ParseContext parseResult);
+    public abstract ValueTask<T?> Read(IYamlReader stream, ParseContext parseResult);
 }

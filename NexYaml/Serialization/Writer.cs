@@ -70,7 +70,7 @@ public abstract class Writer(IYamlSerializerResolver resolver, IEnumerable<IReso
             }
         }
     }
-    public void WriteString<X>(WriteContext<X> context,string? value, DataStyle style)
+    public void WriteString<X>(WriteContext<X> context,string value, DataStyle style)
         where X : Node
     {
         var result = EmitStringAnalyzer.Analyze(value);

@@ -4,9 +4,9 @@ using Stride.Core;
 
 namespace NexYaml.Serializers;
 
-public class ValueTupleSerializer<T1, T2> : YamlSerializer<ValueTuple<T1, T2>>
+public class ValueTupleSerializer<T1, T2> : YamlSerializer<ValueTuple<T1?, T2?>>
 {
-    public override void Write<X>(WriteContext<X> context, ValueTuple<T1, T2> value, DataStyle style)
+    public override void Write<X>(WriteContext<X> context, ValueTuple<T1?, T2?> value, DataStyle style)
     {
         context.BeginSequence("!ValueTuple2", DataStyle.Compact)
             .Write(value.Item1, DataStyle.Compact)
@@ -14,13 +14,13 @@ public class ValueTupleSerializer<T1, T2> : YamlSerializer<ValueTuple<T1, T2>>
             .End(context);
     }
 
-    public override async ValueTask<(T1, T2)> Read(IYamlReader stream, ParseContext parseResult)
+    public override async ValueTask<(T1?, T2?)> Read(IYamlReader stream, ParseContext parseResult)
     {
         stream.Move(ParseEventType.SequenceStart);
         var item1 = stream.Read<T1>(new ParseContext());
         var item2 = stream.Read<T2>(new ParseContext());
         stream.Move(ParseEventType.SequenceEnd);
-        return new ValueTuple<T1, T2>(await item1, await item2);
+        return new ValueTuple<T1?, T2?>(await item1, await item2);
     }
 }
 public struct ValueTuple2Factory : IYamlSerializerFactory
@@ -40,9 +40,9 @@ public struct ValueTuple2Factory : IYamlSerializerFactory
         return (YamlSerializer)Activator.CreateInstance(fillGen)!;
     }
 }
-public class ValueTupleSerializer<T1, T2, T3> : YamlSerializer<ValueTuple<T1, T2, T3>>
+public class ValueTupleSerializer<T1, T2, T3> : YamlSerializer<ValueTuple<T1?, T2?, T3?>>
 {
-    public override void Write<X>(WriteContext<X> context, ValueTuple<T1, T2, T3> value, DataStyle style)
+    public override void Write<X>(WriteContext<X> context, ValueTuple<T1?, T2?, T3?> value, DataStyle style)
     {
         context.BeginSequence("!ValueTuple3", DataStyle.Compact)
             .Write(value.Item1, DataStyle.Compact)
@@ -51,14 +51,14 @@ public class ValueTupleSerializer<T1, T2, T3> : YamlSerializer<ValueTuple<T1, T2
             .End(context);
     }
 
-    public override async ValueTask<(T1, T2, T3)> Read(IYamlReader stream, ParseContext parseResult)
+    public override async ValueTask<(T1?, T2?, T3?)> Read(IYamlReader stream, ParseContext parseResult)
     {
         stream.Move(ParseEventType.SequenceStart);
         var item1 = stream.Read<T1>(new ParseContext());
         var item2 = stream.Read<T2>(new ParseContext());
         var item3 = stream.Read<T3>(new ParseContext());
         stream.Move(ParseEventType.SequenceEnd);
-        return new ValueTuple<T1, T2, T3>(await item1, await item2, await item3);
+        return new ValueTuple<T1?, T2?, T3?>(await item1, await item2, await item3);
     }
 }
 public struct ValueTuple3Factory : IYamlSerializerFactory
@@ -78,9 +78,9 @@ public struct ValueTuple3Factory : IYamlSerializerFactory
         return (YamlSerializer)Activator.CreateInstance(fillGen)!;
     }
 }
-public class ValueTupleSerializer<T1, T2, T3, T4> : YamlSerializer<ValueTuple<T1, T2, T3, T4>>
+public class ValueTupleSerializer<T1, T2, T3, T4> : YamlSerializer<ValueTuple<T1?, T2?, T3?, T4?>>
 {
-    public override void Write<X>(WriteContext<X> context, ValueTuple<T1, T2, T3, T4> value, DataStyle style)
+    public override void Write<X>(WriteContext<X> context, ValueTuple<T1?, T2?, T3?, T4?> value, DataStyle style)
     {
         context.BeginSequence("!ValueTuple4", DataStyle.Compact)
             .Write(value.Item1, DataStyle.Compact)
@@ -89,7 +89,7 @@ public class ValueTupleSerializer<T1, T2, T3, T4> : YamlSerializer<ValueTuple<T1
             .Write(value.Item4, DataStyle.Compact)
             .End(context);
     }
-    public override async ValueTask<(T1, T2, T3, T4)> Read(IYamlReader stream, ParseContext parseResult)
+    public override async ValueTask<(T1?, T2?, T3?, T4?)> Read(IYamlReader stream, ParseContext parseResult)
     {
         stream.Move(ParseEventType.SequenceStart);
         var item1 = stream.Read<T1>(new ParseContext());
@@ -97,7 +97,7 @@ public class ValueTupleSerializer<T1, T2, T3, T4> : YamlSerializer<ValueTuple<T1
         var item3 = stream.Read<T3>(new ParseContext());
         var item4 = stream.Read<T4>(new ParseContext());
         stream.Move(ParseEventType.SequenceEnd);
-        return new ValueTuple<T1, T2, T3, T4>(await item1, await item2, await item3, await item4);
+        return new ValueTuple<T1?, T2?, T3?, T4?>(await item1, await item2, await item3, await item4);
     }
 }
 public struct ValueTuple4Factory : IYamlSerializerFactory
@@ -117,9 +117,9 @@ public struct ValueTuple4Factory : IYamlSerializerFactory
         return (YamlSerializer)Activator.CreateInstance(fillGen)!;
     }
 }
-public class ValueTupleSerializer<T1, T2, T3, T4, T5> : YamlSerializer<ValueTuple<T1, T2, T3, T4, T5>>
+public class ValueTupleSerializer<T1, T2, T3, T4, T5> : YamlSerializer<ValueTuple<T1?, T2?, T3?, T4?, T5?>>
 {
-    public override void Write<X>(WriteContext<X> context, ValueTuple<T1, T2, T3, T4, T5> value, DataStyle style)
+    public override void Write<X>(WriteContext<X> context, ValueTuple<T1?, T2?, T3?, T4?, T5?> value, DataStyle style)
     {
         context.BeginSequence("!ValueTuple5", DataStyle.Compact)
             .Write(value.Item1, DataStyle.Compact)
@@ -130,7 +130,7 @@ public class ValueTupleSerializer<T1, T2, T3, T4, T5> : YamlSerializer<ValueTupl
             .End(context);
     }
 
-    public override async ValueTask<(T1, T2, T3, T4, T5)> Read(IYamlReader stream, ParseContext parseResult)
+    public override async ValueTask<(T1?, T2?, T3?, T4?, T5?)> Read(IYamlReader stream, ParseContext parseResult)
     {
         stream.Move(ParseEventType.SequenceStart);
         var item1 = stream.Read<T1>(new ParseContext());
@@ -139,7 +139,7 @@ public class ValueTupleSerializer<T1, T2, T3, T4, T5> : YamlSerializer<ValueTupl
         var item4 = stream.Read<T4>(new ParseContext());
         var item5 = stream.Read<T5>(new ParseContext());
         stream.Move(ParseEventType.SequenceEnd);
-        return new ValueTuple<T1, T2, T3, T4, T5>(await item1, await item2, await item3, await item4, await item5);
+        return new ValueTuple<T1?, T2?, T3?, T4?, T5?>(await item1, await item2, await item3, await item4, await item5);
     }
 }
 public struct ValueTuple5Factory : IYamlSerializerFactory
@@ -159,10 +159,10 @@ public struct ValueTuple5Factory : IYamlSerializerFactory
         return (YamlSerializer)Activator.CreateInstance(fillGen)!;
     }
 }
-public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6> : YamlSerializer<ValueTuple<T1, T2, T3, T4, T5, T6>>
+public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6> : YamlSerializer<ValueTuple<T1?, T2?, T3?, T4?, T5?, T6?>>
 {
 
-    public override void Write<X>(WriteContext<X> context, ValueTuple<T1, T2, T3, T4, T5, T6> value, DataStyle style)
+    public override void Write<X>(WriteContext<X> context, ValueTuple<T1?, T2?, T3?, T4?, T5?, T6?> value, DataStyle style)
     {
         context.BeginSequence("!ValueTuple6", DataStyle.Compact)
             .Write(value.Item1, DataStyle.Compact)
@@ -174,7 +174,7 @@ public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6> : YamlSerializer<Value
             .End(context);
     }
 
-    public override async ValueTask<(T1, T2, T3, T4, T5, T6)> Read(IYamlReader stream, ParseContext parseResult)
+    public override async ValueTask<(T1?, T2?, T3?, T4?, T5?, T6?)> Read(IYamlReader stream, ParseContext parseResult)
     {
         stream.Move(ParseEventType.SequenceStart);
         var item1 = stream.Read<T1>(new ParseContext());
@@ -184,7 +184,7 @@ public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6> : YamlSerializer<Value
         var item5 = stream.Read<T5>(new ParseContext());
         var item6 = stream.Read<T6>(new ParseContext());
         stream.Move(ParseEventType.SequenceEnd);
-        return new ValueTuple<T1, T2, T3, T4, T5, T6>(await item1, await item2, await item3, await item4, await item5, await item6);
+        return new ValueTuple<T1?, T2?, T3?, T4?, T5?, T6?>(await item1, await item2, await item3, await item4, await item5, await item6);
     }
 }
 public struct ValueTuple6Factory : IYamlSerializerFactory
@@ -204,9 +204,9 @@ public struct ValueTuple6Factory : IYamlSerializerFactory
         return (YamlSerializer)Activator.CreateInstance(fillGen)!;
     }
 }
-public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<ValueTuple<T1, T2, T3, T4, T5, T6, T7>>
+public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<ValueTuple<T1?, T2?, T3?, T4?, T5?, T6?, T7?>>
 {
-    public override void Write<X>(WriteContext<X> context, ValueTuple<T1, T2, T3, T4, T5, T6, T7> value, DataStyle style)
+    public override void Write<X>(WriteContext<X> context, ValueTuple<T1?, T2?, T3?, T4?, T5?, T6?, T7?> value, DataStyle style)
     {
         context.BeginSequence("!ValueTuple7", DataStyle.Compact)
             .Write(value.Item1, DataStyle.Compact)
@@ -218,7 +218,7 @@ public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<V
             .Write(value.Item7, DataStyle.Compact)
             .End(context);
     }
-    public override async ValueTask<(T1, T2, T3, T4, T5, T6, T7)> Read(IYamlReader stream, ParseContext parseResult)
+    public override async ValueTask<(T1?, T2?, T3?, T4?, T5?, T6?, T7?)> Read(IYamlReader stream, ParseContext parseResult)
     {
         stream.Move(ParseEventType.SequenceStart);
         var item1 = stream.Read<T1>(new ParseContext());
@@ -229,7 +229,7 @@ public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<V
         var item6 = stream.Read<T6>(new ParseContext());
         var item7 = stream.Read<T7>(new ParseContext());
         stream.Move(ParseEventType.SequenceEnd);
-        return new ValueTuple<T1, T2, T3, T4, T5, T6, T7>(await item1, await item2, await item3, await item4, await item5, await item6, await item7);
+        return new ValueTuple<T1?, T2?, T3?, T4?, T5?, T6?, T7?>(await item1, await item2, await item3, await item4, await item5, await item6, await item7);
     }
 }
 public struct ValueTuple7Factory : IYamlSerializerFactory

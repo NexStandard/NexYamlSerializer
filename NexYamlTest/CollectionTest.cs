@@ -170,7 +170,7 @@ public class CollectionTest
     [DataContract]
     internal class C
     {
-        public IEnumerable<int> Foo { get; set; }
+        public IEnumerable<int>? Foo { get; set; }
     }
     [Fact(Skip ="Collection initializer? it doesnt redirect to ienumerable")]
     public void EnumerableTest()
@@ -186,10 +186,10 @@ public class CollectionTest
     [Fact]
     public async Task ListWithNullValues()
     {
-        var list = new List<IIdentifiable>() { null, null };
+        var list = new List<IIdentifiable?>() { null, null };
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(list,DataStyle.Compact);
-        var d = await Yaml.Read<List<IIdentifiable>>(s);
+        var d = await Yaml.Read<List<IIdentifiable?>>(s);
         Assert.NotNull(d);
         Assert.Equal(2, list.Count);
     }
@@ -212,6 +212,7 @@ public class CollectionTest
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(data1);
         var d = await Yaml.Read<CollectionInterfaces>(s);
+        Assert.NotNull(d);
         Assert.Equal(data1.Collection.Count, d.Collection.Count);
     }
 }
