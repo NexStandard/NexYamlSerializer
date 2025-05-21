@@ -30,7 +30,7 @@ internal readonly struct ScalarPool(int capacity) : IDisposable
         }
     }
 }
-public class Scalar : ITokenContent, IDisposable
+public sealed record Scalar : ITokenContent, IDisposable
 {
     private const int GrowFactor = 200;
     private const int MinimumGrow = 4;
@@ -97,8 +97,7 @@ public class Scalar : ITokenContent, IDisposable
 
     public void WriteUnicodeCodepoint(int codepoint)
     {
-        Span<char> chars = stackalloc char[1];
-        chars[0] = (char)codepoint;
+        Span<char> chars = [(char)codepoint];
         var utf8ByteCount = Encoding.UTF8.GetByteCount(chars);
         Span<byte> utf8Bytes = stackalloc byte[utf8ByteCount];
         Encoding.UTF8.GetBytes(chars, utf8Bytes);

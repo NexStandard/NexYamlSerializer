@@ -1,6 +1,6 @@
 ﻿namespace NexYaml.Serialization.Nodes
 {
-    internal class CommonNodes
+    internal static class CommonNodes
     {
         public static BlockMapping BlockMapping { get; } = new BlockMapping();
         public static BlockSequence BlockSequence { get; } = new BlockSequence();

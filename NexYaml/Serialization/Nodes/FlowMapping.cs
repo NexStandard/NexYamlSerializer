@@ -35,7 +35,7 @@ class FlowMapping : Mapping
         // all following Nodes need a prefix
         return context with
         {
-            Node = new FlowMappingSecondary()
+            Node = CommonNodes.FlowMappingSecondary
         };
     }
 
