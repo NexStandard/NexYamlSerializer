@@ -11,17 +11,10 @@ public abstract class YamlSerializer
     protected virtual DataStyle Style { get; } = DataStyle.Any;
     public abstract void Write<X>(WriteContext<X> context, object value, DataStyle style)
         where X : Node;
-    public abstract void Write<X>(WriteContext<X> context, object value)
-        where X : Node;
     public abstract ValueTask<object?> ReadUnknown(IYamlReader stream, ParseContext parseResult);
 }
 public abstract class YamlSerializer<T> : YamlSerializer
 {
-    public override void Write<X>(WriteContext<X> context, object value)
-    {
-        var x = typeof(T).GetType().Name;
-        Write(context, (T)value, Style);
-    }
     public override void Write<X>(WriteContext<X> context, object value, DataStyle style)
     {
         Write(context, (T)value, style);
