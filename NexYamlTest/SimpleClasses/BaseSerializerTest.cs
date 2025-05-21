@@ -131,4 +131,8 @@ internal class BaseSerializerNullable
     public ulong? ULongProperty { get; set; } = 12094108541289510239;
 
     public TimeSpan? Time { get; set; } = new TimeSpan();
+    public Guid? GuidProperty { get; set; } = null;
+    public Uri? Uri { get; set; } = null;
+    public DateTimeOffset? DateTimeOffset { get; set; } = null;
+    public DateTime? DateTime { get; set; } = null;
 }

@@ -201,7 +201,7 @@ public class CollectionTest
         {
             Collection = new List<IDInterface>() { },
             ReadonlyList = [new Data1() { Id = 1 }, new Data2() { Id = 2 }],
-            Dictionary = new Dictionary<int, IDInterface>() { [1] = new Data1() },
+            Dictionary = new Dictionary<int, IDInterface>(),
             Enumerable =
             [
                 new Data1() { Id = 1 },
@@ -214,6 +214,29 @@ public class CollectionTest
         var d = await Yaml.Read<CollectionInterfaces>(s);
         Assert.NotNull(d);
         Assert.Equal(data1.Collection.Count, d.Collection.Count);
+    }
+    [Fact]
+    public async Task DictionaryPrimitiveKey()
+    {
+        // Creating test data
+        var data1 = new Generics<Dictionary<int, string>>()
+        {
+            Value = new Dictionary<int, string>()
+            {
+                [1] = "a" ,
+                [2] = "b",
+                [3] = "c",
+            }
+        };
+
+        NexYamlSerializerRegistry.Init();
+        var s = Yaml.Write(data1);
+        var d = await Yaml.Read<Generics<Dictionary<int, string>>>(s);
+        Assert.NotNull(d);
+        Assert.NotNull(d.Value);
+        Assert.Equal("a", d.Value[1]);
+        Assert.Equal("b", d.Value[2]);
+        Assert.Equal("c", d.Value[3]);
     }
 }
 [DataContract]

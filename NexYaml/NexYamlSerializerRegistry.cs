@@ -26,6 +26,17 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
         {
             return (YamlSerializer<T>)serializer;
         }
+        // search if there is a Factory
+        if (SerializerRegistry.SerializerFactory.TryGetValue(typeof(T), out var s2))
+        {
+            s2.TryGetValue(typeof(T), out var t);
+            if (t is not null)
+            {
+                var tempSerializer = t.Instantiate(typeof(T));
+                SerializerRegistry.DefinedSerializers[typeof(T)] = tempSerializer;
+                return (YamlSerializer<T>)tempSerializer;
+            }
+        }
         var s = EmptySerializer<T>.EmptyS();
         SerializerRegistry.DefinedSerializers.Add(typeof(T), s);
         return s;
@@ -186,13 +197,9 @@ internal class SerializerRegistry
             // StandardClassLibrarySerializer
             { typeof(string), NullableStringSerializer.Instance },
             { typeof(decimal), DecimalSerializer.Instance },
-            { typeof(decimal?), DecimalSerializer.Instance },
             { typeof(TimeSpan), TimeSpanSerializer.Instance },
-            { typeof(TimeSpan?), TimeSpanSerializer.Instance },
             { typeof(DateTimeOffset), DateTimeOffsetSerializer.Instance },
-            { typeof(DateTimeOffset?), DateTimeOffsetSerializer.Instance },
             { typeof(Guid), GuidSerializer.Instance },
-            { typeof(Guid?), GuidSerializer.Instance },
             { typeof(Uri), UriSerializer.Instance },
     };
 }

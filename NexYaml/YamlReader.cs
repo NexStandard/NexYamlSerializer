@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text.Unicode;
 
 namespace NexYaml;
-public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : IYamlReader
+public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : IYamlReader, IDisposable
 {
     public bool HasKeyMapping => parser.HasKeyMapping;
     public bool HasSequence => parser.HasSequence;
@@ -23,7 +23,6 @@ public class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : I
 
     private List<IResolvePlugin> plugins =
     [
-        new NullablePlugin(),
         new ArrayPlugin(),
         new ReferencePlugin(),
     ];

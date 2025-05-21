@@ -17,7 +17,6 @@ public class Yaml
         options ??= IYamlSerializerResolver.Default;
         List<IResolvePlugin> plugins = new()
         {
-            new NullablePlugin(),
             new ArrayPlugin(),
             new ReferencePlugin(),
         };
@@ -45,8 +44,8 @@ public class Yaml
     public static async ValueTask<T?> Read<T>(string s, IYamlSerializerResolver? options = null)
     {
         var sequence = new ReadOnlySequence<byte>(Encoding.UTF8.GetBytes(s));
-        var parser = YamlParser.FromSequence(sequence, options ?? IYamlSerializerResolver.Default);
-        var reader = new YamlReader(parser, options ?? IYamlSerializerResolver.Default);
+        using var parser = YamlParser.FromSequence(sequence, options ?? IYamlSerializerResolver.Default);
+        using var reader = new YamlReader(parser, options ?? IYamlSerializerResolver.Default);
 
         parser.SkipAfter(ParseEventType.DocumentStart);
         return await reader.Read<T>(new());
