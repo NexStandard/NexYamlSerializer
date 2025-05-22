@@ -28,20 +28,32 @@ internal static class SourceCreator
         // needs ID at first place to avoid deadlock on awaits for reference resolving
         var orderedSymbols = package.MemberSymbols.OrderByDescending(s => s.Name == "Id").ToList();
         ///
-        objTempVariables.AppendLine($"\t\tvar res = new {info.NameDefinition}();");
+        objTempVariables.AppendLine($"\t\tvar res = context.DataMemberMode is DataMemberMode.Content ? ({info.NameDefinition})context.Value :  new {info.NameDefinition}() {{");
+        foreach(var member in orderedSymbols)
+        {
+            if (member.IsRequired)
+            {
+                objTempVariables.AppendLine($"{member.Name} = default,");
+            }
+        }
 
+        objTempVariables.AppendLine("};");
         foreach (var member in orderedSymbols)
         {
             objTempVariables.AppendLine($"\t\tvar var_{member.Name} = default(ValueTask<{(member.IsArray ? member.Type + "[]" : member.Type)}>);");
             if (member.Context.Mode == MemberApi.UniversalAnalyzers.MemberMode.Content)
             {
-                objTempVariables.AppendLine($"\t\tvar context_{member.Name} = new ParseContext() {{ Value = res.{member.Name} }};");
+                objTempVariables.AppendLine($"\t\tvar context_{member.Name} = new ParseContext() {{ DataMemberMode = DataMemberMode.Content, Value = res.{member.Name} }};");
             }
             else
             {
                 objTempVariables.AppendLine($"\t\tvar context_{member.Name} = new ParseContext();");
             }
-            if (member.IsInit)
+            if (member.Context.Mode is MemberApi.UniversalAnalyzers.MemberMode.Content)
+            {
+                awaits.AppendLine($"await var_{member.Name};");
+            }
+            else if (member.IsInit)
             {
                 awaits.AppendLine($"\t\tExternWrapper{info.TypeParameterArguments}.set_{member.Name}(res,await var_{member.Name});");
             }
