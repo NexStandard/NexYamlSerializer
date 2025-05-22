@@ -43,7 +43,7 @@ internal static class SourceCreator
             }
             if (member.IsInit)
             {
-                awaits.AppendLine($"ExternWrapper{info.TypeParameterArguments}.set_{member.Name}(res,await var_{member.Name});");
+                awaits.AppendLine($"\t\tExternWrapper{info.TypeParameterArguments}.set_{member.Name}(res,await var_{member.Name});");
             }
             else
             {
