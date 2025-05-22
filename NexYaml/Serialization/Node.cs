@@ -15,7 +15,7 @@ public abstract class Node
     /// <param name="context">The current serialization <see cref="WriteContext{T}"/>.</param>
     /// <param name="tag">The YAML tag associated with this <see cref="Mapping"/>.</param>
     /// <param name="style">The <see cref="DataStyle"/></param>
-    /// <returns>A new <see cref="WriteContext{T}"/> for the next upcomming <see cref="Node"/>.</returns>
+    /// <returns>The next <see cref="WriteContext{Mapping}"/> for the upcomming <see cref="Mapping"/>.</returns>
     public abstract WriteContext<Mapping> BeginMapping<T>(WriteContext<T> context, string tag, DataStyle style) where T : Node;
 
     /// <summary>
@@ -25,7 +25,7 @@ public abstract class Node
     /// <param name="context">The current serialization <see cref="WriteContext{T}"/>.</param>
     /// <param name="tag">The YAML tag associated with this <see cref="Sequence"/>.</param>
     /// <param name="style">The <see cref="DataStyle"/></param>
-    /// <returns>A new <see cref="WriteContext{T}"/> for the next upcomming <see cref="Node"/>.</returns>
+    /// <returns>The next <see cref="WriteContext{Sequence}"/> for the upcomming <see cref="Sequence"/>.</returns>
     public abstract WriteContext<Sequence> BeginSequence<T>(WriteContext<T> context, string tag, DataStyle style) where T : Node;
 
     /// <summary>

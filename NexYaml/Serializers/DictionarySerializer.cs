@@ -9,7 +9,7 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
 {
     public override void Write<X>(WriteContext<X> context, Dictionary<TKey, TValue?> value, DataStyle style)
     {
-        if (SerializerExtensions.IsPrimitive(typeof(TKey)))
+        if (IsPrimitive(typeof(TKey)))
         {
             if (value!.Count == 0)
             {
@@ -46,7 +46,7 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
     public override async ValueTask<Dictionary<TKey, TValue?>?> Read(IYamlReader stream, ParseContext parseResult)
     {
         var map = new Dictionary<TKey, TValue>();
-        if (SerializerExtensions.IsPrimitive(typeof(TKey)))
+        if (IsPrimitive(typeof(TKey)))
         {
             List<Task<KeyValuePair<TKey, TValue?>>> tasks = new();
             stream.Move(ParseEventType.MappingStart);
@@ -75,6 +75,26 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
     private async ValueTask<Dictionary<TKey, TValue?>> ConvertToDictionary(ValueTask<List<KeyValuePair<TKey, TValue?>>> list)
     {
         return (await list ?? []).ToDictionary();
+    }
+    private static bool IsPrimitive(Type type)
+    {
+        return type.IsPrimitive ||
+               type == typeof(bool) ||
+               type == typeof(byte) ||
+               type == typeof(sbyte) ||
+               type == typeof(char) ||
+               type == typeof(short) ||
+               type == typeof(ushort) ||
+               type == typeof(int) ||
+               type == typeof(uint) ||
+               type == typeof(long) ||
+               type == typeof(ulong) ||
+               type == typeof(float) ||
+               type == typeof(double) ||
+               type == typeof(decimal) ||
+               type == typeof(string) ||
+               type == typeof(DateTime) ||
+               type == typeof(TimeSpan);
     }
 }
 internal class DictionarySerializerFactory : IYamlSerializerFactory
