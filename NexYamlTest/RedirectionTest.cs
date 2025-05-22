@@ -51,6 +51,7 @@ public class RedirectionTest
         Assert.NotNull(deserialized);
         Assert.Equal(generic.Value, deserialized.Value);
     }
+#if NET9_0_OR_GREATER
     [Fact]
     public async Task StackedGenericsStack()
     {
@@ -64,6 +65,7 @@ public class RedirectionTest
         Assert.NotNull(deserialized);
         Assert.Equal(generic.Value.Value, deserialized.Value.Value);
     }
+#endif
     [Fact]
     public async Task ImplementedGenericsTest()
     {

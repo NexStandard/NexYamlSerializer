@@ -41,8 +41,14 @@ internal static class SourceCreator
             {
                 objTempVariables.AppendLine($"\t\tvar context_{member.Name} = new ParseContext();");
             }
-
-            awaits.AppendLine($"\t\tres.{member.Name} = await var_{member.Name};");
+            if (member.IsInit)
+            {
+                awaits.AppendLine($"ExternWrapper{info.TypeParameterArguments}.set_{member.Name}(res,await var_{member.Name});");
+            }
+            else
+            {
+                awaits.AppendLine($"\t\tres.{member.Name} = await var_{member.Name};");
+            }
             if (package.ClassInfo.IsIIdentifiable && member.Name == "Id")
             {
                 awaits.AppendLine("\t\tstream.RegisterIdentifiable(res.Id, res);");

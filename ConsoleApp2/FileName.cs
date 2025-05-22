@@ -9,36 +9,51 @@ namespace Test;
 [MemoryDiagnoser()]
 public class Benchmarker
 {
-    IYamlSerializerResolver? resolver;
-    Collections values = new Collections();
-    StringBuilder s = new();
+    static IYamlSerializerResolver? resolver = NexYamlSerializerRegistry.Create(typeof(Collections).Assembly);
+    static Collections values = new Collections();
 
-    [GlobalSetup]
-    public void Setup()
+    static Benchmarker()
     {
-        resolver = NexYamlSerializerRegistry.Create(typeof(Collections).Assembly);
+        Yaml.Write(values, (ReadOnlySpan<char> text) => { }, DataStyle.Compact, resolver);
     }
-    [IterationSetup]
-    public void Init()
-    {
-        s = new();
-    }
-
-    [Benchmark(Baseline = true)]
+    [Benchmark]
     public void YamlB()
     {
-        Yaml.Write(values, (ReadOnlySpan<char> text) => s.Append(text), DataStyle.Compact, resolver);
-        var x = s.ToString();
+        Yaml.Write(values, (ReadOnlySpan<char> text) => { }, DataStyle.Compact, resolver);
     }
     [Benchmark()]
     public void JsonB()
     {
         var x = JsonSerializer.Serialize(values, MyJsonContext.Default.Collections);
     }
+
 }
 [DataContract]
 internal class Collections
 {
+    [JsonInclude]
+    public List<TempData> tempDatas = [
+        new(){
+            Id = Guid.NewGuid(),
+            Name = "Name",
+        },
+        new(){
+            Id = Guid.NewGuid(),
+            Name = "Name",
+        },
+        new(){
+            Id = Guid.NewGuid(),
+            Name = "Name",
+        },new(){
+            Id = Guid.NewGuid(),
+            Name = "Name",
+        },
+        new(){
+            Id = Guid.NewGuid(),
+            Name = "Name",
+        }
+
+        ];
     [JsonInclude]
     public TempData values = new TempData
     {

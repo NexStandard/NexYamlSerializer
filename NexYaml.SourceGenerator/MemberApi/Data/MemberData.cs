@@ -23,7 +23,7 @@ internal record ClassPackage(ClassInfo ClassInfo, EquatableReadOnlyList<SymbolIn
             }
 
         }
-
+        
         return builder.ToString();
     }
 }
