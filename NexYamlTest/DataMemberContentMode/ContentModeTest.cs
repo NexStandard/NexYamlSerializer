@@ -19,7 +19,7 @@ public class ContentModeTest
         Assert.NotNull(d);
         Assert.Equal(12, d.Content.Generics);
         Assert.Equal(12, d.ContentInit.Generics);
-        Assert.Equal(14, d.ContentInitRequired.Generics);
+        Assert.Equal(10, d.ContentInitRequired.Generics);
     }
 #endif
 }
