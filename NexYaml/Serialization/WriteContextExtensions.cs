@@ -21,7 +21,7 @@ public static class WriteContextExtensions
         return mapping.Node.BeginSequence(mapping, tag, style);
     }
 
-    public static void WriteType<T, X>(this WriteContext<T> context, X value, DataStyle style)
+    public static void WriteType<T, X>(this WriteContext<T> context, X? value, DataStyle style)
         where T : Node
     {
         context.Writer.WriteType(context, value, style);

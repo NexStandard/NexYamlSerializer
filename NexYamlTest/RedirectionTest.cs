@@ -51,6 +51,7 @@ public class RedirectionTest
         Assert.NotNull(deserialized);
         Assert.Equal(generic.Value, deserialized.Value);
     }
+#if NET9_0_OR_GREATER
     [Fact]
     public async Task StackedGenericsStack()
     {
@@ -62,8 +63,10 @@ public class RedirectionTest
         var s = Yaml.Write(generic);
         var deserialized = await Yaml.Read<GenericWithRestriction<Generics<int>>>(s);
         Assert.NotNull(deserialized);
+        Assert.NotNull(deserialized.Value);
         Assert.Equal(generic.Value.Value, deserialized.Value.Value);
     }
+#endif
     [Fact]
     public async Task ImplementedGenericsTest()
     {

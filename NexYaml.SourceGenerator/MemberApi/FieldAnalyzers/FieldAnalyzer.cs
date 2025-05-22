@@ -22,6 +22,7 @@ internal class FieldAnalyzer(ReferencePackage package) : IMemberSymbolAnalyzer<I
             Context = context.DataMemberContext,
             IsArray = context.Symbol.Type.TypeKind == TypeKind.Array,
             IsInit = false,
+            IsRequired = context.Symbol.IsRequired,
             IsReadonly = context.Symbol.IsReadOnly
         };
     }

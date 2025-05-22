@@ -9,7 +9,7 @@ public abstract class Writer(IYamlSerializerResolver resolver, IEnumerable<IReso
     public IYamlSerializerResolver Resolver { get; } = resolver;
     public HashSet<Guid> References { get; private set; } = new();
     public abstract void Write(ReadOnlySpan<char> text);
-    public virtual void WriteType<X, T>(WriteContext<X> context, T value, DataStyle style)
+    public virtual void WriteType<X, T>(WriteContext<X> context, T? value, DataStyle style)
         where X : Node
     {
         if (value is null)
@@ -43,30 +43,14 @@ public abstract class Writer(IYamlSerializerResolver resolver, IEnumerable<IReso
                 };
             }
 
-            // C# forgets the cast of T when invoking Serialize,
-            // this way we can call the serialize method with the "real type"
+            // C# forgets the cast of T when invoking to an object,
+            // this way we can call the write method with the "real type"
             // that is in the object
-            if (style is DataStyle.Any)
-            {
-                formatt.Write(context, value!);
-                return;
-            }
-            else
-            {
-                formatt.Write(context, value!, style);
-                return;
-            }
+            formatt.Write(context, value, style);
         }
         else
         {
-            if (style is DataStyle.Any)
-            {
-                resolver.GetSerializer<T>().Write(context, value!);
-            }
-            else
-            {
-                resolver.GetSerializer<T>().Write(context, value!, style);
-            }
+            resolver.GetSerializer<T>().Write(context, value, style);
         }
     }
     public void WriteString<X>(WriteContext<X> context, string value, DataStyle style)
