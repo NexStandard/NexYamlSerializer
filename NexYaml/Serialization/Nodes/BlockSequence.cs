@@ -11,13 +11,16 @@ class BlockSequence : Sequence
             return CommonNodes.FlowMapping.BeginMapping(context, tag, DataStyle.Compact);
         }
 
-        //  When no tag is provided, BlockMapping introduce an extra faulty newline.
+        //  When no tag is provided, BlockMapping would introduce an extra faulty newline.
         if (context.IsRedirected)
         {
+            // - {TAG}\n
+            //   {KEY} : {VALUE}
             return CommonNodes.BlockMapping.BeginMapping(context, tag, DataStyle.Normal);
         }
         else
         {
+            // - {KEY} : {VALUE}
             return CommonNodes.BlockSequenceMapping.BeginMapping(context, tag, DataStyle.Normal);
         }
     }

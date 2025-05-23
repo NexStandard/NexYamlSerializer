@@ -7,7 +7,7 @@ class BlockSequenceMapping : BlockMapping
     public override WriteContext<Mapping> Write<T>(WriteContext<Mapping> context, string key, T value, DataStyle style)
     {
         // If the tag is not present on Sequence element:
-        //    {INDENT}- {KEY}: {VALUE}     <-- Standard key-value structure without a new line
+        //    {INDENT}- {KEY}: {VALUE}
         context.WriteString(key);
         context.WriteScalar(" : ");
 

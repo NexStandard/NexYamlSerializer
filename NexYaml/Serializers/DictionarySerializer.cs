@@ -1,15 +1,17 @@
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
+using Stride.Core.Extensions;
 
 namespace NexYaml.Serializers;
 
+[CustomYamlSerializer(TargetType = typeof(Dictionary<,>))]
 public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey, TValue?>>
     where TKey : notnull
 {
     public override void Write<X>(WriteContext<X> context, Dictionary<TKey, TValue?> value, DataStyle style)
     {
-        if (SerializerExtensions.IsPrimitive(typeof(TKey)))
+        if (IsPrimitive(typeof(TKey)))
         {
             if (value!.Count == 0)
             {
@@ -21,7 +23,7 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
 
                 foreach (var x in value)
                 {
-                    resultContext = resultContext.Write(x.Key.ToString(), x.Value, style);
+                    resultContext = resultContext.Write(x.Key.ToString()!, x.Value, style);
                 }
                 resultContext.End(context);
             }
@@ -45,8 +47,8 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
 
     public override async ValueTask<Dictionary<TKey, TValue?>?> Read(IYamlReader stream, ParseContext parseResult)
     {
-        var map = new Dictionary<TKey, TValue>();
-        if (SerializerExtensions.IsPrimitive(typeof(TKey)))
+        var map = parseResult.DataMemberMode is DataMemberMode.Content ? (Dictionary<TKey, TValue?>)parseResult.Value! : [];
+        if (IsPrimitive(typeof(TKey)))
         {
             List<Task<KeyValuePair<TKey, TValue?>>> tasks = new();
             stream.Move(ParseEventType.MappingStart);
@@ -55,28 +57,52 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
             {
                 var key = stream.Read<TKey>(new ParseContext());
                 var value = stream.Read<TValue>(new ParseContext());
-                tasks.Add(ConvertToKeyValuePair(key, value));
+                tasks.Add(ConvertToKeyValuePair(key!, value));
             }
             stream.Move(ParseEventType.MappingEnd);
-            return (await Task.WhenAll(tasks)).ToDictionary();
+            (await Task.WhenAll(tasks)).ForEach(x => map.Add(x.Key, x.Value));
+            return map;
         }
         else
         {
-            var listSerializer = new ListSerializer<KeyValuePair<TKey, TValue>>();
-            return await ConvertToDictionary(listSerializer.Read(stream, new ParseContext()));
+            var listSerializer = new ListSerializer<KeyValuePair<TKey, TValue?>>();
+            var kvp = await listSerializer.Read(stream, new ParseContext());
+
+            // can't be null as !!null wouldnt reach this serializer
+            kvp!.ForEach(x => map.Add(x.Key!, x.Value));
         }
+        return map;
     }
-    private async Task<KeyValuePair<TKey, TValue?>> ConvertToKeyValuePair(ValueTask<TKey> key, ValueTask<TValue?> value)
+
+    private static async Task<KeyValuePair<TKey, TValue?>> ConvertToKeyValuePair(ValueTask<TKey> key, ValueTask<TValue?> value)
     {
         var k = await key;
         var v = await value;
         return new KeyValuePair<TKey, TValue?>(k, v);
     }
-    private async ValueTask<Dictionary<TKey, TValue?>> ConvertToDictionary(ValueTask<List<KeyValuePair<TKey, TValue?>>> list)
+
+    private static bool IsPrimitive(Type type)
     {
-        return (await list ?? []).ToDictionary();
+        return type.IsPrimitive ||
+               type == typeof(bool) ||
+               type == typeof(byte) ||
+               type == typeof(sbyte) ||
+               type == typeof(char) ||
+               type == typeof(short) ||
+               type == typeof(ushort) ||
+               type == typeof(int) ||
+               type == typeof(uint) ||
+               type == typeof(long) ||
+               type == typeof(ulong) ||
+               type == typeof(float) ||
+               type == typeof(double) ||
+               type == typeof(decimal) ||
+               type == typeof(string) ||
+               type == typeof(DateTime) ||
+               type == typeof(TimeSpan);
     }
 }
+
 internal class DictionarySerializerFactory : IYamlSerializerFactory
 {
     public void Register(IYamlSerializerResolver resolver)

@@ -3,7 +3,7 @@ namespace NexYaml.Serialization;
 /// <summary>
 /// The <see cref="IYamlSerializerResolver"/> interface defines the contract for resolving and managing serializers
 /// for different types It allows for retrieving, registering, and resolving serializers
-/// based on types and aliases, supporting both generic and non-generic serializers. 
+/// based on types and aliases, supporting both generic and non-generic serializers.
 /// </summary>
 public interface IYamlSerializerResolver
 {
@@ -29,7 +29,6 @@ public interface IYamlSerializerResolver
     /// <param name="alias">The alias string.</param>
     /// <returns>The <see cref="Type"/> associated with the alias.</returns>
     public Type GetAliasType(string alias);
-
 
     /// <summary>
     /// Registers a custom YAML serializer factory for a given target type and interface type.
