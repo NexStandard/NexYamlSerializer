@@ -18,12 +18,14 @@ public abstract class Writer(IYamlSerializerResolver resolver, IEnumerable<IReso
     /// <summary>
     /// Gets the collection of GUID references representing already serialized <see cref="IIdentifiable"/>.
     /// </summary>
-    public HashSet<Guid> References { get; } = new();
+    public HashSet<Guid> References { get; } = [];
+
     /// <summary>
     /// Writes the provided formatted and escaped text to the underlying output.
     /// </summary>
     /// <param name="text">A <see cref="ReadOnlySpan{T}"/> of characters representing the formatted text to write.</param>
     public abstract void Write(ReadOnlySpan<char> text);
+
     /// <summary>
     /// Redirects a value to the next <see cref="YamlSerializer{T}"/> using the provided <see cref="WriteContext{T}"/> and <see cref="DataStyle"/>.
     /// </summary>
@@ -76,6 +78,7 @@ public abstract class Writer(IYamlSerializerResolver resolver, IEnumerable<IReso
             Resolver.GetSerializer<T>().Write(context, value, style);
         }
     }
+
     /// <summary>
     /// Writes a string value to the YAML output, formatting it according to the appropriate scalar style.
     /// <list type="bullet">

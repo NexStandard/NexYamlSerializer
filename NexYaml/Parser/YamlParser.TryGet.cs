@@ -15,16 +15,16 @@ public partial class YamlParser
                 currentScalar.IsNull());
     }
 
-    private readonly Dictionary<Anchor, object?> aliases = [];
+    private readonly Dictionary<Anchor, object?> _aliases = [];
 
     public void Reset()
     {
-        aliases.Clear();
+        _aliases.Clear();
     }
 
     public void RegisterAnchor(Anchor anchor, object? value)
     {
-        aliases[anchor] = value;
+        _aliases[anchor] = value;
     }
 
     public bool TryResolveCurrentAlias<T>(ref YamlParser parser, out T? aliasValue)
@@ -38,7 +38,7 @@ public partial class YamlParser
         if (parser.TryGetCurrentAnchor(out var anchor))
         {
             parser.Read();
-            if (aliases.TryGetValue(anchor, out var obj))
+            if (_aliases.TryGetValue(anchor, out var obj))
             {
                 switch (obj)
                 {

@@ -79,16 +79,18 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
         var emptySerializer = (YamlSerializer?)Activator.CreateInstance(genericType);
         return emptySerializer!;
     }
-    public static bool IsReady = false;
+    static bool s_isReady = false;
 #if NET9_0_OR_GREATER
-    static readonly Lock s = new();
+    static readonly Lock s_lock = new();
 #elif NET8_0
-    static object s = new object();
+    static readonly object s_lock = new object();
 #endif
     public static IYamlSerializerResolver Create(Assembly assembly)
     {
-        var registry = new NexYamlSerializerRegistry();
-        registry.SerializerRegistry = new();
+        var registry = new NexYamlSerializerRegistry
+        {
+            SerializerRegistry = new()
+        };
         var serializerFactories = assembly.GetTypes()
             .Where(t => typeof(IYamlSerializerFactory).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
         var standard = typeof(Yaml).Assembly.GetTypes()
@@ -112,9 +114,9 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
     /// </summary>
     public static void Init()
     {
-        lock (s)
+        lock (s_lock)
         {
-            if (!IsReady)
+            if (!s_isReady)
             {
                 Instance.SerializerRegistry = new();
                 // Get all loaded assemblies
@@ -132,10 +134,9 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
                     }
                 }
 
-                IsReady = true;
+                s_isReady = true;
             }
         }
-
     }
 
     public void RegisterSerializer<T>(YamlSerializer<T> serializer)
@@ -170,12 +171,8 @@ internal class SerializerRegistry
     {
     };
     internal Dictionary<Type, Type> GenericSerializerBuffer { get; } = new Dictionary<Type, Type>(new GenericEqualityComparer());
-    internal Dictionary<string, Type> TypeMap { get; } = new()
-    {
-    };
-    internal Dictionary<Type, string> AliasMap { get; } = new()
-    {
-    };
+    internal Dictionary<string, Type> TypeMap { get; } = [];
+    internal Dictionary<Type, string> AliasMap { get; } = [];
     internal Dictionary<Type, YamlSerializer> DefinedSerializers { get; } = new Dictionary<Type, YamlSerializer>()
     {
             // Primitive

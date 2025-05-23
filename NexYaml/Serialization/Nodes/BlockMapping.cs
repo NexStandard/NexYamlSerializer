@@ -1,6 +1,7 @@
 ﻿using Stride.Core;
 
 namespace NexYaml.Serialization.Nodes;
+
 class BlockMapping : Mapping
 {
     public override WriteContext<Mapping> BeginMapping<T>(WriteContext<T> context, string tag, DataStyle style)

@@ -1,6 +1,7 @@
 ﻿using Stride.Core;
 
 namespace NexYaml.Serialization;
+
 /// <summary>
 /// Represents a YAML <see cref="Sequence"/> node.
 /// Allows writing ordered elements.
