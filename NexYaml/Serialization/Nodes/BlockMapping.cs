@@ -38,4 +38,17 @@ class BlockMapping : Mapping
         context.WriteType(value, style);
         return context;
     }
+
+    public override WriteContext<Mapping> Write(WriteContext<Mapping> context, string key, ReadOnlySpan<char> value, DataStyle style)
+    {
+        // "{KEY}: {OPTIONAL TAG}" OR "- {OPTIONAL TAG}"
+        // "{NEWLINE}{INDENT}{KEY}: {OUTPUT FROM WriteType}"
+        context.WriteScalar("\n" + new string(' ', context.Indent));
+
+        // The key may contain YAML tokens, so it must be validated according to the ScalarStyle rules.
+        context.WriteString(key);
+        context.WriteScalar(": ");
+        context.WriteScalar(value);
+        return context;
+    }
 }

@@ -10,4 +10,9 @@ class FlowMappingSecondary : FlowMapping
         context.WriteScalar(", ");
         return base.Write(context, key, value, style);
     }
+    public override WriteContext<Mapping> Write(WriteContext<Mapping> context, string key, ReadOnlySpan<char> value, DataStyle style)
+    {
+        context.WriteScalar(", ");
+        return base.Write(context, key, value, style);
+    }
 }

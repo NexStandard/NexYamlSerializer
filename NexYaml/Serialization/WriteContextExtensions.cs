@@ -1,4 +1,6 @@
-﻿using Stride.Core;
+﻿using System.Globalization;
+using NexYaml.Core;
+using Stride.Core;
 
 namespace NexYaml.Serialization;
 
@@ -134,6 +136,24 @@ public static class WriteContextExtensions
     public static void WriteString<X>(this WriteContext<X> context, string value, DataStyle style = DataStyle.Compact)
         where X : Node
     {
-        context.Writer.WriteString(context, value, style);
+        context.WriteScalar(context.Writer.FormatString(context, value, style));
+    }
+}
+public static class ScalarExtensions
+{
+    public static WriteContext<Mapping> Write(this WriteContext<Mapping> mapping, string key, int value, DataStyle style = DataStyle.Any)
+    {
+        Span<char> span = stackalloc char[11];
+        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
+        return mapping.Node.Write(mapping, key, span[..written], style);
+    }
+    
+    public static WriteContext<Mapping> Write(this WriteContext<Mapping> mapping, string key, string? value, DataStyle style = DataStyle.Any)
+    {
+        if(value is null)
+        {
+            return mapping.Node.Write(mapping, key, YamlCodes.Null.AsSpan(),style);
+        }
+        return mapping.Node.Write(mapping, key,mapping.Writer.FormatString(mapping,value, style), style);
     }
 }

@@ -9,7 +9,7 @@ class BlockSequenceMapping : BlockMapping
         // If the tag is not present on Sequence element:
         //    {INDENT}- {KEY}: {VALUE}
         context.WriteString(key);
-        context.WriteScalar(" : ");
+        context.WriteScalar(": ");
 
         // continue with standard BlockMapping, -2 just negates the + 2 of the upcomming BeginMapping
         var x = context with
@@ -19,6 +19,22 @@ class BlockSequenceMapping : BlockMapping
         };
         x.WriteType(value, style);
 
+        return x;
+    }
+    public override WriteContext<Mapping> Write(WriteContext<Mapping> context, string key, ReadOnlySpan<char> value, DataStyle style)
+    {
+        // If the tag is not present on Sequence element:
+        //    {INDENT}- {KEY}: {VALUE}
+        context.WriteString(key);
+        context.WriteScalar(": ");
+
+        // continue with standard BlockMapping, -2 just negates the + 2 of the upcomming BeginMapping
+        var x = context with
+        {
+            Node = new BlockMapping(),
+            Indent = context.Indent - 2,
+        };
+        x.WriteScalar(value);
         return x;
     }
 }
