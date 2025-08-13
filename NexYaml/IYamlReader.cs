@@ -40,13 +40,6 @@ public interface IYamlReader
     /// </summary>
     void Dispose();
 
-    /// <summary>
-    /// Determines if the current position in the YAML stream has a mapping key, and if so, retrieves it.
-    /// </summary>
-    /// <param name="mappingKey">The mapping key, if present.</param>
-    /// <returns><c>true</c> if there is a mapping key; otherwise, <c>false</c>.</returns>
-    bool HasMapping(out ReadOnlySpan<byte> mappingKey);
-
     bool HasMapping(out byte[] mappingKey, bool proxy);
 
     /// <summary>
@@ -79,22 +72,10 @@ public interface IYamlReader
     void Reset();
 
     /// <summary>
-    /// Skips the reader to the next occurrence of the specified <paramref name="eventType"/>.
-    /// </summary>
-    /// <param name="eventType">The event type to skip until.</param>
-    void SkipAfter(ParseEventType eventType);
-
-    /// <summary>
     /// Skips the current read operation without storing the result.
     /// </summary>
     void SkipRead();
     public ValueTask<T?> Read<T>(ParseContext parseResult);
-    /// <summary>
-    /// Attempts to get the current scalar value as a span of bytes.
-    /// </summary>
-    /// <param name="span">The span of bytes containing the scalar value, if found.</param>
-    /// <returns><c>true</c> if the scalar value is successfully retrieved as a span of bytes; otherwise, <c>false</c>.</returns>
-    bool TryGetScalarAsSpan([MaybeNullWhen(false)] out ReadOnlySpan<byte> span);
 
     /// <summary>
     /// Attempts to get the current scalar value as a string.

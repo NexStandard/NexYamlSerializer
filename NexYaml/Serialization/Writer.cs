@@ -98,7 +98,10 @@ public abstract class Writer(IYamlSerializerResolver resolver, IEnumerable<IReso
     {
         var result = EmitStringAnalyzer.Analyze(value);
         var scalarStyle = result.SuggestScalarStyle();
-
+        if(scalarStyle is ScalarStyle.Literal && style is DataStyle.Compact)
+        {
+            scalarStyle = ScalarStyle.DoubleQuoted;
+        }
         switch (scalarStyle)
         {
             case ScalarStyle.Plain or ScalarStyle.Any:
@@ -108,7 +111,7 @@ public abstract class Writer(IYamlSerializerResolver resolver, IEnumerable<IReso
             case ScalarStyle.SingleQuoted:
                 throw new InvalidOperationException("Single Quote is reserved for char");
             case ScalarStyle.DoubleQuoted:
-                return "\"" + value.Replace("\n", "\\n") + "\"";
+                return "\"" + value.Replace("\n", "\\n").Replace("\"", "\\\"" ) + "\"";
             case ScalarStyle.Literal:
                 {
                     var indentCharCount = Math.Max(1, (context.Indent + 1) * context.Indent);

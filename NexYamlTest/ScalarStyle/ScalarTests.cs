@@ -20,7 +20,7 @@ namespace NexYamlTest.ScalarStyle
 
         }
         [Fact]
-        public void DoubleQuotedScalar()
+        public async Task DoubleQuotedScalar()
         {
             NexYamlSerializerRegistry.Init();
             var w = new StringWrapper()
@@ -29,8 +29,11 @@ namespace NexYamlTest.ScalarStyle
             }
             ;
             var s = Yaml.Write(w);
-            Assert.Contains("\"!{[ ] , # ` \" ' &*?|-><=%@. \"", s);
+            var d = await Yaml.Read<StringWrapper>(s);
+            Assert.NotNull(d);
+            Assert.Equal(d.Value, w.Value);
         }
+
         [Fact]
         public void LiteralScalar()
         {
@@ -41,6 +44,19 @@ namespace NexYamlTest.ScalarStyle
             };
             var s = Yaml.Write(w);
             Assert.Contains("|+", s);
+        }
+        [Fact]
+        public async Task LiteralScalar_Compact()
+        {
+            NexYamlSerializerRegistry.Init();
+            var w = new StringWrapper()
+            {
+                Value = "\n\n!{[ ] \n, # ` \" \' &*?|-><=%@.\n"
+            };
+            var s = Yaml.Write(w, DataStyle.Compact);
+            var d = await Yaml.Read<StringWrapper>(s);
+            Assert.NotNull(d);
+            Assert.Equal(w.Value, d.Value);
         }
         [Fact]
         public async Task LiteralScalarAtEnd_NoLineBreak()
