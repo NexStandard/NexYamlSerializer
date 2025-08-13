@@ -1,10 +1,12 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Plugins;
 using NexYaml.Serialization;
 using Stride.Core;
+using static Stride.Graphics.Buffer;
 
 namespace NexYaml;
 public sealed class YamlReader(YamlParser parser, IYamlSerializerResolver Resolver) : IYamlReader, IDisposable
@@ -29,10 +31,6 @@ public sealed class YamlReader(YamlParser parser, IYamlSerializerResolver Resolv
         parser.Dispose();
     }
 
-    public bool HasMapping(out ReadOnlySpan<byte> mappingKey)
-    {
-        return parser.HasMapping(out mappingKey);
-    }
     public bool HasMapping(out byte[] mappingKey, bool proxy)
     {
         var x = parser.HasMapping(out var map);
@@ -43,11 +41,6 @@ public sealed class YamlReader(YamlParser parser, IYamlSerializerResolver Resolv
     public bool IsNullScalar()
     {
         return parser.IsNullScalar();
-    }
-
-    public void Read(ref ReadOnlySpan<byte> span)
-    {
-        parser.TryGetScalarAsSpan(out span);
     }
 
     public bool Move()
@@ -148,24 +141,20 @@ public sealed class YamlReader(YamlParser parser, IYamlSerializerResolver Resolv
         parser.Reset();
     }
 
-    public void SkipAfter(ParseEventType eventType)
-    {
-        parser.SkipAfter(eventType);
-    }
-
     public void SkipRead()
     {
         parser.SkipRead();
     }
 
-    public bool TryGetScalarAsSpan([MaybeNullWhen(false)] out ReadOnlySpan<byte> span)
+    public bool TryGetScalarAsString([MaybeNullWhen(false)] out string? value)
     {
-        return parser.TryGetScalarAsSpan(out span);
-    }
-
-    public bool TryGetScalarAsString(out string? value)
-    {
-        return parser.TryGetScalarAsString(out value);
+        var result = parser.TryGetScalarAsString(out value);
+        if (result)
+        {
+            var interpreted = Regex.Unescape(value!);
+            return true;
+        }
+        return false;
     }
 
     public bool TryGetCurrentTag(out Tag tag)

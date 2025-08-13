@@ -1,5 +1,6 @@
 using System.Buffers;
 using System.Text;
+using System.Text.RegularExpressions;
 using NexYaml.Core;
 
 namespace NexYaml.Parser;
@@ -121,7 +122,9 @@ public sealed record Scalar : ITokenContent, IDisposable
 
     public override string ToString()
     {
-        return Encoding.UTF8.GetString(AsSpan());
+        var raw = Encoding.UTF8.GetString(AsSpan());
+        
+        return raw;
     }
 
     public bool IsNull()

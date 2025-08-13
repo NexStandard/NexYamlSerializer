@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using NexYaml.Core;
 namespace NexYaml.Parser;
 
@@ -69,7 +70,7 @@ public partial class YamlParser
         return true;
     }
 
-    public bool TryGetScalarAsString(out string? value)
+    public bool TryGetScalarAsString([MaybeNullWhen(false)] out string? value)
     {
         if (currentScalar is not null)
         {
