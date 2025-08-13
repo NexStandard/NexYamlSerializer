@@ -908,11 +908,6 @@ public class Utf8YamlTokenizer
             ConsumeBlockScalarBreaks(ref blockIndent, ref lineBreaksBuffer, ref reader);
         }
 
-        // Chomp the tail.
-        if (chomping != -1)
-        {
-            scalar.Write(leadingBreak);
-        }
         if (chomping == 1)
         {
             scalar.Write(lineBreaksBuffer.AsSpan());

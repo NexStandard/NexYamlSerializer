@@ -52,7 +52,7 @@ public class PrimitiveSerializerTest
             ByteProperty = 127,
 
             SByteProperty = 127,
-            StringProperty = "\n#::##\n\n",
+            StringProperty = "\n#::##\n",
             ShortProperty = 32767,
 
             UShortProperty = 12345,

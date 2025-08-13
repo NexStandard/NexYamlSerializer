@@ -54,6 +54,4 @@ class FlowMapping : Mapping
     {
         context.WriteScalar(" }");
     }
-
-
 }
