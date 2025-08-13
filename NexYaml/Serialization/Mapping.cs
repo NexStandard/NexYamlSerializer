@@ -17,4 +17,5 @@ public abstract class Mapping : Node
     /// <param name="style">The <see cref="DataStyle"/>.</param>
     /// <returns>The next <see cref="WriteContext{Mapping}"/> for the <see cref="Mapping"/>.</returns>
     public abstract WriteContext<Mapping> Write<T>(WriteContext<Mapping> context, string key, T value, DataStyle style);
+    public abstract WriteContext<Mapping> Write(WriteContext<Mapping> context, string key, ReadOnlySpan<char> value, DataStyle style);
 }

@@ -93,38 +93,29 @@ public abstract class Writer(IYamlSerializerResolver resolver, IEnumerable<IReso
     /// <param name="context">The context providing state such as current indentation and style.</param>
     /// <param name="value">The string value to write.</param>
     /// <param name="style">The data style that influences formatting (for example, compact or normal).</param>
-    public virtual void WriteString<X>(WriteContext<X> context, string value, DataStyle style)
+    public virtual ReadOnlySpan<char> FormatString<X>(WriteContext<X> context, string value, DataStyle style)
         where X : Node
     {
         var result = EmitStringAnalyzer.Analyze(value);
         var scalarStyle = result.SuggestScalarStyle();
-        if (scalarStyle is ScalarStyle.Literal && style is DataStyle.Compact)
-        {
-            scalarStyle = ScalarStyle.DoubleQuoted;
-        }
+
         switch (scalarStyle)
         {
             case ScalarStyle.Plain or ScalarStyle.Any:
-                context.WriteScalar(value);
-                return;
+                return value;
             case ScalarStyle.Folded:
                 throw new NotSupportedException($"The {ScalarStyle.Folded} is not supported.");
             case ScalarStyle.SingleQuoted:
                 throw new InvalidOperationException("Single Quote is reserved for char");
             case ScalarStyle.DoubleQuoted:
-                context.WriteScalar("\"" + value.Replace("\n", "\\n") + "\"");
-                return;
+                return "\"" + value.Replace("\n", "\\n") + "\"";
             case ScalarStyle.Literal:
                 {
                     var indentCharCount = Math.Max(1, (context.Indent + 1) * context.Indent);
                     var scalarStringBuilt = EmitStringAnalyzer.BuildLiteralScalar(value, indentCharCount).ToString();
-                    if (scalarStringBuilt.EndsWith("\n") && style is not DataStyle.Compact)
-                    {
-                        scalarStringBuilt = scalarStringBuilt.Substring(0, scalarStringBuilt.Length - 1);
-                    }
-                    context.WriteScalar(scalarStringBuilt);
-                    return;
+                    return scalarStringBuilt;
                 }
         }
+        throw new ArgumentOutOfRangeException();
     }
 }

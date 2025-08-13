@@ -48,8 +48,7 @@ internal static class EmitStringAnalyzer
 
         var lines = span.Count('\n');
 
-        if (last == '\n')
-            lines--;
+       
 
         return new EmitStringInfo(lines, needsQuotes, isReservedWord);
     }

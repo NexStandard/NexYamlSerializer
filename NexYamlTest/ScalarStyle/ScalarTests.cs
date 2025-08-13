@@ -1,4 +1,5 @@
-﻿using NexYaml;
+﻿using System.Threading.Tasks;
+using NexYaml;
 using Stride.Core;
 using Xunit;
 
@@ -41,16 +42,96 @@ namespace NexYamlTest.ScalarStyle
             var s = Yaml.Write(w);
             Assert.Contains("|+", s);
         }
-        [Fact(Skip = "\\n doesnt get translated to \n")]
-        public void LiteralCompactScalar()
+        [Fact]
+        public async Task LiteralScalarAtEnd_NoLineBreak()
         {
             NexYamlSerializerRegistry.Init();
             var w = new StringWrapper()
             {
                 Value = "\n\n!{[ ] \n, # ` \" \' &*?|-><=%@."
             };
-            var s = Yaml.Write(w, DataStyle.Compact);
-            Assert.Contains("\n\n!{[ ] \n, # ` \" ' &*?|-><=%@.", s);
+            var s = Yaml.Write(w, DataStyle.Normal);
+            var d = await Yaml.Read<StringWrapper>(s);
+            Assert.NotNull(d);
+            Assert.Equal(w.Value, d.Value);
+        }
+        [Fact(Skip = "Lf at file end is ignored")]
+        public async Task LiteralScalarAtEnd_LineBreak()
+        {
+            NexYamlSerializerRegistry.Init();
+            var w = new StringWrapper()
+            {
+                Value = "\n\n!{[ ] \n, # ` \" \' &*?|-><=%@.\n"
+            };
+            var s = Yaml.Write(w, DataStyle.Normal);
+            var d = await Yaml.Read<StringWrapper>(s);
+            Assert.NotNull(d);
+            Assert.Equal(w.Value, d.Value);
+        }
+        [Fact(Skip = "Lf at file end is ignored")]
+        public async Task LiteralScalarAtEnd_TwoLineBreak()
+        {
+            NexYamlSerializerRegistry.Init();
+            var w = new StringWrapper()
+            {
+                Value = "\n\n!{[ ] \n, # ` \" \' &*?|-><=%@.\n\n"
+            };
+            var s = Yaml.Write(w, DataStyle.Normal);
+            var d = await Yaml.Read<StringWrapper>(s);
+            Assert.NotNull(d);
+            Assert.Equal(w.Value, d.Value);
+        }
+        [Fact]
+        public async Task LiteralScalarNormalInYamlMiddle_NoLineBreak()
+        {
+            NexYamlSerializerRegistry.Init();
+            var w = new StringWrapperSecondProperty()
+            {
+                Value = "\n\n!{[ ] \n, # ` \" \' &*?|-><=%@."
+            };
+            var s = Yaml.Write(w, DataStyle.Normal);
+            var d = await Yaml.Read<StringWrapperSecondProperty>(s);
+            Assert.NotNull(d);
+            Assert.Equal(w.Value, d.Value);
+        }
+        [Fact]
+        public async Task LiteralScalarNormalInYamlMiddle_LineBreak()
+        {
+            NexYamlSerializerRegistry.Init();
+            var w = new StringWrapperSecondProperty()
+            {
+                Value = "\n\n!{[ ] \n, # ` \" \' &*?|-><=%@.\n"
+            };
+            var s = Yaml.Write(w, DataStyle.Normal);
+            var d = await Yaml.Read<StringWrapperSecondProperty>(s);
+            Assert.NotNull(d);
+            Assert.Equal(w.Value, d.Value);
+        }
+        [Fact]
+        public async Task LiteralScalarNormalInYamlMiddle_TwoLineBreak()
+        {
+            NexYamlSerializerRegistry.Init();
+            var w = new StringWrapperSecondProperty()
+            {
+                Value = "\n\n!{[ ] \n, # ` \" \' &*?|-><=%@.\n\n"
+            };
+            var s = Yaml.Write(w, DataStyle.Normal);
+            var d = await Yaml.Read<StringWrapperSecondProperty>(s);
+            Assert.NotNull(d);
+            Assert.Equal(w.Value, d.Value);
+        }
+        [Fact]
+        public async Task LiteralScalarNormalInYamlMiddle_MultipleLineBreak()
+        {
+            NexYamlSerializerRegistry.Init();
+            var w = new StringWrapperSecondProperty()
+            {
+                Value = "\n\n!{[ ] \n, # ` \" \' &*?|-><=%@.\n\n\n\n"
+            };
+            var s = Yaml.Write(w, DataStyle.Normal);
+            var d = await Yaml.Read<StringWrapperSecondProperty>(s);
+            Assert.NotNull(d);
+            Assert.Equal(w.Value, d.Value);
         }
     }
 }
