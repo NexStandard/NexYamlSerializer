@@ -40,7 +40,7 @@ public interface IYamlReader
     /// </summary>
     void Dispose();
 
-    bool HasMapping(out byte[] mappingKey, bool proxy);
+    bool HasMapping(out char[] mappingKey, bool proxy);
 
     /// <summary>
     /// Tries to get the tag currently associated with the YAML stream.

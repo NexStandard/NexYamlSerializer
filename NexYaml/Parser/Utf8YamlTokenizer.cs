@@ -21,13 +21,13 @@ public class Utf8YamlTokenizer
 
     public Marker CurrentMark => mark;
 
-    private ReadOnlySequence<byte> data;
+    private ReadOnlySequence<char> data;
     private Marker mark;
     private Token currentToken;
     private long position;
     private bool streamStartProduced;
     private bool streamEndProduced;
-    private byte currentCode;
+    private char currentCode;
     private int indent;
     private bool simpleKeyAllowed;
     private int adjacentValueAllowedAt;
@@ -38,18 +38,18 @@ public class Utf8YamlTokenizer
     private ScalarPool scalarPool;
     private readonly ExpandBuffer<SimpleKeyState> simpleKeyCandidates;
     private readonly ExpandBuffer<int> indents;
-    private ExpandBuffer<byte> lineBreaksBuffer;
+    private ExpandBuffer<char> lineBreaksBuffer;
 
-    public Utf8YamlTokenizer(ReadOnlySequence<byte> sequence)
+    public Utf8YamlTokenizer(ReadOnlySequence<char> sequence)
     {
         data = sequence;
-        var reader = new SequenceReader<byte>(data);
+        var reader = new SequenceReader<char>(data);
 
         mark = new Marker(0, 1, 0);
         tokens = new InsertionQueue<Token>(16);
         simpleKeyCandidates = new ExpandBuffer<SimpleKeyState>(16);
         indents = new ExpandBuffer<int>(16);
-        lineBreaksBuffer = new ExpandBuffer<byte>(16);
+        lineBreaksBuffer = new ExpandBuffer<char>(16);
         scalarPool = new ScalarPool(32);
 
         indent = -1;
@@ -68,10 +68,11 @@ public class Utf8YamlTokenizer
 
     }
 
-    private void StorePosition(ref SequenceReader<byte> reader)
+    private void StorePosition(ref SequenceReader<char> reader)
     {
         position = reader.Position.GetInteger();
     }
+
     public void Dispose()
     {
         scalarPool.Dispose();
@@ -82,7 +83,7 @@ public class Utf8YamlTokenizer
 
     public bool Read()
     {
-        var reader = new SequenceReader<byte>(data);
+        var reader = new SequenceReader<char>(data);
         reader.Advance(position);
         if (streamEndProduced)
         {
@@ -122,7 +123,7 @@ public class Utf8YamlTokenizer
         return (T)result.Content!;
     }
 
-    private void ConsumeMoreTokens(ref SequenceReader<byte> reader)
+    private void ConsumeMoreTokens(ref SequenceReader<char> reader)
     {
         while (true)
         {
@@ -149,7 +150,7 @@ public class Utf8YamlTokenizer
         tokenAvailable = true;
     }
 
-    private void ConsumeNextToken(ref SequenceReader<byte> reader)
+    private void ConsumeNextToken(ref SequenceReader<char> reader)
     {
         if (!streamStartProduced)
         {
@@ -171,13 +172,13 @@ public class Utf8YamlTokenizer
         {
             switch (currentCode)
             {
-                case (byte)'%':
+                case '%':
                     ConsumeDirective(ref reader);
                     return;
-                case (byte)'-' when reader.IsNext(YamlCodes.StreamStart) && IsEmptyNext(YamlCodes.StreamStart.Length, ref reader):
+                case '-' when reader.IsNext(YamlCodes.StreamStart) && IsEmptyNext(YamlCodes.StreamStart.Length, ref reader):
                     ConsumeDocumentIndicator(TokenType.DocumentStart, ref reader);
                     return;
-                case (byte)'.' when reader.IsNext(YamlCodes.DocStart) && IsEmptyNext(YamlCodes.DocStart.Length, ref reader):
+                case '.' when reader.IsNext(YamlCodes.DocStart) && IsEmptyNext(YamlCodes.DocStart.Length, ref reader):
                     ConsumeDocumentIndicator(TokenType.DocumentEnd, ref reader);
                     return;
             }
@@ -244,7 +245,7 @@ public class Utf8YamlTokenizer
                      (!TryPeek(1, out var nextCode, ref reader) || YamlCodes.IsBlank(nextCode)):
                 ConsumePlainScaler(ref reader);
                 break;
-            case (byte)'%' or (byte)'@' or (byte)'`':
+            case '%' or '@' or '`':
                 throw new YamlTokenizerException(in mark, $"Unexpected character: '{currentCode}'");
             default:
                 ConsumePlainScaler(ref reader);
@@ -275,7 +276,7 @@ public class Utf8YamlTokenizer
         tokens.Enqueue(new Token(TokenType.StreamEnd));
     }
 
-    private void ConsumeDirective(ref SequenceReader<byte> reader)
+    private void ConsumeDirective(ref SequenceReader<char> reader)
     {
         UnrollIndent(-1);
         RemoveSimpleKeyCandidate();
@@ -338,7 +339,7 @@ public class Utf8YamlTokenizer
         }
     }
 
-    private void ConsumeDirectiveName(Scalar result, ref SequenceReader<byte> reader)
+    private void ConsumeDirectiveName(Scalar result, ref SequenceReader<char> reader)
     {
         while (YamlCodes.IsAlphaNumericDashOrUnderscore(currentCode))
         {
@@ -359,7 +360,7 @@ public class Utf8YamlTokenizer
         }
     }
 
-    private void ConsumeVersionDirectiveValue(ref SequenceReader<byte> reader)
+    private void ConsumeVersionDirectiveValue(ref SequenceReader<char> reader)
     {
         while (YamlCodes.IsBlank(currentCode))
         {
@@ -379,7 +380,7 @@ public class Utf8YamlTokenizer
         tokens.Enqueue(new Token(TokenType.VersionDirective, new VersionDirective(major, minor)));
     }
 
-    private int ConsumeVersionDirectiveNumber(ref SequenceReader<byte> reader)
+    private int ConsumeVersionDirectiveNumber(ref SequenceReader<char> reader)
     {
         var value = 0;
         var length = 0;
@@ -404,7 +405,7 @@ public class Utf8YamlTokenizer
         return value;
     }
 
-    private void ConsumeTagDirectiveValue(ref SequenceReader<byte> reader)
+    private void ConsumeTagDirectiveValue(ref SequenceReader<char> reader)
     {
         var handle = scalarPool.Rent();
         var suffix = scalarPool.Rent();
@@ -443,7 +444,7 @@ public class Utf8YamlTokenizer
         }
     }
 
-    private void ConsumeDocumentIndicator(TokenType tokenType, ref SequenceReader<byte> reader)
+    private void ConsumeDocumentIndicator(TokenType tokenType, ref SequenceReader<char> reader)
     {
         UnrollIndent(-1);
         RemoveSimpleKeyCandidate();
@@ -452,7 +453,7 @@ public class Utf8YamlTokenizer
         tokens.Enqueue(new Token(tokenType));
     }
 
-    private void ConsumeFlowCollectionStart(TokenType tokenType, ref SequenceReader<byte> reader)
+    private void ConsumeFlowCollectionStart(TokenType tokenType, ref SequenceReader<char> reader)
     {
         // The indicators '[' and '{' may start a simple key.
         SaveSimpleKeyCandidate();
@@ -464,7 +465,7 @@ public class Utf8YamlTokenizer
         tokens.Enqueue(new Token(tokenType));
     }
 
-    private void ConsumeFlowCollectionEnd(TokenType tokenType, ref SequenceReader<byte> reader)
+    private void ConsumeFlowCollectionEnd(TokenType tokenType, ref SequenceReader<char> reader)
     {
         RemoveSimpleKeyCandidate();
         DecreaseFlowLevel();
@@ -475,7 +476,7 @@ public class Utf8YamlTokenizer
         tokens.Enqueue(new Token(tokenType));
     }
 
-    private void ConsumeFlowEntryStart(ref SequenceReader<byte> reader)
+    private void ConsumeFlowEntryStart(ref SequenceReader<char> reader)
     {
         RemoveSimpleKeyCandidate();
         simpleKeyAllowed = true;
@@ -484,7 +485,7 @@ public class Utf8YamlTokenizer
         tokens.Enqueue(new Token(TokenType.FlowEntryStart));
     }
 
-    private void ConsumeBlockEntry(ref SequenceReader<byte> reader)
+    private void ConsumeBlockEntry(ref SequenceReader<char> reader)
     {
         if (flowLevel != 0)
         {
@@ -502,7 +503,7 @@ public class Utf8YamlTokenizer
         tokens.Enqueue(new Token(TokenType.BlockEntryStart));
     }
 
-    private void ConsumeComplexKeyStart(ref SequenceReader<byte> reader)
+    private void ConsumeComplexKeyStart(ref SequenceReader<char> reader)
     {
         if (flowLevel == 0)
         {
@@ -520,7 +521,7 @@ public class Utf8YamlTokenizer
         tokens.Enqueue(new Token(TokenType.KeyStart));
     }
 
-    private void ConsumeValueStart(ref SequenceReader<byte> reader)
+    private void ConsumeValueStart(ref SequenceReader<char> reader)
     {
         ref var simpleKey = ref simpleKeyCandidates[^1];
         if (simpleKey.Possible)
@@ -552,7 +553,7 @@ public class Utf8YamlTokenizer
         tokens.Enqueue(new Token(TokenType.ValueStart));
     }
 
-    private void ConsumeAnchor(bool alias, ref SequenceReader<byte> reader)
+    private void ConsumeAnchor(bool alias, ref SequenceReader<char> reader)
     {
         SaveSimpleKeyCandidate();
         simpleKeyAllowed = false;
@@ -592,7 +593,7 @@ public class Utf8YamlTokenizer
             : new Token(TokenType.Anchor, scalar));
     }
 
-    private void ConsumeTag(ref SequenceReader<byte> reader)
+    private void ConsumeTag(ref SequenceReader<char> reader)
     {
         SaveSimpleKeyCandidate();
         simpleKeyAllowed = false;
@@ -631,14 +632,14 @@ public class Utf8YamlTokenizer
                 {
                     ConsumeTagUri(ref reader, handle, suffix);
                     handle.Clear();
-                    handle.Write((byte)'!');
+                    handle.Write('!');
                     // A special case: the '!' tag.  Set the handle to '' and the
                     // suffix to '!'.
                     if (suffix.Length <= 0)
                     {
                         handle.Clear();
                         suffix.Clear();
-                        suffix.Write((byte)'!');
+                        suffix.Write('!');
                     }
                 }
             }
@@ -660,12 +661,12 @@ public class Utf8YamlTokenizer
             scalarPool.Return(suffix);
         }
     }
-    public static bool IsEmptyOrComma(byte code)
+    public static bool IsEmptyOrComma(char code)
     {
         // skip comma for !!null,
         return code is YamlCodes.Space or YamlCodes.Tab or YamlCodes.Lf or YamlCodes.Cr or YamlCodes.Comma;
     }
-    private void ConsumeTagHandle(bool directive, Scalar buf, ref SequenceReader<byte> reader)
+    private void ConsumeTagHandle(bool directive, Scalar buf, ref SequenceReader<char> reader)
     {
         if (currentCode != '!')
         {
@@ -688,7 +689,7 @@ public class Utf8YamlTokenizer
             buf.Write(currentCode);
             Advance(1, ref reader);
         }
-        else if (directive && !buf.SequenceEqual([(byte)'!']))
+        else if (directive && !buf.SequenceEqual(['!']))
         {
             // It's either the '!' tag or not really a tag handle.  If it's a %TAG
             // directive, it's an error.  If it's a tag token, it must be a part of
@@ -697,7 +698,7 @@ public class Utf8YamlTokenizer
         }
     }
 
-    private void ConsumeTagUri(ref SequenceReader<byte> reader, Scalar? head, Scalar uri)
+    private void ConsumeTagUri(ref SequenceReader<char> reader, Scalar? head, Scalar uri)
     {
         // Copy the head if needed.
         // Note that we don't copy the leading '!' character.
@@ -709,10 +710,10 @@ public class Utf8YamlTokenizer
 
         // The set of characters that may appear in URI is as follows:
         while (currentCode is
-                   (byte)';' or (byte)'/' or (byte)'?' or (byte)':' or (byte)':' or (byte)'@' or (byte)'&' or
-                   (byte)'=' or (byte)'+' or (byte)'$' or (byte)',' or (byte)'.' or (byte)'!' or (byte)'!' or
-                   (byte)'~' or (byte)'*' or (byte)'\'' or (byte)'(' or (byte)')' or (byte)'[' or (byte)']' or
-                   (byte)'%' ||
+                   ';' or '/' or '?' or ':' or ':' or '@' or '&' or
+                   '=' or '+' or '$' or ',' or '.' or '!' or '!' or
+                   '~' or '*' or '\'' or '(' or ')' or '[' or ']' or
+                   '%' ||
                YamlCodes.IsAlphaNumericDashOrUnderscore(currentCode))
         {
             if (currentCode == '%')
@@ -736,7 +737,7 @@ public class Utf8YamlTokenizer
     }
 
     // TODO: Use Uri
-    private int ConsumeUriEscapes(ref SequenceReader<byte> reader)
+    private int ConsumeUriEscapes(ref SequenceReader<char> reader)
     {
         var width = 0;
         var codepoint = 0;
@@ -786,7 +787,7 @@ public class Utf8YamlTokenizer
         return codepoint;
     }
 
-    private void ConsumeBlockScaler(bool literal, ref SequenceReader<byte> reader)
+    private void ConsumeBlockScaler(bool literal, ref SequenceReader<char> reader)
     {
         SaveSimpleKeyCandidate();
         simpleKeyAllowed = true;
@@ -803,9 +804,9 @@ public class Utf8YamlTokenizer
         // skip '|' or '>'
         Advance(1, ref reader);
 
-        if (currentCode is (byte)'+' or (byte)'-')
+        if (currentCode is '+' or '-')
         {
-            chomping = currentCode == (byte)'+' ? 1 : -1;
+            chomping = currentCode == '+' ? 1 : -1;
             Advance(1, ref reader);
             if (YamlCodes.IsNumber(currentCode))
             {
@@ -829,9 +830,9 @@ public class Utf8YamlTokenizer
             increment = YamlCodes.AsHex(currentCode);
             Advance(1, ref reader);
 
-            if (currentCode is (byte)'+' or (byte)'-')
+            if (currentCode is '+' or '-')
             {
-                chomping = currentCode == (byte)'+' ? 1 : -1;
+                chomping = currentCode == '+' ? 1 : -1;
                 Advance(1, ref reader);
             }
         }
@@ -917,7 +918,7 @@ public class Utf8YamlTokenizer
         tokens.Enqueue(new Token(tokenType, scalar));
     }
 
-    private void ConsumeBlockScalarBreaks(ref int blockIndent, ref ExpandBuffer<byte> blockLineBreaks, ref SequenceReader<byte> reader)
+    private void ConsumeBlockScalarBreaks(ref int blockIndent, ref ExpandBuffer<char> blockLineBreaks, ref SequenceReader<char> reader)
     {
         var maxIndent = 0;
         while (true)
@@ -974,7 +975,7 @@ public class Utf8YamlTokenizer
         }
     }
 
-    private void ConsumeFlowScaler(bool singleQuote, ref SequenceReader<byte> reader)
+    private void ConsumeFlowScaler(bool singleQuote, ref SequenceReader<char> reader)
     {
         SaveSimpleKeyCandidate();
         simpleKeyAllowed = false;
@@ -984,7 +985,7 @@ public class Utf8YamlTokenizer
         var isLeadingBlanks = false;
         var scalar = scalarPool.Rent();
 
-        Span<byte> whitespaceBuffer = stackalloc byte[32];
+        Span<char> whitespaceBuffer = stackalloc char[32];
         var whitespaceLength = 0;
 
         // Eat the left quote
@@ -1017,7 +1018,7 @@ public class Utf8YamlTokenizer
                     // Check for an escaped single quote
                     case YamlCodes.SingleQuote when TryPeek(1, out var nextCode, ref reader) &&
                                                     nextCode == YamlCodes.SingleQuote && singleQuote:
-                        scalar.Write((byte)'\'');
+                        scalar.Write('\'');
                         Advance(2, ref reader);
                         break;
                     // Check for the right quote.
@@ -1025,7 +1026,7 @@ public class Utf8YamlTokenizer
                     case YamlCodes.DoubleQuote when !singleQuote:
                         goto LOOPEND;
                     // Check for an escaped line break.
-                    case (byte)'\\' when !singleQuote &&
+                    case '\\' when !singleQuote &&
                                          TryPeek(1, out var nextCode, ref reader) &&
                                          YamlCodes.IsLineBreak(nextCode):
                         Advance(1, ref reader);
@@ -1033,73 +1034,54 @@ public class Utf8YamlTokenizer
                         isLeadingBlanks = true;
                         break;
                     // Check for an escape sequence.
-                    case (byte)'\\' when !singleQuote:
+                    case '\\' when !singleQuote:
                         var codeLength = 0;
                         TryPeek(1, out var escaped, ref reader);
                         switch (escaped)
                         {
-                            case (byte)'0':
+                            case '0':
                                 scalar.Write((byte)'\0');
                                 break;
-                            case (byte)'a':
-                                scalar.Write((byte)'\a');
+                            case 'a':
+                                scalar.Write('\a');
                                 break;
-                            case (byte)'b':
-                                scalar.Write((byte)'\b');
+                            case 'b':
+                                scalar.Write('\b');
                                 break;
-                            case (byte)'t':
-                                scalar.Write((byte)'\t');
+                            case 't':
+                                scalar.Write('\t');
                                 break;
-                            case (byte)'n':
-                                scalar.Write((byte)'\n');
+                            case 'n':
+                                scalar.Write('\n');
                                 break;
-                            case (byte)'v':
-                                scalar.Write((byte)'\v');
+                            case 'v':
+                                scalar.Write('\v');
                                 break;
-                            case (byte)'f':
-                                scalar.Write((byte)'\f');
+                            case 'f':
+                                scalar.Write('\f');
                                 break;
-                            case (byte)'r':
-                                scalar.Write((byte)'\r');
+                            case 'r':
+                                scalar.Write('\r');
                                 break;
-                            case (byte)'e':
-                                scalar.Write(0x1b);
+                            case ' ':
+                                scalar.Write(' ');
                                 break;
-                            case (byte)' ':
-                                scalar.Write((byte)' ');
+                            case '"':
+                                scalar.Write('"');
                                 break;
-                            case (byte)'"':
-                                scalar.Write((byte)'"');
+                            case '\'':
+                                scalar.Write('\'');
                                 break;
-                            case (byte)'\'':
-                                scalar.Write((byte)'\'');
+                            case '\\':
+                                scalar.Write('\\');
                                 break;
-                            case (byte)'\\':
-                                scalar.Write((byte)'\\');
-                                break;
-                            // NEL (#x85)
-                            case (byte)'N':
-                                scalar.WriteUnicodeCodepoint(0x85);
-                                break;
-                            // #xA0
-                            case (byte)'_':
-                                scalar.WriteUnicodeCodepoint(0xA0);
-                                break;
-                            // LS (#x2028)
-                            case (byte)'L':
-                                scalar.WriteUnicodeCodepoint(0x2028);
-                                break;
-                            // PS (#x2029)
-                            case (byte)'P':
-                                scalar.WriteUnicodeCodepoint(0x2029);
-                                break;
-                            case (byte)'x':
+                            case 'x':
                                 codeLength = 2;
                                 break;
-                            case (byte)'u':
+                            case 'u':
                                 codeLength = 4;
                                 break;
-                            case (byte)'U':
+                            case 'U':
                                 codeLength = 8;
                                 break;
                             default:
@@ -1146,7 +1128,7 @@ public class Utf8YamlTokenizer
                     {
                         if (whitespaceBuffer.Length <= whitespaceLength)
                         {
-                            whitespaceBuffer = new byte[whitespaceBuffer.Length * 2];
+                            whitespaceBuffer = new char[whitespaceBuffer.Length * 2];
                         }
                         whitespaceBuffer[whitespaceLength++] = currentCode;
                     }
@@ -1212,7 +1194,7 @@ public class Utf8YamlTokenizer
             scalar));
     }
 
-    private void ConsumePlainScaler(ref SequenceReader<byte> reader)
+    private void ConsumePlainScaler(ref SequenceReader<char> reader)
     {
         SaveSimpleKeyCandidate();
         simpleKeyAllowed = false;
@@ -1223,7 +1205,7 @@ public class Utf8YamlTokenizer
         var isLeadingBlanks = false;
         var scalar = scalarPool.Rent();
 
-        Span<byte> whitespaceBuffer = stackalloc byte[32];
+        Span<char> whitespaceBuffer = stackalloc char[32];
         var whitespaceLength = 0;
 
         while (true)
@@ -1319,7 +1301,7 @@ public class Utf8YamlTokenizer
                         // This is probably a very rare case.
                         if (whitespaceLength >= whitespaceBuffer.Length)
                         {
-                            whitespaceBuffer = new byte[whitespaceBuffer.Length * 2];
+                            whitespaceBuffer = new char[whitespaceBuffer.Length * 2];
                         }
                         whitespaceBuffer[whitespaceLength++] = currentCode;
                     }
@@ -1353,7 +1335,7 @@ public class Utf8YamlTokenizer
         tokens.Enqueue(new Token(TokenType.PlainScalar, scalar));
     }
 
-    private void SkipToNextToken(ref SequenceReader<byte> reader)
+    private void SkipToNextToken(ref SequenceReader<char> reader)
     {
         while (true)
         {
@@ -1377,16 +1359,13 @@ public class Utf8YamlTokenizer
                         Advance(1, ref reader);
                     }
                     break;
-                case 0xFE when reader.IsNext(YamlCodes.Bom):
-                    Advance(YamlCodes.Bom.Length, ref reader);
-                    break;
                 default:
                     return;
             }
         }
     }
 
-    private void Advance(int offset, ref SequenceReader<byte> reader)
+    private void Advance(int offset, ref SequenceReader<char> reader)
     {
         for (var i = 0; i < offset; i++)
         {
@@ -1405,7 +1384,7 @@ public class Utf8YamlTokenizer
         }
     }
 
-    private LineBreakState ConsumeLineBreaks(ref SequenceReader<byte> reader)
+    private LineBreakState ConsumeLineBreaks(ref SequenceReader<char> reader)
     {
         if (reader.End)
             return LineBreakState.None;
@@ -1522,7 +1501,7 @@ public class Utf8YamlTokenizer
         simpleKeyCandidates.Pop();
     }
 
-    private static bool IsEmptyNext(int offset, ref SequenceReader<byte> reader)
+    private static bool IsEmptyNext(int offset, ref SequenceReader<char> reader)
     {
         if (reader.End || reader.Remaining <= offset)
             return true;
@@ -1536,7 +1515,7 @@ public class Utf8YamlTokenizer
 
         var remainingOffset = offset;
         var nextPosition = reader.Position;
-        ReadOnlyMemory<byte> currentMemory;
+        ReadOnlyMemory<char> currentMemory;
 
         while (reader.Sequence.TryGet(ref nextPosition, out currentMemory, advance: true))
         {
@@ -1557,7 +1536,7 @@ public class Utf8YamlTokenizer
         return YamlCodes.IsEmpty(currentMemory.Span[remainingOffset]);
     }
 
-    private static bool TryPeek(long offset, out byte value, ref SequenceReader<byte> reader)
+    private static bool TryPeek(long offset, out char value, ref SequenceReader<char> reader)
     {
         // If we've got data and offset is not out of bounds
         if (reader.End || reader.Remaining <= offset)
@@ -1575,7 +1554,7 @@ public class Utf8YamlTokenizer
 
         var remainingOffset = offset;
         var nextPosition = reader.Position;
-        ReadOnlyMemory<byte> currentMemory;
+        ReadOnlyMemory<char> currentMemory;
 
         while (reader.Sequence.TryGet(ref nextPosition, out currentMemory, advance: true))
         {

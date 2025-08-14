@@ -31,7 +31,7 @@ public sealed class YamlReader(YamlParser parser, IYamlSerializerResolver Resolv
         parser.Dispose();
     }
 
-    public bool HasMapping(out byte[] mappingKey, bool proxy)
+    public bool HasMapping(out char[] mappingKey, bool proxy)
     {
         var x = parser.HasMapping(out var map);
         mappingKey = map.ToArray();

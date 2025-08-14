@@ -2,7 +2,7 @@
 
 namespace NexYaml.Parser;
 
-public record struct ParseContext
+public record ParseContext
 {
     public ParseContext()
     {

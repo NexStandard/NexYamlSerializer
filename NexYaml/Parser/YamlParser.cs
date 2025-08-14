@@ -52,9 +52,9 @@ internal enum ParseState
     End,
 }
 
-public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlSerializerResolver resolver) : IDisposable
+public partial class YamlParser(ReadOnlySequence<char> sequence, IYamlSerializerResolver resolver) : IDisposable
 {
-    public static YamlParser FromSequence(in ReadOnlySequence<byte> sequence, IYamlSerializerResolver resolver)
+    public static YamlParser FromSequence(in ReadOnlySequence<char> sequence, IYamlSerializerResolver resolver)
     {
         return new YamlParser(sequence, resolver);
     }
@@ -62,7 +62,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlSerializer
     public ParseEventType CurrentEventType { get; private set; } = default;
 
     public Marker CurrentMark => tokenizer.CurrentMark;
-    public bool HasMapping(out ReadOnlySpan<byte> mappingKey)
+    public bool HasMapping(out ReadOnlySpan<char> mappingKey)
     {
         if (HasKeyMapping)
         {
@@ -88,7 +88,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlSerializer
     /// <param name="key">The <see cref="Scalar"/> Key of the Mapping</param>
     /// <returns></returns>
     /// <exception cref="YamlException">Throws when there is no <see cref="ParseEventType.Scalar"/> or if <see cref="TryGetScalarAsSpan(out ReadOnlySpan{byte})"/> doesn't succeed</exception>
-    private void ValidateScalar(out ReadOnlySpan<byte> key)
+    private void ValidateScalar(out ReadOnlySpan<char> key)
     {
         if (CurrentEventType != ParseEventType.Scalar)
         {

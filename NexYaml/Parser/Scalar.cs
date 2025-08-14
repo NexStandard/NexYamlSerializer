@@ -36,33 +36,33 @@ public sealed record Scalar : ITokenContent, IDisposable
     private const int GrowFactor = 200;
     private const int MinimumGrow = 4;
 
-    private byte[] buffer;
+    private char[] buffer;
     public int Length { get; private set; }
 
     public static readonly Scalar Null = new(0);
 
     public Scalar(int capacity = MinimumGrow)
     {
-        buffer = ArrayPool<byte>.Shared.Rent(capacity);
+        buffer = ArrayPool<char>.Shared.Rent(capacity);
     }
 
-    public Scalar(ReadOnlySpan<byte> content)
+    public Scalar(ReadOnlySpan<char> content)
     {
-        buffer = ArrayPool<byte>.Shared.Rent(content.Length);
+        buffer = ArrayPool<char>.Shared.Rent(content.Length);
         Write(content);
     }
 
-    public ReadOnlySpan<byte> AsSpan()
+    public ReadOnlySpan<char> AsSpan()
     {
         return buffer.AsSpan(0, Length);
     }
 
-    public ReadOnlySpan<byte> AsSpan(int start, int length)
+    public ReadOnlySpan<char> AsSpan(int start, int length)
     {
         return buffer.AsSpan(start, length);
     }
 
-    public void Write(byte code)
+    public void Write(char code)
     {
         EnsureCapacity(Length + 1);
         buffer[Length++] = code;
@@ -89,7 +89,7 @@ public sealed record Scalar : ITokenContent, IDisposable
         }
     }
 
-    public void Write(ReadOnlySpan<byte> codes)
+    public void Write(ReadOnlySpan<char> codes)
     {
         EnsureCapacity(Length + codes.Length);
         codes.CopyTo(buffer.AsSpan(Length));
@@ -101,8 +101,8 @@ public sealed record Scalar : ITokenContent, IDisposable
         Span<char> chars = [(char)codepoint];
         var utf8ByteCount = Encoding.UTF8.GetByteCount(chars);
         Span<byte> utf8Bytes = stackalloc byte[utf8ByteCount];
-        Encoding.UTF8.GetBytes(chars, utf8Bytes);
-        Write(utf8Bytes);
+        // TODO
+        // Write(utf8Bytes);
     }
 
     public void Clear()
@@ -114,7 +114,7 @@ public sealed record Scalar : ITokenContent, IDisposable
     {
         if (buffer != null)
         {
-            ArrayPool<byte>.Shared.Return(buffer);
+            ArrayPool<char>.Shared.Return(buffer);
             buffer = null!;
         }
         Length = -1; // Mark as disposed
@@ -122,17 +122,15 @@ public sealed record Scalar : ITokenContent, IDisposable
 
     public override string ToString()
     {
-        var raw = Encoding.UTF8.GetString(AsSpan());
-        
-        return raw;
+        return AsSpan().ToString();
     }
 
     public bool IsNull()
     {
-        return buffer.Length == 0 || buffer.SequenceEqual(YamlCodes.Null0);
+        return buffer.Length == 0 || buffer.SequenceEqual(YamlCodes.Null);
     }
 
-    public bool SequenceEqual(ReadOnlySpan<byte> span)
+    public bool SequenceEqual(ReadOnlySpan<char> span)
     {
         return AsSpan().SequenceEqual(span);
     }
@@ -151,9 +149,9 @@ public sealed record Scalar : ITokenContent, IDisposable
 
     private void SetCapacity(int newCapacity)
     {
-        var newBuffer = ArrayPool<byte>.Shared.Rent(newCapacity);
+        var newBuffer = ArrayPool<char>.Shared.Rent(newCapacity);
         buffer.AsSpan(0, Length).CopyTo(newBuffer);
-        ArrayPool<byte>.Shared.Return(buffer);
+        ArrayPool<char>.Shared.Return(buffer);
         buffer = newBuffer;
     }
 }

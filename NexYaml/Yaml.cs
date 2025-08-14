@@ -71,7 +71,7 @@ public static class Yaml
     /// </returns>
     public static async ValueTask<T?> Read<T>(string yamlString, IYamlSerializerResolver? options = null)
     {
-        var sequence = new ReadOnlySequence<byte>(Encoding.UTF8.GetBytes(yamlString));
+        var sequence = new ReadOnlySequence<char>(yamlString.ToArray());
         using var parser = YamlParser.FromSequence(sequence, options ?? IYamlSerializerResolver.Default);
         using var reader = new YamlReader(parser, options ?? IYamlSerializerResolver.Default);
 
