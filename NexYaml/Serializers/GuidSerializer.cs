@@ -19,7 +19,7 @@ public class GuidSerializer : YamlSerializer<Guid>
     {
         if (stream.TryGetScalarAsString(out var span) && Guid.TryParse(span, CultureInfo.InvariantCulture, out var value))
         {
-            stream.Move();
+            stream.Move(ParseEventType.Scalar);
             return new(value);
         }
         stream.SkipRead();

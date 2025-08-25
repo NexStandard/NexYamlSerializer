@@ -20,7 +20,7 @@ public class Int16Serializer : YamlSerializer<short>
     {
         if (stream.TryGetScalarAsString(out var span) && short.TryParse(span, CultureInfo.InvariantCulture, out var value))
         {
-            stream.Move();
+            stream.Move(ParseEventType.Scalar);
             return new(value);
         }
         stream.SkipRead();

@@ -21,7 +21,7 @@ public class UInt64Serializer : YamlSerializer<ulong>
     {
         if (stream.TryGetScalarAsString(out var span) && ulong.TryParse(span, CultureInfo.InvariantCulture, out var value))
         {
-            stream.Move();
+            stream.Move(ParseEventType.Scalar);
             return new(value);
         }
         stream.SkipRead();

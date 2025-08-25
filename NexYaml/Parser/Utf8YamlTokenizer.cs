@@ -81,34 +81,21 @@ public class Utf8YamlTokenizer
         lineBreaksBuffer.Dispose();
     }
 
-    public bool Read()
+    public void Read()
     {
         var reader = new SequenceReader<char>(data);
         reader.Advance(position);
-        if (streamEndProduced)
-        {
-            return false;
-        }
 
         if (!tokenAvailable)
         {
             ConsumeMoreTokens(ref reader);
         }
 
-        if (currentToken.Content is Scalar scalar)
-        {
-            ReturnToPool(scalar);
-        }
         currentToken = tokens.Dequeue();
         tokenAvailable = false;
         tokensParsed += 1;
 
-        if (currentToken.Type == TokenType.StreamEnd)
-        {
-            streamEndProduced = true;
-        }
         StorePosition(ref reader);
-        return true;
     }
 
     internal void ReturnToPool(Scalar scalar)
@@ -661,7 +648,7 @@ public class Utf8YamlTokenizer
             scalarPool.Return(suffix);
         }
     }
-    public static bool IsEmptyOrComma(char code)
+    private static bool IsEmptyOrComma(char code)
     {
         // skip comma for !!null,
         return code is YamlCodes.Space or YamlCodes.Tab or YamlCodes.Lf or YamlCodes.Cr or YamlCodes.Comma;

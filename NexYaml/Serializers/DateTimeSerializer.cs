@@ -17,7 +17,7 @@ public class DateTimeSerializer : YamlSerializer<DateTime>
     {
         if (stream.TryGetScalarAsString(out var span) && DateTime.TryParse(span, out var value))
         {
-            stream.Move();
+            stream.Move(ParseEventType.Scalar);
             return new(value);
         }
         stream.SkipRead();

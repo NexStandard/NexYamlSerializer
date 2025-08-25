@@ -17,7 +17,7 @@ public class BooleanSerializer : YamlSerializer<bool>
     {
         if (stream.TryGetScalarAsString(out var span) && bool.TryParse(span, out var value))
         {
-            stream.Move();
+            stream.Move(ParseEventType.Scalar);
             return new(value);
         }
         stream.SkipRead();

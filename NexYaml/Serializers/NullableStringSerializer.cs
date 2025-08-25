@@ -17,7 +17,7 @@ public class NullableStringSerializer : YamlSerializer<string>
     {
         if (stream.TryGetScalarAsString(out var span))
         {
-            stream.Move();
+            stream.Move(ParseEventType.Scalar);
             return new(span);
         }
         stream.SkipRead();
