@@ -179,7 +179,12 @@ public partial class YamlParser(ReadOnlySequence<char> sequence, IYamlSerializer
                 break;
 
             case ParseState.BlockNode:
-                ParseNode(true, false);
+                var result5 = ParseNode(true,false);
+                CurrentEventType = result5.CurrentEvent;
+                currentState = result5.State;
+                currentScalar = result5.Scalar;
+                currentTag = result5.Tag;
+                currentAnchor = result5.Anchor;
                 break;
 
             case ParseState.BlockMappingFirstKey:
@@ -236,9 +241,9 @@ public partial class YamlParser(ReadOnlySequence<char> sequence, IYamlSerializer
 
             case ParseState.FlowSequenceEntryMappingEnd:
                 State state5 = new ParseFlowSequenceEntryMappingEnd(this);
-                var result5 = state5.Parse(tokenizer);
-                CurrentEventType = result5.CurrentEvent;
-                currentState = result5.State;
+                var result12 = state5.Parse(tokenizer);
+                CurrentEventType = result12.CurrentEvent;
+                currentState = result12.State;
                 break;
             case ParseState.FlowMappingEmptyValue:
                 ParseFlowMappingValue(true);
@@ -379,12 +384,12 @@ public partial class YamlParser(ReadOnlySequence<char> sequence, IYamlSerializer
                 }
             case TokenType.Tag:
                 {
-                    currentTag = tokenizer.TakeCurrentTokenContent<Tag>();
+                    currentTag = Tag = tokenizer.TakeCurrentTokenContent<Tag>();
                     tokenizer.Read();
                     if (CurrentTokenType == TokenType.Anchor)
                     {
-                        var anchorName = tokenizer.TakeCurrentTokenContent<Scalar>().ToString();
                         tokenizer.Read();
+                        var anchorName = tokenizer.TakeCurrentTokenContent<Scalar>().ToString();
                         var anchorId = RegisterAnchor(anchorName);
                         currentAnchor = anchor = new Anchor(anchorName, anchorId);
                     }
