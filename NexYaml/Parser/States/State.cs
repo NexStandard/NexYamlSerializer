@@ -8,8 +8,13 @@ using Stride.Core.Shaders.Grammar;
 
 namespace NexYaml.Parser.States;
 
-internal abstract class State(YamlParser parser)
+internal abstract class State
 {
+    protected YamlParser parser { get; private init; }
+    internal State(YamlParser parser)
+    {
+        this.parser = parser;
+    }
     public abstract NextState Parse(Utf8YamlTokenizer tokenizer);
 
     protected TokenType CurrentTokenType(Utf8YamlTokenizer tokenizer)
