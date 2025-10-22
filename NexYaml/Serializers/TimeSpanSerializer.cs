@@ -19,7 +19,7 @@ public class TimeSpanSerializer : YamlSerializer<TimeSpan>
     {
         if (stream.TryGetScalarAsString(out var span) && TimeSpan.TryParse(span, CultureInfo.InvariantCulture, out var value))
         {
-            stream.Move();
+            stream.Move(ParseEventType.Scalar);
             return new(value);
         }
         stream.SkipRead();

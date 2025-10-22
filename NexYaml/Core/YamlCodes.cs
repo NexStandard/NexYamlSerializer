@@ -2,66 +2,66 @@ namespace NexYaml.Core;
 
 public static class YamlCodes
 {
-    public static readonly byte[] YamlDirectiveName = [(byte)'Y', (byte)'A', (byte)'M', (byte)'L'];
-    public static readonly byte[] TagDirectiveName = [(byte)'T', (byte)'A', (byte)'G'];
+    public static readonly char[] YamlDirectiveName = ['Y', 'A', 'M', 'L'];
+    public static readonly char[] TagDirectiveName = ['T', 'A', 'G'];
 
     public static readonly byte[] Bom = [0xFE, 0xFE];
-    public static readonly byte[] StreamStart = [(byte)'-', (byte)'-', (byte)'-'];
-    public static readonly byte[] DocStart = [(byte)'.', (byte)'.', (byte)'.'];
-    public static readonly byte[] CrLf = [Cr, Lf];
+    public static readonly char[] StreamStart = ['-', '-', '-'];
+    public static readonly char[] DocStart = ['.', '.', '.'];
+    public static readonly char[] CrLf = [Cr, Lf];
 
     public static readonly byte[] Null0 = [(byte)'!', (byte)'!', (byte)'n', (byte)'u', (byte)'l', (byte)'l'];
     public static readonly string Null = "!!null";
 
-    public const byte Space = (byte)' ';
-    public const byte Tab = (byte)'\t';
-    public const byte Lf = (byte)'\n';
+    public const char Space = ' ';
+    public const char Tab = '\t';
+    public const char Lf = '\n';
     public const char NewLine = '\n';
-    public const byte Cr = (byte)'\r';
-    public const byte Comment = (byte)'#';
-    public const byte DirectiveLine = (byte)'%';
-    public const byte Alias = (byte)'*';
-    public const byte Anchor = (byte)'&';
-    public const byte Tag = (byte)'!';
-    public const byte SingleQuote = (byte)'\'';
-    public const byte DoubleQuote = (byte)'"';
-    public const byte LiteralScalerHeader = (byte)'|';
-    public const byte FoldedScalerHeader = (byte)'>';
-    public const byte Comma = (byte)',';
-    public const byte BlockEntryIndent = (byte)'-';
-    public const byte ExplicitKeyIndent = (byte)'?';
-    public const byte MapValueIndent = (byte)':';
-    public const byte FlowMapStart = (byte)'{';
-    public const byte FlowMapEnd = (byte)'}';
-    public const byte FlowSequenceStart = (byte)'[';
-    public const byte FlowSequenceEnd = (byte)']';
+    public const char Cr = '\r';
+    public const char Comment = '#';
+    public const char DirectiveLine = '%';
+    public const char Alias = '*';
+    public const char Anchor = '&';
+    public const char Tag = '!';
+    public const char SingleQuote = '\'';
+    public const char DoubleQuote = '"';
+    public const char LiteralScalerHeader = '|';
+    public const char FoldedScalerHeader = '>';
+    public const char Comma = ',';
+    public const char BlockEntryIndent = '-';
+    public const char ExplicitKeyIndent = '?';
+    public const char MapValueIndent = ':';
+    public const char FlowMapStart = '{';
+    public const char FlowMapEnd = '}';
+    public const char FlowSequenceStart = '[';
+    public const char FlowSequenceEnd = ']';
 
-    public static bool IsAlphaNumericDashOrUnderscore(byte code)
+    public static bool IsAlphaNumericDashOrUnderscore(char code)
     {
         return code is
-        (>= (byte)'0' and <= (byte)'9') or
-        (>= (byte)'A' and <= (byte)'Z') or
-        (>= (byte)'a' and <= (byte)'z') or
-        (byte)'_' or
-        (byte)'-';
+        (>= '0' and <= '9') or
+        (>= 'A' and <= 'Z') or
+        (>= 'a' and <= 'z') or
+        '_' or
+        '-';
     }
 
-    public static bool IsNumber(byte code)
+    public static bool IsNumber(char code)
     {
-        return code is >= (byte)'0' and <= (byte)'9';
+        return code is >= '0' and <= '9';
     }
 
-    public static bool IsEmpty(byte code)
+    public static bool IsEmpty(char code)
     {
         return code is Space or Tab or Lf or Cr;
     }
 
-    public static bool IsLineBreak(byte code)
+    public static bool IsLineBreak(char code)
     {
         return code is Lf or Cr;
     }
 
-    public static bool IsBlank(byte code)
+    public static bool IsBlank(char code)
     {
         return code is Space or Tab;
     }
@@ -73,27 +73,27 @@ public static class YamlCodes
         (byte)'+' or (byte)'-' or (byte)'.';
     }
 
-    public static bool IsHex(byte code)
+    public static bool IsHex(char code)
     {
         return code is
-        (>= (byte)'0' and <= (byte)'9') or
-        (>= (byte)'A' and <= (byte)'F') or
-        (>= (byte)'a' and <= (byte)'f');
+        (>= '0' and <= '9') or
+        (>= 'A' and <= 'F') or
+        (>= 'a' and <= 'f');
     }
 
-    public static bool IsAnyFlowSymbol(byte code)
+    public static bool IsAnyFlowSymbol(char code)
     {
         return code is
-        (byte)',' or (byte)'[' or (byte)']' or (byte)'{' or (byte)'}';
+        ',' or '[' or ']' or '{' or '}';
     }
 
-    public static byte AsHex(byte code)
+    public static byte AsHex(char code)
     {
         return code switch
         {
-            >= (byte)'0' and <= (byte)'9' => (byte)(code - (byte)'0'),
-            >= (byte)'a' and <= (byte)'f' => (byte)(code - (byte)'a' + 10),
-            >= (byte)'A' and <= (byte)'F' => (byte)(code - (byte)'A' + 10),
+            >= '0' and <= '9' => (byte)(code - (byte)'0'),
+            >= 'a' and <= 'f' => (byte)(code - (byte)'a' + 10),
+            >= 'A' and <= 'F' => (byte)(code - (byte)'A' + 10),
             _ => throw new InvalidOperationException()
         };
     }

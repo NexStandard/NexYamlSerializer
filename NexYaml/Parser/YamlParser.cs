@@ -1,5 +1,7 @@
 using System.Buffers;
+using System.Diagnostics.CodeAnalysis;
 using NexYaml.Core;
+using NexYaml.Parser.States;
 using NexYaml.Serialization;
 
 namespace NexYaml.Parser;
@@ -48,13 +50,12 @@ internal enum ParseState
     FlowMappingFirstKey,
     FlowMappingKey,
     FlowMappingValue,
-    FlowMappingEmptyValue,
-    End,
+    End
 }
 
-public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlSerializerResolver resolver) : IDisposable
+public partial class YamlParser(ReadOnlySequence<char> sequence, IYamlSerializerResolver resolver) : IDisposable
 {
-    public static YamlParser FromSequence(in ReadOnlySequence<byte> sequence, IYamlSerializerResolver resolver)
+    public static YamlParser FromSequence(in ReadOnlySequence<char> sequence, IYamlSerializerResolver resolver)
     {
         return new YamlParser(sequence, resolver);
     }
@@ -62,7 +63,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlSerializer
     public ParseEventType CurrentEventType { get; private set; } = default;
 
     public Marker CurrentMark => tokenizer.CurrentMark;
-    public bool HasMapping(out ReadOnlySpan<byte> mappingKey)
+    public bool HasMapping(out ReadOnlySpan<char> mappingKey)
     {
         if (HasKeyMapping)
         {
@@ -88,7 +89,7 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlSerializer
     /// <param name="key">The <see cref="Scalar"/> Key of the Mapping</param>
     /// <returns></returns>
     /// <exception cref="YamlException">Throws when there is no <see cref="ParseEventType.Scalar"/> or if <see cref="TryGetScalarAsSpan(out ReadOnlySpan{byte})"/> doesn't succeed</exception>
-    private void ValidateScalar(out ReadOnlySpan<byte> key)
+    private void ValidateScalar(out ReadOnlySpan<char> key)
     {
         if (CurrentEventType != ParseEventType.Scalar)
         {
@@ -119,110 +120,51 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlSerializer
         GC.SuppressFinalize(this);
     }
 
-    public bool Read()
+    private bool Read()
     {
-        if (currentScalar is { } scalar)
+        if (currentScalar is not null)
         {
-            tokenizer.ReturnToPool(scalar);
-            currentScalar = null;
+            // tokenizer.ReturnToPool(currentScalar);
+            // currentScalar = null;
         }
 
-        if (currentState == ParseState.End)
+        //if (currentState == ParseState.End)
+        //{
+        //    CurrentEventType = ParseEventType.StreamEnd;
+        //    return false;
+        //}
+        State state = currentState switch
         {
-            CurrentEventType = ParseEventType.StreamEnd;
-            return false;
-        }
+            ParseState.StreamStart => new StreamStart(this),
+            ParseState.ImplicitDocumentStart => new ParseDocumentStartImplicit(this),
+            ParseState.DocumentStart => new ParseStateDocumentStartExplicit(this),
+            ParseState.DocumentContent => new FlowMapValue(this),
+            ParseState.DocumentEnd => new ParseDocumentEnd(this),
+            ParseState.BlockNode => new States.BlockNode(this, true, false),
+            ParseState.BlockSequenceFirstEntry => new BlockSequenceFirstEntry(this),
+            ParseState.BlockSequenceEntry => new BlockSequenceEntry(this),
+            ParseState.IndentlessSequenceEntry => new IndentlessSequenceEntry(this),
+            ParseState.BlockMappingFirstKey => new BlockMapFirstKey(this),
+            ParseState.BlockMappingKey => new BlockMapKey(this),
+            ParseState.BlockMappingValue => new BlockMapValue(this),
+            ParseState.FlowSequenceFirstEntry => new FlowSequenceFirstEntry(this),
+            ParseState.FlowSequenceEntry => new FlowSequenceEntry(this),
+            ParseState.FlowSequenceEntryMappingKey => new FlowSequenceEntryMappingKey(this),
+            ParseState.FlowSequenceEntryMappingValue => new FlowSequenceEntryMappingValue(this),
+            ParseState.FlowSequenceEntryMappingEnd => new ParseFlowSequenceEntryMappingEnd(this),
+            ParseState.FlowMappingFirstKey => new FlowMapFirstKey(this),
+            ParseState.FlowMappingKey => new FlowMapKey(this),
+            ParseState.FlowMappingValue => new FlowMapValue(this),
+            ParseState.End => throw new NotImplementedException(),
+            _ => throw new ArgumentOutOfRangeException($"The {nameof(CurrentEventType)} is {CurrentEventType} and it's out of range"),
 
-        switch (currentState)
-        {
-            case ParseState.StreamStart:
-                ParseStreamStart();
-                break;
-
-            case ParseState.ImplicitDocumentStart:
-                ParseDocumentStart(true);
-                break;
-
-            case ParseState.DocumentStart:
-                ParseDocumentStart(false);
-                break;
-
-            case ParseState.DocumentContent:
-                ParseDocumentContent();
-                break;
-
-            case ParseState.DocumentEnd:
-                ParseDocumentEnd();
-                break;
-
-            case ParseState.BlockNode:
-                ParseNode(true, false);
-                break;
-
-            case ParseState.BlockMappingFirstKey:
-                ParseBlockMappingKey(true);
-                break;
-
-            case ParseState.BlockMappingKey:
-                ParseBlockMappingKey(false);
-                break;
-
-            case ParseState.BlockMappingValue:
-                ParseBlockMappingValue();
-                break;
-
-            case ParseState.BlockSequenceFirstEntry:
-                ParseBlockSequenceEntry(true);
-                break;
-
-            case ParseState.BlockSequenceEntry:
-                ParseBlockSequenceEntry(false);
-                break;
-
-            case ParseState.FlowSequenceFirstEntry:
-                ParseFlowSequenceEntry(true);
-                break;
-
-            case ParseState.FlowSequenceEntry:
-                ParseFlowSequenceEntry(false);
-                break;
-
-            case ParseState.FlowMappingFirstKey:
-                ParseFlowMappingKey(true);
-                break;
-
-            case ParseState.FlowMappingKey:
-                ParseFlowMappingKey(false);
-                break;
-
-            case ParseState.FlowMappingValue:
-                ParseFlowMappingValue(false);
-                break;
-
-            case ParseState.IndentlessSequenceEntry:
-                ParseIndentlessSequenceEntry();
-                break;
-
-            case ParseState.FlowSequenceEntryMappingKey:
-                ParseFlowSequenceEntryMappingKey();
-                break;
-
-            case ParseState.FlowSequenceEntryMappingValue:
-                ParseFlowSequenceEntryMappingValue();
-                break;
-
-            case ParseState.FlowSequenceEntryMappingEnd:
-                ParseFlowSequenceEntryMappingEnd();
-                break;
-
-            case ParseState.FlowMappingEmptyValue:
-                ParseFlowMappingValue(true);
-                break;
-
-            case ParseState.End:
-            default:
-                throw new ArgumentOutOfRangeException($"The {nameof(CurrentEventType)} is {CurrentEventType} and it's out of range");
-        }
+        };
+        var result = state.Parse(tokenizer);
+        CurrentEventType = result.CurrentEvent;
+        currentState = result.State;
+        currentTag = result.Tag;
+        currentScalar = result.Scalar;
+        currentAnchor = result.Anchor;
         return true;
     }
 
@@ -296,118 +238,28 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlSerializer
         }
     }
 
-    private void ParseStreamStart()
-    {
-        if (CurrentTokenType == TokenType.None)
-        {
-            tokenizer.Read();
-        }
-        ThrowIfCurrentTokenUnless(TokenType.StreamStart);
-        currentState = ParseState.ImplicitDocumentStart;
-        tokenizer.Read();
-        CurrentEventType = ParseEventType.StreamStart;
-    }
 
-    private void ParseDocumentStart(bool implicitStarted)
-    {
-        if (!implicitStarted)
-        {
-            while (tokenizer.CurrentTokenType == TokenType.DocumentEnd)
-            {
-                tokenizer.Read();
-            }
-        }
-
-        switch (tokenizer.CurrentTokenType)
-        {
-            case TokenType.StreamEnd:
-                currentState = ParseState.End;
-                tokenizer.Read();
-                CurrentEventType = ParseEventType.StreamEnd;
-                break;
-
-            case TokenType.VersionDirective:
-            case TokenType.TagDirective:
-            case TokenType.DocumentStart:
-                ParseExplicitDocumentStart();
-                break;
-
-            default:
-                if (implicitStarted)
-                {
-                    ProcessDirectives();
-                    PushState(ParseState.DocumentEnd);
-                    currentState = ParseState.BlockNode;
-                    CurrentEventType = ParseEventType.DocumentStart;
-                }
-                else
-                {
-                    ParseExplicitDocumentStart();
-                }
-                break;
-        }
-    }
-
-    private void ParseExplicitDocumentStart()
-    {
-        ProcessDirectives();
-        ThrowIfCurrentTokenUnless(TokenType.DocumentStart);
-        PushState(ParseState.DocumentEnd);
-        currentState = ParseState.DocumentContent;
-        tokenizer.Read();
-        CurrentEventType = ParseEventType.DocumentStart;
-    }
-
-    private void ParseDocumentContent()
-    {
-        switch (tokenizer.CurrentTokenType)
-        {
-            case TokenType.VersionDirective:
-            case TokenType.TagDirective:
-            case TokenType.DocumentStart:
-            case TokenType.DocumentEnd:
-            case TokenType.StreamEnd:
-                PopState();
-                EmptyScalar();
-                break;
-            default:
-                ParseNode(true, false);
-                break;
-        }
-    }
-
-    private void ParseDocumentEnd()
-    {
-        // var _implicit = true;
-        if (CurrentTokenType == TokenType.DocumentEnd)
-        {
-            // _implicit = false;
-            tokenizer.Read();
-        }
-
-        // TODO tag handling
-        currentState = ParseState.DocumentStart;
-        CurrentEventType = ParseEventType.DocumentEnd;
-    }
-
-    private void ParseNode(bool block, bool indentlessSequence)
+    internal NextState ParseNode(bool block, bool indentlessSequence)
     {
         currentAnchor = null;
         currentTag = null;
+        Anchor? anchor = null;
+        Tag? Tag = null;
+        ParseEventType type = ParseEventType.Scalar;
+        ParseState state = ParseState.StreamStart;
+        Scalar? scalar = null;
 
         switch (CurrentTokenType)
         {
             case TokenType.Alias:
-                PopState();
+                var state1 = stateStack.Pop();
 
                 var name = tokenizer.TakeCurrentTokenContent<Scalar>().ToString();  // TODO: Avoid `ToString`
                 tokenizer.Read();
 
                 if (anchors.TryGetValue(name, out var aliasId))
                 {
-                    currentAnchor = new Anchor(name, aliasId);
-                    CurrentEventType = ParseEventType.Alias;
-                    return;
+                    return new(ParseEventType.Alias, state1, null, null, new Anchor(name, aliasId));
                 }
                 throw new YamlException(CurrentMark, "While parsing node, found unknown anchor");
 
@@ -415,25 +267,25 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlSerializer
                 {
                     var anchorName = tokenizer.TakeCurrentTokenContent<Scalar>().ToString(); // TODO: Avoid `ToString`
                     var anchorId = RegisterAnchor(anchorName);
-                    currentAnchor = new Anchor(anchorName, anchorId);
+                    currentAnchor = anchor = new Anchor(anchorName, anchorId);
                     tokenizer.Read();
                     if (CurrentTokenType == TokenType.Tag)
                     {
-                        currentTag = tokenizer.TakeCurrentTokenContent<Tag>();
+                        currentTag = Tag = tokenizer.TakeCurrentTokenContent<Tag>();
                         tokenizer.Read();
                     }
                     break;
                 }
             case TokenType.Tag:
                 {
-                    currentTag = tokenizer.TakeCurrentTokenContent<Tag>();
+                    currentTag = Tag = tokenizer.TakeCurrentTokenContent<Tag>();
                     tokenizer.Read();
                     if (CurrentTokenType == TokenType.Anchor)
                     {
+                        tokenizer.Read();
                         var anchorName = tokenizer.TakeCurrentTokenContent<Scalar>().ToString();
                         var anchorId = RegisterAnchor(anchorName);
-                        currentAnchor = new Anchor(anchorName, anchorId);
-                        tokenizer.Read();
+                        currentAnchor = anchor = new Anchor(anchorName, anchorId);
                     }
                     break;
                 }
@@ -442,8 +294,8 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlSerializer
         switch (CurrentTokenType)
         {
             case TokenType.BlockEntryStart when indentlessSequence:
-                currentState = ParseState.IndentlessSequenceEntry;
-                CurrentEventType = ParseEventType.SequenceStart;
+                currentState = state = ParseState.IndentlessSequenceEntry;
+                CurrentEventType = type = ParseEventType.SequenceStart;
                 break;
 
             case TokenType.PlainScalar:
@@ -451,42 +303,44 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlSerializer
             case TokenType.LiteralScalar:
             case TokenType.SingleQuotedScaler:
             case TokenType.DoubleQuotedScaler:
-                PopState();
-                currentScalar = tokenizer.TakeCurrentTokenContent<Scalar>();
+                currentState = state = stateStack.Pop();
+                CurrentEventType = type = ParseEventType.Scalar;
+                currentScalar = scalar = tokenizer.TakeCurrentTokenContent<Scalar>();
                 tokenizer.Read();
-                CurrentEventType = ParseEventType.Scalar;
                 break;
 
             case TokenType.FlowSequenceStart:
-                currentState = ParseState.FlowSequenceFirstEntry;
-                CurrentEventType = ParseEventType.SequenceStart;
+                currentState = state = ParseState.FlowSequenceFirstEntry;
+                CurrentEventType = type = ParseEventType.SequenceStart;
                 break;
 
             case TokenType.FlowMappingStart:
-                currentState = ParseState.FlowMappingFirstKey;
-                CurrentEventType = ParseEventType.MappingStart;
+                currentState = state = ParseState.FlowMappingFirstKey;
+                CurrentEventType = type = ParseEventType.MappingStart;
                 break;
 
             case TokenType.BlockSequenceStart when block:
-                currentState = ParseState.BlockSequenceFirstEntry;
-                CurrentEventType = ParseEventType.SequenceStart;
+                currentState = state = ParseState.BlockSequenceFirstEntry;
+                CurrentEventType = type = ParseEventType.SequenceStart;
                 break;
 
             case TokenType.BlockMappingStart when block:
-                currentState = ParseState.BlockMappingFirstKey;
-                CurrentEventType = ParseEventType.MappingStart;
+                currentState = state = ParseState.BlockMappingFirstKey;
+                CurrentEventType = type = ParseEventType.MappingStart;
                 break;
 
             // ex 7.2, an empty scalar can follow a secondary tag
             case var _ when currentAnchor != null || currentTag != null:
-                PopState();
-                EmptyScalar();
+                currentState = state = stateStack.Pop();
+                currentScalar = scalar = null;
+                CurrentEventType = type = ParseEventType.Scalar;
                 break;
 
             // consider empty entry in sequence ("- ") as null
             case TokenType.BlockEntryStart when currentState == ParseState.IndentlessSequenceEntry:
-                PopState();
-                EmptyScalar();
+                currentState = state =stateStack.Pop();
+                currentScalar = scalar = null;
+                CurrentEventType = type = ParseEventType.Scalar;
                 break;
 
             default:
@@ -495,376 +349,40 @@ public partial class YamlParser(ReadOnlySequence<byte> sequence, IYamlSerializer
                         "while parsing a node, did not find expected node content");
                 }
         }
+        return new NextState(CurrentEventType, state, scalar, Tag , anchor);
     }
 
-    private void ParseBlockMappingKey(bool first)
+    internal ParseState Pop()
     {
-        // skip BlockMappingStart
-        if (first)
-        {
-            tokenizer.Read();
-        }
-
-        switch (CurrentTokenType)
-        {
-            case TokenType.KeyStart:
-                tokenizer.Read();
-                if (CurrentTokenType is
-                    TokenType.KeyStart or
-                    TokenType.ValueStart or
-                    TokenType.BlockEnd)
-                {
-                    currentState = ParseState.BlockMappingValue;
-                    EmptyScalar();
-                }
-                else
-                {
-                    PushState(ParseState.BlockMappingValue);
-                    ParseNode(true, true);
-                }
-                break;
-
-            case TokenType.ValueStart:
-                currentState = ParseState.BlockMappingValue;
-                EmptyScalar();
-                break;
-
-            case TokenType.BlockEnd:
-                PopState();
-                tokenizer.Read();
-                CurrentEventType = ParseEventType.MappingEnd;
-                break;
-
-            default:
-                throw new YamlException(CurrentMark,
-                    "while parsing a block mapping, did not find expected key");
-        }
+        return stateStack.Pop();
     }
 
-    private void ParseBlockMappingValue()
+
+    internal bool TryResolveAnchor(string name,[MaybeNullWhen(false)] out Anchor? anchor)
     {
-        if (CurrentTokenType == TokenType.ValueStart)
+        if (anchors.TryGetValue(name, out var aliasId))
         {
-            tokenizer.Read();
-            if (CurrentTokenType is
-                TokenType.KeyStart or
-                TokenType.ValueStart or
-                TokenType.BlockEnd)
-            {
-                currentState = ParseState.BlockMappingKey;
-                EmptyScalar();
-            }
-            else
-            {
-                PushState(ParseState.BlockMappingKey);
-                ParseNode(true, true);
-            }
+            anchor = new Anchor(name, aliasId);
+            return true;
         }
-        else
-        {
-            currentState = ParseState.BlockMappingKey;
-            EmptyScalar();
-        }
+        anchor = default;
+        return false;
     }
 
-    private void ParseBlockSequenceEntry(bool first)
+    internal int PushAnchor(string name)
     {
-        // BLOCK-SEQUENCE-START
-        if (first)
-        {
-            tokenizer.Read();
-        }
-
-        switch (CurrentTokenType)
-        {
-            case TokenType.BlockEnd:
-                PopState();
-                tokenizer.Read();
-                CurrentEventType = ParseEventType.SequenceEnd;
-                break;
-
-            case TokenType.BlockEntryStart:
-                tokenizer.Read();
-                if (CurrentTokenType is TokenType.BlockEntryStart or TokenType.BlockEnd)
-                {
-                    currentState = ParseState.BlockSequenceEntry;
-                    EmptyScalar();
-                    break;
-                }
-
-                PushState(ParseState.BlockSequenceEntry);
-                ParseNode(true, false);
-                break;
-
-            default:
-                throw new YamlException(CurrentMark,
-                    "while parsing a block collection, did not find expected '-' indicator");
-        }
+        return RegisterAnchor(name);
     }
 
-    private void ParseFlowSequenceEntry(bool first)
-    {
-        // skip FlowMappingStart
-        if (first)
-        {
-            tokenizer.Read();
-        }
-
-        switch (CurrentTokenType)
-        {
-            case TokenType.FlowSequenceEnd:
-                PopState();
-                tokenizer.Read();
-                CurrentEventType = ParseEventType.SequenceEnd;
-                return;
-
-            case TokenType.FlowEntryStart when !first:
-                tokenizer.Read();
-                break;
-
-            default:
-                if (!first)
-                {
-                    throw new YamlException(CurrentMark,
-                        "while parsing a flow sequence, expected ',' or ']'");
-                }
-                break;
-        }
-
-        switch (CurrentTokenType)
-        {
-            case TokenType.FlowSequenceEnd:
-                PopState();
-                tokenizer.Read();
-                CurrentEventType = ParseEventType.SequenceEnd;
-                break;
-
-            case TokenType.KeyStart:
-                currentState = ParseState.FlowSequenceEntryMappingKey;
-                tokenizer.Read();
-                CurrentEventType = ParseEventType.MappingStart;
-                break;
-
-            default:
-                PushState(ParseState.FlowSequenceEntry);
-                ParseNode(false, false);
-                break;
-        }
-    }
-
-    private void ParseFlowMappingKey(bool first)
-    {
-        if (first)
-        {
-            tokenizer.Read();
-        }
-
-        if (CurrentTokenType == TokenType.FlowMappingEnd)
-        {
-            PopState();
-            tokenizer.Read();
-            CurrentEventType = ParseEventType.MappingEnd;
-            return;
-        }
-
-        if (!first)
-        {
-            if (CurrentTokenType == TokenType.FlowEntryStart)
-            {
-                tokenizer.Read();
-            }
-            else
-            {
-                throw new YamlException(CurrentMark,
-                    "While parsing a flow mapping, did not find expected ',' or '}'");
-            }
-        }
-
-        switch (CurrentTokenType)
-        {
-            case TokenType.KeyStart:
-                tokenizer.Read();
-                if (CurrentTokenType is
-                    TokenType.ValueStart or
-                    TokenType.FlowEntryStart or
-                    TokenType.FlowMappingEnd)
-                {
-                    currentState = ParseState.FlowMappingValue;
-                    EmptyScalar();
-                    break;
-                }
-                PushState(ParseState.FlowMappingValue);
-                ParseNode(false, false);
-                break;
-
-            case TokenType.ValueStart:
-                currentState = ParseState.FlowMappingValue;
-                EmptyScalar();
-                break;
-
-            case TokenType.FlowMappingEnd:
-                PopState();
-                tokenizer.Read();
-                CurrentEventType = ParseEventType.MappingEnd;
-                break;
-
-            default:
-                PushState(ParseState.FlowMappingEmptyValue);
-                ParseNode(false, false);
-                break;
-        }
-    }
-
-    private void ParseFlowMappingValue(bool empty)
-    {
-        if (empty)
-        {
-            currentState = ParseState.FlowMappingKey;
-            EmptyScalar();
-            return;
-        }
-
-        if (CurrentTokenType == TokenType.ValueStart)
-        {
-            tokenizer.Read();
-            if (CurrentTokenType is not TokenType.FlowEntryStart and
-                not TokenType.FlowMappingEnd)
-            {
-                PushState(ParseState.FlowMappingKey);
-                ParseNode(false, false);
-                return;
-            }
-        }
-
-        currentState = ParseState.FlowMappingKey;
-        EmptyScalar();
-    }
-
-    private void ParseIndentlessSequenceEntry()
-    {
-        if (CurrentTokenType != TokenType.BlockEntryStart)
-        {
-            PopState();
-            CurrentEventType = ParseEventType.SequenceEnd;
-            return;
-        }
-
-        tokenizer.Read();
-
-        if (CurrentTokenType is
-            TokenType.KeyStart or
-            TokenType.ValueStart or
-            TokenType.BlockEnd)
-        {
-            currentState = ParseState.IndentlessSequenceEntry;
-            EmptyScalar();
-        }
-        else
-        {
-            PushState(ParseState.IndentlessSequenceEntry);
-            ParseNode(true, false);
-        }
-    }
-
-    private void ParseFlowSequenceEntryMappingKey()
-    {
-        if (CurrentTokenType is
-            TokenType.ValueStart or
-            TokenType.FlowEntryStart or
-            TokenType.FlowSequenceEnd)
-        {
-            tokenizer.Read();
-            currentState = ParseState.FlowSequenceEntryMappingValue;
-            EmptyScalar();
-        }
-        else
-        {
-            PushState(ParseState.FlowSequenceEntryMappingValue);
-            ParseNode(false, false);
-        }
-    }
-
-    private void ParseFlowSequenceEntryMappingValue()
-    {
-        if (CurrentTokenType == TokenType.ValueStart)
-        {
-            tokenizer.Read();
-            currentState = ParseState.FlowSequenceEntryMappingValue;
-            if (CurrentTokenType is
-                TokenType.FlowEntryStart or
-                TokenType.FlowSequenceEnd)
-            {
-                currentState = ParseState.FlowSequenceEntryMappingEnd;
-                EmptyScalar();
-            }
-            else
-            {
-                PushState(ParseState.FlowSequenceEntryMappingEnd);
-                ParseNode(false, false);
-            }
-        }
-        else
-        {
-            currentState = ParseState.FlowSequenceEntryMappingEnd;
-            EmptyScalar();
-        }
-    }
-
-    private void ParseFlowSequenceEntryMappingEnd()
-    {
-        currentState = ParseState.FlowSequenceEntry;
-        CurrentEventType = ParseEventType.MappingEnd;
-    }
-
-    private void PopState()
-    {
-        currentState = stateStack.Pop();
-    }
-
-    private void PushState(ParseState state)
+    internal void PushState(ParseState state)
     {
         stateStack.Add(state);
     }
 
-    private void EmptyScalar()
-    {
-        currentScalar = null;
-        CurrentEventType = ParseEventType.Scalar;
-    }
-
-    private void ProcessDirectives()
-    {
-        while (true)
-        {
-            switch (tokenizer.CurrentTokenType)
-            {
-                case TokenType.VersionDirective:
-                    // TODO:
-                    break;
-                case TokenType.TagDirective:
-                    // TODO:
-                    break;
-                default:
-                    return;
-            }
-            tokenizer.Read();
-        }
-    }
-
-    public int RegisterAnchor(string anchorName)
+    private int RegisterAnchor(string anchorName)
     {
         var newId = ++lastAnchorId;
         anchors[anchorName] = newId;
         return newId;
     }
-
-    private void ThrowIfCurrentTokenUnless(TokenType expectedTokenType)
-    {
-        if (CurrentTokenType != expectedTokenType)
-        {
-            throw new YamlException(tokenizer.CurrentMark,
-                $"Did not find expected token of  `{expectedTokenType}`");
-        }
-    }
 }
-

@@ -65,7 +65,7 @@ internal static class SourceCreator
             {
                 awaits.AppendLine("\t\tstream.RegisterIdentifiable(res.Id, res);");
             }
-            ifStatement.AppendLine($"\t\t\tif (key.SequenceEqual(UTF8{member.Name})){{stream.Move();var_{member.Name} = stream.Read<{(member.IsArray ? member.Type + "[]" : member.Type)}>(context_{member.Name}); continue; }}");
+            ifStatement.AppendLine($"\t\t\tif (key.SequenceEqual(UTF8{member.Name})){{stream.Move(ParseEventType.Scalar);var_{member.Name} = stream.Read<{(member.IsArray ? member.Type + "[]" : member.Type)}>(context_{member.Name}); continue; }}");
         }
         ifStatement.AppendLine("\t\t\tstream.SkipRead();");
 

@@ -12,7 +12,5 @@
 		<PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
 		<PackageReference Include="Stride.Engine" Version="4.2.0.2282" />
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Resources\" />
-	</ItemGroup>
+
 </Project>

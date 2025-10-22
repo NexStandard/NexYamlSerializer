@@ -21,7 +21,7 @@ public class Int64Serializer : YamlSerializer<long>
     {
         if (stream.TryGetScalarAsString(out var span) && long.TryParse(span, CultureInfo.InvariantCulture, out var value))
         {
-            stream.Move();
+            stream.Move(ParseEventType.Scalar);
             return new(value);
         }
         stream.SkipRead();

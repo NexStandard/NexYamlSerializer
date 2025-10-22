@@ -18,7 +18,7 @@ public class DateTimeOffsetSerializer : YamlSerializer<DateTimeOffset>
     {
         if (stream.TryGetScalarAsString(out var span) && DateTimeOffset.TryParse(span, out var value))
         {
-            stream.Move();
+            stream.Move(ParseEventType.Scalar);
             return new(value);
         }
         stream.SkipRead();

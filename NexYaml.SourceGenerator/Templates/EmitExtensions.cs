@@ -30,17 +30,23 @@ internal static class EmitExtensions
     }
     public static string CreateUTF8Members(this ClassPackage package)
     {
-        var utf8Members = new StringBuilder();
+        var charMembers = new StringBuilder();
+
         foreach (var member in package.MemberSymbols)
         {
-            var bytes = Encoding.UTF8.GetBytes(member.Name);
+            var chars = member.Name.ToCharArray();
             var sb = new StringBuilder();
-            foreach (var by in bytes)
+
+            foreach (var ch in chars)
             {
-                sb.Append(by + ",");
+                sb.Append($"'{ch}', ");
             }
-            utf8Members.AppendLine($"private static readonly byte[] UTF8{member.Name} = new byte[]{{ {sb.ToString().Trim(',')} }};").Append("\t");
+
+            charMembers
+                .AppendLine($"private static readonly char[] UTF8{member.Name} = new char[] {{ {sb.ToString().TrimEnd(',', ' ')} }};")
+                .Append("\t");
         }
-        return utf8Members.ToString();
+
+        return charMembers.ToString();
     }
 }

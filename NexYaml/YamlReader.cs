@@ -14,11 +14,9 @@ public sealed class YamlReader(YamlParser parser, IYamlSerializerResolver Resolv
     public bool HasKeyMapping => parser.HasKeyMapping;
     public bool HasSequence => parser.HasSequence;
     public Marker CurrentMarker => parser.CurrentMark;
-    public Dictionary<Guid, List<Action<object>>> ReferenceResolvingMap { get; } = [];
 
     private readonly Dictionary<Guid, (TaskCompletionSource<object>? tcs, object? result)> _identifiables = [];
 
-    public HashSet<IIdentifiable> Identifiables { get; } = [];
 
     private readonly List<IResolvePlugin> plugins =
     [
@@ -31,28 +29,18 @@ public sealed class YamlReader(YamlParser parser, IYamlSerializerResolver Resolv
         parser.Dispose();
     }
 
-    public bool HasMapping(out byte[] mappingKey, bool proxy)
+    public bool HasMapping(out char[] mappingKey, bool proxy)
     {
         var x = parser.HasMapping(out var map);
         mappingKey = map.ToArray();
         return x;
     }
 
-    public bool IsNullScalar()
-    {
-        return parser.IsNullScalar();
-    }
-
-    public bool Move()
-    {
-        return parser.Read();
-    }
-
     public ValueTask<T?> Read<T>(ParseContext parseResult)
     {
-        if (IsNullScalar())
+        if (parser.IsNullScalar())
         {
-            Move();
+            Move(ParseEventType.Scalar);
             return new ValueTask<T?>(default(T));
         }
         Type type = typeof(T);
@@ -66,7 +54,7 @@ public sealed class YamlReader(YamlParser parser, IYamlSerializerResolver Resolv
         }
 
         // await reference
-        if (TryGetCurrentTag(out var tag1) && tag1.Handle == "ref")
+        if (TryGetCurrentTag(out var tag1)  && tag1.Handle == "ref")
         {
             if (TryGetScalarAsString(out var idScalar) && Guid.TryParse(idScalar, out var id))
             {
@@ -110,8 +98,7 @@ public sealed class YamlReader(YamlParser parser, IYamlSerializerResolver Resolv
     }
 
     // For handling anchors, may need it for !TAG &PARENT_ANCHOR 
-    /*
-    private void Read<T>(YamlSerializer<T> serializer, ref YamlParser parser, ref T value, ref ParseResult parseResult)
+    private void Read<T>(YamlSerializer<T> serializer, ref YamlParser parser, ref T value)
     {
         if (parser.TryResolveCurrentAlias<T>(ref parser, out var aliasValue))
         {
@@ -129,7 +116,6 @@ public sealed class YamlReader(YamlParser parser, IYamlSerializerResolver Resolv
         }
         return;
     }
-    */
 
     public void Move(ParseEventType eventType)
     {

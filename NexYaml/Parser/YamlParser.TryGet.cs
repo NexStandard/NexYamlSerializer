@@ -59,7 +59,7 @@ public partial class YamlParser
         aliasValue = default;
         return false;
     }
-    public bool TryGetScalarAsSpan(out ReadOnlySpan<byte> span)
+    public bool TryGetScalarAsSpan(out ReadOnlySpan<char> span)
     {
         if (currentScalar is null)
         {

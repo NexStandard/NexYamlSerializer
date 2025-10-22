@@ -21,7 +21,7 @@ public class ByteSerializer : YamlSerializer<byte>
     {
         if (stream.TryGetScalarAsString(out var span) && byte.TryParse(span, out var value))
         {
-            stream.Move();
+            stream.Move(ParseEventType.Scalar);
             return new(value);
         }
         stream.SkipRead();
