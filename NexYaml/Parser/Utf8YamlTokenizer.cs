@@ -35,7 +35,6 @@ public class Utf8YamlTokenizer
     private int tokensParsed;
     private bool tokenAvailable;
     private readonly InsertionQueue<Token> tokens;
-    private ScalarPool scalarPool;
     private readonly ExpandBuffer<SimpleKeyState> simpleKeyCandidates;
     private readonly ExpandBuffer<int> indents;
     private ExpandBuffer<char> lineBreaksBuffer;
@@ -50,7 +49,6 @@ public class Utf8YamlTokenizer
         simpleKeyCandidates = new ExpandBuffer<SimpleKeyState>(16);
         indents = new ExpandBuffer<int>(16);
         lineBreaksBuffer = new ExpandBuffer<char>(16);
-        scalarPool = new ScalarPool(32);
 
         indent = -1;
         flowLevel = 0;
@@ -75,7 +73,6 @@ public class Utf8YamlTokenizer
 
     public void Dispose()
     {
-        scalarPool.Dispose();
         simpleKeyCandidates.Dispose();
         indents.Dispose();
         lineBreaksBuffer.Dispose();
@@ -96,11 +93,6 @@ public class Utf8YamlTokenizer
         tokensParsed += 1;
 
         StorePosition(ref reader);
-    }
-
-    internal void ReturnToPool(Scalar scalar)
-    {
-        scalarPool.Return(scalar);
     }
 
     internal T TakeCurrentTokenContent<T>() where T : ITokenContent
@@ -271,34 +263,29 @@ public class Utf8YamlTokenizer
 
         Advance(1, ref reader);
 
-        var name = scalarPool.Rent();
-        try
-        {
-            ConsumeDirectiveName(name, ref reader);
-            if (name.SequenceEqual(YamlCodes.YamlDirectiveName))
-            {
-                ConsumeVersionDirectiveValue(ref reader);
-            }
-            else if (name.SequenceEqual(YamlCodes.TagDirectiveName))
-            {
-                ConsumeTagDirectiveValue(ref reader);
-            }
-            else
-            {
-                // Skip current line
-                while (!reader.End && !YamlCodes.IsLineBreak(currentCode))
-                {
-                    Advance(1, ref reader);
-                }
+        var name = new Scalar();
 
-                // TODO: This should be error ?
-                tokens.Enqueue(new Token(TokenType.TagDirective));
-            }
-        }
-        finally
+        ConsumeDirectiveName(name, ref reader);
+        if (name.SequenceEqual(YamlCodes.YamlDirectiveName))
         {
-            scalarPool.Return(name);
+            ConsumeVersionDirectiveValue(ref reader);
         }
+        else if (name.SequenceEqual(YamlCodes.TagDirectiveName))
+        {
+            ConsumeTagDirectiveValue(ref reader);
+        }
+        else
+        {
+            // Skip current line
+            while (!reader.End && !YamlCodes.IsLineBreak(currentCode))
+            {
+                Advance(1, ref reader);
+            }
+
+            // TODO: This should be error ?
+            tokens.Enqueue(new Token(TokenType.TagDirective));
+        }
+
 
         while (YamlCodes.IsBlank(currentCode))
         {
@@ -394,10 +381,9 @@ public class Utf8YamlTokenizer
 
     private void ConsumeTagDirectiveValue(ref SequenceReader<char> reader)
     {
-        var handle = scalarPool.Rent();
-        var suffix = scalarPool.Rent();
-        try
-        {
+        var handle = new Scalar();
+        var suffix = new Scalar();
+
             // Eat whitespaces.
             while (YamlCodes.IsBlank(currentCode))
             {
@@ -423,12 +409,6 @@ public class Utf8YamlTokenizer
                 throw new YamlTokenizerException(CurrentMark,
                     "While scanning TAG, did not find expected whitespace or line break");
             }
-        }
-        finally
-        {
-            scalarPool.Return(handle);
-            scalarPool.Return(suffix);
-        }
     }
 
     private void ConsumeDocumentIndicator(TokenType tokenType, ref SequenceReader<char> reader)
@@ -545,7 +525,7 @@ public class Utf8YamlTokenizer
         SaveSimpleKeyCandidate();
         simpleKeyAllowed = false;
 
-        var scalar = scalarPool.Rent();
+        var scalar = new Scalar();
         Advance(1, ref reader);
 
         while (YamlCodes.IsAlphaNumericDashOrUnderscore(currentCode))
@@ -585,11 +565,9 @@ public class Utf8YamlTokenizer
         SaveSimpleKeyCandidate();
         simpleKeyAllowed = false;
 
-        var handle = scalarPool.Rent();
-        var suffix = scalarPool.Rent();
+        var handle = new Scalar();
+        var suffix = new Scalar();
 
-        try
-        {
             // Check if the tag is in the canonical form (verbatim).
             if (TryPeek(1, out var nextCode, ref reader) && nextCode == '<')
             {
@@ -641,12 +619,6 @@ public class Utf8YamlTokenizer
                 throw new YamlTokenizerException(mark,
                     "While scanning a tag, did not find expected whitespace or line break");
             }
-        }
-        finally
-        {
-            scalarPool.Return(handle);
-            scalarPool.Return(suffix);
-        }
     }
     private static bool IsEmptyOrComma(char code)
     {
@@ -784,7 +756,7 @@ public class Utf8YamlTokenizer
         var blockIndent = 0;
         var leadingBlank = false;
         var leadingBreak = LineBreakState.None;
-        var scalar = scalarPool.Rent();
+        var scalar = new Scalar();
 
         lineBreaksBuffer.Clear();
 
@@ -970,7 +942,7 @@ public class Utf8YamlTokenizer
         var leadingBreak = default(LineBreakState);
         var trailingBreak = default(LineBreakState);
         var isLeadingBlanks = false;
-        var scalar = scalarPool.Rent();
+        var scalar = new Scalar();
 
         Span<char> whitespaceBuffer = stackalloc char[32];
         var whitespaceLength = 0;
@@ -1190,7 +1162,7 @@ public class Utf8YamlTokenizer
         var leadingBreak = default(LineBreakState);
         var trailingBreak = default(LineBreakState);
         var isLeadingBlanks = false;
-        var scalar = scalarPool.Rent();
+        var scalar = new Scalar();
 
         Span<char> whitespaceBuffer = stackalloc char[32];
         var whitespaceLength = 0;
