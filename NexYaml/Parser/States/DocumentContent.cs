@@ -19,7 +19,7 @@ namespace NexYaml.Parser.States
                 case TokenType.StreamEnd:
                     return new(ParseEventType.Scalar,parser.Pop());
                 default:
-                    return parser.ParseNode(true, false);
+                    return new BlockNode(parser,true,false).Parse(tokenizer);
             }
         }
     }

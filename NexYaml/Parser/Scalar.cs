@@ -7,12 +7,10 @@ namespace NexYaml.Parser;
 
 public sealed class Scalar : ITokenContent
 {
-    private const int MinimumGrow = 4;
-
     private string content = "";
     public int Length => content.Length;
 
-    public Scalar(int capacity = MinimumGrow)
+    public Scalar()
     {
     }
 
