@@ -23,7 +23,7 @@ namespace NexYaml.Parser.States
                 else
                 {
                     PushState(ParseState.BlockMappingKey);
-                    return parser.ParseNode(true, true);
+                    return new BlockNode(parser,true,true).Parse(tokenizer);
                 }
             }
             else
