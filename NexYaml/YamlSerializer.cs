@@ -1,5 +1,6 @@
 using NexYaml.Parser;
 using NexYaml.Serialization;
+using NexYaml.XParser;
 using Stride.Core;
 
 namespace NexYaml;
@@ -29,6 +30,8 @@ public abstract class YamlSerializer
     /// <param name="parseResult">The <see cref="ParseContext"/>.</param>
     /// <returns>A task yielding the deserialized object.</returns>
     public abstract ValueTask<object?> ReadUnknown(IYamlReader stream, ParseContext parseResult);
+
+    public abstract ValueTask<object?> ReadUnknown(Scope scope, ParseContext context);
 }
 /// <summary>
 /// Provides methods for serializing and deserializing objects of type <typeparamref name="T"/> to/from YAML.
@@ -44,7 +47,10 @@ public abstract class YamlSerializer<T> : YamlSerializer
     {
         return await Read(stream, parseResult);
     }
-
+    public override async ValueTask<object?> ReadUnknown(Scope scope, ParseContext parseResult)
+    {
+        return await Read(scope, parseResult);
+    }
     /// <summary>
     /// Serializes the specified value of type <typeparamref name="T"/> into YAML.
     /// </summary>
@@ -61,4 +67,5 @@ public abstract class YamlSerializer<T> : YamlSerializer
     /// <param name="parseResult">The <see cref="ParseContext"/>.</param>
     /// <returns>A task yielding the deserialized object of type <typeparamref name="T"/>.</returns>
     public abstract ValueTask<T?> Read(IYamlReader stream, ParseContext parseResult);
+    public abstract ValueTask<T?> Read(Scope scope, ParseContext parseResult);
 }

@@ -1,22 +1,63 @@
-﻿
-using System.Text.Json.Serialization;
-using BenchmarkDotNet.Running;
+﻿using System;
+using System.IO;
+using System.Text;
+using BenchmarkDotNet.Attributes;
+using NexYaml;
+using NexYaml.Serialization;
+using NexYaml.Serializers;
+using NexYaml.XParser;
 using Stride.Core;
-using Test;
+using Vortice.Vulkan;
 
-BenchmarkRunner.Run<Benchmarker>();
-
-[DataContract]
-public partial class Data
+class Program
 {
-    [JsonInclude]
-    public int Id;
-    [JsonInclude]
-    public string Value;
+    static Stream ToStream(string s) => new MemoryStream(Encoding.UTF8.GetBytes(s));
+    public static async Task Main(string[] args)
+    {
+        // Example YAML input
+        string yaml = @"!List [ 1, 2, 3 ]
+";
+        var s = new YamlParser(yaml, IYamlSerializerResolver.Default).Parse();
+        var first = s.First();
+        var x = await new PersonSerializer().Read(first, new NexYaml.Parser.ParseContext());
+        Console.WriteLine(x);
+        Console.ReadKey();
+    }
 }
-[DataContract]
-public partial class Wrapper
+public record Person(int Id,string Name, bool Female);
+public class PersonSerializer : YamlSerializer<Person>
 {
-    [JsonInclude]
-    public Data[] Data;
+    public override ValueTask<Person?> Read(IYamlReader stream, NexYaml.Parser.ParseContext parseResult)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void Write<X>(NexYaml.Serialization.WriteContext<X> context, Person value, DataStyle style)
+    {
+        throw new NotImplementedException();
+    }
+    public override async ValueTask<Person?> Read(Scope scope, NexYaml.Parser.ParseContext parseResult)
+    {
+        var mapping = scope.As<NexYaml.XParser.MappingScope>();
+        int id = default;
+        string? name = default;
+        bool female = default;
+        foreach (var kvp in mapping)
+        {
+            if(kvp.Key == "Id")
+            {
+                id = await new Int32Serializer().Read(kvp.Value, new NexYaml.Parser.ParseContext());
+            }
+            if (kvp.Key == "Name")
+            {
+                name = await new NullableStringSerializer().Read(kvp.Value, new NexYaml.Parser.ParseContext());
+            }
+            if (kvp.Key == "Female")
+            {
+                female = await new BooleanSerializer().Read(kvp.Value, new NexYaml.Parser.ParseContext());
+            }
+        }
+
+        return new Person(id, name, female);
+    }
 }

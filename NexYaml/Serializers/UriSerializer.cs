@@ -1,6 +1,8 @@
 using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
+using NexYaml.XParser;
+using Silk.NET.Maths;
 using Stride.Core;
 
 namespace NexYaml.Serializers;
@@ -23,5 +25,10 @@ public class UriSerializer : YamlSerializer<Uri>
         }
         stream.SkipRead();
         throw YamlException.ThrowExpectedTypeParseException(typeof(Uri), scalar, stream.CurrentMarker);
+    }
+    public override ValueTask<Uri?> Read(Scope scope, ParseContext parseResult)
+    {
+        var scalarScope = scope.As<XParser.ScalarScope>();
+        return new(new Uri(scalarScope.Value, UriKind.RelativeOrAbsolute));
     }
 }

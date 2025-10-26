@@ -1,4 +1,5 @@
 using System.Buffers;
+using System.Text;
 using NexYaml.Core;
 
 namespace NexYaml.Parser;
@@ -38,9 +39,14 @@ public class Utf8YamlTokenizer
     private readonly ExpandBuffer<SimpleKeyState> simpleKeyCandidates;
     private readonly ExpandBuffer<int> indents;
     private ExpandBuffer<char> lineBreaksBuffer;
+    private StreamReader xreader;
 
     public Utf8YamlTokenizer(ReadOnlySequence<char> sequence)
     {
+        var seq = sequence.ToString();
+        var mem  = new MemoryStream(Encoding.UTF8.GetBytes(seq));
+        xreader = new StreamReader(mem);
+
         data = sequence;
         var reader = new SequenceReader<char>(data);
 
@@ -60,7 +66,7 @@ public class Utf8YamlTokenizer
         tokenAvailable = false;
 
         currentToken = default;
-
+        currentCode = (char)xreader.Peek();
         reader.TryPeek(out currentCode);
         StorePosition(ref reader);
 
@@ -675,13 +681,9 @@ public class Utf8YamlTokenizer
                    '%' ||
                YamlCodes.IsAlphaNumericDashOrUnderscore(currentCode))
         {
-            if (currentCode == '%')
-            {
-                uri.WriteUnicodeCodepoint(ConsumeUriEscapes(ref reader));
-            }
             // in flow, it may be the case that its !!null, and this would match an assembly tag without assembly so this case has to be skipped
             // assembly tag without assembly is not valid like "!class,"
-            else if (currentCode == ',' && TryPeek(1, out var nextCode, ref reader) && !YamlCodes.IsAlphaNumericDashOrUnderscore(nextCode))
+             if (currentCode == ',' && TryPeek(1, out var nextCode, ref reader) && !YamlCodes.IsAlphaNumericDashOrUnderscore(nextCode))
             {
                 break;
             }
@@ -693,57 +695,6 @@ public class Utf8YamlTokenizer
 
             length++;
         }
-    }
-
-    // TODO: Use Uri
-    private int ConsumeUriEscapes(ref SequenceReader<char> reader)
-    {
-        var width = 0;
-        var codepoint = 0;
-
-        while (!reader.End)
-        {
-            TryPeek(1, out var hexcode0, ref reader);
-            TryPeek(2, out var hexcode1, ref reader);
-            if (currentCode != '%' || !YamlCodes.IsHex(hexcode0) || !YamlCodes.IsHex(hexcode1))
-            {
-                throw new YamlTokenizerException(mark, "While parsing a tag, did not find URI escaped octet");
-            }
-
-            var octet = (YamlCodes.AsHex(hexcode0) << 4) + YamlCodes.AsHex(hexcode1);
-            if (width == 0)
-            {
-                width = octet switch
-                {
-                    _ when (octet & 0b1000_0000) == 0b0000_0000 => 1,
-                    _ when (octet & 0b1110_0000) == 0b1100_0000 => 2,
-                    _ when (octet & 0b1111_0000) == 0b1110_0000 => 3,
-                    _ when (octet & 0b1111_1000) == 0b1111_0000 => 4,
-                    _ => throw new YamlTokenizerException(mark,
-                        "While parsing a tag, found an incorrect leading utf8 octet")
-                };
-                codepoint = octet;
-            }
-            else
-            {
-                if ((octet & 0xc0) != 0x80)
-                {
-                    throw new YamlTokenizerException(mark,
-                        "While parsing a tag, found an incorrect trailing utf8 octet");
-                }
-                codepoint = (currentCode << 8) + octet;
-            }
-
-            Advance(3, ref reader);
-
-            width -= 1;
-            if (width == 0)
-            {
-                break;
-            }
-        }
-
-        return codepoint;
     }
 
     private void ConsumeBlockScaler(bool literal, ref SequenceReader<char> reader)

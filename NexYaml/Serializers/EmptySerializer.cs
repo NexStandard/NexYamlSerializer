@@ -1,6 +1,7 @@
 ﻿using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
+using NexYaml.XParser;
 using Stride.Core;
 
 namespace NexYaml.Serializers;
@@ -17,6 +18,10 @@ public class EmptySerializer<T> : YamlSerializer<T>
     }
 
     public override ValueTask<T?> Read(IYamlReader stream, ParseContext parseResult)
+    {
+        return default;
+    }
+    public override ValueTask<T?> Read(Scope scope, ParseContext parseResult)
     {
         return default;
     }

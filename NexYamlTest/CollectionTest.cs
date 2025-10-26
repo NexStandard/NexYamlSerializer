@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using NexYaml;
+using NexYaml.Parser;
+using NexYaml.Serialization;
 using NexYamlTest.ComplexCases;
 using NexYamlTest.DataStyleTests;
 using NexYamlTest.SimpleClasses;
@@ -24,8 +27,9 @@ public class CollectionTest
         var collection = new NullDictionary();
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(collection);
-
-        var d = await Yaml.Read<NullDictionary>(s);
+        var parser = new NexYaml.XParser.YamlParser(s, IYamlSerializerResolver.Default).Parse();
+        var first = parser.First();
+        var d = await first.Read<NullDictionary>(first,new ParseContext());
         Assert.NotNull(d);
         Assert.Null(d.dict);
     }
@@ -40,7 +44,9 @@ public class CollectionTest
         };
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(list);
-        var d = await Yaml.Read<List<GenericAbstract<int, int>>>(s);
+        var parser = new NexYaml.XParser.YamlParser(s, IYamlSerializerResolver.Default).Parse();
+        var first = parser.First();
+        var d = await first.Read<List<GenericAbstract<int, int>>>(first, new ParseContext());
         Assert.NotNull(d);
         Assert.IsType<GenericAbstractImlementationLessParams<int>>(d[0]);
         Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
@@ -61,13 +67,17 @@ public class CollectionTest
         };
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(list, DataStyle.Compact);
-        var d = await Yaml.Read<IList<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>>(s);
+        var parser = new NexYaml.XParser.YamlParser(s, IYamlSerializerResolver.Default).Parse();
+        var first = parser.First();
+        var d = await first.Read<IList<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>>(first, new ParseContext());
         Assert.NotNull(d);
         Assert.IsType<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>(d[0]);
         Assert.IsType<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>(d[1]);
 
         var s2 = Yaml.Write(list, DataStyle.Normal);
-        var d2 = await Yaml.Read<IList<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>>(s2);
+        var parser2 = new NexYaml.XParser.YamlParser(s2, IYamlSerializerResolver.Default).Parse();
+        var first2 = parser.First();
+        var d2 = await first.Read<IList<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>>(first2, new ParseContext());
         Assert.NotNull(d2);
         Assert.IsType<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>(d2[0]);
         Assert.IsType<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>(d2[1]);

@@ -79,7 +79,7 @@ public sealed class YamlReader(YamlParser parser, IYamlSerializerResolver Resolv
             }
             else
             {
-                Type alias = Resolver.GetAliasType(tag.Handle);
+                Type alias = Resolver.GetAliasType("!" + tag.Handle);
                 serializer = Resolver.GetSerializer(alias, type);
 
                 var res = serializer.ReadUnknown(this, parseResult);
@@ -143,7 +143,7 @@ public sealed class YamlReader(YamlParser parser, IYamlSerializerResolver Resolv
         return false;
     }
 
-    public bool TryGetCurrentTag(out Tag tag)
+    private bool TryGetCurrentTag(out Tag tag)
     {
         return parser.TryGetCurrentTag(out tag);
     }

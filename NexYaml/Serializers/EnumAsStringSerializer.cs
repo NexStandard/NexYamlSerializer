@@ -2,6 +2,7 @@ using System.Runtime.Serialization;
 using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
+using NexYaml.XParser;
 using Stride.Core;
 
 namespace NexYaml.Serializers;
@@ -87,6 +88,10 @@ public class EnumAsStringSerializer<T> : YamlSerializer<T>
         }
 
         throw new YamlException($"Cannot detect a scalar value of {typeof(T)}");
+    }
+    public override ValueTask<T?> Read(Scope scope, ParseContext parseResult)
+    {
+        throw new NotImplementedException();
     }
 }
 

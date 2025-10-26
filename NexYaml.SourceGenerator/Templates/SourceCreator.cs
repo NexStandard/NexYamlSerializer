@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Threading.Tasks;
 using NexYaml.SourceGenerator.MemberApi.Data;
 
 namespace NexYaml.SourceGenerator.Templates;
@@ -23,7 +24,9 @@ internal static class SourceCreator
         var setResults = new StringBuilder();
         var objTempVariables = new StringBuilder();
         var ifStatement = new StringBuilder();
+        var ifStatementNew = new StringBuilder();
         var awaits = new StringBuilder();
+        var awaitsNew = new StringBuilder();
         var map = package.MemberSymbols;
         // needs ID at first place to avoid deadlock on awaits for reference resolving
         var orderedSymbols = package.MemberSymbols.OrderByDescending(s => s.Name == "Id").ToList();
@@ -52,20 +55,26 @@ internal static class SourceCreator
             if (member.Context.Mode is MemberApi.UniversalAnalyzers.MemberMode.Content)
             {
                 awaits.AppendLine($"await var_{member.Name};");
+                awaitsNew.AppendLine($"await var_{member.Name};");
             }
             else if (member.IsInit)
             {
                 awaits.AppendLine($"\t\tExternWrapper{info.TypeParameterArguments}.set_{member.Name}(res,await var_{member.Name});");
+                awaitsNew.AppendLine($"\t\tExternWrapper{info.TypeParameterArguments}.set_{member.Name}(res,await var_{member.Name});");
             }
             else
             {
                 awaits.AppendLine($"\t\tres.{member.Name} = await var_{member.Name};");
+                awaitsNew.AppendLine($"\t\tres.{member.Name} = await var_{member.Name};");
             }
             if (package.ClassInfo.IsIIdentifiable && member.Name == "Id")
             {
                 awaits.AppendLine("\t\tstream.RegisterIdentifiable(res.Id, res);");
+                awaitsNew.AppendLine("\t\tscope.IdentifiableResolver.RegisterIdentifiable(res.Id, res);");
             }
             ifStatement.AppendLine($"\t\t\tif (key.SequenceEqual(UTF8{member.Name})){{stream.Move(ParseEventType.Scalar);var_{member.Name} = stream.Read<{(member.IsArray ? member.Type + "[]" : member.Type)}>(context_{member.Name}); continue; }}");
+            ifStatementNew.AppendLine($"\t\t\tif (map.Key.SequenceEqual(UTF8{member.Name})){{ var_{member.Name} = mapping.Read<{(member.IsArray ? member.Type + "[]" : member.Type)}>(map.Value, context_{member.Name}); continue; }}");
+
         }
         ifStatement.AppendLine("\t\t\tstream.SkipRead();");
 
@@ -89,6 +98,7 @@ using System.Collections.Generic;
 using NexYaml;
 using NexYaml.Parser;
 using NexYaml.Serialization;
+using NexYaml.XParser;
 using Stride.Core;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -132,6 +142,17 @@ file sealed class {{info.GeneratorName + info.TypeParameterArguments}} : YamlSer
         }
         stream.Move(ParseEventType.MappingEnd);
 {{awaits}}
+        return res;
+    }
+    public override async ValueTask<{{info.NameDefinition}}> Read(Scope scope, ParseContext context)
+    {
+{{objTempVariables}}
+        var mapping = scope.As<MappingScope>();
+        foreach(var map in mapping)
+        {
+{{ifStatementNew}}
+        }
+{{awaitsNew}}
         return res;
     }
 }

@@ -1,6 +1,8 @@
 using NexYaml.Parser;
 using NexYaml.Serialization;
+using NexYaml.XParser;
 using Stride.Core;
+using Stride.Input;
 
 namespace NexYaml.Serializers;
 
@@ -26,6 +28,14 @@ public class KeyValuePairSerializer<TKey, TValue> : YamlSerializer<KeyValuePair<
         var k = await key;
         var v = await value;
 
+        return new KeyValuePair<TKey?, TValue?>(k, v);
+    }
+    public override async ValueTask<KeyValuePair<TKey?, TValue?>> Read(Scope scope, ParseContext parseResult)
+    {
+        List<Task<KeyValuePair<TKey, TValue>>> tasks = new();
+        var scalarScope = scope.As<XParser.SequenceScope>().ToList();
+        var k = await scalarScope[0].Read<TKey?>(scalarScope[0],new ParseContext());
+        var v = await scalarScope[1].Read<TValue?>(scalarScope[1], new ParseContext());
         return new KeyValuePair<TKey?, TValue?>(k, v);
     }
 }

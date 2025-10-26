@@ -32,13 +32,6 @@ public interface IYamlReader
     bool HasMapping(out char[] mappingKey, bool proxy);
 
     /// <summary>
-    /// Tries to get the tag currently associated with the YAML stream.
-    /// </summary>
-    /// <param name="tag">The current tag, if present.</param>
-    /// <returns><c>true</c> if a tag is found; otherwise, <c>false</c>.</returns>
-    public bool TryGetCurrentTag(out Tag tag);
-
-    /// <summary>
     /// Moves the reader to the next scalar value with the expected <paramref name="eventType"/>.
     /// </summary>
     /// <param name="eventType">The expected event type to read.</param>

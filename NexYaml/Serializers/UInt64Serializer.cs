@@ -2,6 +2,7 @@ using System.Globalization;
 using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
+using NexYaml.XParser;
 using Stride.Core;
 
 namespace NexYaml.Serializers;
@@ -26,5 +27,10 @@ public class UInt64Serializer : YamlSerializer<ulong>
         }
         stream.SkipRead();
         throw YamlException.ThrowExpectedTypeParseException(typeof(ulong), span, stream.CurrentMarker);
+    }
+    public override ValueTask<ulong> Read(Scope scope, ParseContext parseResult)
+    {
+        var scalarScope = scope.As<XParser.ScalarScope>();
+        return new(ulong.Parse(scalarScope.Value));
     }
 }

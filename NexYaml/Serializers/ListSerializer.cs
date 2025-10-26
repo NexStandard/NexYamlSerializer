@@ -1,5 +1,6 @@
 using NexYaml.Parser;
 using NexYaml.Serialization;
+using NexYaml.XParser;
 using Stride.Core;
 
 namespace NexYaml.Serializers;
@@ -75,6 +76,17 @@ public class ListSerializer<T> : YamlSerializer<List<T?>>
         stream.Move(ParseEventType.SequenceEnd);
         return (await Task.WhenAll(tasks)).ToList();
     }
+    public override async ValueTask<List<T?>?> Read(Scope scope, ParseContext parseResult)
+    {
+        var sequenceScope = scope.As<XParser.SequenceScope>();
+        var list = new List<T>();
+        var tasks = new List<Task<T?>>();
+        foreach (var element in sequenceScope)
+        {
+            tasks.Add(sequenceScope.Read<T>(element, new ParseContext()).AsTask());
+        }
+        return (await Task.WhenAll(tasks)).ToList();
+    }
 }
 public class ListSerializerFactory : IYamlSerializerFactory
 {
@@ -86,7 +98,7 @@ public class ListSerializerFactory : IYamlSerializerFactory
 
         resolver.Register(this, typeof(List<>), typeof(List<>));
 
-        resolver.RegisterTag("List", typeof(List<>));
+        resolver.RegisterTag("!List", typeof(List<>));
         resolver.Register(this, typeof(List<>), typeof(IList<>));
         resolver.Register(this, typeof(List<>), typeof(ICollection<>));
         resolver.Register(this, typeof(List<>), typeof(IReadOnlyList<>));

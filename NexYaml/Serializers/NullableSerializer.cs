@@ -1,5 +1,7 @@
-﻿using NexYaml.Parser;
+﻿using System.IO;
+using NexYaml.Parser;
 using NexYaml.Serialization;
+using NexYaml.XParser;
 using Stride.Core;
 
 namespace NexYaml.Serializers;
@@ -15,7 +17,10 @@ internal class NullableSerializer<T> : YamlSerializer<Nullable<T>>
     {
         return new T?(await stream.Read<T>(parseResult));
     }
-
+    public override async ValueTask<T?> Read(Scope scope, ParseContext parseResult)
+    {
+        return new T?(await scope.Read<T>(scope,parseResult));
+    }
 }
 public struct NullableFactory : IYamlSerializerFactory
 {

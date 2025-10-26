@@ -1,6 +1,7 @@
 using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
+using NexYaml.XParser;
 using Stride.Core;
 
 namespace NexYaml.Serializers;
@@ -22,5 +23,9 @@ public class NullableStringSerializer : YamlSerializer<string>
         }
         stream.SkipRead();
         throw YamlException.ThrowExpectedTypeParseException(typeof(short), span, stream.CurrentMarker);
+    }
+    public override ValueTask<string?> Read(Scope scope, ParseContext parseResult)
+    {
+        return new (scope.As<XParser.ScalarScope>().Value);
     }
 }

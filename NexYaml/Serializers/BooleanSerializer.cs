@@ -1,6 +1,7 @@
 using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
+using NexYaml.XParser;
 using Stride.Core;
 namespace NexYaml.Serializers;
 
@@ -22,5 +23,10 @@ public class BooleanSerializer : YamlSerializer<bool>
         }
         stream.SkipRead();
         throw YamlException.ThrowExpectedTypeParseException(typeof(DateTime), span, stream.CurrentMarker);
+    }
+    public override ValueTask<bool> Read(Scope scope, ParseContext parseResult)
+    {
+        var s = scope.As<XParser.ScalarScope>();
+        return new(bool.Parse(s.Value));
     }
 }
