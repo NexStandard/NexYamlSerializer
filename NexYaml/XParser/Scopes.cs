@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Irony.Parsing;
 using NexYaml.Parser;
 using NexYaml.Serialization;
+using NexYaml.Serializers;
 using Stride.Core.Extensions;
 
 namespace NexYaml.XParser
@@ -27,6 +29,15 @@ namespace NexYaml.XParser
             if(scope is ScalarScope scalar && scalar.Value == "!!null")
             {
                 return new ValueTask<T?>(default(T));
+            }
+            if (typeof(T).IsArray)
+            {
+                var t = typeof(T).GetElementType()!;
+                var arraySerializerType = typeof(ArraySerializer<>).MakeGenericType(t);
+                var arraySerializer = (YamlSerializer)Activator.CreateInstance(arraySerializerType)!;
+
+                var value = Convert<T>(arraySerializer.ReadUnknown(scope, context));
+                return value;
             }
             Type type = typeof(T);
 
