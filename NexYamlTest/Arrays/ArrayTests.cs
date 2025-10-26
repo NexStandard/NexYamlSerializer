@@ -22,7 +22,7 @@ public class ArrayTests
             Value = [1, 2]
         };
         var intArrayString = Yaml.Write(intArray);
-        var intArrayDeserialized = await Yaml.Read<Generics<int[]>>(intArrayString);
+        var intArrayDeserialized = await TestParser.Read<Generics<int[]>>(intArrayString);
         Assert.NotNull(intArrayDeserialized);
         Assert.NotNull(intArrayDeserialized.Value);
         Assert.Equal(1, intArrayDeserialized.Value[0]);
@@ -38,7 +38,7 @@ public class ArrayTests
             Value = ["bob0", "bob1"]
         };
         var stringArrayString = Yaml.Write(array);
-        var stringArrayDeserialized = await Yaml.Read<Generics<string[]>>(stringArrayString);
+        var stringArrayDeserialized = await TestParser.Read<Generics<string[]>>(stringArrayString);
         Assert.NotNull(stringArrayDeserialized);
         Assert.NotNull(stringArrayDeserialized.Value);
         Assert.Equal("bob0", stringArrayDeserialized.Value[0]);
@@ -54,7 +54,7 @@ public class ArrayTests
             Value = [[2], [1]]
         };
         var stringArrayString = Yaml.Write(array, Stride.Core.DataStyle.Normal);
-        var stringArrayDeserialized = await Yaml.Read<Generics<int[][]>>(stringArrayString);
+        var stringArrayDeserialized = await TestParser.Read<Generics<int[][]>>(stringArrayString);
         Assert.NotNull(stringArrayDeserialized);
         Assert.NotNull(stringArrayDeserialized.Value);
         Assert.Equal([2], stringArrayDeserialized.Value[0]);
@@ -70,7 +70,7 @@ public class ArrayTests
             Value = [[2], [1]]
         };
         var stringArrayString = Yaml.Write(array, Stride.Core.DataStyle.Compact);
-        var stringArrayDeserialized = await Yaml.Read<Generics<int[][]>>(stringArrayString);
+        var stringArrayDeserialized = await TestParser.Read<Generics<int[][]>>(stringArrayString);
         Assert.NotNull(stringArrayDeserialized);
         Assert.NotNull(stringArrayDeserialized.Value);
         Assert.Equal([2], stringArrayDeserialized.Value[0]);
@@ -87,7 +87,7 @@ public class ArrayTests
             new List<int>() { 2 },
         };
         var stringArrayString = Yaml.Write(array, Stride.Core.DataStyle.Compact);
-        var stringArrayDeserialized = await Yaml.Read<List<List<int>>>(stringArrayString);
+        var stringArrayDeserialized = await TestParser.Read<List<List<int>>>(stringArrayString);
         Assert.NotNull(stringArrayDeserialized);
         Assert.NotNull(stringArrayDeserialized[0]);
         Assert.NotNull(stringArrayDeserialized[1]);
@@ -103,7 +103,7 @@ public class ArrayTests
             Value = ["1", "2"]
         };
         var stringArrayString = Yaml.Write(array);
-        var stringArrayDeserialized = await Yaml.Read<Generics<int[]>>(stringArrayString);
+        var stringArrayDeserialized = await TestParser.Read<Generics<int[]>>(stringArrayString);
         Assert.NotNull(stringArrayDeserialized);
         Assert.NotNull(stringArrayDeserialized.Value);
         Assert.Equal(1, stringArrayDeserialized.Value[0]);
@@ -118,7 +118,7 @@ public class ArrayTests
             Value = []
         };
         var stringArrayString = Yaml.Write(array);
-        var stringArrayDeserialized = await Yaml.Read<Generics<int[]>>(stringArrayString);
+        var stringArrayDeserialized = await TestParser.Read<Generics<int[]>>(stringArrayString);
         Assert.NotNull(stringArrayDeserialized);
         Assert.NotNull(stringArrayDeserialized.Value);
         Assert.Empty(stringArrayDeserialized.Value);
@@ -132,6 +132,6 @@ public class ArrayTests
             Value = ["1c", "2c"]
         };
         var stringArrayString = Yaml.Write(array);
-        await Assert.ThrowsAsync<YamlException>(async () => await Yaml.Read<Generics<int[]>>(stringArrayString));
+        await Assert.ThrowsAsync<YamlException>(async () => await TestParser.Read<Generics<int[]>>(stringArrayString));
     }
 }

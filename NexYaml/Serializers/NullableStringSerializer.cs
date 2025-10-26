@@ -14,16 +14,6 @@ public class NullableStringSerializer : YamlSerializer<string>
         context.WriteScalar(context.Writer.FormatString(context, value, style));
     }
 
-    public override ValueTask<string?> Read(IYamlReader stream, ParseContext parseResult)
-    {
-        if (stream.TryGetScalarAsString(out var span))
-        {
-            stream.Move(ParseEventType.Scalar);
-            return new(span);
-        }
-        stream.SkipRead();
-        throw YamlException.ThrowExpectedTypeParseException(typeof(short), span, stream.CurrentMarker);
-    }
     public override ValueTask<string?> Read(Scope scope, ParseContext parseResult)
     {
         return new (scope.As<XParser.ScalarScope>().Value);

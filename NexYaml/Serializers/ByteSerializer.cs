@@ -1,5 +1,4 @@
 using System.Globalization;
-using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using NexYaml.XParser;
@@ -18,16 +17,6 @@ public class ByteSerializer : YamlSerializer<byte>
         context.WriteScalar(span[..written]);
     }
 
-    public override ValueTask<byte> Read(IYamlReader stream, ParseContext parseResult)
-    {
-        if (stream.TryGetScalarAsString(out var span) && byte.TryParse(span, out var value))
-        {
-            stream.Move(ParseEventType.Scalar);
-            return new(value);
-        }
-        stream.SkipRead();
-        throw YamlException.ThrowExpectedTypeParseException(typeof(DateTime), span, stream.CurrentMarker);
-    }
     public override ValueTask<byte> Read(Scope scope, ParseContext parseResult)
     {
         var scalarScope = scope.As<XParser.ScalarScope>();

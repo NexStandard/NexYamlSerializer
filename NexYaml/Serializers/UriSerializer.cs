@@ -15,17 +15,6 @@ public class UriSerializer : YamlSerializer<Uri>
         context.WriteScalar(value.ToString());
     }
 
-    public override ValueTask<Uri?> Read(IYamlReader stream, ParseContext parseResult)
-    {
-        if (stream.TryGetScalarAsString(out var scalar) && scalar != null)
-        {
-            var uri = new Uri(scalar, UriKind.RelativeOrAbsolute);
-            stream.Move(ParseEventType.Scalar);
-            return new(uri);
-        }
-        stream.SkipRead();
-        throw YamlException.ThrowExpectedTypeParseException(typeof(Uri), scalar, stream.CurrentMarker);
-    }
     public override ValueTask<Uri?> Read(Scope scope, ParseContext parseResult)
     {
         var scalarScope = scope.As<XParser.ScalarScope>();

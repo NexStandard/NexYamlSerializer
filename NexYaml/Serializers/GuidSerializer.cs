@@ -16,16 +16,6 @@ public class GuidSerializer : YamlSerializer<Guid>
         context.WriteString(value.ToString());
     }
 
-    public override ValueTask<Guid> Read(IYamlReader stream, ParseContext parseResult)
-    {
-        if (stream.TryGetScalarAsString(out var span) && Guid.TryParse(span, CultureInfo.InvariantCulture, out var value))
-        {
-            stream.Move(ParseEventType.Scalar);
-            return new(value);
-        }
-        stream.SkipRead();
-        throw YamlException.ThrowExpectedTypeParseException(typeof(Guid), span, stream.CurrentMarker);
-    }
     public override ValueTask<Guid> Read(Scope scope, ParseContext parseResult)
     {
         var scalarScope = scope.As<XParser.ScalarScope>();

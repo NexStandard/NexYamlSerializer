@@ -18,19 +18,9 @@ public class DecimalSerializer : YamlSerializer<decimal>
         context.WriteScalar(span[..written]);
     }
 
-    public override ValueTask<decimal> Read(IYamlReader stream, ParseContext parseResult)
-    {
-        if (stream.TryGetScalarAsString(out var span) && decimal.TryParse(span, CultureInfo.InvariantCulture, out var value))
-        {
-            stream.Move(ParseEventType.Scalar);
-            return new(value);
-        }
-        stream.SkipRead();
-        throw YamlException.ThrowExpectedTypeParseException(typeof(decimal), span, stream.CurrentMarker);
-    }
     public override ValueTask<decimal> Read(Scope scope, ParseContext parseResult)
     {
         var scalarScope = scope.As<XParser.ScalarScope>();
-        return new(decimal.Parse(scalarScope.Value));
+        return new(decimal.Parse(scalarScope.Value, CultureInfo.InvariantCulture));
     }
 }

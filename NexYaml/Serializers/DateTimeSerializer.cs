@@ -14,16 +14,6 @@ public class DateTimeSerializer : YamlSerializer<DateTime>
         context.WriteType(value.ToString(), style);
     }
 
-    public override ValueTask<DateTime> Read(IYamlReader stream, ParseContext parseResult)
-    {
-        if (stream.TryGetScalarAsString(out var span) && DateTime.TryParse(span, out var value))
-        {
-            stream.Move(ParseEventType.Scalar);
-            return new(value);
-        }
-        stream.SkipRead();
-        throw YamlException.ThrowExpectedTypeParseException(typeof(DateTime), span, stream.CurrentMarker);
-    }
     public override ValueTask<DateTime> Read(Scope scope, ParseContext parseResult)
     {
         var scalarScope = scope.As<XParser.ScalarScope>();

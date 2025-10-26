@@ -1,9 +1,9 @@
-﻿using NexYaml.Parser;
-using NexYaml.Serialization;
+﻿using NexYaml.Serialization;
 using NexYaml.Serializers;
 using Stride.Core;
 
 namespace NexYaml.Plugins;
+
 internal class ArrayPlugin : IResolvePlugin
 {
     public bool Write<T, X>(WriteContext<X> context, T value, DataStyle style)
@@ -20,7 +20,7 @@ internal class ArrayPlugin : IResolvePlugin
         }
         return false;
     }
-
+    /*
     public bool Read<T>(IYamlReader stream, out ValueTask<T?> value, ParseContext result)
     {
         if (typeof(T).IsArray)
@@ -39,4 +39,5 @@ internal class ArrayPlugin : IResolvePlugin
     {
         return (T?)(await value);
     }
+    */
 }

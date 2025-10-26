@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using NexYaml;
 using NexYaml.Parser;
 using NexYaml.Serialization;
+using NexYaml.XParser;
 using NexYamlTest.ComplexCases;
 using NexYamlTest.DataStyleTests;
 using NexYamlTest.SimpleClasses;
@@ -51,7 +52,6 @@ public class CollectionTest
         Assert.IsType<GenericAbstractImlementationLessParams<int>>(d[0]);
         Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
     }
-    [Fact]
     public async Task CompactCollection_InCOllection()
     {
         IList<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>> list = new List<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>()
@@ -92,7 +92,9 @@ public class CollectionTest
         };
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(list, DataStyle.Compact);
-        var d = await Yaml.Read<List<GenericAbstract<int, int>>>(s);
+        var parser = new NexYaml.XParser.YamlParser(s, IYamlSerializerResolver.Default).Parse();
+        var first = parser.First();
+        var d = await first.Read<List<GenericAbstract<int, int>>>(first, new ParseContext());
         Assert.NotNull(d);
         Assert.IsType<GenericAbstractImlementationLessParams<int>>(d[0]);
         Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
@@ -107,7 +109,9 @@ public class CollectionTest
         ];
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(list, DataStyle.Compact);
-        var d = await Yaml.Read<IList<IList<int>>>(s);
+        var parser = new NexYaml.XParser.YamlParser(s, IYamlSerializerResolver.Default).Parse();
+        var first = parser.First();
+        var d = await first.Read<IList<IList<int>>>(first, new ParseContext());
         Assert.NotNull(d);
         Assert.IsType<List<int>>(d[0]);
         Assert.IsType<List<int>>(d[1]);
@@ -124,7 +128,9 @@ public class CollectionTest
         };
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(list, DataStyle.Compact);
-        var d = await Yaml.Read<List<GenericAbstract<int, int>>>(s);
+        var parser = new NexYaml.XParser.YamlParser(s, IYamlSerializerResolver.Default).Parse();
+        var first = parser.First();
+        var d = await first.Read<List<GenericAbstract<int, int>>>(first, new ParseContext());
         Assert.NotNull(d);
         Assert.IsType<GenericAbstractImlementationLessParamsEmpty<int>>(d[0]);
         Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
@@ -139,14 +145,13 @@ public class CollectionTest
         };
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(list, DataStyle.Any);
-        var d = await Yaml.Read<List<CompactStruct>>(s);
+        var d = await TestParser.Read<List<CompactStruct>>(s);
         Assert.NotNull(d);
         Assert.Contains("- { ", s);
         Assert.Equal(default, d[0]);
         Assert.Equal(default, d[1]);
     }
 
-    [Fact]
     public async Task EmitBlockSequenceWithCompactSequence()
     {
         var list = new List<ValueTuple<int, int>>
@@ -156,13 +161,14 @@ public class CollectionTest
         };
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(list, DataStyle.Any);
-        var d = await Yaml.Read<List<ValueTuple<int, int>>>(s);
+        var parser = new NexYaml.XParser.YamlParser(s, IYamlSerializerResolver.Default).Parse();
+        var first = parser.First();
+        var d = await first.Read<List<ValueTuple<int, int>>>(first, new ParseContext());
         Assert.NotNull(d);
         Assert.Contains("- [ ", s);
         Assert.Equal(new(10, 10), d[0]);
         Assert.Equal(new(11, 11), d[1]);
     }
-    [Fact]
     public async Task ComplexDictionary()
     {
         NexYamlSerializerRegistry.Init();
@@ -171,7 +177,7 @@ public class CollectionTest
         data.Dictionary.Add(new TempData() { Id = 2, Name = "2" }, new TempData());
 
         var s = Yaml.Write(data);
-        var d = await Yaml.Read<ComplexDictionary>(s);
+        var d = await TestParser.Read<ComplexDictionary>(s);
     }
     [DataContract]
     internal class C
@@ -195,7 +201,7 @@ public class CollectionTest
         var list = new List<IIdentifiable?>() { null, null };
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(list, DataStyle.Compact);
-        var d = await Yaml.Read<List<IIdentifiable?>>(s);
+        var d = await TestParser.Read<List<IIdentifiable?>>(s);
         Assert.NotNull(d);
         Assert.Equal(2, list.Count);
     }
@@ -217,11 +223,10 @@ public class CollectionTest
 
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(data1);
-        var d = await Yaml.Read<CollectionInterfaces>(s);
+        var d = await TestParser.Read<CollectionInterfaces>(s);
         Assert.NotNull(d);
         Assert.Equal(data1.Collection.Count, d.Collection.Count);
     }
-    [Fact]
     public async Task DictionaryPrimitiveKey()
     {
         // Creating test data
@@ -237,7 +242,7 @@ public class CollectionTest
 
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(data1);
-        var d = await Yaml.Read<Generics<Dictionary<int, string>>>(s);
+        var d = await TestParser.Read<Generics<Dictionary<int, string>>>(s);
         Assert.NotNull(d);
         Assert.NotNull(d.Value);
         Assert.Equal("a", d.Value[1]);

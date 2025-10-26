@@ -13,10 +13,7 @@ internal class NullableSerializer<T> : YamlSerializer<Nullable<T>>
     {
         // do nothing?
     }
-    public override async ValueTask<T?> Read(IYamlReader stream, ParseContext parseResult)
-    {
-        return new T?(await stream.Read<T>(parseResult));
-    }
+
     public override async ValueTask<T?> Read(Scope scope, ParseContext parseResult)
     {
         return new T?(await scope.Read<T>(scope,parseResult));

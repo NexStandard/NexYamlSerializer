@@ -16,20 +16,6 @@ public class KeyValuePairSerializer<TKey, TValue> : YamlSerializer<KeyValuePair<
             .End(context);
     }
 
-    public override async ValueTask<KeyValuePair<TKey?, TValue?>> Read(IYamlReader stream, ParseContext parseResult)
-    {
-        List<Task<KeyValuePair<TKey, TValue>>> tasks = new();
-        stream.Move(ParseEventType.SequenceStart);
-
-        var key = stream.Read<TKey>(new ParseContext());
-        var value = stream.Read<TValue>(new ParseContext());
-
-        stream.Move(ParseEventType.SequenceEnd);
-        var k = await key;
-        var v = await value;
-
-        return new KeyValuePair<TKey?, TValue?>(k, v);
-    }
     public override async ValueTask<KeyValuePair<TKey?, TValue?>> Read(Scope scope, ParseContext parseResult)
     {
         List<Task<KeyValuePair<TKey, TValue>>> tasks = new();

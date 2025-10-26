@@ -131,19 +131,6 @@ file sealed class {{info.GeneratorName + info.TypeParameterArguments}} : YamlSer
         {{writeString}}
     }
 
-    public override async ValueTask<{{info.NameDefinition}}> Read(IYamlReader stream, ParseContext context)
-    {
-
-{{objTempVariables}}
-        stream.Move(ParseEventType.MappingStart);
-        while(stream.HasMapping(out var key,false))
-        {
-{{ifStatement}}
-        }
-        stream.Move(ParseEventType.MappingEnd);
-{{awaits}}
-        return res;
-    }
     public override async ValueTask<{{info.NameDefinition}}> Read(Scope scope, ParseContext context)
     {
 {{objTempVariables}}

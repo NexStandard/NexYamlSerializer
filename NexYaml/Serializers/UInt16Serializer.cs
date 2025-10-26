@@ -18,19 +18,9 @@ public class UInt16Serializer : YamlSerializer<ushort>
         context.WriteScalar(span[..written]);
     }
 
-    public override ValueTask<ushort> Read(IYamlReader stream, ParseContext parseResult)
-    {
-        if (stream.TryGetScalarAsString(out var span) && ushort.TryParse(span, CultureInfo.InvariantCulture, out var value))
-        {
-            stream.Move(ParseEventType.Scalar);
-            return new(value);
-        }
-        stream.SkipRead();
-        throw YamlException.ThrowExpectedTypeParseException(typeof(ushort), span, stream.CurrentMarker);
-    }
     public override ValueTask<ushort> Read(Scope scope, ParseContext parseResult)
     {
         var scalarScope = scope.As<XParser.ScalarScope>();
-        return new(ushort.Parse(scalarScope.Value));
+        return new(ushort.Parse(scalarScope.Value, CultureInfo.InvariantCulture));
     }
 }

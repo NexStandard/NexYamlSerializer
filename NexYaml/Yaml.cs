@@ -57,25 +57,5 @@ public static class Yaml
         return sb.ToString();
     }
 
-    /// <summary>
-    /// Asynchronously deserializes YAML content from a string into an object of type <typeparamref name="T"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the object to be deserialized from the <paramref name="yamlString"/>.</typeparam>
-    /// <param name="yamlString">A string containing YAML content.</param>
-    /// <param name="options">
-    /// The options used by the YAML serializer resolver to control deserialization features.
-    /// If not specified, the default resolver <see cref="IYamlSerializerResolver.Default"/> will be used.
-    /// </param>
-    /// <returns>
-    /// A <see cref="ValueTask{T}"/> with the resulting object of type <typeparamref name="T"/> upon completion.
-    /// </returns>
-    public static async ValueTask<T?> Read<T>(string yamlString, IYamlSerializerResolver? options = null)
-    {
-        var sequence = new ReadOnlySequence<char>(yamlString.ToArray());
-        using var parser = YamlParser.FromSequence(sequence, options ?? IYamlSerializerResolver.Default);
-        using var reader = new YamlReader(parser, options ?? IYamlSerializerResolver.Default);
 
-        parser.SkipAfter(ParseEventType.DocumentStart);
-        return await reader.Read<T>(new());
-    }
 }

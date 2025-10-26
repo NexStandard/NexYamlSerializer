@@ -1,5 +1,4 @@
-﻿using NexYaml.Parser;
-using NexYaml.Serialization;
+﻿using NexYaml.Serialization;
 using Stride.Core;
 
 namespace NexYaml.Plugins;
@@ -19,11 +18,6 @@ internal class ReferencePlugin : IResolvePlugin
                 context.Writer.References.Add(id.Id);
             }
         }
-        return false;
-    }
-    public bool Read<T>(IYamlReader stream, out ValueTask<T?> value, ParseContext result)
-    {
-        value = default;
         return false;
     }
 }

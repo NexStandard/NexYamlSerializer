@@ -18,19 +18,9 @@ public class Int32Serializer : YamlSerializer<int>
         context.WriteScalar(span[..written]);
     }
 
-    public override ValueTask<int> Read(IYamlReader stream, ParseContext parseResult)
-    {
-        if (stream.TryGetScalarAsString(out var span) && int.TryParse(span, CultureInfo.InvariantCulture, out var value))
-        {
-            stream.Move(ParseEventType.Scalar);
-            return new(value);
-        }
-        stream.SkipRead();
-        throw YamlException.ThrowExpectedTypeParseException(typeof(double), span, stream.CurrentMarker);
-    }
     public override ValueTask<int> Read(Scope scope, ParseContext parseResult)
     {
         var scalarScope = scope.As<XParser.ScalarScope>();
-        return new(int.Parse(scalarScope.Value));
+        return new(int.Parse(scalarScope.Value, CultureInfo.InvariantCulture));
     }
 }

@@ -15,17 +15,6 @@ public class CharSerializer : YamlSerializer<char>
         context.WriteScalar(['\'', value, '\'']);
     }
 
-    public override ValueTask<char> Read(IYamlReader stream, ParseContext parseResult)
-    {
-        if (stream.TryGetScalarAsString(out var span) && char.TryParse(span, out var value) && span.Length == 1)
-        {
-            value = span[0];
-            stream.Move(ParseEventType.Scalar);
-            return new(value);
-        }
-        stream.SkipRead();
-        throw YamlException.ThrowExpectedTypeParseException(typeof(DateTime), span, stream.CurrentMarker);
-    }
     public override ValueTask<char> Read(Scope scope, ParseContext parseResult)
     {
         var scalarScope = scope.As<XParser.ScalarScope>();

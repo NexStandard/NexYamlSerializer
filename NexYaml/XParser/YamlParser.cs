@@ -1,27 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using NexYaml.Serialization;
 
 namespace NexYaml.XParser
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Text;
-    using NexYaml.Serialization;
-
     public sealed class YamlParser : IDisposable
     {
         private readonly StreamReader _reader;
         private string? _currentLine;
         private bool _eof;
-        private IYamlSerializerResolver _resolver;
+        private readonly IYamlSerializerResolver _resolver;
         private IdentifiableResolver IdentifiableResolver { get; } = new();
 
-        // Construct from string
         public YamlParser(string text, IYamlSerializerResolver resolver)
         {
             var bytes = Encoding.UTF8.GetBytes(text);
@@ -30,7 +23,6 @@ namespace NexYaml.XParser
             _resolver = resolver;
         }
 
-        // Construct from stream
         public YamlParser(Stream stream, IYamlSerializerResolver resolver, Encoding? encoding = null)
         {
             _reader = new StreamReader(stream, encoding ?? Encoding.UTF8, leaveOpen: true);
@@ -48,7 +40,21 @@ namespace NexYaml.XParser
 
                 if (trimmed.StartsWith("!") && trimmed != "!!null")
                 {
-                    string tag = trimmed;
+                    int spaceIndex = trimmed.IndexOf(' ');
+                    string tag = spaceIndex > 0 ? trimmed.Substring(0, spaceIndex) : trimmed;
+                    string inline = spaceIndex > 0 ? trimmed.Substring(spaceIndex + 1).Trim() : "";
+
+                    if (inline.Length > 0)
+                    {
+                        if (inline.StartsWith("["))
+                            yield return ParseFlowSequence(inline, indent, tag);
+                        else if (inline.StartsWith("{"))
+                            yield return ParseFlowMapping(inline, indent, tag);
+                        else
+                            yield return new ScalarScope(inline, indent, _resolver, IdentifiableResolver, tag);
+                        continue;
+                    }
+
                     if (!ReadNextLine())
                         throw new InvalidOperationException($"Tag '{tag}' at indent {indent} not followed by a value");
 
@@ -145,11 +151,7 @@ namespace NexYaml.XParser
             var inner = text.Substring(1, text.Length - 2).Trim();
             if (inner.Length == 0) return map;
 
-            var entries = inner.Split(',')
-                               .Select(e => e.Trim())
-                               .Where(e => e.Length > 0);
-
-            foreach (var entry in entries)
+            foreach (var entry in SplitFlowItems(inner))
             {
                 var kv = entry.Split(':', 2);
                 if (kv.Length != 2)
@@ -226,7 +228,7 @@ namespace NexYaml.XParser
                         if (nextIndent > indent)
                         {
                             var nextTrim = _currentLine.TrimStart();
-                            if (nextTrim.StartsWith("- "))
+                              if (nextTrim.StartsWith("- "))
                                 seq.Add(ParseSequence(indent + 2, childTag));
                             else
                                 seq.Add(ParseMapping(indent + 2, childTag));
@@ -244,22 +246,35 @@ namespace NexYaml.XParser
             var seq = new SequenceScope(indent, _resolver, IdentifiableResolver, tag);
             var inner = text.Substring(1, text.Length - 2).Trim();
             if (inner.Length == 0) return seq;
-
-            var items = inner.Split(',')
-                             .Select(e => e.Trim())
-                             .Where(e => e.Length > 0);
-
-            foreach (var raw in items)
+            string bufferedTag = "";
+            foreach (var raw in SplitFlowItems(inner))
             {
                 string childTag = "";
                 string value = raw;
-
-                if (value.StartsWith("!") && value != "!!null")
+                if(bufferedTag == "")
                 {
-                    var segs = value.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
-                    childTag = segs[0];
-                    value = segs.Length > 1 ? segs[1].Trim() : "";
+                    if (value.StartsWith("!") && value != "!!null")
+                    {
+                        var segs = value.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+                        if (segs.Length == 1)
+                        {
+                            bufferedTag = segs[0];
+                            continue;
+                        }
+                        else
+                        {
+                            childTag = segs[0];
+                            value = segs.Length > 1 ? segs[1].Trim() : "";
+
+                        }
+                    }
                 }
+                else
+                {
+                    childTag = bufferedTag;
+                    bufferedTag = "";
+                }
+
                 if (IsQuoted(value))
                     seq.Add(new ScalarScope(Unquote(value), indent + 2, _resolver, IdentifiableResolver, childTag));
                 else if (value.StartsWith("|"))
@@ -271,14 +286,14 @@ namespace NexYaml.XParser
                 else
                     seq.Add(new ScalarScope(value, indent + 2, _resolver, IdentifiableResolver, childTag));
             }
+
             return seq;
         }
 
         private string ParseLiteralScalar(int indent)
         {
             var sb = new StringBuilder();
-            // consume the line with the '|' indicator
-            ReadNextLine();
+            ReadNextLine(); // consume the '|' line
 
             while (!_eof)
             {
@@ -287,7 +302,6 @@ namespace NexYaml.XParser
                 int lineIndent = CountIndent(_currentLine);
                 if (lineIndent < indent) break;
 
-                // strip the indent and append
                 sb.AppendLine(_currentLine.Substring(indent));
                 if (!ReadNextLine()) break;
             }
@@ -305,20 +319,78 @@ namespace NexYaml.XParser
 
         private static bool IsQuoted(string s)
         {
-            return (s.Length >= 2 &&
+            return s.Length >= 2 &&
                    ((s.StartsWith("\"") && s.EndsWith("\"")) ||
-                    (s.StartsWith("'") && s.EndsWith("'"))));
+                    (s.StartsWith("'") && s.EndsWith("'")));
         }
 
         private static string Unquote(string s)
         {
-            if (IsQuoted(s))
-                return s.Substring(1, s.Length - 2);
-            return s;
+            return IsQuoted(s) ? s.Substring(1, s.Length - 2) : s;
         }
 
         private static int CountIndent(string line)
-            => line.TakeWhile(c => c == ' ').Count();
+        {
+            return line.TakeWhile(c => c == ' ').Count();
+        }
+
+        private static List<string> SplitFlowItems(string input)
+        {
+            var result = new List<string>();
+            var sb = new StringBuilder();
+            int depth = 0;
+            bool inQuotes = false;
+            bool inTag = false;
+            char quoteChar = '\0';
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                char c = input[i];
+
+                if (inQuotes)
+                {
+                    sb.Append(c);
+                    if (c == quoteChar) inQuotes = false;
+                    continue;
+                }
+
+                if (c == '"' || c == '\'')
+                {
+                    inQuotes = true;
+                    quoteChar = c;
+                    sb.Append(c);
+                    continue;
+                }
+                if (c == '!' && sb.ToString().Trim().Length == 0)
+                {
+                    inTag = true;
+                }
+                if((c == ' ' ||  c == '[' || c == '{' ) && inTag)
+                {
+                    inTag = false;
+                    result.Add(sb.ToString().Trim());
+                    sb.Clear();
+                    continue;
+                }
+                if (c == '[' || c == '{') depth++;
+                if (c == ']' || c == '}') depth--;
+
+                if (c == ',' && depth == 0 && !inTag)
+                {
+                    result.Add(sb.ToString().Trim());
+                    sb.Clear();
+                }
+                else
+                {
+                    sb.Append(c);
+                }
+            }
+
+            if (sb.Length > 0)
+                result.Add(sb.ToString().Trim());
+
+            return result;
+        }
 
         public void Dispose()
         {
@@ -326,5 +398,3 @@ namespace NexYaml.XParser
         }
     }
 }
-
-

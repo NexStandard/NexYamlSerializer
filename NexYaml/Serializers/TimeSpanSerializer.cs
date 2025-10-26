@@ -16,16 +16,6 @@ public class TimeSpanSerializer : YamlSerializer<TimeSpan>
         context.WriteString(value.ToString());
     }
 
-    public override ValueTask<TimeSpan> Read(IYamlReader stream, ParseContext parseResult)
-    {
-        if (stream.TryGetScalarAsString(out var span) && TimeSpan.TryParse(span, CultureInfo.InvariantCulture, out var value))
-        {
-            stream.Move(ParseEventType.Scalar);
-            return new(value);
-        }
-        stream.SkipRead();
-        throw YamlException.ThrowExpectedTypeParseException(typeof(TimeSpan), span, stream.CurrentMarker);
-    }
     public override ValueTask<TimeSpan> Read(Scope scope, ParseContext parseResult)
     {
         var scalarScope = scope.As<XParser.ScalarScope>();

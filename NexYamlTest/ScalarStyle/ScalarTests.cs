@@ -29,7 +29,7 @@ namespace NexYamlTest.ScalarStyle
             }
             ;
             var s = Yaml.Write(w);
-            var d = await Yaml.Read<StringWrapper>(s);
+            var d = await TestParser.Read<StringWrapper>(s);
             Assert.NotNull(d);
             Assert.Equal(d.Value, w.Value);
         }
@@ -54,7 +54,7 @@ namespace NexYamlTest.ScalarStyle
                 Value = "\n\n!{[ ] \n, # ` \" \' &*?|-><=%@.\n"
             };
             var s = Yaml.Write(w, DataStyle.Compact);
-            var d = await Yaml.Read<StringWrapper>(s);
+            var d = await TestParser.Read<StringWrapper>(s);
             Assert.NotNull(d);
             Assert.Equal(w.Value, d.Value);
         }
@@ -67,7 +67,7 @@ namespace NexYamlTest.ScalarStyle
                 Value = "\n\n!{[ ] \n, # ` \" \' &*?|-><=%@."
             };
             var s = Yaml.Write(w, DataStyle.Normal);
-            var d = await Yaml.Read<StringWrapper>(s);
+            var d = await TestParser.Read<StringWrapper>(s);
             Assert.NotNull(d);
             Assert.Equal(w.Value, d.Value);
         }
@@ -80,7 +80,7 @@ namespace NexYamlTest.ScalarStyle
                 Value = "\n\n!{[ ] \n, # ` \" \' &*?|-><=%@.\n"
             };
             var s = Yaml.Write(w, DataStyle.Normal);
-            var d = await Yaml.Read<StringWrapper>(s);
+            var d = await TestParser.Read<StringWrapper>(s);
             Assert.NotNull(d);
             Assert.Equal(w.Value, d.Value);
         }
@@ -93,7 +93,7 @@ namespace NexYamlTest.ScalarStyle
                 Value = "\n\n!{[ ] \n, # ` \" \' &*?|-><=%@.\n\n"
             };
             var s = Yaml.Write(w, DataStyle.Normal);
-            var d = await Yaml.Read<StringWrapper>(s);
+            var d = await TestParser.Read<StringWrapper>(s);
             Assert.NotNull(d);
             Assert.Equal(w.Value, d.Value);
         }
@@ -106,7 +106,7 @@ namespace NexYamlTest.ScalarStyle
                 Value = "\n\n!{[ ] \n, # ` \" \' &*?|-><=%@."
             };
             var s = Yaml.Write(w, DataStyle.Normal);
-            var d = await Yaml.Read<StringWrapperSecondProperty>(s);
+            var d = await TestParser.Read<StringWrapperSecondProperty>(s);
             Assert.NotNull(d);
             Assert.Equal(w.Value, d.Value);
         }
@@ -119,7 +119,7 @@ namespace NexYamlTest.ScalarStyle
                 Value = "\n\n!{[ ] \n, # ` \" \' &*?|-><=%@.\n"
             };
             var s = Yaml.Write(w, DataStyle.Normal);
-            var d = await Yaml.Read<StringWrapperSecondProperty>(s);
+            var d = await TestParser.Read<StringWrapperSecondProperty>(s);
             Assert.NotNull(d);
             Assert.Equal(w.Value, d.Value);
         }
@@ -132,7 +132,7 @@ namespace NexYamlTest.ScalarStyle
                 Value = "\n\n!{[ ] \n, # ` \" \' &*?|-><=%@.\n\n"
             };
             var s = Yaml.Write(w, DataStyle.Normal);
-            var d = await Yaml.Read<StringWrapperSecondProperty>(s);
+            var d = await TestParser.Read<StringWrapperSecondProperty>(s);
             Assert.NotNull(d);
             Assert.Equal(w.Value, d.Value);
         }
@@ -145,7 +145,7 @@ namespace NexYamlTest.ScalarStyle
                 Value = "\n\n!{[ ] \n, # ` \" \' &*?|-><=%@.\n\n\n\n"
             };
             var s = Yaml.Write(w, DataStyle.Normal);
-            var d = await Yaml.Read<StringWrapperSecondProperty>(s);
+            var d = await TestParser.Read<StringWrapperSecondProperty>(s);
             Assert.NotNull(d);
             Assert.Equal(w.Value, d.Value);
         }

@@ -73,22 +73,6 @@ public class EnumAsStringSerializer<T> : YamlSerializer<T>
         }
     }
 
-    public override ValueTask<T?> Read(IYamlReader stream, ParseContext parseResult)
-    {
-        if (stream.TryGetScalarAsString(out var scalar))
-        {
-            if (scalar == null)
-            {
-                return new(default(T?));
-            }
-            else if (NameValueMapping.TryGetValue(scalar, out var val))
-            {
-                return new(val);
-            }
-        }
-
-        throw new YamlException($"Cannot detect a scalar value of {typeof(T)}");
-    }
     public override ValueTask<T?> Read(Scope scope, ParseContext parseResult)
     {
         throw new NotImplementedException();

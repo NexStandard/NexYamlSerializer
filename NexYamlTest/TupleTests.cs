@@ -12,7 +12,7 @@ public class TupleTests
     {
         NexYamlSerializerRegistry.Init();
         var t1 = Yaml.Write(new ValueTuple<int, int>(10, 10));
-        var d1 = await Yaml.Read<(int, int)>(t1);
+        var d1 = await TestParser.Read<(int, int)>(t1);
         Assert.Equal(10, d1.Item1);
         Assert.Equal(10, d1.Item2);
     }
@@ -21,7 +21,7 @@ public class TupleTests
     {
         NexYamlSerializerRegistry.Init();
         var t1 = Yaml.Write(new ValueTuple<int, int, int>(10, 10, 10));
-        var d1 = await Yaml.Read<(int, int, int)>(t1);
+        var d1 = await TestParser.Read<(int, int, int)>(t1);
         Assert.Equal(10, d1.Item1);
         Assert.Equal(10, d1.Item2);
         Assert.Equal(10, d1.Item3);
@@ -31,7 +31,7 @@ public class TupleTests
     {
         NexYamlSerializerRegistry.Init();
         var t1 = Yaml.Write(new ValueTuple<int, int, int, int>(10, 10, 10, 10));
-        var d1 = await Yaml.Read<(int, int, int, int)>(t1);
+        var d1 = await TestParser.Read<(int, int, int, int)>(t1);
         Assert.Equal(10, d1.Item1);
         Assert.Equal(10, d1.Item2);
         Assert.Equal(10, d1.Item3);
@@ -42,7 +42,7 @@ public class TupleTests
     {
         NexYamlSerializerRegistry.Init();
         var t1 = Yaml.Write(new ValueTuple<int, int, int, int, int>(10, 10, 10, 10, 10));
-        var d1 = await Yaml.Read<(int, int, int, int, int)>(t1);
+        var d1 = await TestParser.Read<(int, int, int, int, int)>(t1);
         Assert.Equal(10, d1.Item1);
         Assert.Equal(10, d1.Item2);
         Assert.Equal(10, d1.Item3);
@@ -54,7 +54,7 @@ public class TupleTests
     {
         NexYamlSerializerRegistry.Init();
         var t1 = Yaml.Write(new ValueTuple<int, int, int, int, int, int>(10, 10, 10, 10, 10, 10));
-        var d1 = await Yaml.Read<(int, int, int, int, int, int)>(t1);
+        var d1 = await TestParser.Read<(int, int, int, int, int, int)>(t1);
         Assert.Equal(10, d1.Item1);
         Assert.Equal(10, d1.Item2);
         Assert.Equal(10, d1.Item3);
@@ -67,7 +67,7 @@ public class TupleTests
     {
         NexYamlSerializerRegistry.Init();
         var t1 = Yaml.Write(new ValueTuple<int, int, int, int, int, int, int>(10, 10, 10, 10, 10, 10, 10));
-        var d1 = await Yaml.Read<(int, int, int, int, int, int, int)>(t1);
+        var d1 = await TestParser.Read<(int, int, int, int, int, int, int)>(t1);
         Assert.Equal(10, d1.Item1);
         Assert.Equal(10, d1.Item2);
         Assert.Equal(10, d1.Item3);
@@ -81,7 +81,7 @@ public class TupleTests
     {
         NexYamlSerializerRegistry.Init();
         var t1 = Yaml.Write(new Tuple<int, int>(10, 10));
-        var d1 = await Yaml.Read<Tuple<int, int>>(t1);
+        var d1 = await TestParser.Read<Tuple<int, int>>(t1);
         Assert.NotNull(d1);
         Assert.Equal(10, d1.Item1);
         Assert.Equal(10, d1.Item2);
@@ -91,7 +91,7 @@ public class TupleTests
     {
         NexYamlSerializerRegistry.Init();
         var t1 = Yaml.Write(new Tuple<int, int, int>(10, 10, 10));
-        var d1 = await Yaml.Read<Tuple<int, int, int>>(t1);
+        var d1 = await TestParser.Read<Tuple<int, int, int>>(t1);
         Assert.NotNull(d1);
         Assert.Equal(10, d1.Item1);
         Assert.Equal(10, d1.Item2);
@@ -102,7 +102,7 @@ public class TupleTests
     {
         NexYamlSerializerRegistry.Init();
         var t1 = Yaml.Write(new Tuple<int, int, int, int>(10, 10, 10, 10));
-        var d1 = await Yaml.Read<Tuple<int, int, int, int>>(t1);
+        var d1 = await TestParser.Read<Tuple<int, int, int, int>>(t1);
         Assert.NotNull(d1);
         Assert.Equal(10, d1.Item1);
         Assert.Equal(10, d1.Item2);
@@ -114,7 +114,7 @@ public class TupleTests
     {
         NexYamlSerializerRegistry.Init();
         var t1 = Yaml.Write(new Tuple<int, int, int, int, int>(10, 10, 10, 10, 10));
-        var d1 = await Yaml.Read<Tuple<int, int, int, int, int>>(t1);
+        var d1 = await TestParser.Read<Tuple<int, int, int, int, int>>(t1);
         Assert.NotNull(d1);
         Assert.Equal(10, d1.Item1);
         Assert.Equal(10, d1.Item2);
@@ -127,7 +127,7 @@ public class TupleTests
     {
         NexYamlSerializerRegistry.Init();
         var t1 = Yaml.Write(new Tuple<int, int, int, int, int, int>(10, 10, 10, 10, 10, 10));
-        var d1 = await Yaml.Read<Tuple<int, int, int, int, int, int>>(t1);
+        var d1 = await TestParser.Read<Tuple<int, int, int, int, int, int>>(t1);
         Assert.NotNull(d1);
         Assert.Equal(10, d1.Item1);
         Assert.Equal(10, d1.Item2);
@@ -141,7 +141,7 @@ public class TupleTests
     {
         NexYamlSerializerRegistry.Init();
         var t1 = Yaml.Write(new Tuple<int, int, int, int, int, int, int>(10, 10, 10, 10, 10, 10, 10));
-        var d1 = await Yaml.Read<Tuple<int, int, int, int, int, int, int>>(t1);
+        var d1 = await TestParser.Read<Tuple<int, int, int, int, int, int, int>>(t1);
         Assert.NotNull(d1);
         Assert.Equal(10, d1.Item1);
         Assert.Equal(10, d1.Item2);

@@ -18,19 +18,9 @@ public class SByteSerializer : YamlSerializer<sbyte>
         context.WriteScalar(span[..written]);
     }
 
-    public override ValueTask<sbyte> Read(IYamlReader stream, ParseContext parseResult)
-    {
-        if (stream.TryGetScalarAsString(out var span) && sbyte.TryParse(span, CultureInfo.InvariantCulture, out var value))
-        {
-            stream.Move(ParseEventType.Scalar);
-            return new(value);
-        }
-        stream.SkipRead();
-        throw YamlException.ThrowExpectedTypeParseException(typeof(sbyte), span, stream.CurrentMarker);
-    }
     public override ValueTask<sbyte> Read(Scope scope, ParseContext parseResult)
     {
         var scalarScope = scope.As<XParser.ScalarScope>();
-        return new(sbyte.Parse(scalarScope.Value));
+        return new(sbyte.Parse(scalarScope.Value, CultureInfo.InvariantCulture));
     }
 }

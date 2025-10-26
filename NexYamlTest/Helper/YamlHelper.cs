@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using NexYaml;
+using NexYamlTest.DataStyleTests;
 using Xunit;
 
 namespace NexYamlTest.Helper;
@@ -16,7 +17,7 @@ internal class YamlHelper
     {
         SetUp();
         var serialized = Yaml.Write(target);
-        var deserialized = await Yaml.Read<T>(serialized);
-        Assert.Equal(target, deserialized);
+        var d = await TestParser.Read<T>(serialized);
+        Assert.Equal(target, d);
     }
 }

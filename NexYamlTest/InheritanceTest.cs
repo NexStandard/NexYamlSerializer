@@ -22,7 +22,7 @@ public class InheritanceTest
         };
 
         var s = Yaml.Write(inherited);
-        var deserialized = await Yaml.Read<InheritedNormalClass>(s);
+        var deserialized = await TestParser.Read<InheritedNormalClass>(s);
         Assert.NotNull(deserialized);
         Assert.Equal(100, deserialized.Test);
         Assert.Equal("Bob", deserialized.Name);

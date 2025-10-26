@@ -27,10 +27,6 @@ class Program
 public record Person(int Id,string Name, bool Female);
 public class PersonSerializer : YamlSerializer<Person>
 {
-    public override ValueTask<Person?> Read(IYamlReader stream, NexYaml.Parser.ParseContext parseResult)
-    {
-        throw new NotImplementedException();
-    }
 
     public override void Write<X>(NexYaml.Serialization.WriteContext<X> context, Person value, DataStyle style)
     {
@@ -38,24 +34,13 @@ public class PersonSerializer : YamlSerializer<Person>
     }
     public override async ValueTask<Person?> Read(Scope scope, NexYaml.Parser.ParseContext parseResult)
     {
-        var mapping = scope.As<NexYaml.XParser.MappingScope>();
+        var mapping = scope.As<NexYaml.XParser.SequenceScope>();
         int id = default;
         string? name = default;
         bool female = default;
         foreach (var kvp in mapping)
         {
-            if(kvp.Key == "Id")
-            {
-                id = await new Int32Serializer().Read(kvp.Value, new NexYaml.Parser.ParseContext());
-            }
-            if (kvp.Key == "Name")
-            {
-                name = await new NullableStringSerializer().Read(kvp.Value, new NexYaml.Parser.ParseContext());
-            }
-            if (kvp.Key == "Female")
-            {
-                female = await new BooleanSerializer().Read(kvp.Value, new NexYaml.Parser.ParseContext());
-            }
+
         }
 
         return new Person(id, name, female);

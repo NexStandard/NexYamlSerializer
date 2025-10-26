@@ -81,7 +81,7 @@ namespace NexYaml.XParser
             {
                 return castedScope;
             }
-            throw new InvalidCastException($"Expected: {nameof(T)} but got {scope.Kind}");
+            throw new InvalidCastException($"Expected: {typeof(T).Name} but got {scope.Kind}");
         }
     }
 
