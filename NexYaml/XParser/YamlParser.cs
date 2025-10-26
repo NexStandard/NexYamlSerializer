@@ -227,6 +227,15 @@ namespace NexYaml.XParser
                         seq.Add(ParseFlowMapping(item, indent + 2, childTag));
                     else if (item.StartsWith("[") && item.EndsWith("]"))
                         seq.Add(ParseFlowSequence(item, indent + 2, childTag));
+                    else if (item.Contains(":"))
+                    {
+                        var parts = item.Split(':', 2);
+                        var key = parts[0].Trim();
+                        var val = parts.Length > 1 ? parts[1].Trim() : "";
+
+                        // Delegate into ParseMapping with seed key/value
+                        seq.Add(ParseMapping(indent + 2, childTag, key, val));
+                    }
                     else
                         seq.Add(new ScalarScope(item, indent + 2, _resolver, IdentifiableResolver, childTag));
                 }
@@ -250,6 +259,66 @@ namespace NexYaml.XParser
                 }
             }
             return seq;
+        }
+        private MappingScope ParseMapping(int indent, string tag, string? initialKey = null, string? initialValue = null)
+        {
+            var map = new MappingScope(indent, _resolver, IdentifiableResolver, tag);
+
+            // If we were seeded with a key (from "- key:" or "- key: value")
+            if (initialKey != null)
+            {
+                if (!string.IsNullOrEmpty(initialValue))
+                {
+                    // Inline value case: "- key: value"
+                    map.Add(initialKey, new ScalarScope(initialValue, indent + 2, _resolver, IdentifiableResolver, ""));
+                }
+                else
+                {
+                    // No inline value: "- key:" followed by nested mapping/sequence
+                    if (!_eof)
+                    {
+                        int nextIndent = CountIndent(_currentLine);
+                        if (nextIndent > indent)
+                        {
+                            var nextTrim = _currentLine.TrimStart();
+                            if (nextTrim.StartsWith("- "))
+                                map.Add(initialKey, ParseSequence(indent + 2, ""));
+                            else
+                                map.Add(initialKey, ParseMapping(indent + 2, ""));
+                        }
+                        else
+                        {
+                            map.Add(initialKey, new ScalarScope(string.Empty, indent + 2, _resolver, IdentifiableResolver, ""));
+                        }
+                    }
+                }
+            }
+
+            // Continue with your existing loop
+            while (!_eof)
+            {
+                if (string.IsNullOrWhiteSpace(_currentLine)) { if (!ReadNextLine()) break; continue; }
+
+                int lineIndent = CountIndent(_currentLine);
+                if (lineIndent < indent) break;
+                indent = lineIndent;
+
+                string trimmed = _currentLine.Trim();
+                if (trimmed.StartsWith("- ")) break;
+                if (trimmed.StartsWith("!") && trimmed != "!!null")
+                    throw new InvalidOperationException($"Standalone tag inside mapping is invalid: '{trimmed}'");
+
+                var parts = trimmed.Split(':', 2);
+                if (parts.Length != 2) throw new InvalidOperationException($"Invalid mapping line: '{trimmed}'");
+
+                var key = parts[0].Trim();
+                var val = parts[1].Trim();
+                ReadNextLine();
+
+                // … your existing value handling logic …
+            }
+
+            return map;
         }
 
         private SequenceScope ParseFlowSequence(string text, int indent, string tag)
