@@ -21,8 +21,8 @@ public class TupleSerializer<T1, T2> : YamlSerializer<Tuple<T1?, T2?>>
     {
         var scalarScope = scope.As<XParser.SequenceScope>();
         var scalarList = scalarScope.ToList();
-        var item1 = scalarScope.Read<T1?>(scalarList[0], new ParseContext());
-        var item2 = scalarScope.Read<T2?>(scalarList[1], new ParseContext());
+        var item1 = scalarList[0].Read<T1?>(new ParseContext());
+        var item2 = scalarList[1].Read<T2?>(new ParseContext());
         return new(await item1, await item2);
     }
 }
@@ -61,9 +61,9 @@ public class TupleSerializer<T1, T2, T3> : YamlSerializer<Tuple<T1?, T2?, T3?>>
     {
         var scalarScope = scope.As<XParser.SequenceScope>();
         var scalarList = scalarScope.ToList();
-        var item1 = scalarScope.Read<T1?>(scalarList[0], new ParseContext());
-        var item2 = scalarScope.Read<T2?>(scalarList[1], new ParseContext());
-        var item3 = scalarScope.Read<T3?>(scalarList[2], new ParseContext());
+        var item1 = scalarList[0].Read<T1?>(new ParseContext());
+        var item2 = scalarList[1].Read<T2?>(new ParseContext());
+        var item3 = scalarList[2].Read<T3?>(new ParseContext());
         return new(await item1, await item2, await item3);
     }
 }
@@ -103,10 +103,10 @@ public class TupleSerializer<T1, T2, T3, T4> : YamlSerializer<Tuple<T1?, T2?, T3
     {
         var scalarScope = scope.As<XParser.SequenceScope>();
         var scalarList = scalarScope.ToList();
-        var item1 = scalarScope.Read<T1?>(scalarList[0], new ParseContext());
-        var item2 = scalarScope.Read<T2?>(scalarList[1], new ParseContext());
-        var item3 = scalarScope.Read<T3?>(scalarList[2], new ParseContext());
-        var item4 = scalarScope.Read<T4?>(scalarList[3], new ParseContext());
+        var item1 = scalarList[0].Read<T1?>(new ParseContext());
+        var item2 = scalarList[1].Read<T2?>(new ParseContext());
+        var item3 = scalarList[2].Read<T3?>(new ParseContext());
+        var item4 = scalarList[3].Read<T4?>(new ParseContext());
         return new(await item1, await item2, await item3, await item4);
     }
 }
@@ -148,11 +148,11 @@ public class TupleSerializer<T1, T2, T3, T4, T5> : YamlSerializer<Tuple<T1?, T2?
     {
         var scalarScope = scope.As<XParser.SequenceScope>();
         var scalarList = scalarScope.ToList();
-        var item1 = scalarScope.Read<T1?>(scalarList[0], new ParseContext());
-        var item2 = scalarScope.Read<T2?>(scalarList[1], new ParseContext());
-        var item3 = scalarScope.Read<T3?>(scalarList[2], new ParseContext());
-        var item4 = scalarScope.Read<T4?>(scalarList[3], new ParseContext());
-        var item5 = scalarScope.Read<T5?>(scalarList[4], new ParseContext());
+        var item1 = scalarList[0].Read<T1?>(new ParseContext());
+        var item2 = scalarList[1].Read<T2?>(new ParseContext());
+        var item3 = scalarList[2].Read<T3?>(new ParseContext());
+        var item4 = scalarList[3].Read<T4?>(new ParseContext());
+        var item5 = scalarList[4].Read<T5?>(new ParseContext());
         return new(await item1, await item2, await item3, await item4, await item5);
     }
 }
@@ -196,12 +196,12 @@ public class TupleSerializer<T1, T2, T3, T4, T5, T6> : YamlSerializer<Tuple<T1?,
     {
         var scalarScope = scope.As<XParser.SequenceScope>();
         var scalarList = scalarScope.ToList();
-        var item1 = scalarScope.Read<T1?>(scalarList[0], new ParseContext());
-        var item2 = scalarScope.Read<T2?>(scalarList[1], new ParseContext());
-        var item3 = scalarScope.Read<T3?>(scalarList[2], new ParseContext());
-        var item4 = scalarScope.Read<T4?>(scalarList[3], new ParseContext());
-        var item5 = scalarScope.Read<T5?>(scalarList[4], new ParseContext());
-        var item6 = scalarScope.Read<T6?>(scalarList[5], new ParseContext());
+        var item1 = scalarList[0].Read<T1?>(new ParseContext());
+        var item2 = scalarList[1].Read<T2?>(new ParseContext());
+        var item3 = scalarList[2].Read<T3?>(new ParseContext());
+        var item4 = scalarList[3].Read<T4?>(new ParseContext());
+        var item5 = scalarList[4].Read<T5?>(new ParseContext());
+        var item6 = scalarList[5].Read<T6?>(new ParseContext());
         return new(await item1, await item2, await item3, await item4, await item5, await item6);
     }
 }
@@ -245,13 +245,13 @@ public class TupleSerializer<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<Tuple<
     {
         var scalarScope = scope.As<XParser.SequenceScope>();
         var scalarList = scalarScope.ToList();
-        var item1 = scalarScope.Read<T1?>(scalarList[0], new ParseContext());
-        var item2 = scalarScope.Read<T2?>(scalarList[1], new ParseContext());
-        var item3 = scalarScope.Read<T3?>(scalarList[2], new ParseContext());
-        var item4 = scalarScope.Read<T4?>(scalarList[3], new ParseContext());
-        var item5 = scalarScope.Read<T5?>(scalarList[4], new ParseContext());
-        var item6 = scalarScope.Read<T6?>(scalarList[5], new ParseContext());
-        var item7 = scalarScope.Read<T7?>(scalarList[6], new ParseContext());
+        var item1 = scalarList[0].Read<T1?>(new ParseContext());
+        var item2 = scalarList[1].Read<T2?>(new ParseContext());
+        var item3 = scalarList[2].Read<T3?>(new ParseContext());
+        var item4 = scalarList[3].Read<T4?>(new ParseContext());
+        var item5 = scalarList[4].Read<T5?>(new ParseContext());
+        var item6 = scalarList[5].Read<T6?>(new ParseContext());
+        var item7 = scalarList[6].Read<T7?>(new ParseContext());
         return new(await item1, await item2, await item3, await item4, await item5, await item6, await item7);
     }
 }

@@ -20,24 +20,4 @@ internal class ArrayPlugin : IResolvePlugin
         }
         return false;
     }
-    /*
-    public bool Read<T>(IYamlReader stream, out ValueTask<T?> value, ParseContext result)
-    {
-        if (typeof(T).IsArray)
-        {
-            var t = typeof(T).GetElementType()!;
-            var arraySerializerType = typeof(ArraySerializer<>).MakeGenericType(t);
-            var arraySerializer = (YamlSerializer)Activator.CreateInstance(arraySerializerType)!;
-
-            value = Convert<T>(arraySerializer.ReadUnknown(stream, result));
-            return true;
-        }
-        value = default;
-        return false;
-    }
-    private async ValueTask<T?> Convert<T>(ValueTask<object?> value)
-    {
-        return (T?)(await value);
-    }
-    */
 }

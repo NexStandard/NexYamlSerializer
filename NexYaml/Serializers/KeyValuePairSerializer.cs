@@ -20,8 +20,8 @@ public class KeyValuePairSerializer<TKey, TValue> : YamlSerializer<KeyValuePair<
     {
         List<Task<KeyValuePair<TKey, TValue>>> tasks = new();
         var scalarScope = scope.As<XParser.SequenceScope>().ToList();
-        var k = await scalarScope[0].Read<TKey?>(scalarScope[0],new ParseContext());
-        var v = await scalarScope[1].Read<TValue?>(scalarScope[1], new ParseContext());
+        var k = await scalarScope[0].Read<TKey?>(new ParseContext());
+        var v = await scalarScope[1].Read<TValue?>(new ParseContext());
         return new KeyValuePair<TKey?, TValue?>(k, v);
     }
 }

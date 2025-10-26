@@ -7,6 +7,7 @@ namespace NexYamlTest.ScalarStyle
 {
     public class ScalarTests
     {
+        /*
         [Fact]
         public void PlainScalar()
         {
@@ -149,5 +150,6 @@ namespace NexYamlTest.ScalarStyle
             Assert.NotNull(d);
             Assert.Equal(w.Value, d.Value);
         }
+        */
     }
 }

@@ -35,7 +35,8 @@ namespace NexYaml.XParser
             {
                 if (string.IsNullOrWhiteSpace(_currentLine)) continue;
 
-                int indent = CountIndent(_currentLine);
+                var indent = CountIndent(_currentLine);
+
                 string trimmed = _currentLine.Trim();
 
                 if (trimmed.StartsWith("!") && trimmed != "!!null")
@@ -90,7 +91,7 @@ namespace NexYaml.XParser
 
                 int lineIndent = CountIndent(_currentLine);
                 if (lineIndent < indent) break;
-
+                indent = lineIndent;
                 string trimmed = _currentLine.Trim();
                 if (trimmed.StartsWith("- ")) break;
                 if (trimmed.StartsWith("!") && trimmed != "!!null")
@@ -136,6 +137,13 @@ namespace NexYaml.XParser
                                 map.Add(key, ParseSequence(indent + 2, childTag));
                             else
                                 map.Add(key, ParseMapping(indent + 2, childTag));
+                            continue;
+                        }
+                        else
+                        {
+                            var nextTrim = _currentLine.TrimStart();
+                            if (nextTrim.StartsWith("- "))
+                                map.Add(key, ParseSequence(indent, childTag));
                             continue;
                         }
                     }
@@ -200,6 +208,8 @@ namespace NexYaml.XParser
                 ReadNextLine();
 
                 string childTag = "";
+                
+
                 if (item.StartsWith("!") && item != "!!null")
                 {
                     var segs = item.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
@@ -228,12 +238,13 @@ namespace NexYaml.XParser
                         if (nextIndent > indent)
                         {
                             var nextTrim = _currentLine.TrimStart();
-                              if (nextTrim.StartsWith("- "))
+                            if (nextTrim.StartsWith("- "))
                                 seq.Add(ParseSequence(indent + 2, childTag));
                             else
                                 seq.Add(ParseMapping(indent + 2, childTag));
                             continue;
                         }
+
                     }
                     seq.Add(new ScalarScope(string.Empty, indent + 2, _resolver, IdentifiableResolver, childTag));
                 }

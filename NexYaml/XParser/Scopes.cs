@@ -24,9 +24,9 @@ namespace NexYaml.XParser
         private IYamlSerializerResolver _resolver;
         public IdentifiableResolver IdentifiableResolver { get; private set; }
         protected Scope(string tag, int indent,IYamlSerializerResolver resolver, IdentifiableResolver identifiableResolver) => (Tag, Indent, _resolver, IdentifiableResolver) = (tag, indent, resolver, identifiableResolver);
-        public ValueTask<T?> Read<T>(Scope scope,ParseContext context)
+        public ValueTask<T?> Read<T>(ParseContext context)
         {
-            if(scope is ScalarScope scalar && scalar.Value == "!!null")
+            if(this is ScalarScope scalar && scalar.Value == "!!null")
             {
                 return new ValueTask<T?>(default(T));
             }
@@ -36,17 +36,17 @@ namespace NexYaml.XParser
                 var arraySerializerType = typeof(ArraySerializer<>).MakeGenericType(t);
                 var arraySerializer = (YamlSerializer)Activator.CreateInstance(arraySerializerType)!;
 
-                var value = Convert<T>(arraySerializer.ReadUnknown(scope, context));
+                var value = Convert<T>(arraySerializer.ReadUnknown(this, context));
                 return value;
             }
             Type type = typeof(T);
 
-            if (scope.Tag.SequenceEqual("!!ref"))
+            if (Tag.SequenceEqual("!!ref"))
             {
-                var refScalar = scope.As<ScalarScope>();
+                var refScalar = this.As<ScalarScope>();
                 if (Guid.TryParse(refScalar.Value, out var id))
                 {
-                    return scope.IdentifiableResolver.AsyncGetRef<T?>(id);
+                    return IdentifiableResolver.AsyncGetRef<T?>(id);
                 }
                 else
                 {
@@ -58,23 +58,23 @@ namespace NexYaml.XParser
             if (type.IsInterface || type.IsAbstract || type.IsGenericType)
             {
                 YamlSerializer? serializer;
-                if (scope.Tag.IsNullOrEmpty())
+                if (Tag.IsNullOrEmpty())
                 {
                     var formatt = _resolver.GetSerializer<T>();
                     result = formatt.Read(this, context);
                 }
                 else
                 {
-                    Type alias = _resolver.GetAliasType(scope.Tag);
+                    Type alias = _resolver.GetAliasType(Tag);
                     serializer = _resolver.GetSerializer(alias, type);
 
-                    var res = serializer.ReadUnknown(scope, context);
+                    var res = serializer.ReadUnknown(this, context);
                     result = Convert<T>(res);
                 }
             }
             else
             {
-                result = _resolver.GetSerializer<T?>().Read(scope, context);
+                result = _resolver.GetSerializer<T?>().Read(this, context);
             }
             return result;
         }

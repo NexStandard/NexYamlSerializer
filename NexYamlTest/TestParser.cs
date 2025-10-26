@@ -14,7 +14,7 @@ namespace NexYamlTest
         {
             var parser = new NexYaml.XParser.YamlParser(s, IYamlSerializerResolver.Default).Parse();
             var first = parser.First();
-            return await first.Read<T>(first, new ParseContext());
+            return await first.Read<T>(new ParseContext());
         }
     }
 }

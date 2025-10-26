@@ -56,7 +56,7 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
             foreach (var kvp in mapping)
             {
                 var key = ParsePrimitive<TKey>(kvp.Key);
-                var value = kvp.Value.Read<TValue>(kvp.Value, new ParseContext());
+                var value = kvp.Value.Read<TValue>(new ParseContext());
                 tasks.Add(DictionarySerializer<TKey, TValue>.ConvertToKeyValuePair(key!, value));
             }
             (await Task.WhenAll(tasks)).ForEach(x => map.Add(x.Key, x.Value));

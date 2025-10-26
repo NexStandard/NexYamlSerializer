@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using NexYaml;
+using NexYaml.Serialization;
+using NexYaml.XParser;
 using Xunit;
 
 namespace NexYamlTest.References;
@@ -126,6 +129,9 @@ public class ReferenceTest
         list.List.Add(refScript2);
         list.List.Add(refScript3);
         var s = Yaml.Write(list);
+        var parser = new NexYaml.XParser.YamlParser(s, IYamlSerializerResolver.Default).Parse();
+        var first = parser.First();
+        Console.WriteLine(first.Dump());
         var d = await TestParser.Read<ReferenceScriptList>(s);
         Assert.Equal(d.List[1], d.List[0].Reference.ReferenceScript);
     }
