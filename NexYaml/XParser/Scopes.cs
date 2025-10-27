@@ -20,7 +20,7 @@ namespace NexYaml.XParser
     {
         public abstract ScopeKind Kind { get; }
         public string Tag { get; }
-        public int Indent { get; }
+        public int Indent { get; set; }
         private IYamlSerializerResolver _resolver;
         public IdentifiableResolver IdentifiableResolver { get; private set; }
         protected Scope(string tag, int indent,IYamlSerializerResolver resolver, IdentifiableResolver identifiableResolver) => (Tag, Indent, _resolver, IdentifiableResolver) = (tag, indent, resolver, identifiableResolver);
@@ -99,9 +99,52 @@ namespace NexYaml.XParser
     public sealed class ScalarScope : Scope
     {
         public string Value { get; }
-        public ScalarScope(string value, int indent, IYamlSerializerResolver resolver, IdentifiableResolver identifiableResolver, string tag = "") : base(tag, indent, resolver, identifiableResolver) => Value = value;
+
+        public ScalarScope(
+            string value,
+            int indent,
+            IYamlSerializerResolver resolver,
+            IdentifiableResolver identifiableResolver,
+            string tag = ""
+        ) : base(tag, indent, resolver, identifiableResolver)
+        {
+            Value = DecodeEscapes(value);
+        }
+
         public override ScopeKind Kind => ScopeKind.Scalar;
+
+        private static string DecodeEscapes(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            var sb = new StringBuilder(input.Length);
+            for (int i = 0; i < input.Length; i++)
+            {
+                char c = input[i];
+                if (c == '\\' && i + 1 < input.Length)
+                {
+                    char next = input[++i];
+                    switch (next)
+                    {
+                        case 'n': sb.Append('\n'); break;
+                        case 'r': sb.Append('\r'); break;
+                        case 't': sb.Append('\t'); break;
+                        default:
+                            // Unknown escape, keep literally
+                            sb.Append(next);
+                            break;
+                    }
+                }
+                else
+                {
+                    sb.Append(c);
+                }
+            }
+            return sb.ToString();
+        }
     }
+
 
     public sealed class MappingScope : Scope, IEnumerable<KeyValuePair<string, Scope>>
     {
@@ -111,6 +154,7 @@ namespace NexYaml.XParser
         public void Add(string key, Scope value) => _entries.Add(new KeyValuePair<string,Scope>(key, value));
         public IEnumerator<KeyValuePair<string, Scope>> GetEnumerator() => _entries.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => _entries.GetEnumerator();
+
     }
 
     public sealed class SequenceScope : Scope, IEnumerable<Scope>

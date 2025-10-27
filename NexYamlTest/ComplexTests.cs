@@ -148,8 +148,7 @@ public class ComplexTests
         Assert.NotNull(deserialized);
         Assert.Equal(abstractObject.Test, deserialized.Test);
     }
-
-    [Fact(Skip = "FF")]
+    [Fact]
     public async Task UnregisteredRedirection()
     {
         Setup();

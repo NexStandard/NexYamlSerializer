@@ -7,7 +7,6 @@ namespace NexYamlTest.ScalarStyle
 {
     public class ScalarTests
     {
-        /*
         [Fact]
         public void PlainScalar()
         {
@@ -85,7 +84,7 @@ namespace NexYamlTest.ScalarStyle
             Assert.NotNull(d);
             Assert.Equal(w.Value, d.Value);
         }
-        [Fact(Skip = "Lf at file end is ignored")]
+        [Fact(Skip ="")]
         public async Task LiteralScalarAtEnd_TwoLineBreak()
         {
             NexYamlSerializerRegistry.Init();
@@ -98,7 +97,7 @@ namespace NexYamlTest.ScalarStyle
             Assert.NotNull(d);
             Assert.Equal(w.Value, d.Value);
         }
-        [Fact]
+        [Fact(Skip ="")]
         public async Task LiteralScalarNormalInYamlMiddle_NoLineBreak()
         {
             NexYamlSerializerRegistry.Init();
@@ -111,7 +110,7 @@ namespace NexYamlTest.ScalarStyle
             Assert.NotNull(d);
             Assert.Equal(w.Value, d.Value);
         }
-        [Fact]
+        [Fact(Skip = "")]
         public async Task LiteralScalarNormalInYamlMiddle_LineBreak()
         {
             NexYamlSerializerRegistry.Init();
@@ -124,7 +123,7 @@ namespace NexYamlTest.ScalarStyle
             Assert.NotNull(d);
             Assert.Equal(w.Value, d.Value);
         }
-        [Fact]
+        [Fact(Skip = "")]
         public async Task LiteralScalarNormalInYamlMiddle_TwoLineBreak()
         {
             NexYamlSerializerRegistry.Init();
@@ -137,7 +136,7 @@ namespace NexYamlTest.ScalarStyle
             Assert.NotNull(d);
             Assert.Equal(w.Value, d.Value);
         }
-        [Fact]
+        [Fact(Skip = "")]
         public async Task LiteralScalarNormalInYamlMiddle_MultipleLineBreak()
         {
             NexYamlSerializerRegistry.Init();
@@ -150,6 +149,5 @@ namespace NexYamlTest.ScalarStyle
             Assert.NotNull(d);
             Assert.Equal(w.Value, d.Value);
         }
-        */
     }
 }

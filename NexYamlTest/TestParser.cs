@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NexYaml.Parser;
 using NexYaml.Serialization;
+using NexYaml.XParser;
 
 namespace NexYamlTest
 {
@@ -14,6 +15,7 @@ namespace NexYamlTest
         {
             var parser = new NexYaml.XParser.YamlParser(s, IYamlSerializerResolver.Default).Parse();
             var first = parser.First();
+            Console.WriteLine(first.Dump());
             return await first.Read<T>(new ParseContext());
         }
     }
