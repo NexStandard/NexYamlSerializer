@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using NexYaml.Serialization;
+using Stride.Input;
 
 namespace NexYaml.XParser
 {
@@ -39,7 +40,7 @@ namespace NexYaml.XParser
 
                 string trimmed = _currentLine.Trim();
 
-                if (trimmed.StartsWith("!") && trimmed != "!!null")
+                if (trimmed.StartsWith('!') && trimmed != "!!null")
                 {
                     int spaceIndex = trimmed.IndexOf(' ');
                     string tag = spaceIndex > 0 ? trimmed.Substring(0, spaceIndex) : trimmed;
@@ -47,9 +48,9 @@ namespace NexYaml.XParser
 
                     if (inline.Length > 0)
                     {
-                        if (inline.StartsWith("["))
+                        if (inline.StartsWith('['))
                             yield return ParseFlowSequence(inline, indent, tag);
-                        else if (inline.StartsWith("{"))
+                        else if (inline.StartsWith('{'))
                             yield return ParseFlowMapping(inline, indent, tag);
                         else
                             yield return new ScalarScope(inline, indent, _resolver, IdentifiableResolver, tag);
@@ -94,7 +95,7 @@ namespace NexYaml.XParser
                 indent = lineIndent;
                 string trimmed = _currentLine.Trim();
                 if (trimmed.StartsWith("- ")) break;
-                if (trimmed.StartsWith("!") && trimmed != "!!null")
+                if (trimmed.StartsWith('!') && trimmed != "!!null")
                     throw new InvalidOperationException($"Standalone tag inside mapping is invalid: '{trimmed}'");
 
                 var parts = trimmed.Split(':', 2);
@@ -105,7 +106,7 @@ namespace NexYaml.XParser
                 ReadNextLine();
 
                 string childTag = "";
-                if (val.StartsWith("!") && val != "!!null")
+                if (val.StartsWith('!') && val != "!!null")
                 {
                     var segs = val.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
                     childTag = segs[0];
@@ -116,11 +117,11 @@ namespace NexYaml.XParser
                 {
                     if (IsQuoted(val))
                         map.Add(key, new ScalarScope(Unquote(val), indent + 2, _resolver, IdentifiableResolver, childTag));
-                    else if (val.StartsWith("|"))
+                    else if (val.StartsWith('|'))
                         map.Add(key, new ScalarScope(ParseLiteralScalar(indent + 2), indent + 2, _resolver, IdentifiableResolver, childTag));
-                    else if (val.StartsWith("{") && val.EndsWith("}"))
+                    else if (val.StartsWith('{') && val.EndsWith("}"))
                         map.Add(key, ParseFlowMapping(val, indent + 2, childTag));
-                    else if (val.StartsWith("[") && val.EndsWith("]"))
+                    else if (val.StartsWith('[') && val.EndsWith("]"))
                         map.Add(key, ParseFlowSequence(val, indent + 2, childTag));
                     else
                         map.Add(key, new ScalarScope(val, indent + 2, _resolver, IdentifiableResolver, childTag));
@@ -165,27 +166,27 @@ namespace NexYaml.XParser
                 if (kv.Length != 2)
                     throw new InvalidOperationException($"Invalid inline mapping entry: '{entry}'");
 
-                var k = kv[0].Trim();
-                var v = kv[1].Trim();
+                var key = kv[0].Trim();
+                var val = kv[1].Trim();
 
                 string childTag = "";
-                if (v.StartsWith("!") && v != "!!null")
+                if (val.StartsWith("!") && val != "!!null")
                 {
-                    var segs = v.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+                    var segs = val.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
                     childTag = segs[0];
-                    v = segs.Length > 1 ? segs[1].Trim() : "";
+                    val = segs.Length > 1 ? segs[1].Trim() : "";
                 }
 
-                if (IsQuoted(v))
-                    map.Add(k, new ScalarScope(Unquote(v), indent + 2, _resolver, IdentifiableResolver, childTag));
-                else if (v.StartsWith("|"))
-                    map.Add(k, new ScalarScope(ParseLiteralScalar(indent + 2), indent + 2, _resolver, IdentifiableResolver, childTag));
-                else if (v.StartsWith("{") && v.EndsWith("}"))
-                    map.Add(k, ParseFlowMapping(v, indent + 2, childTag));
-                else if (v.StartsWith("[") && v.EndsWith("]"))
-                    map.Add(k, ParseFlowSequence(v, indent + 2, childTag));
+                if (IsQuoted(val))
+                    map.Add(key, new ScalarScope(Unquote(val), indent + 2, _resolver, IdentifiableResolver, childTag));
+                else if (val.StartsWith('|'))
+                    map.Add(key, new ScalarScope(ParseLiteralScalar(indent + 2), indent + 2, _resolver, IdentifiableResolver, childTag));
+                else if (val.StartsWith('{') && val.EndsWith("}"))
+                    map.Add(key, ParseFlowMapping(val, indent + 2, childTag));
+                else if (val.StartsWith('[') && val.EndsWith("]"))
+                    map.Add(key, ParseFlowSequence(val, indent + 2, childTag));
                 else
-                    map.Add(k, new ScalarScope(v, indent + 2, _resolver, IdentifiableResolver, childTag));
+                    map.Add(key, new ScalarScope(val, indent + 2, _resolver, IdentifiableResolver, childTag));
             }
             return map;
         }
@@ -221,13 +222,13 @@ namespace NexYaml.XParser
                 {
                     if (IsQuoted(item))
                         seq.Add(new ScalarScope(Unquote(item), indent + 2, _resolver, IdentifiableResolver, childTag));
-                    else if (item.StartsWith("|"))
+                    else if (item.StartsWith('|'))
                         seq.Add(new ScalarScope(ParseLiteralScalar(indent + 2), indent + 2, _resolver, IdentifiableResolver, childTag));
-                    else if (item.StartsWith("{") && item.EndsWith("}"))
+                    else if (item.StartsWith('{') && item.EndsWith('}'))
                         seq.Add(ParseFlowMapping(item, indent + 2, childTag));
-                    else if (item.StartsWith("[") && item.EndsWith("]"))
+                    else if (item.StartsWith('[') && item.EndsWith(']'))
                         seq.Add(ParseFlowSequence(item, indent + 2, childTag));
-                    else if (item.Contains(":"))
+                    else if (item.Contains(':'))
                     {
                         var parts = item.Split(':', 2);
                         var key = parts[0].Trim();
@@ -272,7 +273,7 @@ namespace NexYaml.XParser
                     string childTag = "";
                     string val = initialValue;
 
-                    if (val.StartsWith("!") && val != "!!null")
+                    if (val.StartsWith('!') && val != "!!null")
                     {
                         var segs = val.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
                         childTag = segs[0];
@@ -281,11 +282,11 @@ namespace NexYaml.XParser
 
                     if (IsQuoted(val))
                         map.Add(initialKey, new ScalarScope(Unquote(val), indent + 2, _resolver, IdentifiableResolver, childTag));
-                    else if (val.StartsWith("|"))
+                    else if (val.StartsWith('|'))
                         map.Add(initialKey, new ScalarScope(ParseLiteralScalar(indent + 2), indent + 2, _resolver, IdentifiableResolver, childTag));
-                    else if (val.StartsWith("{") && val.EndsWith("}"))
+                    else if (val.StartsWith('{') && val.EndsWith("}"))
                         map.Add(initialKey, ParseFlowMapping(val, indent + 2, childTag));
-                    else if (val.StartsWith("[") && val.EndsWith("]"))
+                    else if (val.StartsWith('[') && val.EndsWith("]"))
                         map.Add(initialKey, ParseFlowSequence(val, indent + 2, childTag));
                     else
                         map.Add(initialKey, new ScalarScope(val, indent + 2, _resolver, IdentifiableResolver, childTag));
@@ -323,7 +324,7 @@ namespace NexYaml.XParser
 
                 string trimmed = _currentLine.Trim();
                 if (trimmed.StartsWith("- ")) break;
-                if (trimmed.StartsWith("!") && trimmed != "!!null")
+                if (trimmed.StartsWith('!') && trimmed != "!!null")
                     throw new InvalidOperationException($"Standalone tag inside mapping is invalid: '{trimmed}'");
 
                 var parts = trimmed.Split(':', 2);
@@ -334,7 +335,7 @@ namespace NexYaml.XParser
                 ReadNextLine();
 
                 string childTag = "";
-                if (val.StartsWith("!") && val != "!!null")
+                if (val.StartsWith('!') && val != "!!null")
                 {
                     var segs = val.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
                     childTag = segs[0];
@@ -345,11 +346,11 @@ namespace NexYaml.XParser
                 {
                     if (IsQuoted(val))
                         map.Add(key, new ScalarScope(Unquote(val), indent + 2, _resolver, IdentifiableResolver, childTag));
-                    else if (val.StartsWith("|"))
+                    else if (val.StartsWith('|'))
                         map.Add(key, new ScalarScope(ParseLiteralScalar(indent + 2), indent + 2, _resolver, IdentifiableResolver, childTag));
-                    else if (val.StartsWith("{") && val.EndsWith("}"))
+                    else if (val.StartsWith('{') && val.EndsWith('}'))
                         map.Add(key, ParseFlowMapping(val, indent + 2, childTag));
-                    else if (val.StartsWith("[") && val.EndsWith("]"))
+                    else if (val.StartsWith('[') && val.EndsWith(']'))
                         map.Add(key, ParseFlowSequence(val, indent + 2, childTag));
                     else
                         map.Add(key, new ScalarScope(val, indent + 2, _resolver, IdentifiableResolver, childTag));
@@ -392,12 +393,12 @@ namespace NexYaml.XParser
             foreach (var raw in SplitFlowItems(inner))
             {
                 string childTag = "";
-                string value = raw;
+                string item = raw;
                 if(bufferedTag == "")
                 {
-                    if (value.StartsWith("!") && value != "!!null")
+                    if (item.StartsWith('!') && item != "!!null")
                     {
-                        var segs = value.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+                        var segs = item.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
                         if (segs.Length == 1)
                         {
                             bufferedTag = segs[0];
@@ -406,7 +407,7 @@ namespace NexYaml.XParser
                         else
                         {
                             childTag = segs[0];
-                            value = segs.Length > 1 ? segs[1].Trim() : "";
+                            item = segs.Length > 1 ? segs[1].Trim() : "";
 
                         }
                     }
@@ -417,16 +418,16 @@ namespace NexYaml.XParser
                     bufferedTag = "";
                 }
 
-                if (IsQuoted(value))
-                    seq.Add(new ScalarScope(Unquote(value), indent + 2, _resolver, IdentifiableResolver, childTag));
-                else if (value.StartsWith("|"))
+                if (IsQuoted(item))
+                    seq.Add(new ScalarScope(Unquote(item), indent + 2, _resolver, IdentifiableResolver, childTag));
+                else if (item.StartsWith('|'))
                     seq.Add(new ScalarScope(ParseLiteralScalar(indent + 2), indent + 2, _resolver, IdentifiableResolver, childTag));
-                else if (value.StartsWith("{") && value.EndsWith("}"))
-                    seq.Add(ParseFlowMapping(value, indent + 2, childTag));
-                else if (value.StartsWith("[") && value.EndsWith("]"))
-                    seq.Add(ParseFlowSequence(value, indent + 2, childTag));
+                else if (item.StartsWith('{') && item.EndsWith('}'))
+                    seq.Add(ParseFlowMapping(item, indent + 2, childTag));
+                else if (item.StartsWith('[') && item.EndsWith(']'))
+                    seq.Add(ParseFlowSequence(item, indent + 2, childTag));
                 else
-                    seq.Add(new ScalarScope(value, indent + 2, _resolver, IdentifiableResolver, childTag));
+                    seq.Add(new ScalarScope(item, indent + 2, _resolver, IdentifiableResolver, childTag));
             }
 
             return seq;
@@ -462,8 +463,8 @@ namespace NexYaml.XParser
         private static bool IsQuoted(string s)
         {
             return s.Length >= 2 &&
-                   ((s.StartsWith("\"") && s.EndsWith("\"")) ||
-                    (s.StartsWith("'") && s.EndsWith("'")));
+                   ((s.StartsWith('\"') && s.EndsWith('\"')) ||
+                    (s.StartsWith('\'') && s.EndsWith('\'')));
         }
 
         private static string Unquote(string s)
@@ -473,7 +474,11 @@ namespace NexYaml.XParser
 
         private static int CountIndent(string line)
         {
-            return line.TakeWhile(c => c == ' ').Count();
+            var span = line.AsSpan();
+            int i = 0;
+            while (i < span.Length && span[i] == ' ')
+                i++;
+            return i;
         }
 
         private static List<string> SplitFlowItems(string input)
