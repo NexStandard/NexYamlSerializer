@@ -15,9 +15,8 @@ namespace NexYaml.Parser
         public abstract ScopeKind Kind { get; }
         public string Tag { get; }
         public int Indent { get; set; }
-        private IYamlSerializerResolver _resolver;
-        public IdentifiableResolver IdentifiableResolver { get; private set; }
-        protected Scope(string tag, int indent, IYamlSerializerResolver resolver, IdentifiableResolver identifiableResolver) => (Tag, Indent, _resolver, IdentifiableResolver) = (tag, indent, resolver, identifiableResolver);
+        public ScopeContext Context { get; }
+        protected Scope(string tag, int indent, ScopeContext context) => (Tag, indent, Context) = (tag, indent, context);
         public ValueTask<T?> Read<T>(ParseContext context)
         {
             if (this is ScalarScope scalar && scalar.Value == "!!null")
@@ -40,7 +39,7 @@ namespace NexYaml.Parser
                 var refScalar = this.As<ScalarScope>();
                 if (Guid.TryParse(refScalar.Value, out var id))
                 {
-                    return IdentifiableResolver.AsyncGetRef<T?>(id);
+                    return Context.IdentifiableResolver.AsyncGetRef<T?>(id);
                 }
                 else
                 {
@@ -54,13 +53,13 @@ namespace NexYaml.Parser
                 YamlSerializer? serializer;
                 if (Tag.IsNullOrEmpty())
                 {
-                    var formatt = _resolver.GetSerializer<T>();
+                    var formatt = Context.Resolver.GetSerializer<T>();
                     result = formatt.Read(this, context);
                 }
                 else
                 {
-                    Type alias = _resolver.GetAliasType(Tag);
-                    serializer = _resolver.GetSerializer(alias, type);
+                    Type alias = Context.Resolver.GetAliasType(Tag);
+                    serializer = Context.Resolver.GetSerializer(alias, type);
 
                     var res = serializer.ReadUnknown(this, context);
                     result = Convert<T>(res);
@@ -68,7 +67,7 @@ namespace NexYaml.Parser
             }
             else
             {
-                result = _resolver.GetSerializer<T?>().Read(this, context);
+                result = Context.Resolver.GetSerializer<T?>().Read(this, context);
             }
             return result;
         }
@@ -97,10 +96,9 @@ namespace NexYaml.Parser
         public ScalarScope(
             string value,
             int indent,
-            IYamlSerializerResolver resolver,
-            IdentifiableResolver identifiableResolver,
+            ScopeContext context,
             string tag = ""
-        ) : base(tag, indent, resolver, identifiableResolver)
+        ) : base(tag, indent,context)
         {
             Value = DecodeEscapes(value);
         }
@@ -143,75 +141,20 @@ namespace NexYaml.Parser
     public sealed class MappingScope : Scope, IEnumerable<KeyValuePair<string, Scope>>
     {
         private readonly List<KeyValuePair<string, Scope>> _entries = new();
-        public MappingScope(int indent, IYamlSerializerResolver resolver, IdentifiableResolver identifiableResolver, string tag = "") : base(tag, indent, resolver, identifiableResolver) { }
+        public MappingScope(int indent, ScopeContext context, string tag = "") : base(tag, indent, context) { }
         public override ScopeKind Kind => ScopeKind.Mapping;
         public void Add(string key, Scope value) => _entries.Add(new KeyValuePair<string, Scope>(key, value));
         public IEnumerator<KeyValuePair<string, Scope>> GetEnumerator() => _entries.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => _entries.GetEnumerator();
-
     }
 
     public sealed class SequenceScope : Scope, IEnumerable<Scope>
     {
         private readonly List<Scope> _items = new();
-        public SequenceScope(int indent, IYamlSerializerResolver resolver, IdentifiableResolver identifiableResolver, string tag = "") : base(tag, indent, resolver, identifiableResolver) { }
+        public SequenceScope(int indent, ScopeContext context, string tag = "") : base(tag, indent, context) { }
         public override ScopeKind Kind => ScopeKind.Sequence;
         public void Add(Scope value) => _items.Add(value);
         public IEnumerator<Scope> GetEnumerator() => _items.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => _items.GetEnumerator();
-    }
-    public static class YamlDumpExtensions
-    {
-        public static string Dump(this Scope scope, int indent = 0, bool includeHeader = true)
-        {
-            var pad = new string(' ', indent);
-            string TagSuffix(string tag) => $"({tag})";
-
-            switch (scope)
-            {
-                case ScalarScope s:
-                    return $"{pad}SCALAR{TagSuffix(s.Tag)}({s.Value})";
-
-                case MappingScope m:
-                    {
-                        var sb = new StringBuilder();
-                        if (includeHeader)
-                            sb.AppendLine($"{pad}MAPPING{TagSuffix(m.Tag)}");
-                        sb.AppendLine($"{pad}{{");
-                        foreach (var (key, val) in m)
-                        {
-                            if (val is ScalarScope scalar)
-                            {
-                                sb.AppendLine($"{pad}  SCALAR({key}) = SCALAR{TagSuffix(scalar.Tag)}({scalar.Value})");
-                            }
-                            else
-                            {
-                                var header = val.Kind.ToString().ToUpper();
-                                sb.AppendLine($"{pad}  SCALAR({key}) = {header}{TagSuffix(val.Tag)}");
-                                sb.Append(val.Dump(indent + 2, includeHeader: false));
-                            }
-                        }
-                        sb.AppendLine($"{pad}}}");
-                        return sb.ToString();
-                    }
-
-                case SequenceScope seq:
-                    {
-                        var sb = new StringBuilder();
-                        if (includeHeader)
-                            sb.AppendLine($"{pad}SEQUENCE{TagSuffix(seq.Tag)}");
-                        sb.AppendLine($"{pad}[");
-                        foreach (var item in seq)
-                        {
-                            sb.AppendLine(item.Dump(indent + 2, includeHeader: true));
-                        }
-                        sb.AppendLine($"{pad}]");
-                        return sb.ToString();
-                    }
-
-                default:
-                    throw new InvalidOperationException();
-            }
-        }
     }
 }
