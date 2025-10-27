@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using NexYaml;
-using NexYaml.Parser;
-using NexYaml.Serialization;
-using NexYaml.XParser;
 using NexYamlTest.ComplexCases;
 using NexYamlTest.DataStyleTests;
 using NexYamlTest.SimpleClasses;

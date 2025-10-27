@@ -1,7 +1,5 @@
-using System.IO;
 using NexYaml.Parser;
 using NexYaml.Serialization;
-using NexYaml.XParser;
 using Stride.Core;
 using Stride.Core.Extensions;
 
@@ -50,7 +48,7 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
     public override async ValueTask<Dictionary<TKey, TValue?>?> Read(Scope scope, ParseContext parseResult)
     {
         var map = parseResult.DataMemberMode is DataMemberMode.Content ? (Dictionary<TKey, TValue?>)parseResult.Value! : [];
-        if(scope is XParser.MappingScope mapping && DictionarySerializer<TKey, TValue>.IsPrimitive(typeof(TKey)))
+        if (scope is MappingScope mapping && DictionarySerializer<TKey, TValue>.IsPrimitive(typeof(TKey)))
         {
             List<Task<KeyValuePair<TKey, TValue?>>> tasks = new();
             foreach (var kvp in mapping)

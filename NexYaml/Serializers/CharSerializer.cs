@@ -1,7 +1,5 @@
-using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
-using NexYaml.XParser;
 using Stride.Core;
 
 namespace NexYaml.Serializers;
@@ -17,7 +15,7 @@ public class CharSerializer : YamlSerializer<char>
 
     public override ValueTask<char> Read(Scope scope, ParseContext parseResult)
     {
-        var scalarScope = scope.As<XParser.ScalarScope>();
+        var scalarScope = scope.As<ScalarScope>();
         return new(char.Parse(scalarScope.Value));
     }
 }

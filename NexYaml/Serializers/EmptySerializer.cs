@@ -1,7 +1,6 @@
 ﻿using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
-using NexYaml.XParser;
 using Stride.Core;
 
 namespace NexYaml.Serializers;

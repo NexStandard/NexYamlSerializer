@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using NexYaml;
-using NexYamlTest.DataMemberContentMode;
 using NexYamlTest.Helper;
 using NexYamlTest.SimpleClasses;
 using Stride.Core;

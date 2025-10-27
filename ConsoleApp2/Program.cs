@@ -1,14 +1,8 @@
-﻿using System;
-using System.IO;
-using System.Text;
+﻿using System.Text;
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Running;
 using NexYaml;
-using NexYaml.Serialization;
-using NexYaml.Serializers;
-using NexYaml.XParser;
+using NexYaml.Parser;
 using Stride.Core;
-using Vortice.Vulkan;
 
 class Program
 {
@@ -41,7 +35,7 @@ List:
 
     }
 }
-public record Person(int Id,string Name, bool Female);
+public record Person(int Id, string Name, bool Female);
 public class PersonSerializer : YamlSerializer<Person>
 {
 
@@ -51,7 +45,7 @@ public class PersonSerializer : YamlSerializer<Person>
     }
     public override async ValueTask<Person?> Read(Scope scope, NexYaml.Parser.ParseContext parseResult)
     {
-        var mapping = scope.As<NexYaml.XParser.SequenceScope>();
+        var mapping = scope.As<SequenceScope>();
         int id = default;
         string? name = default;
         bool female = default;

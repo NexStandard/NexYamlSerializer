@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using NexYaml.Serialization;
-using Stride.Input;
 
-namespace NexYaml.XParser
+namespace NexYaml.Parser
 {
     public sealed class YamlParser : IDisposable
     {
@@ -351,7 +346,7 @@ namespace NexYaml.XParser
             {
                 string childTag = "";
                 string item = raw;
-                if(bufferedTag == "")
+                if (bufferedTag == "")
                 {
                     if (item.StartsWith('!') && item != "!!null")
                     {
@@ -469,7 +464,7 @@ namespace NexYaml.XParser
                 {
                     inTag = true;
                 }
-                if((c == ' ' ||  c == '[' || c == '{' ) && inTag)
+                if ((c == ' ' || c == '[' || c == '{') && inTag)
                 {
                     inTag = false;
                     result.Add(sb.ToString().Trim());

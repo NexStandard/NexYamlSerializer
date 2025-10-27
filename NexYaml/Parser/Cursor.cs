@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NexYaml.XParser
+﻿namespace NexYaml.Parser
 {
     public sealed class YamlCursor : IDisposable
     {

@@ -1,6 +1,5 @@
 using NexYaml.Parser;
 using NexYaml.Serialization;
-using NexYaml.XParser;
 using Stride.Core;
 
 namespace NexYaml.Serializers;
@@ -66,7 +65,7 @@ public class ListSerializer<T> : YamlSerializer<List<T?>>
 
     public override async ValueTask<List<T?>?> Read(Scope scope, ParseContext parseResult)
     {
-        var sequenceScope = scope.As<XParser.SequenceScope>();
+        var sequenceScope = scope.As<SequenceScope>();
         var list = new List<T>();
         var tasks = new List<Task<T?>>();
         foreach (var element in sequenceScope)

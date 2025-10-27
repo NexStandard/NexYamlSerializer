@@ -2,7 +2,6 @@ using System.Collections;
 using System.Runtime.CompilerServices;
 using NexYaml.Parser;
 using NexYaml.Serialization;
-using NexYaml.XParser;
 using Stride.Core;
 
 namespace NexYaml.Serializers;
@@ -19,7 +18,7 @@ public class TupleSerializer<T1, T2> : YamlSerializer<Tuple<T1?, T2?>>
 
     public override async ValueTask<Tuple<T1?, T2?>?> Read(Scope scope, ParseContext parseResult)
     {
-        var scalarScope = scope.As<XParser.SequenceScope>();
+        var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
         var item1 = scalarList[0].Read<T1?>(new ParseContext());
         var item2 = scalarList[1].Read<T2?>(new ParseContext());
@@ -59,7 +58,7 @@ public class TupleSerializer<T1, T2, T3> : YamlSerializer<Tuple<T1?, T2?, T3?>>
 
     public override async ValueTask<Tuple<T1?, T2?, T3?>?> Read(Scope scope, ParseContext parseResult)
     {
-        var scalarScope = scope.As<XParser.SequenceScope>();
+        var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
         var item1 = scalarList[0].Read<T1?>(new ParseContext());
         var item2 = scalarList[1].Read<T2?>(new ParseContext());
@@ -101,7 +100,7 @@ public class TupleSerializer<T1, T2, T3, T4> : YamlSerializer<Tuple<T1?, T2?, T3
 
     public override async ValueTask<Tuple<T1?, T2?, T3?, T4?>?> Read(Scope scope, ParseContext parseResult)
     {
-        var scalarScope = scope.As<XParser.SequenceScope>();
+        var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
         var item1 = scalarList[0].Read<T1?>(new ParseContext());
         var item2 = scalarList[1].Read<T2?>(new ParseContext());
@@ -146,7 +145,7 @@ public class TupleSerializer<T1, T2, T3, T4, T5> : YamlSerializer<Tuple<T1?, T2?
 
     public override async ValueTask<Tuple<T1?, T2?, T3?, T4?, T5?>?> Read(Scope scope, ParseContext parseResult)
     {
-        var scalarScope = scope.As<XParser.SequenceScope>();
+        var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
         var item1 = scalarList[0].Read<T1?>(new ParseContext());
         var item2 = scalarList[1].Read<T2?>(new ParseContext());
@@ -194,7 +193,7 @@ public class TupleSerializer<T1, T2, T3, T4, T5, T6> : YamlSerializer<Tuple<T1?,
 
     public override async ValueTask<Tuple<T1?, T2?, T3?, T4?, T5?, T6?>?> Read(Scope scope, ParseContext parseResult)
     {
-        var scalarScope = scope.As<XParser.SequenceScope>();
+        var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
         var item1 = scalarList[0].Read<T1?>(new ParseContext());
         var item2 = scalarList[1].Read<T2?>(new ParseContext());
@@ -243,7 +242,7 @@ public class TupleSerializer<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<Tuple<
 
     public override async ValueTask<Tuple<T1?, T2?, T3?, T4?, T5?, T6?, T7?>?> Read(Scope scope, ParseContext parseResult)
     {
-        var scalarScope = scope.As<XParser.SequenceScope>();
+        var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
         var item1 = scalarList[0].Read<T1?>(new ParseContext());
         var item2 = scalarList[1].Read<T2?>(new ParseContext());

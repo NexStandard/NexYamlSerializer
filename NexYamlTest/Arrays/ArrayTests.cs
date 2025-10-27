@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using NexYaml;
-using NexYaml.Core;
 using NexYaml.Serialization;
-using NexYaml.XParser;
 using NexYamlTest.SimpleClasses;
 using Xunit;
 
@@ -42,10 +40,7 @@ public class ArrayTests
             Value = ["bob0", "bob1"]
         };
         var stringArrayString = Yaml.Write(array);
-        var parser = new NexYaml.XParser.YamlParser(stringArrayString, IYamlSerializerResolver.Default).Parse();
-        var first = parser.First();
-        Console.WriteLine(first.Dump());
-
+        var d = TestParser.Read<Generics<string[]>>(stringArrayString);
         var stringArrayDeserialized = await TestParser.Read<Generics<string[]>>(stringArrayString);
         Assert.NotNull(stringArrayDeserialized);
         Assert.NotNull(stringArrayDeserialized.Value);
@@ -53,7 +48,7 @@ public class ArrayTests
         Assert.Equal("bob1", stringArrayDeserialized.Value[1]);
     }
 
-    [Fact(Skip = "FF")]
+    [Fact]
     public async Task Generic_Nested_Int_Array_Normal()
     {
         Setup();

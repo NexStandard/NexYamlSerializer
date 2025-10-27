@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using NexYaml;
-using NexYaml.Core;
 using NexYaml.Serialization;
-using NexYaml.XParser;
 using NexYamlTest.SimpleClasses;
 using Xunit;
 
@@ -375,9 +372,6 @@ public class PrimitiveSerializerTest
 
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(x);
-        var parser = new NexYaml.XParser.YamlParser(s, IYamlSerializerResolver.Default).Parse();
-        var first = parser.First();
-        Console.WriteLine(first.Dump());
         var d = await TestParser.Read<BaseSerializerNullable>(s);
         Assert.NotNull(d);
         Assert.Equal(d.IntField, d.IntField);

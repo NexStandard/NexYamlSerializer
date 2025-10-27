@@ -1,7 +1,6 @@
 using System.Globalization;
 using NexYaml.Parser;
 using NexYaml.Serialization;
-using NexYaml.XParser;
 using Stride.Core;
 
 namespace NexYaml.Serializers;
@@ -19,7 +18,7 @@ public class ByteSerializer : YamlSerializer<byte>
 
     public override ValueTask<byte> Read(Scope scope, ParseContext parseResult)
     {
-        var scalarScope = scope.As<XParser.ScalarScope>();
+        var scalarScope = scope.As<ScalarScope>();
         return new(byte.Parse(scalarScope.Value));
     }
 }

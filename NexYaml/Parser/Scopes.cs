@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.Collections;
 using System.Text;
-using System.Threading.Tasks;
-using Irony.Parsing;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using NexYaml.Serializers;
 using Stride.Core.Extensions;
 
-namespace NexYaml.XParser
+namespace NexYaml.Parser
 {
 
     public enum ScopeKind { Scalar, Mapping, Sequence }
@@ -23,10 +17,10 @@ namespace NexYaml.XParser
         public int Indent { get; set; }
         private IYamlSerializerResolver _resolver;
         public IdentifiableResolver IdentifiableResolver { get; private set; }
-        protected Scope(string tag, int indent,IYamlSerializerResolver resolver, IdentifiableResolver identifiableResolver) => (Tag, Indent, _resolver, IdentifiableResolver) = (tag, indent, resolver, identifiableResolver);
+        protected Scope(string tag, int indent, IYamlSerializerResolver resolver, IdentifiableResolver identifiableResolver) => (Tag, Indent, _resolver, IdentifiableResolver) = (tag, indent, resolver, identifiableResolver);
         public ValueTask<T?> Read<T>(ParseContext context)
         {
-            if(this is ScalarScope scalar && scalar.Value == "!!null")
+            if (this is ScalarScope scalar && scalar.Value == "!!null")
             {
                 return new ValueTask<T?>(default(T));
             }
@@ -88,7 +82,7 @@ namespace NexYaml.XParser
         public static T As<T>(this Scope scope)
             where T : Scope
         {
-            if(scope is T castedScope)
+            if (scope is T castedScope)
             {
                 return castedScope;
             }
@@ -148,10 +142,10 @@ namespace NexYaml.XParser
 
     public sealed class MappingScope : Scope, IEnumerable<KeyValuePair<string, Scope>>
     {
-        private readonly List<KeyValuePair<string,Scope>> _entries = new();
-        public MappingScope(int indent, IYamlSerializerResolver resolver, IdentifiableResolver identifiableResolver,string tag = "") : base(tag, indent,resolver, identifiableResolver) { }
+        private readonly List<KeyValuePair<string, Scope>> _entries = new();
+        public MappingScope(int indent, IYamlSerializerResolver resolver, IdentifiableResolver identifiableResolver, string tag = "") : base(tag, indent, resolver, identifiableResolver) { }
         public override ScopeKind Kind => ScopeKind.Mapping;
-        public void Add(string key, Scope value) => _entries.Add(new KeyValuePair<string,Scope>(key, value));
+        public void Add(string key, Scope value) => _entries.Add(new KeyValuePair<string, Scope>(key, value));
         public IEnumerator<KeyValuePair<string, Scope>> GetEnumerator() => _entries.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => _entries.GetEnumerator();
 
@@ -160,7 +154,7 @@ namespace NexYaml.XParser
     public sealed class SequenceScope : Scope, IEnumerable<Scope>
     {
         private readonly List<Scope> _items = new();
-        public SequenceScope(int indent, IYamlSerializerResolver resolver,IdentifiableResolver identifiableResolver, string tag = "") : base(tag, indent, resolver, identifiableResolver) { }
+        public SequenceScope(int indent, IYamlSerializerResolver resolver, IdentifiableResolver identifiableResolver, string tag = "") : base(tag, indent, resolver, identifiableResolver) { }
         public override ScopeKind Kind => ScopeKind.Sequence;
         public void Add(Scope value) => _items.Add(value);
         public IEnumerator<Scope> GetEnumerator() => _items.GetEnumerator();
