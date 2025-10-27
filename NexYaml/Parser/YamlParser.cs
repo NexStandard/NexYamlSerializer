@@ -1,8 +1,29 @@
-﻿using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using NexYaml.Serialization;
 
 namespace NexYaml.Parser
 {
+    class YamlReader
+    {
+        public StreamReader Reader { get; set; }
+        public bool EOF { get; private set; }
+        public bool ReadNextLine([MaybeNullWhen(false)]out string? currentLine)
+        {
+            if (Reader.EndOfStream) {
+                currentLine = null;
+                EOF = true;
+                return false;
+            }
+            currentLine = Reader.ReadLine();
+            if (currentLine == null)
+            {
+                EOF = true;
+                return false;
+            }
+            return true;
+        }
+    }
     public sealed class YamlParser : IDisposable
     {
         private readonly StreamReader _reader;
@@ -10,29 +31,39 @@ namespace NexYaml.Parser
         private bool _eof;
         private readonly IYamlSerializerResolver _resolver;
         private IdentifiableResolver IdentifiableResolver { get; } = new();
-
+        private YamlReader xreader;
         public YamlParser(string text, IYamlSerializerResolver resolver)
         {
             var bytes = Encoding.UTF8.GetBytes(text);
             var ms = new MemoryStream(bytes);
             _reader = new StreamReader(ms, Encoding.UTF8, leaveOpen: false);
             _resolver = resolver;
+            xreader = new YamlReader()
+            {
+                Reader = _reader
+            };
         }
 
         public YamlParser(Stream stream, IYamlSerializerResolver resolver, Encoding? encoding = null)
         {
             _reader = new StreamReader(stream, encoding ?? Encoding.UTF8, leaveOpen: true);
             _resolver = resolver;
+            xreader = new YamlReader()
+            {
+                Reader = _reader
+            };
         }
 
         public IEnumerable<Scope> Parse()
         {
-            while (ReadNextLine())
+            while (xreader.ReadNextLine(out var currentLine))
             {
-                if (string.IsNullOrWhiteSpace(_currentLine)) continue;
+                _currentLine = currentLine;
+                _eof = xreader.EOF;
+                if (string.IsNullOrWhiteSpace(currentLine)) continue;
 
-                int indent = CountIndent(_currentLine);
-                string trimmed = _currentLine.Trim();
+                int indent = CountIndent(currentLine);
+                string trimmed = currentLine.Trim();
 
                 // Tagged root
                 if (trimmed.StartsWith('!') && trimmed != "!!null")
@@ -47,19 +78,21 @@ namespace NexYaml.Parser
                         continue;
                     }
 
-                    if (!ReadNextLine())
+                    if (!xreader.ReadNextLine(out var nextLine))
                         throw new InvalidOperationException($"Tag '{tag}' at indent {indent} not followed by a value");
+                    _currentLine = nextLine;
+                    _eof = xreader.EOF;
 
-                    int nextIndent = CountIndent(_currentLine);
+                    int nextIndent = CountIndent(nextLine);
                     if (nextIndent != indent)
                         throw new InvalidOperationException($"Tag '{tag}' at indent {indent} not aligned with following value");
 
-                    if (_currentLine.TrimStart().StartsWith('-'))
+                    if (nextLine.TrimStart().StartsWith('-'))
                         yield return ParseSequence(indent, tag);
-                    else if (_currentLine.Contains(":"))
+                    else if (nextLine.Contains(":"))
                         yield return ParseMapping(indent, tag);
                     else
-                        yield return ParseValue(_currentLine.Trim(), indent, tag);
+                        yield return ParseValue(nextLine.Trim(), indent, tag);
 
                     continue;
                 }
