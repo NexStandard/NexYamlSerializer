@@ -4,31 +4,9 @@ using NexYaml.Serialization;
 
 namespace NexYaml.Parser
 {
-    class YamlReader
-    {
-        public required StreamReader Reader { get; set; }
-        public bool EOF { get; private set; }
-        public bool ReadNextLine([NotNullWhen(true)]out string? currentLine)
-        {
-            if (Reader.EndOfStream) {
-                currentLine = null;
-                EOF = true;
-                return false;
-            }
-            currentLine = Reader.ReadLine();
-            if (currentLine == null)
-            {
-                EOF = true;
-                return false;
-            }
-            return true;
-        }
-    }
     public sealed class YamlParser : IDisposable
     {
         private readonly StreamReader _reader;
-        private string? _currentLine;
-        private bool _eof;
         private readonly IYamlSerializerResolver _resolver;
         private IdentifiableResolver IdentifiableResolver { get; } = new();
         private YamlReader xreader;
@@ -53,13 +31,10 @@ namespace NexYaml.Parser
                 Reader = _reader
             };
         }
-
         public IEnumerable<Scope> Parse()
         {
-            while (xreader.ReadNextLine(out var currentLine))
+            while (xreader.Peek(out var currentLine))
             {
-                _currentLine = currentLine;
-                _eof = xreader.EOF;
                 if (string.IsNullOrWhiteSpace(currentLine)) continue;
 
                 int indent = CountIndent(currentLine);
@@ -68,6 +43,7 @@ namespace NexYaml.Parser
                 // Tagged root
                 if (trimmed.StartsWith('!') && trimmed != "!!null")
                 {
+                    xreader.Move(out var scope);
                     int spaceIndex = trimmed.IndexOf(' ');
                     string tag = spaceIndex > 0 ? trimmed.Substring(0, spaceIndex) : trimmed;
                     string inline = spaceIndex > 0 ? trimmed.Substring(spaceIndex + 1).Trim() : "";
@@ -78,21 +54,27 @@ namespace NexYaml.Parser
                         continue;
                     }
 
-                    if (!xreader.ReadNextLine(out var nextLine))
+                    if (!xreader.Peek(out var nextLine))
                         throw new InvalidOperationException($"Tag '{tag}' at indent {indent} not followed by a value");
-                    _currentLine = nextLine;
-                    _eof = xreader.EOF;
+
 
                     int nextIndent = CountIndent(nextLine);
                     if (nextIndent != indent)
                         throw new InvalidOperationException($"Tag '{tag}' at indent {indent} not aligned with following value");
 
                     if (nextLine.TrimStart().StartsWith('-'))
+                    {
                         yield return ParseSequence(indent, tag);
+                    }
                     else if (nextLine.Contains(':'))
+                    {
                         yield return ParseMapping(indent, tag);
+                    }
                     else
+                    {
+                        xreader.Move(out var s);
                         yield return ParseValue(nextLine.Trim(), indent, tag);
+                    }
 
                     continue;
                 }
@@ -110,6 +92,7 @@ namespace NexYaml.Parser
                 // Scalar root
                 else
                 {
+                    xreader.Move(out var scope);
                     yield return ParseValue(trimmed, indent, "");
                 }
             }
@@ -136,12 +119,14 @@ namespace NexYaml.Parser
 
             return new ScalarScope(val, indent, _resolver, IdentifiableResolver, tag);
         }
+
         private MappingScope ParseMapping(int indent, string tag)
         {
             var map = new MappingScope(indent, _resolver, IdentifiableResolver, tag);
             ParseMappingLoop(map);
             return map;
         }
+
         private MappingScope ParseMapping(int indent, string tag, string? key = null, string? initialValue = null)
         {
             var map = new MappingScope(indent, _resolver, IdentifiableResolver, tag);
@@ -165,23 +150,22 @@ namespace NexYaml.Parser
                 }
                 else
                 {
-                    // No inline value: "- key:" followed by nested mapping/sequence
-                    if (!_eof)
+
+                    xreader.Peek(out var dump);
+                    int nextIndent = CountIndent(dump);
+                    if (nextIndent > indent)
                     {
-                        int nextIndent = CountIndent(_currentLine);
-                        if (nextIndent > indent)
-                        {
-                            var nextTrim = _currentLine.TrimStart();
-                            if (nextTrim.StartsWith('-'))
-                                map.Add(key, ParseSequence(indent + 2, ""));
-                            else
-                                map.Add(key, ParseMapping(indent + 2, ""));
-                        }
+                        var nextTrim = dump.TrimStart();
+                        if (nextTrim.StartsWith('-'))
+                            map.Add(key, ParseSequence(indent + 2, ""));
                         else
-                        {
-                            map.Add(key, new ScalarScope(string.Empty, indent + 2, _resolver, IdentifiableResolver, ""));
-                        }
+                            map.Add(key, ParseMapping(indent + 2, ""));
                     }
+                    else
+                    {
+                        map.Add(key, new ScalarScope(string.Empty, indent + 2, _resolver, IdentifiableResolver, ""));
+                    }
+
                 }
             }
 
@@ -230,20 +214,19 @@ namespace NexYaml.Parser
             }
             return map;
         }
-
         private SequenceScope ParseSequence(int indent, string tag)
         {
             var seq = new SequenceScope(indent, _resolver, IdentifiableResolver, tag);
-            while (!_eof)
-            {
-                if (string.IsNullOrWhiteSpace(_currentLine)) { if (!ReadNextLine()) break; continue; }
 
-                int lineIndent = CountIndent(_currentLine);
+
+            while (xreader.Peek(out var next))
+            {
+                int lineIndent = CountIndent(next);
                 if (lineIndent < indent) break;
                 if (lineIndent != indent) break;
-
-                string trimmed = _currentLine.Trim();
+                string trimmed = next.Trim();
                 if (!trimmed.StartsWith('-')) break;
+                xreader.Move();
 
                 // Skip the leading '-' and any following spaces
                 int i = 1;
@@ -251,7 +234,6 @@ namespace NexYaml.Parser
                     i++;
 
                 var item = trimmed.Substring(i);
-                ReadNextLine();
 
                 string childTag = "";
 
@@ -286,49 +268,48 @@ namespace NexYaml.Parser
                 }
                 else
                 {
-                    if (!_eof)
-                    {
-                        int nextIndent = CountIndent(_currentLine);
-                        if (nextIndent > indent)
-                        {
-                            var nextTrim = _currentLine.TrimStart();
-                            if (nextTrim.StartsWith('-'))
-                                seq.Add(ParseSequence(indent + 2, childTag));
-                            else
-                                seq.Add(ParseMapping(indent + 2, childTag));
-                            continue;
-                        }
 
+                    xreader.Peek(out var dump);
+                    int nextIndent = CountIndent(dump);
+                    if (nextIndent > indent)
+                    {
+                        var nextTrim = dump.TrimStart();
+                        if (nextTrim.StartsWith('-'))
+                            seq.Add(ParseSequence(indent + 2, childTag));
+                        else
+                        {
+                            seq.Add(ParseMapping(indent + 2, childTag));
+                        }
+                        continue;
                     }
-                    seq.Add(new ScalarScope(string.Empty, indent + 2, _resolver, IdentifiableResolver, childTag));
                 }
             }
             return seq;
         }
 
-
         private void ParseMappingLoop(MappingScope map)
         {
             // Continue with your existing loop
-            while (!_eof)
+            while (xreader.Peek(out var next))
             {
-                if (string.IsNullOrWhiteSpace(_currentLine)) { if (!ReadNextLine()) break; continue; }
-
-                int lineIndent = CountIndent(_currentLine);
+                int lineIndent = CountIndent(next);
                 if (lineIndent < map.Indent) break;
                 map.Indent = lineIndent;
 
-                string trimmed = _currentLine.Trim();
-                if (trimmed.StartsWith('-')) break;
+                string trimmed = next.Trim();
+
                 if (trimmed.StartsWith('!') && trimmed != "!!null")
                     throw new InvalidOperationException($"Standalone tag inside mapping is invalid: '{trimmed}'");
 
+
+                if (next.Trim().StartsWith('-')) break;
                 var parts = trimmed.Split(':', 2);
                 if (parts.Length != 2) throw new InvalidOperationException($"Invalid mapping line: '{trimmed}'");
+                xreader.Move(out var dump);
 
                 var key = parts[0].Trim();
                 var val = parts[1].Trim();
-                ReadNextLine();
+
 
                 string childTag = "";
                 if (val.StartsWith('!') && val != "!!null")
@@ -344,31 +325,28 @@ namespace NexYaml.Parser
                 }
                 else
                 {
-                    if (!_eof)
+                    xreader.Peek(out var dump4);
+                    int nextIndent = CountIndent(dump4);
+                    if (nextIndent > map.Indent)
                     {
-                        int nextIndent = CountIndent(_currentLine);
-                        if (nextIndent > map.Indent)
-                        {
-                            var nextTrim = _currentLine.TrimStart();
-                            if (nextTrim.StartsWith('-'))
-                                map.Add(key, ParseSequence(map.Indent + 2, childTag));
-                            else
-                                map.Add(key, ParseMapping(map.Indent + 2, childTag));
-                            continue;
-                        }
+                        var nextTrim = dump4.TrimStart();
+                        if (nextTrim.StartsWith('-'))
+                            map.Add(key, ParseSequence(map.Indent + 2, childTag));
                         else
-                        {
-                            var nextTrim = _currentLine.TrimStart();
-                            if (nextTrim.StartsWith('-'))
-                                map.Add(key, ParseSequence(map.Indent, childTag));
-                            continue;
-                        }
+                            map.Add(key, ParseMapping(map.Indent + 2, childTag));
+                        continue;
                     }
-                    map.Add(key, new ScalarScope(string.Empty, map.Indent + 2, _resolver, IdentifiableResolver, childTag));
+                    else
+                    {
+                        var nextTrim = dump4.TrimStart();
+                        if (nextTrim.StartsWith('-'))
+                            map.Add(key, ParseSequence(map.Indent, childTag));
+                        continue;
+                    }
                 }
+
             }
         }
-
         private SequenceScope ParseFlowSequence(string text, int indent, string tag)
         {
             var seq = new SequenceScope(indent, _resolver, IdentifiableResolver, tag);
@@ -420,29 +398,7 @@ namespace NexYaml.Parser
 
         private string ParseLiteralScalar(int indent)
         {
-            var sb = new StringBuilder();
-            ReadNextLine(); // consume the '|' line
-
-            while (!_eof)
-            {
-                if (string.IsNullOrEmpty(_currentLine)) { sb.AppendLine(); if (!ReadNextLine()) break; continue; }
-
-                int lineIndent = CountIndent(_currentLine);
-                if (lineIndent < indent) break;
-
-                sb.AppendLine(_currentLine.Substring(indent));
-                if (!ReadNextLine()) break;
-            }
-
-            return sb.ToString();
-        }
-
-        private bool ReadNextLine()
-        {
-            if (_reader.EndOfStream) { _eof = true; return false; }
-            _currentLine = _reader.ReadLine();
-            if (_currentLine == null) { _eof = true; return false; }
-            return true;
+            throw new NotImplementedException();
         }
 
         private static bool IsQuoted(string s)
