@@ -91,7 +91,7 @@ public class ReferenceTest
         Assert.Equal(d.List[0], d.List[2]);
     }
 #if NET9_0_OR_GREATER
-    [Fact(Skip="")]
+    [Fact]
     public async Task ResolveListReferences_DeepStructure()
     {
         NexYamlSerializerRegistry.Init();

@@ -269,8 +269,26 @@ namespace NexYaml.XParser
             {
                 if (!string.IsNullOrEmpty(initialValue))
                 {
-                    // Inline value case: "- key: value"
-                    map.Add(initialKey, new ScalarScope(initialValue, indent + 2, _resolver, IdentifiableResolver, ""));
+                    string childTag = "";
+                    string val = initialValue;
+
+                    if (val.StartsWith("!") && val != "!!null")
+                    {
+                        var segs = val.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+                        childTag = segs[0];
+                        val = segs.Length > 1 ? segs[1].Trim() : "";
+                    }
+
+                    if (IsQuoted(val))
+                        map.Add(initialKey, new ScalarScope(Unquote(val), indent + 2, _resolver, IdentifiableResolver, childTag));
+                    else if (val.StartsWith("|"))
+                        map.Add(initialKey, new ScalarScope(ParseLiteralScalar(indent + 2), indent + 2, _resolver, IdentifiableResolver, childTag));
+                    else if (val.StartsWith("{") && val.EndsWith("}"))
+                        map.Add(initialKey, ParseFlowMapping(val, indent + 2, childTag));
+                    else if (val.StartsWith("[") && val.EndsWith("]"))
+                        map.Add(initialKey, ParseFlowSequence(val, indent + 2, childTag));
+                    else
+                        map.Add(initialKey, new ScalarScope(val, indent + 2, _resolver, IdentifiableResolver, childTag));
                 }
                 else
                 {
@@ -315,7 +333,51 @@ namespace NexYaml.XParser
                 var val = parts[1].Trim();
                 ReadNextLine();
 
-                // … your existing value handling logic …
+                string childTag = "";
+                if (val.StartsWith("!") && val != "!!null")
+                {
+                    var segs = val.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+                    childTag = segs[0];
+                    val = segs.Length > 1 ? segs[1].Trim() : "";
+                }
+
+                if (val.Length > 0)
+                {
+                    if (IsQuoted(val))
+                        map.Add(key, new ScalarScope(Unquote(val), indent + 2, _resolver, IdentifiableResolver, childTag));
+                    else if (val.StartsWith("|"))
+                        map.Add(key, new ScalarScope(ParseLiteralScalar(indent + 2), indent + 2, _resolver, IdentifiableResolver, childTag));
+                    else if (val.StartsWith("{") && val.EndsWith("}"))
+                        map.Add(key, ParseFlowMapping(val, indent + 2, childTag));
+                    else if (val.StartsWith("[") && val.EndsWith("]"))
+                        map.Add(key, ParseFlowSequence(val, indent + 2, childTag));
+                    else
+                        map.Add(key, new ScalarScope(val, indent + 2, _resolver, IdentifiableResolver, childTag));
+                }
+                else
+                {
+                    if (!_eof)
+                    {
+                        int nextIndent = CountIndent(_currentLine);
+                        if (nextIndent > indent)
+                        {
+                            var nextTrim = _currentLine.TrimStart();
+                            if (nextTrim.StartsWith("- "))
+                                map.Add(key, ParseSequence(indent + 2, childTag));
+                            else
+                                map.Add(key, ParseMapping(indent + 2, childTag));
+                            continue;
+                        }
+                        else
+                        {
+                            var nextTrim = _currentLine.TrimStart();
+                            if (nextTrim.StartsWith("- "))
+                                map.Add(key, ParseSequence(indent, childTag));
+                            continue;
+                        }
+                    }
+                    map.Add(key, new ScalarScope(string.Empty, indent + 2, _resolver, IdentifiableResolver, childTag));
+                }
             }
 
             return map;
