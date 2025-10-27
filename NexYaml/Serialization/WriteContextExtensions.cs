@@ -147,13 +147,13 @@ public static class ScalarExtensions
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
         return mapping.Node.Write(mapping, key, span[..written], style);
     }
-    
+
     public static WriteContext<Mapping> Write(this WriteContext<Mapping> mapping, string key, string? value, DataStyle style = DataStyle.Any)
     {
-        if(value is null)
+        if (value is null)
         {
-            return mapping.Node.Write(mapping, key, YamlCodes.Null.AsSpan(),style);
+            return mapping.Node.Write(mapping, key, YamlCodes.Null.AsSpan(), style);
         }
-        return mapping.Node.Write(mapping, key,mapping.Writer.FormatString(mapping,value, style), style);
+        return mapping.Node.Write(mapping, key, mapping.Writer.FormatString(mapping, value, style), style);
     }
 }

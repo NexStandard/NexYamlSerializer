@@ -15,7 +15,7 @@ public class ContentModeTest
             ContentInitRequired = new ContentModeData(14)
         };
         var s = Yaml.Write(x);
-        var d = await Yaml.Read<ContentModeClass>(s);
+        var d = await TestParser.Read<ContentModeClass>(s);
         Assert.NotNull(d);
         Assert.Equal(12, d.Content.Generics);
         Assert.Equal(12, d.ContentInit.Generics);

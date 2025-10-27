@@ -21,7 +21,7 @@ public class PartialTest
             ID2 = 2,
         };
         var s = Yaml.Write(simplePartial1);
-        var deserialized = await Yaml.Read<SimplePartial>(s);
+        var deserialized = await TestParser.Read<SimplePartial>(s);
         Assert.NotNull(deserialized);
         Assert.Equal(simplePartial1.Id1, deserialized.Id1);
         Assert.Equal(simplePartial1.ID2, deserialized.ID2);

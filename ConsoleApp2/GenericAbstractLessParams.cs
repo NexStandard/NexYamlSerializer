@@ -1,3 +1,4 @@
-﻿internal class GenericAbstractLessParams<T>
+﻿namespace NexYaml.XParser
 {
+
 }

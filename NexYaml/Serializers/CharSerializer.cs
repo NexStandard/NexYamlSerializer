@@ -1,4 +1,3 @@
-using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
@@ -14,15 +13,9 @@ public class CharSerializer : YamlSerializer<char>
         context.WriteScalar(['\'', value, '\'']);
     }
 
-    public override ValueTask<char> Read(IYamlReader stream, ParseContext parseResult)
+    public override ValueTask<char> Read(Scope scope, ParseContext parseResult)
     {
-        if (stream.TryGetScalarAsString(out var span) && char.TryParse(span, out var value) && span.Length == 1)
-        {
-            value = span[0];
-            stream.Move(ParseEventType.Scalar);
-            return new(value);
-        }
-        stream.SkipRead();
-        throw YamlException.ThrowExpectedTypeParseException(typeof(DateTime), span, stream.CurrentMarker);
+        var scalarScope = scope.As<ScalarScope>();
+        return new(char.Parse(scalarScope.Value));
     }
 }

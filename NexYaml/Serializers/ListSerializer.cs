@@ -63,16 +63,15 @@ public class ListSerializer<T> : YamlSerializer<List<T?>>
         result.End(context);
     }
 
-    public override async ValueTask<List<T?>?> Read(IYamlReader stream, ParseContext parseResult)
+    public override async ValueTask<List<T?>?> Read(Scope scope, ParseContext parseResult)
     {
+        var sequenceScope = scope.As<SequenceScope>();
         var list = new List<T>();
         var tasks = new List<Task<T?>>();
-        stream.Move(ParseEventType.SequenceStart);
-        while (stream.HasSequence)
+        foreach (var element in sequenceScope)
         {
-            tasks.Add(stream.Read<T>(parseResult).AsTask());
+            tasks.Add(element.Read<T>(new ParseContext()).AsTask());
         }
-        stream.Move(ParseEventType.SequenceEnd);
         return (await Task.WhenAll(tasks)).ToList();
     }
 }
@@ -86,7 +85,7 @@ public class ListSerializerFactory : IYamlSerializerFactory
 
         resolver.Register(this, typeof(List<>), typeof(List<>));
 
-        resolver.RegisterTag("List", typeof(List<>));
+        resolver.RegisterTag("!List", typeof(List<>));
         resolver.Register(this, typeof(List<>), typeof(IList<>));
         resolver.Register(this, typeof(List<>), typeof(ICollection<>));
         resolver.Register(this, typeof(List<>), typeof(IReadOnlyList<>));

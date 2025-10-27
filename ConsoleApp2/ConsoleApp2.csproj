@@ -11,6 +11,7 @@
 		<ProjectReference Include="..\NexYaml\NexYaml.csproj" />
 		<PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
 		<PackageReference Include="Stride.Engine" Version="4.2.0.2282" />
+		<PackageReference Include="System.Linq.Async" Version="6.0.3" />
 	</ItemGroup>
 
 </Project>

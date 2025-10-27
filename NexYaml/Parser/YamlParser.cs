@@ -1,388 +1,499 @@
-using System.Buffers;
-using System.Diagnostics.CodeAnalysis;
-using NexYaml.Core;
-using NexYaml.Parser.States;
+﻿using System.Text;
 using NexYaml.Serialization;
 
-namespace NexYaml.Parser;
-
-public enum ParseEventType : byte
+namespace NexYaml.Parser
 {
-    /// Reserved for internal use
-    Nothing,
-    StreamStart,
-    StreamEnd,
-    DocumentStart,
-    DocumentEnd,
-    /// Refer to an anchor ID
-    Alias,
-    /// Value, style, anchor_id, tag
-    Scalar,
-    /// Anchor ID
-    SequenceStart,
-    SequenceEnd,
-    /// Anchor ID
-    MappingStart,
-    MappingEnd,
-}
-
-internal enum ParseState
-{
-    StreamStart,
-    ImplicitDocumentStart,
-    DocumentStart,
-    DocumentContent,
-    DocumentEnd,
-    BlockNode,
-    // BlockNodeOrIndentlessSequence,
-    // FlowNode,
-    BlockSequenceFirstEntry,
-    BlockSequenceEntry,
-    IndentlessSequenceEntry,
-    BlockMappingFirstKey,
-    BlockMappingKey,
-    BlockMappingValue,
-    FlowSequenceFirstEntry,
-    FlowSequenceEntry,
-    FlowSequenceEntryMappingKey,
-    FlowSequenceEntryMappingValue,
-    FlowSequenceEntryMappingEnd,
-    FlowMappingFirstKey,
-    FlowMappingKey,
-    FlowMappingValue,
-    End
-}
-
-public partial class YamlParser(ReadOnlySequence<char> sequence, IYamlSerializerResolver resolver) : IDisposable
-{
-    public static YamlParser FromSequence(in ReadOnlySequence<char> sequence, IYamlSerializerResolver resolver)
+    public sealed class YamlParser : IDisposable
     {
-        return new YamlParser(sequence, resolver);
-    }
+        private readonly StreamReader _reader;
+        private string? _currentLine;
+        private bool _eof;
+        private readonly IYamlSerializerResolver _resolver;
+        private IdentifiableResolver IdentifiableResolver { get; } = new();
 
-    public ParseEventType CurrentEventType { get; private set; } = default;
-
-    public Marker CurrentMark => tokenizer.CurrentMark;
-    public bool HasMapping(out ReadOnlySpan<char> mappingKey)
-    {
-        if (HasKeyMapping)
+        public YamlParser(string text, IYamlSerializerResolver resolver)
         {
-            ValidateScalar(out mappingKey);
-            return true;
-        }
-        mappingKey = default;
-        return false;
-    }
-    /// <summary>
-    /// Indicates if the current <see cref="ParseEventType.MappingEnd"/> or <see cref="ParseEventType.StreamEnd"/> has not happened yet.
-    /// </summary>
-    public bool HasKeyMapping => CurrentEventType is not ParseEventType.StreamEnd and not ParseEventType.MappingEnd;
-    /// <summary>
-    /// Indicates if the current <see cref="ParseEventType.SequenceEnd"/> or <see cref="ParseEventType.StreamEnd"/> has not happened yet.
-    /// </summary>
-    public bool HasSequence => CurrentEventType is not ParseEventType.StreamEnd and not ParseEventType.SequenceEnd;
-
-    /// <summary>
-    /// Validates the scalar and returns it if succesful.
-    /// Else it's an empty scalar and <see cref="YamlException"/> will be thrown
-    /// </summary>
-    /// <param name="key">The <see cref="Scalar"/> Key of the Mapping</param>
-    /// <returns></returns>
-    /// <exception cref="YamlException">Throws when there is no <see cref="ParseEventType.Scalar"/> or if <see cref="TryGetScalarAsSpan(out ReadOnlySpan{byte})"/> doesn't succeed</exception>
-    private void ValidateScalar(out ReadOnlySpan<char> key)
-    {
-        if (CurrentEventType != ParseEventType.Scalar)
-        {
-            throw new YamlException(CurrentMark, "Custom type deserialization supports only string key");
+            var bytes = Encoding.UTF8.GetBytes(text);
+            var ms = new MemoryStream(bytes);
+            _reader = new StreamReader(ms, Encoding.UTF8, leaveOpen: false);
+            _resolver = resolver;
         }
 
-        if (!TryGetScalarAsSpan(out key))
+        public YamlParser(Stream stream, IYamlSerializerResolver resolver, Encoding? encoding = null)
         {
-            throw new YamlException(CurrentMark, "Custom type deserialization supports only string key");
-        }
-    }
-
-    private TokenType CurrentTokenType => tokenizer.CurrentTokenType;
-
-    private Utf8YamlTokenizer tokenizer = new Utf8YamlTokenizer(sequence);
-    private ParseState currentState = ParseState.StreamStart;
-    internal Scalar? currentScalar = null;
-    private Tag? currentTag = null;
-    private Anchor? currentAnchor = null;
-    private int lastAnchorId = -1;
-    private readonly Dictionary<string, int> anchors = [];
-    private ExpandBuffer<ParseState> stateStack = new ExpandBuffer<ParseState>(16);
-
-    public void Dispose()
-    {
-        tokenizer.Dispose();
-        stateStack.Dispose();
-        GC.SuppressFinalize(this);
-    }
-
-    private bool Read()
-    {
-        if (currentScalar is not null)
-        {
-            // tokenizer.ReturnToPool(currentScalar);
-            // currentScalar = null;
+            _reader = new StreamReader(stream, encoding ?? Encoding.UTF8, leaveOpen: true);
+            _resolver = resolver;
         }
 
-        //if (currentState == ParseState.End)
-        //{
-        //    CurrentEventType = ParseEventType.StreamEnd;
-        //    return false;
-        //}
-        State state = currentState switch
+        public IEnumerable<Scope> Parse()
         {
-            ParseState.StreamStart => new StreamStart(this),
-            ParseState.ImplicitDocumentStart => new ParseDocumentStartImplicit(this),
-            ParseState.DocumentStart => new ParseStateDocumentStartExplicit(this),
-            ParseState.DocumentContent => new FlowMapValue(this),
-            ParseState.DocumentEnd => new ParseDocumentEnd(this),
-            ParseState.BlockNode => new States.BlockNode(this, true, false),
-            ParseState.BlockSequenceFirstEntry => new BlockSequenceFirstEntry(this),
-            ParseState.BlockSequenceEntry => new BlockSequenceEntry(this),
-            ParseState.IndentlessSequenceEntry => new IndentlessSequenceEntry(this),
-            ParseState.BlockMappingFirstKey => new BlockMapFirstKey(this),
-            ParseState.BlockMappingKey => new BlockMapKey(this),
-            ParseState.BlockMappingValue => new BlockMapValue(this),
-            ParseState.FlowSequenceFirstEntry => new FlowSequenceFirstEntry(this),
-            ParseState.FlowSequenceEntry => new FlowSequenceEntry(this),
-            ParseState.FlowSequenceEntryMappingKey => new FlowSequenceEntryMappingKey(this),
-            ParseState.FlowSequenceEntryMappingValue => new FlowSequenceEntryMappingValue(this),
-            ParseState.FlowSequenceEntryMappingEnd => new ParseFlowSequenceEntryMappingEnd(this),
-            ParseState.FlowMappingFirstKey => new FlowMapFirstKey(this),
-            ParseState.FlowMappingKey => new FlowMapKey(this),
-            ParseState.FlowMappingValue => new FlowMapValue(this),
-            ParseState.End => throw new NotImplementedException(),
-            _ => throw new ArgumentOutOfRangeException($"The {nameof(CurrentEventType)} is {CurrentEventType} and it's out of range"),
-
-        };
-        var result = state.Parse(tokenizer);
-        CurrentEventType = result.CurrentEvent;
-        currentState = result.State;
-        currentTag = result.Tag;
-        currentScalar = result.Scalar;
-        currentAnchor = result.Anchor;
-        return true;
-    }
-
-    public void ReadWithVerify(ParseEventType eventType)
-    {
-        if (CurrentEventType != eventType)
-            throw new YamlException(CurrentMark, $"Did not find expected event : `{eventType}`");
-        Read();
-    }
-
-    public void SkipAfter(ParseEventType eventType)
-    {
-        while (CurrentEventType != eventType)
-        {
-            if (!Read())
+            while (ReadNextLine())
             {
-                break;
+                if (string.IsNullOrWhiteSpace(_currentLine)) continue;
+
+                int indent = CountIndent(_currentLine);
+                string trimmed = _currentLine.Trim();
+
+                // Tagged root
+                if (trimmed.StartsWith('!') && trimmed != "!!null")
+                {
+                    int spaceIndex = trimmed.IndexOf(' ');
+                    string tag = spaceIndex > 0 ? trimmed.Substring(0, spaceIndex) : trimmed;
+                    string inline = spaceIndex > 0 ? trimmed.Substring(spaceIndex + 1).Trim() : "";
+
+                    if (inline.Length > 0)
+                    {
+                        yield return ParseValue(inline, indent, tag);
+                        continue;
+                    }
+
+                    if (!ReadNextLine())
+                        throw new InvalidOperationException($"Tag '{tag}' at indent {indent} not followed by a value");
+
+                    int nextIndent = CountIndent(_currentLine);
+                    if (nextIndent != indent)
+                        throw new InvalidOperationException($"Tag '{tag}' at indent {indent} not aligned with following value");
+
+                    if (_currentLine.TrimStart().StartsWith('-'))
+                        yield return ParseSequence(indent, tag);
+                    else if (_currentLine.Contains(":"))
+                        yield return ParseMapping(indent, tag);
+                    else
+                        yield return ParseValue(_currentLine.Trim(), indent, tag);
+
+                    continue;
+                }
+
+                // Sequence root
+                if (trimmed.StartsWith('-'))
+                {
+                    yield return ParseSequence(indent, "");
+                }
+                // Mapping root
+                else if (trimmed.Contains(":"))
+                {
+                    yield return ParseMapping(indent, "");
+                }
+                // Scalar root
+                else
+                {
+                    yield return ParseValue(trimmed, indent, "");
+                }
             }
         }
-        if (CurrentEventType == eventType)
+
+        private Scope ParseValue(string val, int indent, string tag)
         {
-            Read();
+            if (val.StartsWith('!') && val != "!!null")
+            {
+                var segs = val.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+                string childTag = segs[0];
+                string rest = segs.Length > 1 ? segs[1].Trim() : "";
+                return ParseValue(rest, indent, childTag);
+            }
+
+            if (IsQuoted(val))
+                return new ScalarScope(Unquote(val), indent, _resolver, IdentifiableResolver, tag);
+            if (val.StartsWith('|'))
+                return new ScalarScope(ParseLiteralScalar(indent), indent, _resolver, IdentifiableResolver, tag);
+            if (val.StartsWith('{') && val.EndsWith('}'))
+                return ParseFlowMapping(val, indent, tag);
+            if (val.StartsWith('[') && val.EndsWith(']'))
+                return ParseFlowSequence(val, indent, tag);
+
+            return new ScalarScope(val, indent, _resolver, IdentifiableResolver, tag);
         }
-    }
-
-    public void SkipCurrentNode()
-    {
-        switch (CurrentEventType)
+        private MappingScope ParseMapping(int indent, string tag)
         {
-            case ParseEventType.Alias:
-            case ParseEventType.Scalar:
-                Read();
-                break;
+            var map = new MappingScope(indent, _resolver, IdentifiableResolver, tag);
+            ParseMappingLoop(map);
+            return map;
+        }
+        private MappingScope ParseMapping(int indent, string tag, string? key = null, string? initialValue = null)
+        {
+            var map = new MappingScope(indent, _resolver, IdentifiableResolver, tag);
 
-            case ParseEventType.SequenceStart:
+            // If we were seeded with a key (from "- key:" or "- key: value")
+            if (key != null)
+            {
+                if (!string.IsNullOrEmpty(initialValue))
                 {
-                    var depth = 1;
-                    while (Read())
+                    string childTag = "";
+                    string val = initialValue;
+
+                    if (val.StartsWith('!') && val != "!!null")
                     {
-                        switch (CurrentEventType)
+                        var segs = val.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+                        childTag = segs[0];
+                        val = segs.Length > 1 ? segs[1].Trim() : "";
+                    }
+
+                    StandardMappingResolve(map, key, val, childTag);
+                }
+                else
+                {
+                    // No inline value: "- key:" followed by nested mapping/sequence
+                    if (!_eof)
+                    {
+                        int nextIndent = CountIndent(_currentLine);
+                        if (nextIndent > indent)
                         {
-                            case ParseEventType.SequenceStart:
-                                ++depth;
-                                break;
-                            case ParseEventType.SequenceEnd when --depth <= 0:
-                                Read();
-                                return;
+                            var nextTrim = _currentLine.TrimStart();
+                            if (nextTrim.StartsWith('-'))
+                                map.Add(key, ParseSequence(indent + 2, ""));
+                            else
+                                map.Add(key, ParseMapping(indent + 2, ""));
+                        }
+                        else
+                        {
+                            map.Add(key, new ScalarScope(string.Empty, indent + 2, _resolver, IdentifiableResolver, ""));
                         }
                     }
-                    break;
                 }
-            case ParseEventType.MappingStart:
+            }
+
+            ParseMappingLoop(map);
+
+            return map;
+        }
+        private void StandardMappingResolve(MappingScope map, string key, string val, string childTag)
+        {
+            if (IsQuoted(val))
+                map.Add(key, new ScalarScope(Unquote(val), map.Indent + 2, _resolver, IdentifiableResolver, childTag));
+            else if (val.StartsWith('|'))
+                map.Add(key, new ScalarScope(ParseLiteralScalar(map.Indent + 2), map.Indent + 2, _resolver, IdentifiableResolver, childTag));
+            else if (val.StartsWith('{') && val.EndsWith("}"))
+                map.Add(key, ParseFlowMapping(val, map.Indent + 2, childTag));
+            else if (val.StartsWith('[') && val.EndsWith("]"))
+                map.Add(key, ParseFlowSequence(val, map.Indent + 2, childTag));
+            else
+                map.Add(key, new ScalarScope(val, map.Indent + 2, _resolver, IdentifiableResolver, childTag));
+        }
+
+        private MappingScope ParseFlowMapping(string text, int indent, string tag)
+        {
+            var map = new MappingScope(indent, _resolver, IdentifiableResolver, tag);
+            var inner = text.Substring(1, text.Length - 2).Trim();
+            if (inner.Length == 0) return map;
+
+            foreach (var entry in SplitFlowItems(inner))
+            {
+                var kv = entry.Split(':', 2);
+                if (kv.Length != 2)
+                    throw new InvalidOperationException($"Invalid inline mapping entry: '{entry}'");
+
+                var key = kv[0].Trim();
+                var val = kv[1].Trim();
+
+                string childTag = "";
+                if (val.StartsWith('!') && val != "!!null")
                 {
-                    var depth = 1;
-                    while (Read())
+                    var segs = val.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+                    childTag = segs[0];
+                    val = segs.Length > 1 ? segs[1].Trim() : "";
+                }
+
+                StandardMappingResolve(map, key, val, childTag);
+            }
+            return map;
+        }
+
+        private SequenceScope ParseSequence(int indent, string tag)
+        {
+            var seq = new SequenceScope(indent, _resolver, IdentifiableResolver, tag);
+            while (!_eof)
+            {
+                if (string.IsNullOrWhiteSpace(_currentLine)) { if (!ReadNextLine()) break; continue; }
+
+                int lineIndent = CountIndent(_currentLine);
+                if (lineIndent < indent) break;
+                if (lineIndent != indent) break;
+
+                string trimmed = _currentLine.Trim();
+                if (!trimmed.StartsWith('-')) break;
+
+                // Skip the leading '-' and any following spaces
+                int i = 1;
+                while (i < trimmed.Length && trimmed[i] == ' ')
+                    i++;
+
+                var item = trimmed.Substring(i);
+                ReadNextLine();
+
+                string childTag = "";
+
+                if (item.StartsWith('!') && item != "!!null")
+                {
+                    var segs = item.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+                    childTag = segs[0];
+                    item = segs.Length > 1 ? segs[1].Trim() : "";
+                }
+
+                if (item.Length > 0)
+                {
+                    if (IsQuoted(item))
+                        seq.Add(new ScalarScope(Unquote(item), indent + 2, _resolver, IdentifiableResolver, childTag));
+                    else if (item.StartsWith('|'))
+                        seq.Add(new ScalarScope(ParseLiteralScalar(indent + 2), indent + 2, _resolver, IdentifiableResolver, childTag));
+                    else if (item.StartsWith('{') && item.EndsWith('}'))
+                        seq.Add(ParseFlowMapping(item, indent + 2, childTag));
+                    else if (item.StartsWith('[') && item.EndsWith(']'))
+                        seq.Add(ParseFlowSequence(item, indent + 2, childTag));
+                    else if (item.Contains(':'))
                     {
-                        switch (CurrentEventType)
+                        var parts = item.Split(':', 2);
+                        var key = parts[0].Trim();
+                        var val = parts.Length > 1 ? parts[1].Trim() : "";
+
+                        // Delegate into ParseMapping with seed key/value
+                        seq.Add(ParseMapping(indent + 2, childTag, key, val));
+                    }
+                    else
+                        seq.Add(new ScalarScope(item, indent + 2, _resolver, IdentifiableResolver, childTag));
+                }
+                else
+                {
+                    if (!_eof)
+                    {
+                        int nextIndent = CountIndent(_currentLine);
+                        if (nextIndent > indent)
                         {
-                            case ParseEventType.MappingStart:
-                                ++depth;
-                                break;
-                            case ParseEventType.MappingEnd when --depth <= 0:
-                                Read();
-                                return;
+                            var nextTrim = _currentLine.TrimStart();
+                            if (nextTrim.StartsWith('-'))
+                                seq.Add(ParseSequence(indent + 2, childTag));
+                            else
+                                seq.Add(ParseMapping(indent + 2, childTag));
+                            continue;
+                        }
+
+                    }
+                    seq.Add(new ScalarScope(string.Empty, indent + 2, _resolver, IdentifiableResolver, childTag));
+                }
+            }
+            return seq;
+        }
+
+
+        private void ParseMappingLoop(MappingScope map)
+        {
+            // Continue with your existing loop
+            while (!_eof)
+            {
+                if (string.IsNullOrWhiteSpace(_currentLine)) { if (!ReadNextLine()) break; continue; }
+
+                int lineIndent = CountIndent(_currentLine);
+                if (lineIndent < map.Indent) break;
+                map.Indent = lineIndent;
+
+                string trimmed = _currentLine.Trim();
+                if (trimmed.StartsWith('-')) break;
+                if (trimmed.StartsWith('!') && trimmed != "!!null")
+                    throw new InvalidOperationException($"Standalone tag inside mapping is invalid: '{trimmed}'");
+
+                var parts = trimmed.Split(':', 2);
+                if (parts.Length != 2) throw new InvalidOperationException($"Invalid mapping line: '{trimmed}'");
+
+                var key = parts[0].Trim();
+                var val = parts[1].Trim();
+                ReadNextLine();
+
+                string childTag = "";
+                if (val.StartsWith('!') && val != "!!null")
+                {
+                    var segs = val.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+                    childTag = segs[0];
+                    val = segs.Length > 1 ? segs[1].Trim() : "";
+                }
+
+                if (val.Length > 0)
+                {
+                    StandardMappingResolve(map, key, val, childTag);
+                }
+                else
+                {
+                    if (!_eof)
+                    {
+                        int nextIndent = CountIndent(_currentLine);
+                        if (nextIndent > map.Indent)
+                        {
+                            var nextTrim = _currentLine.TrimStart();
+                            if (nextTrim.StartsWith('-'))
+                                map.Add(key, ParseSequence(map.Indent + 2, childTag));
+                            else
+                                map.Add(key, ParseMapping(map.Indent + 2, childTag));
+                            continue;
+                        }
+                        else
+                        {
+                            var nextTrim = _currentLine.TrimStart();
+                            if (nextTrim.StartsWith('-'))
+                                map.Add(key, ParseSequence(map.Indent, childTag));
+                            continue;
                         }
                     }
-                    break;
+                    map.Add(key, new ScalarScope(string.Empty, map.Indent + 2, _resolver, IdentifiableResolver, childTag));
                 }
-            default:
-                throw new ArgumentOutOfRangeException($"The {nameof(CurrentEventType)} is {CurrentEventType} and it's out of range");
+            }
         }
-    }
 
-
-    internal NextState ParseNode(bool block, bool indentlessSequence)
-    {
-        currentAnchor = null;
-        currentTag = null;
-        Anchor? anchor = null;
-        Tag? Tag = null;
-        ParseEventType type = ParseEventType.Scalar;
-        ParseState state = ParseState.StreamStart;
-        Scalar? scalar = null;
-
-        switch (CurrentTokenType)
+        private SequenceScope ParseFlowSequence(string text, int indent, string tag)
         {
-            case TokenType.Alias:
-                var state1 = stateStack.Pop();
-
-                var name = tokenizer.TakeCurrentTokenContent<Scalar>().ToString();  // TODO: Avoid `ToString`
-                tokenizer.Read();
-
-                if (anchors.TryGetValue(name, out var aliasId))
+            var seq = new SequenceScope(indent, _resolver, IdentifiableResolver, tag);
+            var inner = text.Substring(1, text.Length - 2).Trim();
+            if (inner.Length == 0) return seq;
+            string bufferedTag = "";
+            foreach (var raw in SplitFlowItems(inner))
+            {
+                string childTag = "";
+                string item = raw;
+                if (bufferedTag == "")
                 {
-                    return new(ParseEventType.Alias, state1, null, null, new Anchor(name, aliasId));
-                }
-                throw new YamlException(CurrentMark, "While parsing node, found unknown anchor");
-
-            case TokenType.Anchor:
-                {
-                    var anchorName = tokenizer.TakeCurrentTokenContent<Scalar>().ToString(); // TODO: Avoid `ToString`
-                    var anchorId = RegisterAnchor(anchorName);
-                    currentAnchor = anchor = new Anchor(anchorName, anchorId);
-                    tokenizer.Read();
-                    if (CurrentTokenType == TokenType.Tag)
+                    if (item.StartsWith('!') && item != "!!null")
                     {
-                        currentTag = Tag = tokenizer.TakeCurrentTokenContent<Tag>();
-                        tokenizer.Read();
+                        var segs = item.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+                        if (segs.Length == 1)
+                        {
+                            bufferedTag = segs[0];
+                            continue;
+                        }
+                        else
+                        {
+                            childTag = segs[0];
+                            item = segs.Length > 1 ? segs[1].Trim() : "";
+
+                        }
                     }
-                    break;
                 }
-            case TokenType.Tag:
+                else
                 {
-                    currentTag = Tag = tokenizer.TakeCurrentTokenContent<Tag>();
-                    tokenizer.Read();
-                    if (CurrentTokenType == TokenType.Anchor)
-                    {
-                        tokenizer.Read();
-                        var anchorName = tokenizer.TakeCurrentTokenContent<Scalar>().ToString();
-                        var anchorId = RegisterAnchor(anchorName);
-                        currentAnchor = anchor = new Anchor(anchorName, anchorId);
-                    }
-                    break;
+                    childTag = bufferedTag;
+                    bufferedTag = "";
                 }
+
+                if (IsQuoted(item))
+                    seq.Add(new ScalarScope(Unquote(item), indent + 2, _resolver, IdentifiableResolver, childTag));
+                else if (item.StartsWith('|'))
+                    seq.Add(new ScalarScope(ParseLiteralScalar(indent + 2), indent + 2, _resolver, IdentifiableResolver, childTag));
+                else if (item.StartsWith('{') && item.EndsWith('}'))
+                    seq.Add(ParseFlowMapping(item, indent + 2, childTag));
+                else if (item.StartsWith('[') && item.EndsWith(']'))
+                    seq.Add(ParseFlowSequence(item, indent + 2, childTag));
+                else
+                    seq.Add(new ScalarScope(item, indent + 2, _resolver, IdentifiableResolver, childTag));
+            }
+
+            return seq;
         }
 
-        switch (CurrentTokenType)
+        private string ParseLiteralScalar(int indent)
         {
-            case TokenType.BlockEntryStart when indentlessSequence:
-                currentState = state = ParseState.IndentlessSequenceEntry;
-                CurrentEventType = type = ParseEventType.SequenceStart;
-                break;
+            var sb = new StringBuilder();
+            ReadNextLine(); // consume the '|' line
 
-            case TokenType.PlainScalar:
-            case TokenType.FoldedScalar:
-            case TokenType.LiteralScalar:
-            case TokenType.SingleQuotedScaler:
-            case TokenType.DoubleQuotedScaler:
-                currentState = state = stateStack.Pop();
-                CurrentEventType = type = ParseEventType.Scalar;
-                currentScalar = scalar = tokenizer.TakeCurrentTokenContent<Scalar>();
-                tokenizer.Read();
-                break;
+            while (!_eof)
+            {
+                if (string.IsNullOrEmpty(_currentLine)) { sb.AppendLine(); if (!ReadNextLine()) break; continue; }
 
-            case TokenType.FlowSequenceStart:
-                currentState = state = ParseState.FlowSequenceFirstEntry;
-                CurrentEventType = type = ParseEventType.SequenceStart;
-                break;
+                int lineIndent = CountIndent(_currentLine);
+                if (lineIndent < indent) break;
 
-            case TokenType.FlowMappingStart:
-                currentState = state = ParseState.FlowMappingFirstKey;
-                CurrentEventType = type = ParseEventType.MappingStart;
-                break;
+                sb.AppendLine(_currentLine.Substring(indent));
+                if (!ReadNextLine()) break;
+            }
 
-            case TokenType.BlockSequenceStart when block:
-                currentState = state = ParseState.BlockSequenceFirstEntry;
-                CurrentEventType = type = ParseEventType.SequenceStart;
-                break;
-
-            case TokenType.BlockMappingStart when block:
-                currentState = state = ParseState.BlockMappingFirstKey;
-                CurrentEventType = type = ParseEventType.MappingStart;
-                break;
-
-            // ex 7.2, an empty scalar can follow a secondary tag
-            case var _ when currentAnchor != null || currentTag != null:
-                currentState = state = stateStack.Pop();
-                currentScalar = scalar = null;
-                CurrentEventType = type = ParseEventType.Scalar;
-                break;
-
-            // consider empty entry in sequence ("- ") as null
-            case TokenType.BlockEntryStart when currentState == ParseState.IndentlessSequenceEntry:
-                currentState = state =stateStack.Pop();
-                currentScalar = scalar = null;
-                CurrentEventType = type = ParseEventType.Scalar;
-                break;
-
-            default:
-                {
-                    throw new YamlTokenizerException(tokenizer.CurrentMark,
-                        "while parsing a node, did not find expected node content");
-                }
+            return sb.ToString();
         }
-        return new NextState(CurrentEventType, state, scalar, Tag , anchor);
-    }
 
-    internal ParseState Pop()
-    {
-        return stateStack.Pop();
-    }
-
-
-    internal bool TryResolveAnchor(string name,[MaybeNullWhen(false)] out Anchor? anchor)
-    {
-        if (anchors.TryGetValue(name, out var aliasId))
+        private bool ReadNextLine()
         {
-            anchor = new Anchor(name, aliasId);
+            if (_reader.EndOfStream) { _eof = true; return false; }
+            _currentLine = _reader.ReadLine();
+            if (_currentLine == null) { _eof = true; return false; }
             return true;
         }
-        anchor = default;
-        return false;
-    }
 
-    internal int PushAnchor(string name)
-    {
-        return RegisterAnchor(name);
-    }
+        private static bool IsQuoted(string s)
+        {
+            return s.Length >= 2 &&
+                   ((s.StartsWith('\"') && s.EndsWith('\"')) ||
+                    (s.StartsWith('\'') && s.EndsWith('\'')));
+        }
 
-    internal void PushState(ParseState state)
-    {
-        stateStack.Add(state);
-    }
+        private static string Unquote(string s)
+        {
+            return IsQuoted(s) ? s.Substring(1, s.Length - 2) : s;
+        }
 
-    private int RegisterAnchor(string anchorName)
-    {
-        var newId = ++lastAnchorId;
-        anchors[anchorName] = newId;
-        return newId;
+        private static int CountIndent(string line)
+        {
+            var span = line.AsSpan();
+            int i = 0;
+            while (i < span.Length && span[i] == ' ')
+                i++;
+            return i;
+        }
+
+        private static IEnumerable<string> SplitFlowItems(string input)
+        {
+            var result = new List<string>();
+            var sb = new StringBuilder();
+            int depth = 0;
+            bool inQuotes = false;
+            bool inTag = false;
+            char quoteChar = '\0';
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                char c = input[i];
+
+                if (inQuotes)
+                {
+                    sb.Append(c);
+                    if (c == quoteChar) inQuotes = false;
+                    continue;
+                }
+
+                if (c == '"' || c == '\'')
+                {
+                    inQuotes = true;
+                    quoteChar = c;
+                    sb.Append(c);
+                    continue;
+                }
+                if (c == '!' && sb.ToString().Trim().Length == 0)
+                {
+                    inTag = true;
+                }
+                if ((c == ' ' || c == '[' || c == '{') && inTag)
+                {
+                    inTag = false;
+                    result.Add(sb.ToString().Trim());
+                    sb.Clear();
+                    continue;
+                }
+                if (c == '[' || c == '{') depth++;
+                if (c == ']' || c == '}') depth--;
+
+                if (c == ',' && depth == 0 && !inTag)
+                {
+                    result.Add(sb.ToString().Trim());
+                    sb.Clear();
+                }
+                else
+                {
+                    sb.Append(c);
+                }
+            }
+
+            if (sb.Length > 0)
+                result.Add(sb.ToString().Trim());
+
+            return result;
+        }
+
+        public void Dispose()
+        {
+            _reader.Dispose();
+        }
     }
 }

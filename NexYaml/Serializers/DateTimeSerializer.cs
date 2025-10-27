@@ -1,4 +1,3 @@
-using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
@@ -13,14 +12,9 @@ public class DateTimeSerializer : YamlSerializer<DateTime>
         context.WriteType(value.ToString(), style);
     }
 
-    public override ValueTask<DateTime> Read(IYamlReader stream, ParseContext parseResult)
+    public override ValueTask<DateTime> Read(Scope scope, ParseContext parseResult)
     {
-        if (stream.TryGetScalarAsString(out var span) && DateTime.TryParse(span, out var value))
-        {
-            stream.Move(ParseEventType.Scalar);
-            return new(value);
-        }
-        stream.SkipRead();
-        throw YamlException.ThrowExpectedTypeParseException(typeof(DateTime), span, stream.CurrentMarker);
+        var scalarScope = scope.As<ScalarScope>();
+        return new(DateTime.Parse(scalarScope.Value));
     }
 }

@@ -16,7 +16,7 @@ internal class YamlHelper
     {
         SetUp();
         var serialized = Yaml.Write(target);
-        var deserialized = await Yaml.Read<T>(serialized);
-        Assert.Equal(target, deserialized);
+        var d = await TestParser.Read<T>(serialized);
+        Assert.Equal(target, d);
     }
 }

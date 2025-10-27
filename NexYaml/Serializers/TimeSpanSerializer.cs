@@ -1,5 +1,3 @@
-using System.Globalization;
-using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
@@ -15,14 +13,9 @@ public class TimeSpanSerializer : YamlSerializer<TimeSpan>
         context.WriteString(value.ToString());
     }
 
-    public override ValueTask<TimeSpan> Read(IYamlReader stream, ParseContext parseResult)
+    public override ValueTask<TimeSpan> Read(Scope scope, ParseContext parseResult)
     {
-        if (stream.TryGetScalarAsString(out var span) && TimeSpan.TryParse(span, CultureInfo.InvariantCulture, out var value))
-        {
-            stream.Move(ParseEventType.Scalar);
-            return new(value);
-        }
-        stream.SkipRead();
-        throw YamlException.ThrowExpectedTypeParseException(typeof(TimeSpan), span, stream.CurrentMarker);
+        var scalarScope = scope.As<ScalarScope>();
+        return new(TimeSpan.Parse(scalarScope.Value));
     }
 }

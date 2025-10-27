@@ -1,4 +1,3 @@
-using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
@@ -13,14 +12,8 @@ public class NullableStringSerializer : YamlSerializer<string>
         context.WriteScalar(context.Writer.FormatString(context, value, style));
     }
 
-    public override ValueTask<string?> Read(IYamlReader stream, ParseContext parseResult)
+    public override ValueTask<string?> Read(Scope scope, ParseContext parseResult)
     {
-        if (stream.TryGetScalarAsString(out var span))
-        {
-            stream.Move(ParseEventType.Scalar);
-            return new(span);
-        }
-        stream.SkipRead();
-        throw YamlException.ThrowExpectedTypeParseException(typeof(short), span, stream.CurrentMarker);
+        return new(scope.As<ScalarScope>().Value);
     }
 }

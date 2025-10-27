@@ -21,15 +21,14 @@ public class ArraySerializer<T> : YamlSerializer<T?[]>
         result.End(context);
     }
 
-    public override async ValueTask<T?[]?> Read(IYamlReader stream, ParseContext parseResult)
+    public override async ValueTask<T?[]?> Read(Scope scope, ParseContext parseResult)
     {
+        var sequenceScope = scope.As<SequenceScope>();
         var tasks = new List<Task<T?>>();
-        stream.Move(ParseEventType.SequenceStart);
-        while (stream.HasSequence)
+        foreach (var element in sequenceScope)
         {
-            tasks.Add(stream.Read<T>(parseResult).AsTask());
+            tasks.Add(element.Read<T>(new ParseContext()).AsTask());
         }
-        stream.Move(ParseEventType.SequenceEnd);
         return (await Task.WhenAll(tasks)).ToArray();
     }
 }

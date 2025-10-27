@@ -1,5 +1,3 @@
-using System.Globalization;
-using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
@@ -15,14 +13,9 @@ public class GuidSerializer : YamlSerializer<Guid>
         context.WriteString(value.ToString());
     }
 
-    public override ValueTask<Guid> Read(IYamlReader stream, ParseContext parseResult)
+    public override ValueTask<Guid> Read(Scope scope, ParseContext parseResult)
     {
-        if (stream.TryGetScalarAsString(out var span) && Guid.TryParse(span, CultureInfo.InvariantCulture, out var value))
-        {
-            stream.Move(ParseEventType.Scalar);
-            return new(value);
-        }
-        stream.SkipRead();
-        throw YamlException.ThrowExpectedTypeParseException(typeof(Guid), span, stream.CurrentMarker);
+        var scalarScope = scope.As<ScalarScope>();
+        return new(Guid.Parse(scalarScope.Value));
     }
 }

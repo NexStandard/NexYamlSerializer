@@ -1,5 +1,4 @@
 using System.Globalization;
-using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
@@ -17,14 +16,9 @@ public class Float64Serializer : YamlSerializer<double>
         context.WriteScalar(span[..written]);
     }
 
-    public override ValueTask<double> Read(IYamlReader stream, ParseContext parseResult)
+    public override ValueTask<double> Read(Scope scope, ParseContext parseResult)
     {
-        if (stream.TryGetScalarAsString(out var span) && double.TryParse(span, CultureInfo.InvariantCulture, out var value))
-        {
-            stream.Move(ParseEventType.Scalar);
-            return new(value);
-        }
-        stream.SkipRead();
-        throw YamlException.ThrowExpectedTypeParseException(typeof(double), span, stream.CurrentMarker);
+        var scalarScope = scope.As<ScalarScope>();
+        return new(double.Parse(scalarScope.Value, CultureInfo.InvariantCulture));
     }
 }

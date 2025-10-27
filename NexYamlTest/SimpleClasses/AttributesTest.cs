@@ -22,7 +22,7 @@ public class AttributeTest
             Z = 200,
         };
         var s = Yaml.Write(dat);
-        var d = await Yaml.Read<Attribute>(s);
+        var d = await TestParser.Read<Attribute>(s);
         Assert.NotNull(d);
         Assert.Equal(100, d.InternalVisible);
         Assert.Equal(101, d.X);

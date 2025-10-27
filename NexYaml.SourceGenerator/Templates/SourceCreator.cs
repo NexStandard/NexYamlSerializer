@@ -22,14 +22,14 @@ internal static class SourceCreator
         var objectCreation = new StringBuilder();
         var setResults = new StringBuilder();
         var objTempVariables = new StringBuilder();
-        var ifStatement = new StringBuilder();
-        var awaits = new StringBuilder();
+        var ifStatementNew = new StringBuilder();
+        var awaitsNew = new StringBuilder();
         var map = package.MemberSymbols;
         // needs ID at first place to avoid deadlock on awaits for reference resolving
         var orderedSymbols = package.MemberSymbols.OrderByDescending(s => s.Name == "Id").ToList();
         ///
         objTempVariables.AppendLine($"\t\tvar res = context.DataMemberMode is DataMemberMode.Content ? ({info.NameDefinition})context.Value :  new {info.NameDefinition}() {{");
-        foreach(var member in orderedSymbols)
+        foreach (var member in orderedSymbols)
         {
             if (member.IsRequired)
             {
@@ -51,23 +51,23 @@ internal static class SourceCreator
             }
             if (member.Context.Mode is MemberApi.UniversalAnalyzers.MemberMode.Content)
             {
-                awaits.AppendLine($"await var_{member.Name};");
+                awaitsNew.AppendLine($"await var_{member.Name};");
             }
             else if (member.IsInit)
             {
-                awaits.AppendLine($"\t\tExternWrapper{info.TypeParameterArguments}.set_{member.Name}(res,await var_{member.Name});");
+                awaitsNew.AppendLine($"\t\tExternWrapper{info.TypeParameterArguments}.set_{member.Name}(res,await var_{member.Name});");
             }
             else
             {
-                awaits.AppendLine($"\t\tres.{member.Name} = await var_{member.Name};");
+                awaitsNew.AppendLine($"\t\tres.{member.Name} = await var_{member.Name};");
             }
             if (package.ClassInfo.IsIIdentifiable && member.Name == "Id")
             {
-                awaits.AppendLine("\t\tstream.RegisterIdentifiable(res.Id, res);");
+                awaitsNew.AppendLine("\t\tscope.IdentifiableResolver.RegisterIdentifiable(res.Id, res);");
             }
-            ifStatement.AppendLine($"\t\t\tif (key.SequenceEqual(UTF8{member.Name})){{stream.Move(ParseEventType.Scalar);var_{member.Name} = stream.Read<{(member.IsArray ? member.Type + "[]" : member.Type)}>(context_{member.Name}); continue; }}");
+            ifStatementNew.AppendLine($"\t\t\tif (map.Key.SequenceEqual(UTF8{member.Name})){{ var_{member.Name} = map.Value.Read<{(member.IsArray ? member.Type + "[]" : member.Type)}>(context_{member.Name}); continue; }}");
+
         }
-        ifStatement.AppendLine("\t\t\tstream.SkipRead();");
 
         ///
         string writeString = isEmpty ? $"       context.WriteEmptyMapping(\"!{tag}\");" :
@@ -87,8 +87,8 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using NexYaml;
-using NexYaml.Parser;
 using NexYaml.Serialization;
+using NexYaml.Parser;
 using Stride.Core;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -121,17 +121,15 @@ file sealed class {{info.GeneratorName + info.TypeParameterArguments}} : YamlSer
         {{writeString}}
     }
 
-    public override async ValueTask<{{info.NameDefinition}}> Read(IYamlReader stream, ParseContext context)
+    public override async ValueTask<{{info.NameDefinition}}> Read(Scope scope, ParseContext context)
     {
-
 {{objTempVariables}}
-        stream.Move(ParseEventType.MappingStart);
-        while(stream.HasMapping(out var key,false))
+        var mapping = scope.As<MappingScope>();
+        foreach(var map in mapping)
         {
-{{ifStatement}}
+{{ifStatementNew}}
         }
-        stream.Move(ParseEventType.MappingEnd);
-{{awaits}}
+{{awaitsNew}}
         return res;
     }
 }
