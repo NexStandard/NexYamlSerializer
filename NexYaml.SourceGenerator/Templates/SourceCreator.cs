@@ -63,7 +63,7 @@ internal static class SourceCreator
             }
             if (package.ClassInfo.IsIIdentifiable && member.Name == "Id")
             {
-                awaitsNew.AppendLine("\t\tscope.IdentifiableResolver.RegisterIdentifiable(res.Id, res);");
+                awaitsNew.AppendLine("\t\tscope.Context.IdentifiableResolver.RegisterIdentifiable(res.Id, res);");
             }
             ifStatementNew.AppendLine($"\t\t\tif (map.Key.SequenceEqual(UTF8{member.Name})){{ var_{member.Name} = map.Value.Read<{(member.IsArray ? member.Type + "[]" : member.Type)}>(context_{member.Name}); continue; }}");
 

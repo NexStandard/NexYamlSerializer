@@ -2,7 +2,7 @@
 
 namespace NexYaml.Parser
 {
-    class YamlReader
+    public class YamlReader
     {
         public required StreamReader Reader { get; set; }
 
