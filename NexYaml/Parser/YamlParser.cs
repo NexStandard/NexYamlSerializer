@@ -6,9 +6,9 @@ namespace NexYaml.Parser
 {
     class YamlReader
     {
-        public StreamReader Reader { get; set; }
+        public required StreamReader Reader { get; set; }
         public bool EOF { get; private set; }
-        public bool ReadNextLine([MaybeNullWhen(false)]out string? currentLine)
+        public bool ReadNextLine([NotNullWhen(true)]out string? currentLine)
         {
             if (Reader.EndOfStream) {
                 currentLine = null;
@@ -89,7 +89,7 @@ namespace NexYaml.Parser
 
                     if (nextLine.TrimStart().StartsWith('-'))
                         yield return ParseSequence(indent, tag);
-                    else if (nextLine.Contains(":"))
+                    else if (nextLine.Contains(':'))
                         yield return ParseMapping(indent, tag);
                     else
                         yield return ParseValue(nextLine.Trim(), indent, tag);
@@ -103,7 +103,7 @@ namespace NexYaml.Parser
                     yield return ParseSequence(indent, "");
                 }
                 // Mapping root
-                else if (trimmed.Contains(":"))
+                else if (trimmed.Contains(':'))
                 {
                     yield return ParseMapping(indent, "");
                 }
