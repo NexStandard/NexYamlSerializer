@@ -125,7 +125,7 @@ public abstract class Writer(IYamlSerializerResolver resolver)
             case ScalarStyle.SingleQuoted:
                 throw new InvalidOperationException("Single Quote is reserved for char");
             case ScalarStyle.DoubleQuoted:
-                return "\"" + value.Replace("\n", "\\n").Replace("\"", "\\\"") + "\"";
+                return "\"" + value.Replace("\n", "\\n") + "\"";
             case ScalarStyle.Literal:
                 {
                     var indentCharCount = Math.Max(1, (context.Indent + 1) * context.Indent);

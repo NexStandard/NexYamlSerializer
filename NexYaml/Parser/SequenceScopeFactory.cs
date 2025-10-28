@@ -53,7 +53,7 @@ class SequenceScopeFactory : ScopeFactory<SequenceScope>
                 // literal block scalar
                 else if (itemSpan[0] == '|')
                 {
-                    seq.Add(new ScalarScope(ParseLiteralScalar(indent + 2), indent + 2, context, childTag));
+                    seq.Add(new ScalarScope(ParseLiteralScalar(seq.Context,indent + 1, itemSpan[1]), indent + 2, context, childTag));
                 }
                 // flow mapping
                 else if (itemSpan[0] == '{' && itemSpan[^1] == '}')
@@ -140,7 +140,7 @@ class SequenceScopeFactory : ScopeFactory<SequenceScope>
                     }
                 }
 
-                StandardMappingResolve(context, map, key, valSpan.ToString(), childTag);
+                StandardMappingResolve(map, key, valSpan.ToString(), childTag);
             }
             else
             {
@@ -209,9 +209,9 @@ class SequenceScopeFactory : ScopeFactory<SequenceScope>
             }
 
             if (IsQuoted(item))
-                seq.Add(new ScalarScope(Unquote(item), indent + 2,context, childTag));
+                seq.Add(new ScalarScope(Unquote(item), indent + 2, context, childTag));
             else if (item.StartsWith('|'))
-                seq.Add(new ScalarScope(ParseLiteralScalar(indent + 2), indent + 2, context, childTag));
+                seq.Add(new ScalarScope(ParseLiteralScalar(context,indent + 2, item[1]), indent + 2, context, childTag));
             else if (item.StartsWith('{') && item.EndsWith('}'))
                 seq.Add(YamlParser.Mapping.ParseFlow(context, item, indent + 2, childTag));
             else if (item.StartsWith('[') && item.EndsWith(']'))
@@ -222,17 +222,17 @@ class SequenceScopeFactory : ScopeFactory<SequenceScope>
 
         return seq;
     }
-    private void StandardMappingResolve(ScopeContext context, MappingScope map, string key, string val, string childTag)
+    private void StandardMappingResolve(MappingScope map, string key, string val, string childTag)
     {
         if (IsQuoted(val))
-            map.Add(key, new ScalarScope(Unquote(val), map.Indent + 2, context, childTag));
+            map.Add(key, new ScalarScope(Unquote(val), map.Indent + 2, map.Context, childTag));
         else if (val.StartsWith('|'))
-            map.Add(key, new ScalarScope(ParseLiteralScalar(map.Indent + 2), map.Indent + 2, context, childTag));
+            map.Add(key, new ScalarScope(ParseLiteralScalar(map.Context,map.Indent + 2, val[1]), map.Indent + 2, map.Context, childTag));
         else if (val.StartsWith('{') && val.EndsWith('}'))
-            map.Add(key, ParseFlow(context, val, map.Indent + 2, childTag));
+            map.Add(key, ParseFlow(map.Context, val, map.Indent + 2, childTag));
         else if (val.StartsWith('[') && val.EndsWith(']'))
-            map.Add(key, YamlParser.Sequence.ParseFlow(context, val, map.Indent + 2, childTag));
+            map.Add(key, YamlParser.Sequence.ParseFlow(map.Context, val, map.Indent + 2, childTag));
         else
-            map.Add(key, new ScalarScope(val, map.Indent + 2, context, childTag));
+            map.Add(key, new ScalarScope(val, map.Indent + 2, map.Context, childTag));
     }
 }

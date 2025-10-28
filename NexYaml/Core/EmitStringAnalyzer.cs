@@ -53,27 +53,59 @@ internal static class EmitStringAnalyzer
         return new EmitStringInfo(lines, needsQuotes, isReservedWord);
     }
 
+    /// <summary>
+    /// Builds a YAML literal block scalar representation from the given value.
+    /// </summary>
+    /// <param name="originalValue">
+    /// The raw scalar text to encode. Line breaks are preserved and indented
+    /// according to <paramref name="indentCharCount"/>.
+    /// </param>
+    /// <param name="indentCharCount">
+    /// The number of spaces to insert at the start of each content line
+    /// inside the literal block.
+    /// </param>
+    /// <returns>
+    /// A <see cref="StringBuilder"/> containing the YAML literal block scalar,
+    /// including the leading <c>|</c> and an appropriate chomping indicator.
+    /// </returns>
+    /// <remarks>
+    /// Chomping is used to let the parser know if the trailing linebreak was written by the <see cref="NexYaml.Serialization.Node"/> OR if it's content of the literal scalar
+    /// The method automatically selects the chomping indicator:
+    /// <list type="bullet">
+    ///   <item><description>
+    /// If <paramref name="originalValue"/> ends with a newline (<c>'\n'</c>),
+    /// the <c>|-</c> form is used so that the parser trims does <c>NOT</c> trim the trailing newline.
+    /// </description></item>
+    ///   <item><description>
+    /// Otherwise, the <c>|+</c> form is used so that the parser trims the excessive \n
+    /// </description></item>
+    /// </list>
+    /// Each line of <paramref name="originalValue"/> is indented by
+    /// <paramref name="indentCharCount"/> spaces after the block header.
+    /// </remarks>
     public static StringBuilder BuildLiteralScalar(ReadOnlySpan<char> originalValue, int indentCharCount)
     {
-        var chompHint = '+';
+        // Choose chomping indicator:
+        // If the value already ends with '\n', emit '-' so the reader trims one back.
+        // Otherwise emit '+' so the reader preserves the trailing content as-is.
+        char chompHint = (originalValue.Length > 0 && originalValue[^1] == '\n') ? '-' : '+';
 
+        var sb = new StringBuilder();
+        sb.Append('|');
+        sb.Append(chompHint);
+        sb.Append('\n');
+        AppendWhiteSpace(sb, indentCharCount);
 
-        var stringBuilder = new StringBuilder();
-        stringBuilder.Append('|');
-        if (chompHint > 0)
-            stringBuilder.Append(chompHint);
-        stringBuilder.Append('\n');
-        AppendWhiteSpace(stringBuilder, indentCharCount);
-
-        for (var i = 0; i < originalValue.Length; i++)
+        for (int i = 0; i < originalValue.Length; i++)
         {
-            var ch = originalValue[i];
-            stringBuilder.Append(ch);
+            char ch = originalValue[i];
+            sb.Append(ch);
+
             if (ch == '\n' && i < originalValue.Length - 1)
-                AppendWhiteSpace(stringBuilder, indentCharCount);
+                AppendWhiteSpace(sb, indentCharCount);
         }
 
-        return stringBuilder;
+        return sb;
     }
 
     private static bool IsReservedWord(string value)
