@@ -24,7 +24,11 @@ namespace NexYaml.Parser
         /// </summary>
         Sequence
     }
-
+    public struct ScopeEnumerator : IEnumerable<Scope>
+    {
+        public IEnumerator<Scope> GetEnumerator() => throw new NotImplementedException();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
 
     /// <summary>
     /// Base class for all YAML <see cref="ScopeKind"/>.
@@ -154,7 +158,7 @@ namespace NexYaml.Parser
             return result;
         }
 
-        protected static void ExtractTag(ref ReadOnlySpan<char> itemSpan, ref string childTag)
+        public static void ExtractTag(ref ReadOnlySpan<char> itemSpan, ref string childTag)
         {
             if (!itemSpan.IsEmpty && itemSpan[0] == '!' && !itemSpan.SequenceEqual("!!null".AsSpan()))
             {
@@ -171,34 +175,34 @@ namespace NexYaml.Parser
                 }
             }
         }
-        protected static bool IsQuoted(string s)
+        public static bool IsQuoted(string s)
         {
             return s.Length >= 2 &&
                    ((s.StartsWith('\"') && s.EndsWith('\"')) ||
                     (s.StartsWith('\'') && s.EndsWith('\'')));
         }
-        protected static bool IsQuoted(ReadOnlySpan<char> s)
+        public static bool IsQuoted(ReadOnlySpan<char> s)
         {
             return s.Length >= 2 &&
                    ((s[0] == '\"' && s[s.Length - 1] == '\"') ||
                     (s[0] == '\'' && s[s.Length - 1] == '\''));
         }
-        protected static string Unquote(string s)
+        public static string Unquote(string s)
         {
             return IsQuoted(s) ? s.Substring(1, s.Length - 2) : s;
         }
-        protected static string Unquote(ReadOnlySpan<char> s)
+        public static string Unquote(ReadOnlySpan<char> s)
         {
             return IsQuoted(s) ? s.Slice(1, s.Length - 2).ToString() : s.ToString();
         }
-        protected static int CountIndent(string line)
+        public static int CountIndent(string line)
         {
             int i = 0;
             while (i < line.Length && line[i] == ' ')
                 i++;
             return i;
         }
-        protected static IEnumerable<string> SplitFlowItems(string input)
+        public static IEnumerable<string> SplitFlowItems(string input)
         {
             int depth = 0;
             bool inQuotes = false;

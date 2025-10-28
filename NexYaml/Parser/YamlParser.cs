@@ -6,7 +6,7 @@ namespace NexYaml
 {
     public sealed class YamlParser
     {
-        internal static ValueScopeFactory ValueScope = new ValueScopeFactory();
+        private readonly ValueScopeFactory ValueScope = new ValueScopeFactory();
         private readonly IYamlSerializerResolver _resolver;
         private IdentifiableResolver IdentifiableResolver { get; } = new();
         private YamlReader _reader;

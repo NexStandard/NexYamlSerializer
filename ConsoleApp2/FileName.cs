@@ -29,7 +29,7 @@ public class Benchmarker
     public async Task YamlB()
     {
         parser = new YamlParser(w, resolver).Parse();
-        await parser.First().Read<Collections>(new NexYaml.Parser.ParseContext());
+        parser.First().EmptyDump();
     }
     [Benchmark()]
     public void JsonB()

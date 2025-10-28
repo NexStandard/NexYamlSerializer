@@ -4,6 +4,23 @@ namespace NexYaml.Parser
 {
     public static class YamlDumpExtensions
     {
+        public static void EmptyDump(this Scope scope)
+        {
+            if (scope is MappingScope mappingScope)
+            {
+                foreach(var m in mappingScope)
+                {
+                    m.Value.EmptyDump();
+                }
+            }
+            if(scope is SequenceScope sequenceScope)
+            {
+                foreach (var m in sequenceScope)
+                {
+                    m.EmptyDump();
+                }
+            }
+        }
         public static string Dump(this Scope scope, int indent = 0, bool includeHeader = true)
         {
             var pad = new string(' ', indent);
