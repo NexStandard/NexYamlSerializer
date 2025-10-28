@@ -6,8 +6,6 @@ namespace NexYaml
 {
     public sealed class YamlParser
     {
-        internal static ScopeFactory<MappingScope> Mapping = new MappingScopeFactory();
-        internal static ScopeFactory<SequenceScope> Sequence = new SequenceScopeFactory();
         internal static ValueScopeFactory ValueScope = new ValueScopeFactory();
         private readonly IYamlSerializerResolver _resolver;
         private IdentifiableResolver IdentifiableResolver { get; } = new();
@@ -72,11 +70,11 @@ namespace NexYaml
 
                     if (nextLine.TrimStart().StartsWith('-'))
                     {
-                        yield return Sequence.Parse(context, indent, tag);
+                        yield return SequenceScope.Parse(context, indent, tag);
                     }
                     else if (nextLine.Contains(':'))
                     {
-                        yield return Mapping.Parse(context, indent, tag);
+                        yield return MappingScope.Parse(context, indent, tag);
                     }
                     else
                     {
@@ -89,12 +87,12 @@ namespace NexYaml
                 // Sequence root
                 if (trimmed.StartsWith('-'))
                 {
-                    yield return Mapping.Parse(context, indent, "");
+                    yield return MappingScope.Parse(context, indent, "");
                 }
                 // Mapping root
                 else if (trimmed.Contains(':'))
                 {
-                    yield return Mapping.Parse(context, indent, "");
+                    yield return MappingScope.Parse(context, indent, "");
                 }
                 // Scalar root
                 else

@@ -26,9 +26,9 @@ class ValueScopeFactory : ScopeFactory<Scope>
         if (val.StartsWith('|'))
             return new ScalarScope(ParseLiteralScalar(context,indent, val[1]), indent, context, tag);
         if (val.StartsWith('{') && val.EndsWith('}'))
-            return YamlParser.Mapping.ParseFlow(context, val, indent, tag);
+            return MappingScope.ParseFlow(context, val, indent, tag);
         if (val.StartsWith('[') && val.EndsWith(']'))
-            return YamlParser.Sequence.ParseFlow(context, val, indent, tag);
+            return SequenceScope.ParseFlow(context, val, indent, tag);
 
         return new ScalarScope(val, indent, context, tag);
     }

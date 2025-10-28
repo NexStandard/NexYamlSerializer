@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using NexYaml;
 using NexYaml.Parser;
@@ -9,12 +11,18 @@ namespace NexYamlTest
 {
     internal static class TestParser
     {
+        static Stream ToStream(string s) => new MemoryStream(Encoding.UTF8.GetBytes(s));
         public static async ValueTask<T?> Read<T>(string s)
         {
-            var parser = new YamlParser(s, IYamlSerializerResolver.Default).Parse();
-            var first = parser.First();
+
+            using var reader = new StreamReader(ToStream(s));
+            var parser = new YamlParser(reader, IYamlSerializerResolver.Default);
+            var pars = parser.Parse();
+            var first = pars.First();
             Console.WriteLine(first.Dump());
-            return await first.Read<T>(new ParseContext());
+            reader.BaseStream.Position = 0;
+            var f = parser.Parse().First();
+            return await f.Read<T>(new ParseContext());
         }
     }
 }

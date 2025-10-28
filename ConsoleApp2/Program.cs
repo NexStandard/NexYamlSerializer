@@ -10,8 +10,17 @@ class Program
     static Stream ToStream(string s) => new MemoryStream(Encoding.UTF8.GetBytes(s));
     public static async Task Main(string[] args)
     {
-        BenchmarkRunner.Run<Benchmarker>();
+        IEnumerable<int> GetNumbers()
+        {
+            yield return 1;
+            yield return 2;
+            yield return 3;
+        }
 
+        var numbers = GetNumbers();
+
+        foreach (var n in numbers) { Console.WriteLine(n); } // Prints 1,2,3
+        foreach (var n in numbers) { Console.WriteLine(n); } // Prints nothing!
     }
 }
 public record Person(int Id, string Name, bool Female);
