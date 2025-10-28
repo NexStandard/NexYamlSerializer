@@ -46,7 +46,23 @@ abstract class ScopeFactory<T>
         return result;
     }
 
-
+    protected static void ExtractTag(ref ReadOnlySpan<char> itemSpan, ref string childTag)
+    {
+        if (!itemSpan.IsEmpty && itemSpan[0] == '!' && !itemSpan.SequenceEqual("!!null".AsSpan()))
+        {
+            int spaceIdx = itemSpan.IndexOf(' ');
+            if (spaceIdx >= 0)
+            {
+                childTag = itemSpan.Slice(0, spaceIdx).ToString();
+                itemSpan = itemSpan.Slice(spaceIdx + 1).Trim();
+            }
+            else
+            {
+                childTag = itemSpan.ToString();
+                itemSpan = ReadOnlySpan<char>.Empty;
+            }
+        }
+    }
     protected static bool IsQuoted(string s)
     {
         return s.Length >= 2 &&

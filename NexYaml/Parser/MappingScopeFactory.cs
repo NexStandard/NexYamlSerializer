@@ -73,29 +73,16 @@ class MappingScopeFactory : ScopeFactory<MappingScope>
             context.Reader.Move();
 
             string key = keySpan.ToString();
-            string val = valSpan.ToString();
+            ReadOnlySpan<char> val = valSpan;
 
             string childTag = "";
 
             // Inline tag handling
-            if (!valSpan.IsEmpty && valSpan[0] == '!' && !valSpan.SequenceEqual("!!null".AsSpan()))
-            {
-                int spaceIdx = valSpan.IndexOf(' ');
-                if (spaceIdx >= 0)
-                {
-                    childTag = valSpan.Slice(0, spaceIdx).ToString();
-                    val = valSpan.Slice(spaceIdx + 1).Trim().ToString();
-                }
-                else
-                {
-                    childTag = val;
-                    val = string.Empty;
-                }
-            }
+            ExtractTag(ref val, ref childTag);
 
             if (val.Length > 0)
             {
-                StandardMappingResolve(context, map, key, val, childTag);
+                StandardMappingResolve(context, map, key, val.ToString(), childTag);
             }
             else
             {
