@@ -14,13 +14,10 @@ namespace NexYaml
         private YamlReader _reader;
         public YamlParser(string text, IYamlSerializerResolver resolver)
         {
-            var bytes = Encoding.UTF8.GetBytes(text);
-            var ms = new MemoryStream(bytes);
-            var reader = new StreamReader(ms, Encoding.UTF8, leaveOpen: false);
             _resolver = resolver;
             _reader = new YamlReader()
             {
-                Reader = reader
+                Reader = new StringReader(text),
             };
         }
 
@@ -33,7 +30,7 @@ namespace NexYaml
                 Reader = reader
             };
         }
-        public YamlParser(StreamReader stream, IYamlSerializerResolver resolver)
+        public YamlParser(TextReader stream, IYamlSerializerResolver resolver)
         {
             _resolver = resolver;
             _reader = new YamlReader()

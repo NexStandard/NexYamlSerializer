@@ -1,13 +1,23 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
 
 namespace NexYaml.Parser
 {
+    /// <summary>
+    /// Provides line-by-line reading with single-line lookahead for YAML parsing.
+    /// </summary>
     public class YamlReader
     {
-        public required StreamReader Reader { get; set; }
+        /// <summary>
+        /// The underlying text reader supplying YAML input.
+        /// </summary>
+        public required TextReader Reader { get; set; }
 
         private string? _peekBuffer;
 
+        /// <summary>
+        /// Advances to the next line and returns it.
+        /// </summary>
         public bool Move([NotNullWhen(true)] out string? currentLine)
         {
             if (_peekBuffer != null)
@@ -17,19 +27,13 @@ namespace NexYaml.Parser
                 return true;
             }
 
-            if (Reader.EndOfStream)
-            {
-                currentLine = null;
-                return false;
-            }
-
             currentLine = Reader.ReadLine();
-            if (currentLine == null)
-            {
-                return false;
-            }
-            return true;
+            return currentLine != null;
         }
+
+        /// <summary>
+        /// Advances to the next line, discarding it.
+        /// </summary>
         public bool Move()
         {
             if (_peekBuffer != null)
@@ -38,30 +42,19 @@ namespace NexYaml.Parser
                 return true;
             }
 
-            if (Reader.EndOfStream)
-            {
-                return false;
-            }
-
             var line = Reader.ReadLine();
-            if (line == null)
-            {
-                return false;
-            }
-            return true;
+            return line != null;
         }
+
+        /// <summary>
+        /// Peeks at the next line without consuming it.
+        /// </summary>
         public bool Peek([NotNullWhen(true)] out string? nextLine)
         {
             if (_peekBuffer != null)
             {
                 nextLine = _peekBuffer;
                 return true;
-            }
-
-            if (Reader.EndOfStream)
-            {
-                nextLine = null;
-                return false;
             }
 
             _peekBuffer = Reader.ReadLine();

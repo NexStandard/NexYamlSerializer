@@ -55,25 +55,25 @@ internal static class EmitStringAnalyzer
 
     public static StringBuilder BuildLiteralScalar(ReadOnlySpan<char> originalValue, int indentCharCount)
     {
-        var chompHint = '+';
+        // Decide chomping: if the value ends with '\n' use '-', else '+'
+        char chompHint = (originalValue.Length > 0 && originalValue[^1] == '\n') ? '-' : '+';
 
+        var sb = new StringBuilder();
+        sb.Append('|');
+        sb.Append(chompHint);
+        sb.Append('\n');
+        AppendWhiteSpace(sb, indentCharCount);
 
-        var stringBuilder = new StringBuilder();
-        stringBuilder.Append('|');
-        if (chompHint > 0)
-            stringBuilder.Append(chompHint);
-        stringBuilder.Append('\n');
-        AppendWhiteSpace(stringBuilder, indentCharCount);
-
-        for (var i = 0; i < originalValue.Length; i++)
+        for (int i = 0; i < originalValue.Length; i++)
         {
-            var ch = originalValue[i];
-            stringBuilder.Append(ch);
+            char ch = originalValue[i];
+            sb.Append(ch);
+
             if (ch == '\n' && i < originalValue.Length - 1)
-                AppendWhiteSpace(stringBuilder, indentCharCount);
+                AppendWhiteSpace(sb, indentCharCount);
         }
 
-        return stringBuilder;
+        return sb;
     }
 
     private static bool IsReservedWord(string value)

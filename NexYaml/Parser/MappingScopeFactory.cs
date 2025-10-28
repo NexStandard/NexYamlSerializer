@@ -130,7 +130,7 @@ class MappingScopeFactory : ScopeFactory<MappingScope>
         if (IsQuoted(val))
             map.Add(key, new ScalarScope(Unquote(val), map.Indent + 2, context, childTag));
         else if (val.StartsWith('|'))
-            map.Add(key, new ScalarScope(ParseLiteralScalar(map.Indent + 2), map.Indent + 2, context, childTag));
+            map.Add(key, new ScalarScope(ParseLiteralScalar(map.Context,map.Indent + 1, val[1]), map.Indent + 2, context, childTag));
         else if (val.StartsWith('{') && val.EndsWith("}"))
             map.Add(key, ParseFlow(context, val, map.Indent + 2, childTag));
         else if (val.StartsWith('[') && val.EndsWith("]"))

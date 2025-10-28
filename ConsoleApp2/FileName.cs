@@ -22,20 +22,13 @@ public class Benchmarker
     [IterationSetup]
     public void Setup()
     {
-
         w = Yaml.Write(values, DataStyle.Normal, resolver);
-
         x = JsonSerializer.Serialize(values, MyJsonContext.Default.Collections);
-        var bytes = Encoding.UTF8.GetBytes(w);
-        var ms = new MemoryStream(bytes);
-        red = new StreamReader(ms, Encoding.UTF8, leaveOpen: true);
     }
     [Benchmark]
     public async Task YamlB()
     {
-
-
-        parser = new YamlParser(red, resolver).Parse();
+        parser = new YamlParser(w, resolver).Parse();
         await parser.First().Read<Collections>(new NexYaml.Parser.ParseContext());
     }
     [Benchmark()]

@@ -5,10 +5,47 @@ abstract class ScopeFactory<T>
 {
     public abstract T Parse(ScopeContext context, int indent, string tag);
     public abstract T ParseFlow(ScopeContext context, string value, int indent, string tag);
-    protected string ParseLiteralScalar(int indent)
+    protected string ParseLiteralScalar(ScopeContext context, int indent, char chompHint)
     {
-        throw new NotImplementedException();
+        var sb = new System.Text.StringBuilder();
+
+        while (context.Reader.Peek(out var next))
+        {
+            int lineIndent = CountIndent(next);
+            if (lineIndent < indent)
+                break;
+
+            context.Reader.Move();
+
+            string content = lineIndent >= indent
+                ? next.Substring(indent)
+                : next;
+
+            sb.Append(content);
+            sb.Append('\n'); // normalize to LF
+        }
+
+        string result = sb.ToString();
+
+        // Apply chomping
+        if (chompHint == '+')
+        {
+            // Strip exactly one trailing newline if present
+            if (result.EndsWith('\n'))
+                result = result.Substring(0, result.Length - 1);
+        }
+        else if (chompHint == ' ')
+        {
+            // Clip (default): ensure exactly one trailing newline
+            int i = result.Length;
+            while (i > 0 && result[i - 1] == '\n') i--;
+            result = result.Substring(0, i) + "\n";
+        }
+        // '+' means preserve as is
+
+        return result;
     }
+
 
     protected static bool IsQuoted(string s)
     {

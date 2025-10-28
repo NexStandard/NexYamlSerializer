@@ -24,7 +24,7 @@ class ValueScopeFactory : ScopeFactory<Scope>
         if (IsQuoted(val))
             return new ScalarScope(Unquote(val), indent, context, tag);
         if (val.StartsWith('|'))
-            return new ScalarScope(ParseLiteralScalar(indent), indent, context, tag);
+            return new ScalarScope(ParseLiteralScalar(context,indent, val[1]), indent, context, tag);
         if (val.StartsWith('{') && val.EndsWith('}'))
             return YamlParser.Mapping.ParseFlow(context, val, indent, tag);
         if (val.StartsWith('[') && val.EndsWith(']'))

@@ -20,7 +20,7 @@
         {
             if (string.IsNullOrEmpty(input))
                 return input;
-            return input.Replace("\\n", "\n").Replace("\\\"", "\"");
+            return input.Replace("\\n", "\n").Replace("\r\n","\n");
         }
     }
 }
