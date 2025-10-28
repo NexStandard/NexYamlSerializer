@@ -6,8 +6,6 @@ namespace NexYaml.Serializers;
 
 public class DateTimeOffsetSerializer : YamlSerializer<DateTimeOffset>
 {
-    public static readonly DateTimeOffsetSerializer Instance = new();
-
     public override void Write<X>(WriteContext<X> context, DateTimeOffset value, DataStyle style)
     {
         context.WriteType(value.ToString(), style);

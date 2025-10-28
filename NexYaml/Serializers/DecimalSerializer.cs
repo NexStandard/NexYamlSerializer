@@ -7,8 +7,6 @@ namespace NexYaml.Serializers;
 
 public class DecimalSerializer : YamlSerializer<decimal>
 {
-    public static readonly DecimalSerializer Instance = new();
-
     public override void Write<X>(WriteContext<X> context, decimal value, DataStyle style)
     {
         Span<char> span = stackalloc char[64];

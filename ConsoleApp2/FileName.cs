@@ -1,60 +1,88 @@
-﻿using System.Text.Json;
+﻿using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using BenchmarkDotNet.Attributes;
 using NexYaml;
+using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
+using static System.Net.Mime.MediaTypeNames;
 namespace Test;
 [MemoryDiagnoser()]
 public class Benchmarker
 {
-    static IYamlSerializerResolver? resolver = NexYamlSerializerRegistry.Create(typeof(Collections).Assembly);
     static Collections values = new Collections();
-
+    IEnumerable<Scope> parser;
+    static IYamlSerializerResolver? resolver = NexYamlSerializerRegistry.Create(typeof(Collections).Assembly);
+    string x;
+    string w;
+    StreamReader red;
     static Benchmarker()
     {
-        Yaml.Write(values, (ReadOnlySpan<char> text) => { }, DataStyle.Compact, resolver);
+    }
+    [IterationSetup]
+    public void Setup()
+    {
+
+        w = Yaml.Write(values, DataStyle.Normal, resolver);
+
+        x = JsonSerializer.Serialize(values, MyJsonContext.Default.Collections);
+        var bytes = Encoding.UTF8.GetBytes(w);
+        var ms = new MemoryStream(bytes);
+        red = new StreamReader(ms, Encoding.UTF8, leaveOpen: true);
     }
     [Benchmark]
-    public void YamlB()
+    public async Task YamlB()
     {
-        Yaml.Write(values, (ReadOnlySpan<char> text) => { }, DataStyle.Compact, resolver);
+
+
+        parser = new YamlParser(red, resolver).Parse();
+        await parser.First().Read<Collections>(new NexYaml.Parser.ParseContext());
     }
     [Benchmark()]
     public void JsonB()
     {
-        var x = JsonSerializer.Serialize(values, MyJsonContext.Default.Collections);
+
+        var d = JsonSerializer.Deserialize<Collections>(x);
     }
 
 }
 [DataContract]
 internal class Collections
 {
-    [JsonInclude]
-    public List<TempData> tempDatas = [
-        new(){
-            Id = Guid.NewGuid(),
-            Name = "Name",
-        },
-        new(){
-            Id = Guid.NewGuid(),
-            Name = "Name",
-        },
-        new(){
-            Id = Guid.NewGuid(),
-            Name = "Name",
-        },new(){
-            Id = Guid.NewGuid(),
-            Name = "Name",
-        },
-        new(){
-            Id = Guid.NewGuid(),
-            Name = "Name",
-        }
 
-        ];
     [JsonInclude]
-    public TempData values = new TempData
+    public TempData valu11es = new TempData
+    {
+        Id = Guid.NewGuid(),
+        Name = $"Name_1",
+    };
+    [JsonInclude]
+    public TempData valu1es = new TempData
+    {
+        Id = Guid.NewGuid(),
+        Name = $"Name_1",
+    };
+    [JsonInclude]
+    public TempData value3s = new TempData
+    {
+        Id = Guid.NewGuid(),
+        Name = $"Name_1",
+    };
+    [JsonInclude]
+    public TempData valu2es = new TempData
+    {
+        Id = Guid.NewGuid(),
+        Name = $"Name_1",
+    };
+    [JsonInclude]
+    public TempData value1s = new TempData
+    {
+        Id = Guid.NewGuid(),
+        Name = $"Name_1",
+    };
+    [JsonInclude]
+    public TempData values3 = new TempData
     {
         Id = Guid.NewGuid(),
         Name = $"Name_1",

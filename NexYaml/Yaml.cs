@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using NexYaml.Plugins;
 using NexYaml.Serialization;
 using NexYaml.Serialization.Nodes;
 using Stride.Core;
@@ -24,12 +23,8 @@ public static class Yaml
     public static void Write<T>(T value, WriteDelegate writing, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
     {
         options ??= IYamlSerializerResolver.Default;
-        List<IResolvePlugin> plugins = new()
-        {
-            new ArrayPlugin(),
-            new ReferencePlugin(),
-        };
-        WriteContext<Node> node = new WriteContext<Node>(-2, true, style, new BlockMapping(), new DelegateWriter(options, plugins, writing));
+
+        WriteContext<Node> node = new WriteContext<Node>(-2, true, style, new BlockMapping(), new DelegateWriter(options, writing));
 
         node.WriteType(value, style);
     }
@@ -51,7 +46,7 @@ public static class Yaml
     public static string Write<T>(T value, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
     {
         StringBuilder sb = new StringBuilder();
-        Yaml.Write(value, (ReadOnlySpan<char> text) => { sb.Append(text); Console.Write(text.ToString()); }, style, options);
+        Yaml.Write(value, (ReadOnlySpan<char> text) => { sb.Append(text); }, style, options);
         return sb.ToString();
     }
 

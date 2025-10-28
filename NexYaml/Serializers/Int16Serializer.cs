@@ -7,7 +7,6 @@ namespace NexYaml.Serializers;
 
 public class Int16Serializer : YamlSerializer<short>
 {
-    public static readonly Int16Serializer Instance = new();
     public override void Write<X>(WriteContext<X> context, short value, DataStyle style)
     {
         Span<char> span = stackalloc char[6];

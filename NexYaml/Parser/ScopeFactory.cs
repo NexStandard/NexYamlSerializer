@@ -17,28 +17,35 @@ abstract class ScopeFactory<T>
                ((s.StartsWith('\"') && s.EndsWith('\"')) ||
                 (s.StartsWith('\'') && s.EndsWith('\'')));
     }
-
+    protected static bool IsQuoted(ReadOnlySpan<char> s)
+    {
+        return s.Length >= 2 &&
+               ((s[0] == '\"' && s[s.Length-1] == '\"') ||
+                (s[0] == '\'' && s[s.Length-1] == '\''));
+    }
     protected static string Unquote(string s)
     {
         return IsQuoted(s) ? s.Substring(1, s.Length - 2) : s;
     }
-
+    protected static string Unquote(ReadOnlySpan<char> s)
+    {
+        return IsQuoted(s) ? s.Slice(1, s.Length - 2).ToString() : s.ToString();
+    }
     protected static int CountIndent(string line)
     {
-        var span = line.AsSpan();
         int i = 0;
-        while (i < span.Length && span[i] == ' ')
+        while (i < line.Length && line[i] == ' ')
             i++;
         return i;
     }
     protected static IEnumerable<string> SplitFlowItems(string input)
     {
-        var result = new List<string>();
-        var sb = new StringBuilder();
         int depth = 0;
         bool inQuotes = false;
         bool inTag = false;
         char quoteChar = '\0';
+
+        int tokenStart = 0;
 
         for (int i = 0; i < input.Length; i++)
         {
@@ -46,7 +53,6 @@ abstract class ScopeFactory<T>
 
             if (inQuotes)
             {
-                sb.Append(c);
                 if (c == quoteChar) inQuotes = false;
                 continue;
             }
@@ -55,37 +61,41 @@ abstract class ScopeFactory<T>
             {
                 inQuotes = true;
                 quoteChar = c;
-                sb.Append(c);
                 continue;
             }
-            if (c == '!' && sb.ToString().Trim().Length == 0)
+
+            if (c == '!' && string.IsNullOrWhiteSpace(input.Substring(tokenStart, i - tokenStart)))
             {
                 inTag = true;
             }
+
             if ((c == ' ' || c == '[' || c == '{') && inTag)
             {
                 inTag = false;
-                result.Add(sb.ToString().Trim());
-                sb.Clear();
+                var s = input.Substring(tokenStart, i - tokenStart).Trim();
+                if (s.Length > 0)
+                    yield return s;
+                tokenStart = i + 1;
                 continue;
             }
+
             if (c == '[' || c == '{') depth++;
             if (c == ']' || c == '}') depth--;
 
             if (c == ',' && depth == 0 && !inTag)
             {
-                result.Add(sb.ToString().Trim());
-                sb.Clear();
-            }
-            else
-            {
-                sb.Append(c);
+                var s = input.Substring(tokenStart, i - tokenStart).Trim();
+                if (s.Length > 0)
+                    yield return s;
+                tokenStart = i + 1;
             }
         }
 
-        if (sb.Length > 0)
-            result.Add(sb.ToString().Trim());
-
-        return result;
+        if (tokenStart < input.Length)
+        {
+            var s = input.Substring(tokenStart).Trim();
+            if (s.Length > 0)
+                yield return s;
+        }
     }
 }

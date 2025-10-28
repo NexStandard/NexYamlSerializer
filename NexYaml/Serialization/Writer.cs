@@ -1,5 +1,5 @@
 ﻿using NexYaml.Core;
-using NexYaml.Plugins;
+using NexYaml.Serializers;
 using Stride.Core;
 
 namespace NexYaml.Serialization;
@@ -8,7 +8,7 @@ namespace NexYaml.Serialization;
 /// This class uses a serializer <see cref="IYamlSerializerResolver"/> and a collection of resolve <see cref="IResolvePlugin"/>
 /// to handle the redirection of registered types into YAML.
 /// </summary>
-public abstract class Writer(IYamlSerializerResolver resolver, IEnumerable<IResolvePlugin> plugins)
+public abstract class Writer(IYamlSerializerResolver resolver)
 {
     /// <summary>
     /// Gets the <see cref="IYamlSerializerResolver"/> used to resolve serializers for the registered types.
@@ -42,11 +42,25 @@ public abstract class Writer(IYamlSerializerResolver resolver, IEnumerable<IReso
             context.WriteScalar(YamlCodes.Null);
             return;
         }
-        foreach (var plugin in plugins)
+        if (value is Array)
         {
-            if (plugin.Write(context, value, context.StyleScope))
+            var t = typeof(T).GetElementType()!;
+            var arraySerializerType = typeof(ArraySerializer<>).MakeGenericType(t);
+            var arraySerializer = (YamlSerializer)Activator.CreateInstance(arraySerializerType)!;
+
+            arraySerializer.Write(context, value, style);
+            return;
+        }
+        if (value is IIdentifiable id)
+        {
+            if (context.Writer.References.Contains(id.Id))
             {
+                context.WriteScalar("!!ref " + id.Id);
                 return;
+            }
+            else
+            {
+                context.Writer.References.Add(id.Id);
             }
         }
         var type = typeof(T);

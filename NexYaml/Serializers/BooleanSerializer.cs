@@ -5,8 +5,6 @@ namespace NexYaml.Serializers;
 
 public class BooleanSerializer : YamlSerializer<bool>
 {
-    public static readonly BooleanSerializer Instance = new();
-
     public override void Write<X>(WriteContext<X> context, bool value, DataStyle style)
     {
         context.WriteScalar(value ? ['t', 'r', 'u', 'e'] : ['f', 'a', 'l', 's', 'e']);

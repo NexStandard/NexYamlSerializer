@@ -65,7 +65,7 @@ internal static class SourceCreator
             {
                 awaitsNew.AppendLine("\t\tscope.Context.IdentifiableResolver.RegisterIdentifiable(res.Id, res);");
             }
-            ifStatementNew.AppendLine($"\t\t\tif (map.Key.SequenceEqual(UTF8{member.Name})){{ var_{member.Name} = map.Value.Read<{(member.IsArray ? member.Type + "[]" : member.Type)}>(context_{member.Name}); continue; }}");
+            ifStatementNew.AppendLine($"\t\t\tif (map.Key == UTF8{member.Name}){{ var_{member.Name} = map.Value.Read<{(member.IsArray ? member.Type + "[]" : member.Type)}>(context_{member.Name}); continue; }}");
 
         }
 
