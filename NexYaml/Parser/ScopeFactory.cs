@@ -34,14 +34,6 @@ abstract class ScopeFactory<T>
             if (result.EndsWith('\n'))
                 result = result.Substring(0, result.Length - 1);
         }
-        else if (chompHint == ' ')
-        {
-            // Clip (default): ensure exactly one trailing newline
-            int i = result.Length;
-            while (i > 0 && result[i - 1] == '\n') i--;
-            result = result.Substring(0, i) + "\n";
-        }
-        // '+' means preserve as is
 
         return result;
     }
