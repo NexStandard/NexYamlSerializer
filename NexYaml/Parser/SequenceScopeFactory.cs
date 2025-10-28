@@ -209,7 +209,7 @@ class SequenceScopeFactory : ScopeFactory<SequenceScope>
             }
 
             if (IsQuoted(item))
-                seq.Add(new ScalarScope(Unquote(item), indent + 2,context, childTag));
+                seq.Add(new ScalarScope(Unquote(item), indent + 2, context, childTag));
             else if (item.StartsWith('|'))
                 seq.Add(new ScalarScope(ParseLiteralScalar(indent + 2), indent + 2, context, childTag));
             else if (item.StartsWith('{') && item.EndsWith('}'))

@@ -5,9 +5,9 @@ class ValueScopeFactory : ScopeFactory<Scope>
 {
     public override Scope Parse(ScopeContext context, int indent, string tag)
     {
-        if(context.Reader.Move(out var val))
+        if (context.Reader.Move(out var val))
         {
-            return Parse(context, val.Trim(),indent, tag);
+            return Parse(context, val.Trim(), indent, tag);
         }
         throw new EndOfStreamException();
     }

@@ -1,7 +1,4 @@
 ﻿using System.Collections;
-using System.Text;
-using NexYaml.Parser;
-using NexYaml.Serialization;
 using NexYaml.Serializers;
 using Stride.Core.Extensions;
 
@@ -98,7 +95,7 @@ namespace NexYaml.Parser
             int indent,
             ScopeContext context,
             string tag = ""
-        ) : base(tag, indent,context)
+        ) : base(tag, indent, context)
         {
             Value = DecodeEscapes(value);
         }

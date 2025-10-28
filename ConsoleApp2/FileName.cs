@@ -6,7 +6,6 @@ using NexYaml;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
-using static System.Net.Mime.MediaTypeNames;
 namespace Test;
 [MemoryDiagnoser()]
 public class Benchmarker

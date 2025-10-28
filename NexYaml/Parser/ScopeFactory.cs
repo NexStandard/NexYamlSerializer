@@ -1,11 +1,10 @@
-﻿using System.Text;
-using NexYaml.Parser;
+﻿using NexYaml.Parser;
 
 abstract class ScopeFactory<T>
     where T : Scope
 {
-    public abstract T Parse(ScopeContext context,int indent, string tag);
-    public abstract T ParseFlow(ScopeContext context,string value, int indent, string tag);
+    public abstract T Parse(ScopeContext context, int indent, string tag);
+    public abstract T ParseFlow(ScopeContext context, string value, int indent, string tag);
     protected string ParseLiteralScalar(int indent)
     {
         throw new NotImplementedException();
@@ -20,8 +19,8 @@ abstract class ScopeFactory<T>
     protected static bool IsQuoted(ReadOnlySpan<char> s)
     {
         return s.Length >= 2 &&
-               ((s[0] == '\"' && s[s.Length-1] == '\"') ||
-                (s[0] == '\'' && s[s.Length-1] == '\''));
+               ((s[0] == '\"' && s[s.Length - 1] == '\"') ||
+                (s[0] == '\'' && s[s.Length - 1] == '\''));
     }
     protected static string Unquote(string s)
     {

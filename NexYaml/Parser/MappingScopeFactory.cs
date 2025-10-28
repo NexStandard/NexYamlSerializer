@@ -6,11 +6,11 @@ class MappingScopeFactory : ScopeFactory<MappingScope>
     public override MappingScope Parse(ScopeContext context, int indent, string tag)
     {
         var map = new MappingScope(indent, context, tag);
-        ParseMappingLoop(map,context);
+        ParseMappingLoop(map, context);
         return map;
     }
 
-    public override MappingScope ParseFlow(ScopeContext context,string value, int indent, string tag)
+    public override MappingScope ParseFlow(ScopeContext context, string value, int indent, string tag)
     {
         var map = new MappingScope(indent, context, tag);
         var inner = value.Substring(1, value.Length - 2).Trim();
@@ -33,7 +33,7 @@ class MappingScopeFactory : ScopeFactory<MappingScope>
                 val = segs.Length > 1 ? segs[1].Trim() : "";
             }
 
-            StandardMappingResolve(context,map, key, val, childTag);
+            StandardMappingResolve(context, map, key, val, childTag);
         }
         return map;
     }
@@ -125,7 +125,7 @@ class MappingScopeFactory : ScopeFactory<MappingScope>
             }
         }
     }
-    private void StandardMappingResolve(ScopeContext context,MappingScope map, string key, string val, string childTag)
+    private void StandardMappingResolve(ScopeContext context, MappingScope map, string key, string val, string childTag)
     {
         if (IsQuoted(val))
             map.Add(key, new ScalarScope(Unquote(val), map.Indent + 2, context, childTag));
@@ -134,7 +134,7 @@ class MappingScopeFactory : ScopeFactory<MappingScope>
         else if (val.StartsWith('{') && val.EndsWith("}"))
             map.Add(key, ParseFlow(context, val, map.Indent + 2, childTag));
         else if (val.StartsWith('[') && val.EndsWith("]"))
-            map.Add(key, YamlParser.Sequence.ParseFlow(context,val, map.Indent + 2, childTag));
+            map.Add(key, YamlParser.Sequence.ParseFlow(context, val, map.Indent + 2, childTag));
         else
             map.Add(key, new ScalarScope(val, map.Indent + 2, context, childTag));
     }

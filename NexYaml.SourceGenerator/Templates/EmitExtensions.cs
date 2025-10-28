@@ -35,7 +35,7 @@ internal static class EmitExtensions
         foreach (var member in package.MemberSymbols)
         {
             charMembers
-                .AppendLine($"private readonly string UTF8{member.Name} = \"{ member.Name}\";")
+                .AppendLine($"private readonly string UTF8{member.Name} = \"{member.Name}\";")
                 .Append("\t");
         }
 
