@@ -28,20 +28,7 @@ class SequenceScopeFactory : ScopeFactory<SequenceScope>
             string childTag = "";
 
             // tag detection
-            if (itemSpan.Length > 0 && itemSpan[0] == '!' && !itemSpan.SequenceEqual("!!null".AsSpan()))
-            {
-                int spaceIdx = itemSpan.IndexOf(' ');
-                if (spaceIdx >= 0)
-                {
-                    childTag = itemSpan.Slice(0, spaceIdx).ToString();
-                    itemSpan = itemSpan.Slice(spaceIdx + 1).Trim();
-                }
-                else
-                {
-                    childTag = itemSpan.ToString();
-                    itemSpan = ReadOnlySpan<char>.Empty;
-                }
-            }
+            ExtractTag(ref itemSpan, ref childTag);
 
             if (itemSpan.Length > 0)
             {
@@ -53,7 +40,7 @@ class SequenceScopeFactory : ScopeFactory<SequenceScope>
                 // literal block scalar
                 else if (itemSpan[0] == '|')
                 {
-                    seq.Add(new ScalarScope(ParseLiteralScalar(seq.Context,indent + 1, itemSpan[1]), indent + 2, context, childTag));
+                    seq.Add(new ScalarScope(ParseLiteralScalar(seq.Context, indent + 1, itemSpan[1]), indent + 2, context, childTag));
                 }
                 // flow mapping
                 else if (itemSpan[0] == '{' && itemSpan[^1] == '}')
@@ -112,6 +99,8 @@ class SequenceScopeFactory : ScopeFactory<SequenceScope>
 
         return seq;
     }
+
+
 
     private MappingScope ParseMapping(ScopeContext context, int indent, string tag, string? key = null, string? initialValue = null)
     {
