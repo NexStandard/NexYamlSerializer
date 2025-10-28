@@ -39,62 +39,90 @@ class MappingScopeFactory : ScopeFactory<MappingScope>
     }
     private void ParseMappingLoop(MappingScope map, ScopeContext context)
     {
-        // Continue with your existing loop
         while (context.Reader.Peek(out var next))
         {
+            // Work with spans to avoid allocations
+            ReadOnlySpan<char> line = next.AsSpan();
+
             int lineIndent = CountIndent(next);
             if (lineIndent < map.Indent) break;
             map.Indent = lineIndent;
 
-            string trimmed = next.Trim();
+            // Slice off leading spaces
+            ReadOnlySpan<char> trimmed = line.Slice(lineIndent);
+            if (trimmed.IsEmpty) { context.Reader.Move(); continue; }
 
-            if (trimmed.StartsWith('!') && trimmed != "!!null")
-                throw new InvalidOperationException($"Standalone tag inside mapping is invalid: '{trimmed}'");
+            // Sequence indicator means mapping ends
+            if (trimmed[0] == '-') break;
 
+            // Standalone tag check
+            if (trimmed[0] == '!' && !trimmed.SequenceEqual("!!null".AsSpan()))
+                throw new InvalidOperationException($"Standalone tag inside mapping is invalid: '{next}'");
 
-            if (next.Trim().StartsWith('-')) break;
-            var parts = trimmed.Split(':', 2);
-            if (parts.Length != 2) throw new InvalidOperationException($"Invalid mapping line: '{trimmed}'");
-            context.Reader.Move(out var dump);
+            // Find key/value separator
+            int colonIdx = trimmed.IndexOf(':');
+            if (colonIdx < 0)
+                throw new InvalidOperationException($"Invalid mapping line: '{next}'");
 
-            var key = parts[0].Trim();
-            var val = parts[1].Trim();
+            ReadOnlySpan<char> keySpan = trimmed.Slice(0, colonIdx).Trim();
+            ReadOnlySpan<char> valSpan = colonIdx + 1 < trimmed.Length
+                ? trimmed.Slice(colonIdx + 1).Trim()
+                : ReadOnlySpan<char>.Empty;
 
+            // Consume the line
+            context.Reader.Move();
+
+            string key = keySpan.ToString();
+            string val = valSpan.ToString();
 
             string childTag = "";
-            if (val.StartsWith('!') && val != "!!null")
+
+            // Inline tag handling
+            if (!valSpan.IsEmpty && valSpan[0] == '!' && !valSpan.SequenceEqual("!!null".AsSpan()))
             {
-                var segs = val.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
-                childTag = segs[0];
-                val = segs.Length > 1 ? segs[1].Trim() : "";
+                int spaceIdx = valSpan.IndexOf(' ');
+                if (spaceIdx >= 0)
+                {
+                    childTag = valSpan.Slice(0, spaceIdx).ToString();
+                    val = valSpan.Slice(spaceIdx + 1).Trim().ToString();
+                }
+                else
+                {
+                    childTag = val;
+                    val = string.Empty;
+                }
             }
 
             if (val.Length > 0)
             {
-                StandardMappingResolve(context,map, key, val, childTag);
+                StandardMappingResolve(context, map, key, val, childTag);
             }
             else
             {
-                context.Reader.Peek(out var dump4);
-                int nextIndent = CountIndent(dump4);
-                if (nextIndent > map.Indent)
+                // Look ahead for nested structures
+                if (context.Reader.Peek(out var lookahead))
                 {
-                    var nextTrim = dump4.TrimStart();
-                    if (nextTrim.StartsWith('-'))
-                        map.Add(key, YamlParser.Sequence.Parse(context, map.Indent + 2, childTag));
-                    else
-                        map.Add(key, Parse(context,map.Indent + 2, childTag));
-                    continue;
-                }
-                else
-                {
-                    var nextTrim = dump4.TrimStart();
-                    if (nextTrim.StartsWith('-'))
-                        map.Add(key, YamlParser.Sequence.Parse(context,map.Indent, childTag));
-                    continue;
-                }
-            }
+                    int nextIndent = CountIndent(lookahead);
+                    ReadOnlySpan<char> nextTrim = lookahead.AsSpan(nextIndent);
 
+                    if (nextIndent > map.Indent)
+                    {
+                        if (!nextTrim.IsEmpty && nextTrim[0] == '-')
+                            map.Add(key, YamlParser.Sequence.Parse(context, map.Indent + 2, childTag));
+                        else
+                            map.Add(key, Parse(context, map.Indent + 2, childTag));
+                        continue;
+                    }
+                    else if (!nextTrim.IsEmpty && nextTrim[0] == '-')
+                    {
+                        map.Add(key, YamlParser.Sequence.Parse(context, map.Indent, childTag));
+                        continue;
+                    }
+                }
+
+                // Default: empty scalar
+                map.Add(key, new ScalarScope(string.Empty, map.Indent + 2, context, childTag));
+            }
         }
     }
     private void StandardMappingResolve(ScopeContext context,MappingScope map, string key, string val, string childTag)

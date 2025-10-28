@@ -58,7 +58,7 @@ namespace NexYamlTest.ScalarStyle
             Assert.NotNull(d);
             Assert.Equal(w.Value, d.Value);
         }
-        [Fact(Skip = "")]
+        [Fact]
         public async Task LiteralScalarAtEnd_NoLineBreak()
         {
             NexYamlSerializerRegistry.Init();

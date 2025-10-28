@@ -1,37 +1,17 @@
 ﻿using System.Text;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Running;
 using NexYaml;
 using NexYaml.Parser;
 using Stride.Core;
+using Test;
 
 class Program
 {
     static Stream ToStream(string s) => new MemoryStream(Encoding.UTF8.GetBytes(s));
     public static async Task Main(string[] args)
     {
-        // BenchmarkRunner.Run<Benchmarker>();
-        // Example YAML input
-
-        string yaml = @"!NexYamlTest.References.ReferenceScriptList,NexYamlTest
-List: 
-- Reference: 
-    Id: 00000000-0000-0000-0000-000000000000
-    ReferenceScript: !!ref 0df63044-c6e5-4ee3-b938-c3280c8d7b07
-    Test: 0
-  Reference1: !!null
-  Reference2: !!null
-  Id: 2f2bd1ee-a1aa-49cf-9757-fb4dc2bbf211
-- Reference: !!ref 00000000-0000-0000-0000-000000000000
-  Reference1: !!null
-  Reference2: !!null
-  Id: 0df63044-c6e5-4ee3-b938-c3280c8d7b07
-- Reference: !!ref 00000000-0000-0000-0000-000000000000
-  Reference1: !!null
-  Reference2: !!null
-  Id: f9c689a9-6119-47dd-857c-9d7cb895351d
-";
-        var s = new YamlParser(yaml, new NexYamlSerializerRegistry()).Parse();
-        var first = s.First();
+        BenchmarkRunner.Run<Benchmarker>();
 
     }
 }
@@ -55,14 +35,5 @@ public class PersonSerializer : YamlSerializer<Person>
         }
 
         return new Person(id, name, female);
-    }
-}
-[MemoryDiagnoser]
-public class Benchmarker
-{
-    [Benchmark]
-    public void Test()
-    {
-
     }
 }

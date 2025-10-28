@@ -7,8 +7,6 @@ namespace NexYaml.Serializers;
 
 public class Float64Serializer : YamlSerializer<double>
 {
-    public static readonly Float64Serializer Instance = new();
-
     public override void Write<X>(WriteContext<X> context, double value, DataStyle style)
     {
         Span<char> span = stackalloc char[32];

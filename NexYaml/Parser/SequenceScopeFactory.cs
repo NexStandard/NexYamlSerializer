@@ -7,75 +7,113 @@ class SequenceScopeFactory : ScopeFactory<SequenceScope>
     {
         var seq = new SequenceScope(indent, context, tag);
 
-
         while (context.Reader.Peek(out var next))
         {
             int lineIndent = CountIndent(next);
             if (lineIndent < indent) break;
             if (lineIndent != indent) break;
-            string trimmed = next.Trim();
-            if (!trimmed.StartsWith('-')) break;
+
+            ReadOnlySpan<char> line = next.AsSpan(lineIndent);
+            if (line.Length == 0 || line[0] != '-') break;
+
+            // consume this line
             context.Reader.Move();
 
-            // Skip the leading '-' and any following spaces
+            // skip the leading '-' and any following spaces
             int i = 1;
-            while (i < trimmed.Length && trimmed[i] == ' ')
+            while (i < line.Length && line[i] == ' ')
                 i++;
 
-            var item = trimmed.Substring(i);
-
+            var itemSpan = line.Slice(i).Trim();
             string childTag = "";
 
-            if (item.StartsWith('!') && item != "!!null")
+            // tag detection
+            if (itemSpan.Length > 0 && itemSpan[0] == '!' && !itemSpan.SequenceEqual("!!null".AsSpan()))
             {
-                var segs = item.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
-                childTag = segs[0];
-                item = segs.Length > 1 ? segs[1].Trim() : "";
-            }
-
-            if (item.Length > 0)
-            {
-                if (IsQuoted(item))
-                    seq.Add(new ScalarScope(Unquote(item), indent + 2, context, childTag));
-                else if (item.StartsWith('|'))
-                    seq.Add(new ScalarScope(ParseLiteralScalar(indent + 2), indent + 2, context, childTag));
-                else if (item.StartsWith('{') && item.EndsWith('}'))
-                    seq.Add(YamlParser.Mapping.ParseFlow(context,item, indent + 2, childTag));
-                else if (item.StartsWith('[') && item.EndsWith(']'))
-                    seq.Add(ParseFlow(context,item, indent + 2, childTag));
-                else if (item.Contains(':'))
+                int spaceIdx = itemSpan.IndexOf(' ');
+                if (spaceIdx >= 0)
                 {
-                    var parts = item.Split(':', 2);
-                    var key = parts[0].Trim();
-                    var val = parts.Length > 1 ? parts[1].Trim() : "";
-
-                    // Delegate into ParseMapping with seed key/value
-                    seq.Add(ParseMapping(context,indent + 2, childTag, key, val));
+                    childTag = itemSpan.Slice(0, spaceIdx).ToString();
+                    itemSpan = itemSpan.Slice(spaceIdx + 1).Trim();
                 }
                 else
-                    seq.Add(new ScalarScope(item, indent + 2, context, childTag));
+                {
+                    childTag = itemSpan.ToString();
+                    itemSpan = ReadOnlySpan<char>.Empty;
+                }
+            }
+
+            if (itemSpan.Length > 0)
+            {
+                // quoted scalar
+                if (IsQuoted(itemSpan))
+                {
+                    seq.Add(new ScalarScope(Unquote(itemSpan.ToString()), indent + 2, context, childTag));
+                }
+                // literal block scalar
+                else if (itemSpan[0] == '|')
+                {
+                    seq.Add(new ScalarScope(ParseLiteralScalar(indent + 2), indent + 2, context, childTag));
+                }
+                // flow mapping
+                else if (itemSpan[0] == '{' && itemSpan[^1] == '}')
+                {
+                    seq.Add(YamlParser.Mapping.ParseFlow(context, itemSpan.ToString(), indent + 2, childTag));
+                }
+                // flow sequence
+                else if (itemSpan[0] == '[' && itemSpan[^1] == ']')
+                {
+                    seq.Add(ParseFlow(context, itemSpan.ToString(), indent + 2, childTag));
+                }
+                // inline mapping (key: value)
+                else
+                {
+                    int colonIdx = itemSpan.IndexOf(':');
+                    if (colonIdx >= 0)
+                    {
+                        var keySpan = itemSpan.Slice(0, colonIdx).Trim();
+                        var valSpan = colonIdx + 1 < itemSpan.Length
+                            ? itemSpan.Slice(colonIdx + 1).Trim()
+                            : ReadOnlySpan<char>.Empty;
+
+                        seq.Add(ParseMapping(context,
+                                             indent + 2,
+                                             childTag,
+                                             keySpan.ToString(),
+                                             valSpan.ToString()));
+                    }
+                    else
+                    {
+                        seq.Add(new ScalarScope(itemSpan.ToString(), indent + 2, context, childTag));
+                    }
+                }
             }
             else
             {
-
-                context.Reader.Peek(out var dump);
-                int nextIndent = CountIndent(dump);
-                if (nextIndent > indent)
+                // empty item, look ahead for nested structure
+                if (context.Reader.Peek(out var la))
                 {
-                    var nextTrim = dump.TrimStart();
-                    if (nextTrim.StartsWith('-'))
-                        seq.Add(Parse(context, indent + 2, childTag));
-                    else
+                    int nextIndent = CountIndent(la);
+                    var nextTrim = la.AsSpan(nextIndent);
+
+                    if (nextIndent > indent)
                     {
-                        seq.Add(YamlParser.Mapping.Parse(context, indent + 2, childTag));
+                        if (nextTrim.Length > 0 && nextTrim[0] == '-')
+                            seq.Add(Parse(context, indent + 2, childTag));
+                        else
+                            seq.Add(YamlParser.Mapping.Parse(context, indent + 2, childTag));
+                        continue;
                     }
-                    continue;
                 }
+
+                seq.Add(new ScalarScope(string.Empty, indent + 2, context, childTag));
             }
         }
+
         return seq;
     }
-    private MappingScope ParseMapping(ScopeContext context,int indent, string tag, string? key = null, string? initialValue = null)
+
+    private MappingScope ParseMapping(ScopeContext context, int indent, string tag, string? key = null, string? initialValue = null)
     {
         var map = new MappingScope(indent, context, tag);
 
@@ -85,41 +123,53 @@ class SequenceScopeFactory : ScopeFactory<SequenceScope>
             if (!string.IsNullOrEmpty(initialValue))
             {
                 string childTag = "";
-                string val = initialValue;
+                ReadOnlySpan<char> valSpan = initialValue.AsSpan();
 
-                if (val.StartsWith('!') && val != "!!null")
+                if (valSpan[0] == '!' && !valSpan.SequenceEqual("!!null".AsSpan()))
                 {
-                    var segs = val.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
-                    childTag = segs[0];
-                    val = segs.Length > 1 ? segs[1].Trim() : "";
+                    int spaceIdx = valSpan.IndexOf(' ');
+                    if (spaceIdx >= 0)
+                    {
+                        childTag = valSpan.Slice(0, spaceIdx).ToString();
+                        valSpan = valSpan.Slice(spaceIdx + 1).Trim();
+                    }
+                    else
+                    {
+                        childTag = valSpan.ToString();
+                        valSpan = ReadOnlySpan<char>.Empty;
+                    }
                 }
 
-                StandardMappingResolve(context,map, key, val, childTag);
+                StandardMappingResolve(context, map, key, valSpan.ToString(), childTag);
             }
             else
             {
-
-                context.Reader.Peek(out var dump);
-                int nextIndent = CountIndent(dump);
-                if (nextIndent > indent)
+                // No inline value: "- key:" followed by nested mapping/sequence
+                if (context.Reader.Peek(out var lookahead))
                 {
-                    var nextTrim = dump.TrimStart();
-                    if (nextTrim.StartsWith('-'))
-                        map.Add(key, Parse(context,indent + 2, ""));
+                    int nextIndent = CountIndent(lookahead);
+                    var nextTrim = lookahead.AsSpan(nextIndent);
+
+                    if (nextIndent > indent)
+                    {
+                        if (nextTrim[0] == '-')
+                            map.Add(key, Parse(context, indent + 2, ""));
+                        else
+                            map.Add(key, YamlParser.Mapping.Parse(context, indent + 2, ""));
+                    }
                     else
-                        map.Add(key, YamlParser.Mapping.Parse(context,indent + 2, ""));
+                    {
+                        map.Add(key, new ScalarScope(string.Empty, indent + 2, context, ""));
+                    }
                 }
-                else
-                {
-                    map.Add(key, new ScalarScope(string.Empty, indent + 2, context, ""));
-                }
-
             }
         }
+
+        // Continue parsing the rest of the mapping at this indent
         var temp = YamlParser.Mapping.Parse(context, map.Indent, map.Tag);
-        foreach(var m in temp)
+        foreach (var m in temp)
         {
-            map.Add(m.Key,m.Value);
+            map.Add(m.Key, m.Value);
         }
 
         return map;
@@ -178,9 +228,9 @@ class SequenceScopeFactory : ScopeFactory<SequenceScope>
             map.Add(key, new ScalarScope(Unquote(val), map.Indent + 2, context, childTag));
         else if (val.StartsWith('|'))
             map.Add(key, new ScalarScope(ParseLiteralScalar(map.Indent + 2), map.Indent + 2, context, childTag));
-        else if (val.StartsWith('{') && val.EndsWith("}"))
+        else if (val.StartsWith('{') && val.EndsWith('}'))
             map.Add(key, ParseFlow(context, val, map.Indent + 2, childTag));
-        else if (val.StartsWith('[') && val.EndsWith("]"))
+        else if (val.StartsWith('[') && val.EndsWith(']'))
             map.Add(key, YamlParser.Sequence.ParseFlow(context, val, map.Indent + 2, childTag));
         else
             map.Add(key, new ScalarScope(val, map.Indent + 2, context, childTag));

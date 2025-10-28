@@ -7,8 +7,6 @@ namespace NexYaml.Serializers;
 
 public class SByteSerializer : YamlSerializer<sbyte>
 {
-    public static readonly SByteSerializer Instance = new();
-
     public override void Write<X>(WriteContext<X> context, sbyte value, DataStyle style)
     {
         Span<char> span = stackalloc char[4];

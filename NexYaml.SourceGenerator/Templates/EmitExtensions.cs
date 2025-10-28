@@ -34,16 +34,8 @@ internal static class EmitExtensions
 
         foreach (var member in package.MemberSymbols)
         {
-            var chars = member.Name.ToCharArray();
-            var sb = new StringBuilder();
-
-            foreach (var ch in chars)
-            {
-                sb.Append($"'{ch}', ");
-            }
-
             charMembers
-                .AppendLine($"private static readonly char[] UTF8{member.Name} = new char[] {{ {sb.ToString().TrimEnd(',', ' ')} }};")
+                .AppendLine($"private readonly string UTF8{member.Name} = \"{ member.Name}\";")
                 .Append("\t");
         }
 

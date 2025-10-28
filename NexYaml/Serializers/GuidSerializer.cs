@@ -6,8 +6,6 @@ namespace NexYaml.Serializers;
 
 public class GuidSerializer : YamlSerializer<Guid>
 {
-    public static readonly GuidSerializer Instance = new();
-
     public override void Write<X>(WriteContext<X> context, Guid value, DataStyle style)
     {
         context.WriteString(value.ToString());

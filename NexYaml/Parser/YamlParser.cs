@@ -37,6 +37,14 @@ namespace NexYaml
                 Reader = reader
             };
         }
+        public YamlParser(StreamReader stream, IYamlSerializerResolver resolver)
+        {
+            _resolver = resolver;
+            _reader = new YamlReader()
+            {
+                Reader = stream
+            };
+        }
         public IEnumerable<Scope> Parse()
         {
             var context = new ScopeContext(_reader, _resolver, IdentifiableResolver);

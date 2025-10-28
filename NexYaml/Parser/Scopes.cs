@@ -109,52 +109,105 @@ namespace NexYaml.Parser
         {
             if (string.IsNullOrEmpty(input))
                 return input;
-
-            var sb = new StringBuilder(input.Length);
-            for (int i = 0; i < input.Length; i++)
-            {
-                char c = input[i];
-                if (c == '\\' && i + 1 < input.Length)
-                {
-                    char next = input[++i];
-                    switch (next)
-                    {
-                        case 'n': sb.Append('\n'); break;
-                        case 'r': sb.Append('\r'); break;
-                        case 't': sb.Append('\t'); break;
-                        default:
-                            // Unknown escape, keep literally
-                            sb.Append(next);
-                            break;
-                    }
-                }
-                else
-                {
-                    sb.Append(c);
-                }
-            }
-            return sb.ToString();
+            return input.Replace("\\n", "\n").Replace("\\\"", "\"");
         }
     }
 
 
     public sealed class MappingScope : Scope, IEnumerable<KeyValuePair<string, Scope>>
     {
-        private readonly List<KeyValuePair<string, Scope>> _entries = new();
-        public MappingScope(int indent, ScopeContext context, string tag = "") : base(tag, indent, context) { }
+        // Generously sized backing array to avoid repeated allocations
+        private KeyValuePair<string, Scope>[] _entries;
+        private int _count;
+
+        public MappingScope(int indent, ScopeContext context, string tag = "", int initialCapacity = 10)
+            : base(tag, indent, context)
+        {
+            _entries = new KeyValuePair<string, Scope>[initialCapacity];
+            _count = 0;
+        }
+
         public override ScopeKind Kind => ScopeKind.Mapping;
-        public void Add(string key, Scope value) => _entries.Add(new KeyValuePair<string, Scope>(key, value));
-        public IEnumerator<KeyValuePair<string, Scope>> GetEnumerator() => _entries.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => _entries.GetEnumerator();
+
+        public int Count => _count;
+
+        public void Add(string key, Scope value)
+        {
+            if (_count == _entries.Length)
+            {
+                // If we ever exceed the initial capacity, just double it
+                var newArr = new KeyValuePair<string, Scope>[_entries.Length * 2];
+                Array.Copy(_entries, newArr, _count);
+                _entries = newArr;
+            }
+
+            _entries[_count++] = new KeyValuePair<string, Scope>(key, value);
+        }
+
+        public KeyValuePair<string, Scope> this[int index]
+        {
+            get
+            {
+                if ((uint)index >= (uint)_count)
+                    throw new ArgumentOutOfRangeException(nameof(index));
+                return _entries[index];
+            }
+        }
+
+        public IEnumerator<KeyValuePair<string, Scope>> GetEnumerator()
+        {
+            for (int i = 0; i < _count; i++)
+                yield return _entries[i];
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
     public sealed class SequenceScope : Scope, IEnumerable<Scope>
     {
-        private readonly List<Scope> _items = new();
-        public SequenceScope(int indent, ScopeContext context, string tag = "") : base(tag, indent, context) { }
+        private Scope[] _items;
+        private int _count;
+
+        public SequenceScope(int indent, ScopeContext context, string tag = "", int initialCapacity = 10)
+            : base(tag, indent, context)
+        {
+            _items = new Scope[initialCapacity];
+            _count = 0;
+        }
+
         public override ScopeKind Kind => ScopeKind.Sequence;
-        public void Add(Scope value) => _items.Add(value);
-        public IEnumerator<Scope> GetEnumerator() => _items.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => _items.GetEnumerator();
+
+        public int Count => _count;
+
+        public void Add(Scope value)
+        {
+            if (_count == _items.Length)
+            {
+                // grow if needed; double the size
+                var newArr = new Scope[_items.Length * 2];
+                Array.Copy(_items, newArr, _count);
+                _items = newArr;
+            }
+
+            _items[_count++] = value;
+        }
+
+        public Scope this[int index]
+        {
+            get
+            {
+                if ((uint)index >= (uint)_count)
+                    throw new ArgumentOutOfRangeException(nameof(index));
+                return _items[index];
+            }
+        }
+
+        public IEnumerator<Scope> GetEnumerator()
+        {
+            for (int i = 0; i < _count; i++)
+                yield return _items[i];
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

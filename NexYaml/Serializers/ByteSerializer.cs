@@ -7,8 +7,6 @@ namespace NexYaml.Serializers;
 
 public class ByteSerializer : YamlSerializer<byte>
 {
-    public static readonly ByteSerializer Instance = new();
-
     public override void Write<X>(WriteContext<X> context, byte value, DataStyle style)
     {
         Span<char> span = stackalloc char[3];

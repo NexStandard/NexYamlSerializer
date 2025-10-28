@@ -93,12 +93,6 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
 
         throw new NotSupportedException($"Unsupported primitive type: {type.Name}");
     }
-    private static async Task<KeyValuePair<TKey, TValue?>> ConvertToKeyValuePair(ValueTask<TKey> key, ValueTask<TValue?> value)
-    {
-        var k = await key;
-        var v = await value;
-        return new KeyValuePair<TKey, TValue?>(k, v);
-    }
     private static async Task<KeyValuePair<TKey, TValue?>> ConvertToKeyValuePair(TKey key, ValueTask<TValue?> value)
     {
         var k = key;

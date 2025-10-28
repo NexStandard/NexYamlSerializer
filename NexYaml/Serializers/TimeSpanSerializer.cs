@@ -6,8 +6,6 @@ namespace NexYaml.Serializers;
 
 public class TimeSpanSerializer : YamlSerializer<TimeSpan>
 {
-    public static readonly TimeSpanSerializer Instance = new();
-
     public override void Write<X>(WriteContext<X> context, TimeSpan value, DataStyle style)
     {
         context.WriteString(value.ToString());
