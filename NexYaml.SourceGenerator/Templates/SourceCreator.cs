@@ -51,7 +51,7 @@ internal static class SourceCreator
             }
             if (member.Context.Mode is MemberApi.UniversalAnalyzers.MemberMode.Content)
             {
-                awaitsNew.AppendLine($"await var_{member.Name};");
+                awaitsNew.AppendLine($"if(context.DataMemberMode is DataMemberMode.Content) {{ res.{member.Name} = await var_{member.Name}; }} else {{ await var_{member.Name};}}");
             }
             else if (member.IsInit)
             {

@@ -10,32 +10,37 @@ namespace Test;
 [MemoryDiagnoser()]
 public class Benchmarker
 {
-    static Collections values = new Collections();
-    IEnumerable<Scope> parser;
-    static IYamlSerializerResolver? resolver = NexYamlSerializerRegistry.Create(typeof(Collections).Assembly);
-    string x;
-    string w;
-    StreamReader red;
+    static Collections values;
+
+    static IYamlSerializerResolver? resolver;
     static Benchmarker()
     {
     }
-    [IterationSetup]
+    [GlobalSetup]
+    public void Gsetup()
+    {
+        resolver = NexYamlSerializerRegistry.Create(typeof(Collections).Assembly);
+        values = new Collections();
+    }
+    [GlobalCleanup]
     public void Setup()
     {
-        w = Yaml.Write(values, DataStyle.Normal, resolver);
-        x = JsonSerializer.Serialize(values, MyJsonContext.Default.Collections);
+        resolver = null;
+        values = null;
     }
     [Benchmark]
     public async Task YamlB()
     {
-        parser = new YamlParser(w, resolver).Parse();
+       var  w = Yaml.Write(values, DataStyle.Normal, resolver);
+        var parser = new YamlParser(w, resolver).Parse();
         parser.First().EmptyDump();
     }
     [Benchmark()]
     public void JsonB()
     {
 
-        var d = JsonSerializer.Deserialize<Collections>(x);
+        var w = JsonSerializer.Serialize(values, MyJsonContext.Default.Collections);
+        var d = JsonSerializer.Deserialize<Collections>(w);
     }
 
 }

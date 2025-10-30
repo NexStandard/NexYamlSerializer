@@ -12,9 +12,7 @@ class Program
     static Stream ToStream(string s) => new MemoryStream(Encoding.UTF8.GetBytes(s));
     public static async Task Main(string[] args)
     {
-        var w = Yaml.Write(new Collections(), DataStyle.Normal, NexYamlSerializerRegistry.Create(typeof(Collections).Assembly));
-        var parser = new YamlParser(w, NexYamlSerializerRegistry.Create(typeof(Collections).Assembly)).Parse();
-        parser.First().EmptyDump();
+        BenchmarkRunner.Run<Benchmarker>();
     }
 }
 public record Person(int Id, string Name, bool Female);
