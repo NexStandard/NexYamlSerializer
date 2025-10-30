@@ -17,7 +17,7 @@ class ValueScopeFactory : ScopeFactory<Scope>
         {
             var segs = val.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
             string childTag = segs[0];
-            string rest = segs.Length > 1 ? segs[1].Trim() : "";
+            string rest = segs.Length > 1 ? segs[1].Trim() : string.Empty;
             return Parse(context, rest, indent, childTag);
         }
 
@@ -26,9 +26,9 @@ class ValueScopeFactory : ScopeFactory<Scope>
         if (val.StartsWith('|'))
             return new ScalarScope(ParseLiteralScalar(context,indent, val[1]), indent, context, tag);
         if (val.StartsWith('{') && val.EndsWith('}'))
-            return YamlParser.Mapping.ParseFlow(context, val, indent, tag);
+            return MappingScope.ParseFlow(context, val, indent, tag);
         if (val.StartsWith('[') && val.EndsWith(']'))
-            return YamlParser.Sequence.ParseFlow(context, val, indent, tag);
+            return SequenceScope.ParseFlow(context, val, indent, tag);
 
         return new ScalarScope(val, indent, context, tag);
     }

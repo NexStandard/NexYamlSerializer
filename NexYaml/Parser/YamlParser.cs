@@ -6,9 +6,7 @@ namespace NexYaml
 {
     public sealed class YamlParser
     {
-        internal static ScopeFactory<MappingScope> Mapping = new MappingScopeFactory();
-        internal static ScopeFactory<SequenceScope> Sequence = new SequenceScopeFactory();
-        internal static ValueScopeFactory ValueScope = new ValueScopeFactory();
+        private readonly ValueScopeFactory ValueScope = new ValueScopeFactory();
         private readonly IYamlSerializerResolver _resolver;
         private IdentifiableResolver IdentifiableResolver { get; } = new();
         private YamlReader _reader;
@@ -54,7 +52,7 @@ namespace NexYaml
                     _reader.Move(out var scope);
                     int spaceIndex = trimmed.IndexOf(' ');
                     string tag = spaceIndex > 0 ? trimmed.Substring(0, spaceIndex) : trimmed;
-                    string inline = spaceIndex > 0 ? trimmed.Substring(spaceIndex + 1).Trim() : "";
+                    string inline = spaceIndex > 0 ? trimmed.Substring(spaceIndex + 1).Trim() : string.Empty;
 
                     if (inline.Length > 0)
                     {
@@ -72,11 +70,11 @@ namespace NexYaml
 
                     if (nextLine.TrimStart().StartsWith('-'))
                     {
-                        yield return Sequence.Parse(context, indent, tag);
+                        yield return SequenceScope.Parse(context, indent, tag);
                     }
                     else if (nextLine.Contains(':'))
                     {
-                        yield return Mapping.Parse(context, indent, tag);
+                        yield return MappingScope.Parse(context, indent, tag);
                     }
                     else
                     {
@@ -89,17 +87,17 @@ namespace NexYaml
                 // Sequence root
                 if (trimmed.StartsWith('-'))
                 {
-                    yield return Mapping.Parse(context, indent, "");
+                    yield return MappingScope.Parse(context, indent, string.Empty);
                 }
                 // Mapping root
                 else if (trimmed.Contains(':'))
                 {
-                    yield return Mapping.Parse(context, indent, "");
+                    yield return MappingScope.Parse(context, indent, string.Empty);
                 }
                 // Scalar root
                 else
                 {
-                    yield return ValueScope.Parse(context, indent, "");
+                    yield return ValueScope.Parse(context, indent, string.Empty);
                 }
             }
         }

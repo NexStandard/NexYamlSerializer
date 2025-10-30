@@ -66,13 +66,17 @@ public class ListSerializer<T> : YamlSerializer<List<T?>>
     public override async ValueTask<List<T?>?> Read(Scope scope, ParseContext parseResult)
     {
         var sequenceScope = scope.As<SequenceScope>();
-        var list = new List<T>();
-        var tasks = new List<Task<T?>>();
+        var list = new List<T?>();
+        var tasks = new List<ValueTask<T?>>();
         foreach (var element in sequenceScope)
         {
-            tasks.Add(element.Read<T>(new ParseContext()).AsTask());
+            tasks.Add(element.Read<T>(new ParseContext()));
         }
-        return (await Task.WhenAll(tasks)).ToList();
+        foreach( var task in tasks)
+        {
+            list.Add(await task);
+        }
+        return list;
     }
 }
 public class ListSerializerFactory : IYamlSerializerFactory

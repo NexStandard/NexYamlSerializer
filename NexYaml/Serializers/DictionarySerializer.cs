@@ -50,14 +50,18 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
         var map = parseResult.DataMemberMode is DataMemberMode.Content ? (Dictionary<TKey, TValue?>)parseResult.Value! : [];
         if (scope is MappingScope mapping && DictionarySerializer<TKey, TValue>.IsPrimitive(typeof(TKey)))
         {
-            List<Task<KeyValuePair<TKey, TValue?>>> tasks = new();
+            List<ValueTask<KeyValuePair<TKey, TValue?>>> tasks = new();
             foreach (var kvp in mapping)
             {
                 var key = ParsePrimitive<TKey>(kvp.Key);
                 var value = kvp.Value.Read<TValue>(new ParseContext());
                 tasks.Add(DictionarySerializer<TKey, TValue>.ConvertToKeyValuePair(key!, value));
             }
-            (await Task.WhenAll(tasks)).ForEach(x => map.Add(x.Key, x.Value));
+            foreach(var result in tasks)
+            {
+                var kvp = await result;
+                map.Add(kvp.Key,kvp.Value);
+            }
             return map;
         }
         else
@@ -93,7 +97,7 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
 
         throw new NotSupportedException($"Unsupported primitive type: {type.Name}");
     }
-    private static async Task<KeyValuePair<TKey, TValue?>> ConvertToKeyValuePair(TKey key, ValueTask<TValue?> value)
+    private static async ValueTask<KeyValuePair<TKey, TValue?>> ConvertToKeyValuePair(TKey key, ValueTask<TValue?> value)
     {
         var k = key;
         var v = await value;

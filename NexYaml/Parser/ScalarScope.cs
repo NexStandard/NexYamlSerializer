@@ -8,7 +8,7 @@
             string value,
             int indent,
             ScopeContext context,
-            string tag = ""
+            string tag
         ) : base(tag, indent, context)
         {
             Value = DecodeEscapes(value);
