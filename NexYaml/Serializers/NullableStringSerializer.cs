@@ -18,7 +18,10 @@ public class NullableStringSerializer : IYamlSerializer<string?>
 
     public ValueTask<string?> Read(Scope scope, string? parseResult)
     {
-        // Given the changes above, what should we do here ? -Eideren
-        return new(scope.As<ScalarScope>().Value);
+        var scalarScope = scope.As<ScalarScope>();
+        // Given the changes above, is this correct, wouldn't this return a null string if the string contains "!!null" ? -Eideren
+        if (scalarScope.Value == YamlCodes.Null)
+            return default;
+        return new(scalarScope.Value);
     }
 }
