@@ -24,11 +24,16 @@ public class ArraySerializer<T> : YamlSerializer<T?[]>
     public override async ValueTask<T?[]?> Read(Scope scope, T?[]? parseResult)
     {
         var sequenceScope = scope.As<SequenceScope>();
-        var tasks = new List<Task<T?>>();
+        var list = new List<T?>();
+        var tasks = new List<ValueTask<T?>>();
         foreach (var element in sequenceScope)
         {
-            tasks.Add(element.Read<T>().AsTask());
+            tasks.Add(element.Read<T>());
         }
-        return (await Task.WhenAll(tasks)).ToArray();
+        foreach (var task in tasks)
+        {
+            list.Add(await task);
+        }
+        return list.ToArray();
     }
 }
