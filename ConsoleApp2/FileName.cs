@@ -26,7 +26,7 @@ public class Benchmarker
     public async Task YamlB()
     {
         var parser = new YamlParser(w, resolver).Parse();
-        await parser.First().Read(default(Collections));
+        parser.First().EmptyDump();
     }
     [Benchmark()]
     public void JsonB()

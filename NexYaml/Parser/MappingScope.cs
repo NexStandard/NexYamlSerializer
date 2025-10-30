@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using NexYaml.Core;
 using NexYaml.Parser;
 using Stride.Input;
 
@@ -101,7 +102,7 @@ public struct BlockMappingPrefixedParse(MappingScope scope, string startKey, str
                 string childTag = string.Empty;
                 ReadOnlySpan<char> valSpan = initialValue.AsSpan();
 
-                if (valSpan[0] == '!' && !valSpan.SequenceEqual("!!null".AsSpan()))
+                if (valSpan[0] == '!' && !valSpan.SequenceEqual(YamlCodes.Null.AsSpan()))
                 {
                     int spaceIdx = valSpan.IndexOf(' ');
                     if (spaceIdx >= 0)
@@ -168,7 +169,7 @@ public struct BlockFlowParse(MappingScope scope, string value) : IEnumerable<Key
             var val = kv[1].Trim();
 
             string childTag = string.Empty;
-            if (val.StartsWith('!') && val != "!!null")
+            if (val.StartsWith('!') && val != YamlCodes.Null)
             {
                 var segs = val.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
                 childTag = segs[0];
@@ -205,7 +206,7 @@ public struct BlockMappingParse(MappingScope scope) : IEnumerable<KeyValuePair<s
             if (trimmed[0] == '-') break;
 
             // Standalone tag check
-            if (trimmed[0] == '!' && !trimmed.SequenceEqual("!!null".AsSpan()))
+            if (trimmed[0] == '!' && !trimmed.SequenceEqual(YamlCodes.Null.AsSpan()))
                 throw new InvalidOperationException($"Standalone tag inside mapping is invalid: '{next}'");
 
             // Find key/value separator

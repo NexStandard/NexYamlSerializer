@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using NexYaml.Core;
 using NexYaml.Serializers;
 using Stride.Core.Extensions;
 
@@ -103,7 +104,7 @@ namespace NexYaml.Parser
 
         public static void ExtractTag(ref ReadOnlySpan<char> itemSpan, ref string childTag)
         {
-            if (!itemSpan.IsEmpty && itemSpan[0] == '!' && !itemSpan.SequenceEqual("!!null".AsSpan()))
+            if (!itemSpan.IsEmpty && itemSpan[0] == '!' && !itemSpan.SequenceEqual(YamlCodes.Null.AsSpan()))
             {
                 int spaceIdx = itemSpan.IndexOf(' ');
                 if (spaceIdx >= 0)

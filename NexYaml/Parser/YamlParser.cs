@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 
@@ -47,7 +48,7 @@ namespace NexYaml
                 string trimmed = currentLine.Trim();
 
                 // Tagged root
-                if (trimmed.StartsWith('!') && trimmed != "!!null")
+                if (trimmed.StartsWith('!') && trimmed != YamlCodes.Null)
                 {
                     _reader.Move(out var scope);
                     int spaceIndex = trimmed.IndexOf(' ');

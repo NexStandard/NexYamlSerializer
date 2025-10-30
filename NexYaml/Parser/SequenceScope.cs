@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using NexYaml.Core;
 
 namespace NexYaml.Parser
 {
@@ -150,7 +151,7 @@ namespace NexYaml.Parser
                 string item = raw;
                 if (bufferedTag == string.Empty)
                 {
-                    if (item.StartsWith('!') && item != "!!null")
+                    if (item.StartsWith('!') && item != YamlCodes.Null)
                     {
                         var segs = item.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
                         if (segs.Length == 1)
