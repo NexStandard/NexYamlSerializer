@@ -36,20 +36,20 @@ namespace NexYaml.Parser
 
         public IEnumerator<Scope> GetEnumerator()
         {
-                if (flow)
+            if (flow)
+            {
+                foreach(var ele in ParseSequenceFlow(Context, value, Indent, Tag))
                 {
-                    foreach(var ele in ParseSequenceFlow(Context, value, Indent, Tag))
-                    {
-                        yield return ele;
-                    }
+                    yield return ele;
                 }
-                else
+            }
+            else
+            {
+                foreach(var ele in ParseSequence(Context, Indent, Tag))
                 {
-                    foreach(var ele in ParseSequence(Context, Indent, Tag))
-                    {
-                        yield return ele;
-                    }
+                    yield return ele;
                 }
+            }
         }
         private IEnumerable<Scope> ParseSequence(ScopeContext context, int indent, string tag)
         {

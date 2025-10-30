@@ -15,8 +15,7 @@ internal static class SourceCreator
         var isEmpty = package.MemberSymbols.Count == 0;
         foreach (var member in package.MemberSymbols)
         {
-
-                tempVariables.AppendLine($"var temp_{member.Name} = context.DataMemberMode == DataMemberMode.Content ? ({info.NameDefinition})context.Value : default({member.Type});");
+            tempVariables.AppendLine($"var temp_{member.Name} = context.DataMemberMode == DataMemberMode.Content ? ({info.NameDefinition})context.Value : default({member.Type});");
         }
         var tag = package.ClassInfo.AliasTag?.Length == 0 ?
             $"{info.NameSpace}.{info.TypeName},{info.NameSpace.Split('.')[0]}" :
