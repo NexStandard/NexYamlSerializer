@@ -24,8 +24,6 @@ namespace NexYaml.Parser
                 return value;
             }
 
-            var type = typeof(T);
-
             if (scope.Tag.SequenceEqual("!!ref"))
             {
                 var refScalar = scope.As<ScalarScope>();
@@ -39,12 +37,13 @@ namespace NexYaml.Parser
                 }
             }
 
+            var type = typeof(T);
             if (type.IsInterface || type.IsAbstract || type.IsGenericType)
             {
                 if (scope.Tag.IsNullOrEmpty())
                 {
-                    var formatt = scope.Context.Resolver.GetSerializer<T>();
-                    return formatt.Read(scope, context)!;
+                    var serializerForT = scope.Context.Resolver.GetSerializer<T>();
+                    return serializerForT.Read(scope, context)!;
                 }
                 else
                 {
