@@ -1,15 +1,14 @@
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
-using Stride.Core.Extensions;
 
 namespace NexYaml.Serializers;
 
 [CustomYamlSerializer(TargetType = typeof(Dictionary<,>))]
-public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey, TValue?>>
+public class DictionarySerializer<TKey, TValue> : IYamlSerializer<Dictionary<TKey, TValue?>>
     where TKey : notnull
 {
-    public override void Write<X>(WriteContext<X> context, Dictionary<TKey, TValue?> value, DataStyle style)
+    public void Write<X>(WriteContext<X> context, Dictionary<TKey, TValue?> value, DataStyle style) where X : Node
     {
         if (IsPrimitive(typeof(TKey)))
         {
@@ -45,7 +44,7 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
         }
     }
 
-    public override async ValueTask<Dictionary<TKey, TValue?>?> Read(Scope scope, Dictionary<TKey, TValue?>? parseResult)
+    public async ValueTask<Dictionary<TKey, TValue?>> Read(Scope scope, Dictionary<TKey, TValue?>? parseResult)
     {
 
         Dictionary<TKey, TValue?>? map = parseResult ;
@@ -138,29 +137,23 @@ internal class DictionarySerializerFactory : IYamlSerializerFactory
         resolver.Register(this, typeof(Dictionary<,>), typeof(IReadOnlyDictionary<,>));
     }
 
-    public YamlSerializer Instantiate(Type type)
+    public IYamlSerializer Instantiate(Type type)
     {
-        if (type.GetGenericTypeDefinition() == typeof(IDictionary<,>))
+        var generatorType = typeof(DictionarySerializer<,>);
+        var genericParams = type.GenericTypeArguments;
+
+        var genericTypeDefinition = type.GetGenericTypeDefinition();
+        Type filledGeneratorType;
+        if (genericTypeDefinition == typeof(IDictionary<,>)
+            || genericTypeDefinition == typeof(IReadOnlyDictionary<,>))
         {
-            var generatorType = typeof(DictionarySerializer<,>);
-            var genericParams = type.GenericTypeArguments;
-            var param = new Type[] { genericParams[0], genericParams[1] };
-            var filledGeneratorType = generatorType.MakeGenericType(param);
-            return (YamlSerializer)Activator.CreateInstance(filledGeneratorType)!;
+            filledGeneratorType = generatorType.MakeGenericType(genericParams[0], genericParams[1]);
+        }
+        else
+        {
+            filledGeneratorType = generatorType.MakeGenericType(genericParams);
         }
 
-        if (type.GetGenericTypeDefinition() == typeof(IReadOnlyDictionary<,>))
-        {
-            var generatorType = typeof(DictionarySerializer<,>);
-            var genericParams = type.GenericTypeArguments;
-            var param = new Type[] { genericParams[0], genericParams[1] };
-            var filledGeneratorType = generatorType.MakeGenericType(param);
-            return (YamlSerializer)Activator.CreateInstance(filledGeneratorType)!;
-        }
-
-        var gen = typeof(DictionarySerializer<,>);
-        var genParams = type.GenericTypeArguments;
-        var fillGen = gen.MakeGenericType(genParams);
-        return (YamlSerializer)Activator.CreateInstance(fillGen)!;
+        return (IYamlSerializer)Activator.CreateInstance(filledGeneratorType)!;
     }
 }

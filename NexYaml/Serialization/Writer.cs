@@ -4,7 +4,7 @@ using Stride.Core;
 
 namespace NexYaml.Serialization;
 /// <summary>
-/// Provides an abstract base class for writing YAML content. 
+/// Provides an abstract base class for writing YAML content.
 /// This class uses a serializer <see cref="IYamlSerializerResolver"/> and a collection of resolve <see cref="IResolvePlugin"/>
 /// to handle the redirection of registered types into YAML.
 /// </summary>
@@ -27,7 +27,7 @@ public abstract class Writer(IYamlSerializerResolver resolver)
     public abstract void Write(ReadOnlySpan<char> text);
 
     /// <summary>
-    /// Redirects a value to the next <see cref="YamlSerializer{T}"/> using the provided <see cref="WriteContext{T}"/> and <see cref="DataStyle"/>.
+    /// Redirects a value to the next <see cref="IYamlSerializer{T}"/> using the provided <see cref="WriteContext{T}"/> and <see cref="DataStyle"/>.
     /// </summary>
     /// <typeparam name="X">The type of the current YAML <see cref="Node"/>.</typeparam>
     /// <typeparam name="T">The type of the value to write.</typeparam>
@@ -46,7 +46,7 @@ public abstract class Writer(IYamlSerializerResolver resolver)
         {
             var t = typeof(T).GetElementType()!;
             var arraySerializerType = typeof(ArraySerializer<>).MakeGenericType(t);
-            var arraySerializer = (YamlSerializer)Activator.CreateInstance(arraySerializerType)!;
+            var arraySerializer = (IYamlSerializer)Activator.CreateInstance(arraySerializerType)!;
 
             arraySerializer.Write(context, value, style);
             return;

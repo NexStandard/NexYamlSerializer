@@ -1,18 +1,24 @@
+using NexYaml.Core;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
 
 namespace NexYaml.Serializers;
 
-public class NullableStringSerializer : YamlSerializer<string>
+public class NullableStringSerializer : IYamlSerializer<string?>
 {
-    public override void Write<X>(WriteContext<X> context, string value, DataStyle style)
+    public void Write<X>(WriteContext<X> context, string? value, DataStyle style) where X : Node
     {
-        context.WriteScalar(context.Writer.FormatString(context, value, style));
+        // Is this correct ? -Eideren
+        if (value is null)
+            context.WriteScalar(YamlCodes.Null);
+        else
+            context.WriteScalar(context.Writer.FormatString(context, value, style));
     }
 
-    public override ValueTask<string?> Read(Scope scope, string? parseResult)
+    public ValueTask<string?> Read(Scope scope, string? parseResult)
     {
+        // Given the changes above, what should we do here ? -Eideren
         return new(scope.As<ScalarScope>().Value);
     }
 }

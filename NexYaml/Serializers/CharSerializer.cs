@@ -4,14 +4,14 @@ using Stride.Core;
 
 namespace NexYaml.Serializers;
 
-public class CharSerializer : YamlSerializer<char>
+public class CharSerializer : IYamlSerializer<char>
 {
-    public override void Write<X>(WriteContext<X> context, char value, DataStyle style)
+    public void Write<X>(WriteContext<X> context, char value, DataStyle style) where X : Node
     {
         context.WriteScalar(['\'', value, '\'']);
     }
 
-    public override ValueTask<char> Read(Scope scope, char parseResult)
+    public ValueTask<char> Read(Scope scope, char parseResult)
     {
         var scalarScope = scope.As<ScalarScope>();
         return new(char.Parse(scalarScope.Value));

@@ -11,8 +11,8 @@ public interface IYamlSerializerResolver
     /// Retrieves the serializer for the specified type.
     /// </summary>
     /// <typeparam name="T">The type of the object to serialize.</typeparam>
-    /// <returns>The <see cref="YamlSerializer{T}"/> for the specified type.</returns>
-    YamlSerializer<T> GetSerializer<T>();
+    /// <returns>The <see cref="IYamlSerializer{T}"/> for the specified type.</returns>
+    IYamlSerializer<T> GetSerializer<T>();
 
     /// <summary>
     /// Retrieves the serializer for the specified type and its origin, 
@@ -20,8 +20,8 @@ public interface IYamlSerializerResolver
     /// </summary>
     /// <param name="type">The <see cref="Type"/> of the object to serialize.</param>
     /// <param name="origin">The <see cref="Type"/> representing the original type or base type.</param>
-    /// <returns>The <see cref="YamlSerializer"/> for the specified type and origin.</returns>
-    YamlSerializer GetSerializer(Type type, Type origin);
+    /// <returns>The <see cref="IYamlSerializer"/> for the specified type and origin.</returns>
+    IYamlSerializer GetSerializer(Type type, Type origin);
 
     /// <summary>
     /// Retrieves the alias type associated with the specified alias.
@@ -43,13 +43,13 @@ public interface IYamlSerializerResolver
     /// Registers a specific serializer for the given type.
     /// </summary>
     /// <typeparam name="T">The type of the object to serialize.</typeparam>
-    /// <param name="serializer">The <see cref="YamlSerializer{T}"/> instance to register.</param>
-    public void RegisterSerializer<T>(YamlSerializer<T> serializer);
+    /// <param name="serializer">The <see cref="IYamlSerializer{T}"/> instance to register.</param>
+    public void RegisterSerializer<T>(IYamlSerializer<T> serializer);
 
     /// <summary>
     /// Registers a specific serializer for a given type.
     /// </summary>
-    /// <param name="serializer">The <see cref="YamlSerializer"/> instance to register.</param>
+    /// <param name="serializer">The <see cref="IYamlSerializer"/> instance to register.</param>
     public void RegisterSerializer(Type serializer);
 
     /// <summary>

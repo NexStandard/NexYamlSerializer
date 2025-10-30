@@ -4,9 +4,9 @@ using Stride.Core;
 
 namespace NexYaml.Serializers;
 
-public class KeyValuePairSerializer<TKey, TValue> : YamlSerializer<KeyValuePair<TKey?, TValue?>>
+public class KeyValuePairSerializer<TKey, TValue> : IYamlSerializer<KeyValuePair<TKey?, TValue?>>
 {
-    public override void Write<X>(WriteContext<X> context, KeyValuePair<TKey?, TValue?> value, DataStyle style)
+    public void Write<X>(WriteContext<X> context, KeyValuePair<TKey?, TValue?> value, DataStyle style) where X : Node
     {
         context.BeginSequence("!KeyValue", style)
             .Write(value.Key, style)
@@ -14,7 +14,7 @@ public class KeyValuePairSerializer<TKey, TValue> : YamlSerializer<KeyValuePair<
             .End(context);
     }
 
-    public override async ValueTask<KeyValuePair<TKey?, TValue?>> Read(Scope scope, KeyValuePair<TKey?, TValue?> parseResult)
+    public async ValueTask<KeyValuePair<TKey?, TValue?>> Read(Scope scope, KeyValuePair<TKey?, TValue?> parseResult)
     {
         List<Task<KeyValuePair<TKey, TValue>>> tasks = new();
         var scalarScope = scope.As<SequenceScope>().ToList();
@@ -32,12 +32,12 @@ file sealed class KeyValuePairSerializerFactory : IYamlSerializerFactory
         resolver.RegisterSerializer(typeof(KeyValuePairSerializer<,>));
     }
 
-    public YamlSerializer Instantiate(Type target)
+    public IYamlSerializer Instantiate(Type target)
     {
         var gen = typeof(KeyValuePairSerializer<,>);
         var genParams = target.GenericTypeArguments;
         var fillGen = gen.MakeGenericType(genParams);
-        return (YamlSerializer)Activator.CreateInstance(fillGen)!;
+        return (IYamlSerializer)Activator.CreateInstance(fillGen)!;
     }
 }
 

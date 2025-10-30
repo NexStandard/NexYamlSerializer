@@ -17,7 +17,7 @@ namespace NexYaml.Parser
             {
                 var t = typeof(T).GetElementType()!;
                 var arraySerializerType = typeof(ArraySerializer<>).MakeGenericType(t);
-                var arraySerializer = (YamlSerializer)Activator.CreateInstance(arraySerializerType)!;
+                var arraySerializer = (IYamlSerializer)Activator.CreateInstance(arraySerializerType)!;
 
                 var value = Convert<T>(arraySerializer.ReadUnknown(scope, context));
                 return value;
@@ -40,7 +40,7 @@ namespace NexYaml.Parser
             ValueTask<T?> result;
             if (type.IsInterface || type.IsAbstract || type.IsGenericType)
             {
-                YamlSerializer? serializer;
+                IYamlSerializer? serializer;
                 if (scope.Tag.IsNullOrEmpty())
                 {
                     var formatt = scope.Context.Resolver.GetSerializer<T>();

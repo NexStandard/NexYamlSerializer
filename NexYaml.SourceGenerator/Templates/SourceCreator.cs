@@ -174,12 +174,12 @@ file sealed class {{info.GeneratorName + info.TypeParameterArguments}} : YamlSer
     {{(info.DataStyle != "DataStyle.Any" ? $"protected override DataStyle Style =>{info.DataStyle};" : "")}}
     {{package.CreateUTF8Members()}}
 
-    public override void Write<X>(WriteContext<X> context, {{info.NameDefinition}} value, DataStyle style)
+    public void Write<X>(WriteContext<X> context, {{info.NameDefinition}} value, DataStyle style) where X : Node
     {
         {{writeString}}
     }
 
-    public override async ValueTask<{{info.NameDefinition}}> Read(Scope scope, {{info.NameDefinition}} context)
+    public async ValueTask<{{info.NameDefinition}}> Read(Scope scope, {{info.NameDefinition}} context)
     {
 
 {{objTempVariables}}

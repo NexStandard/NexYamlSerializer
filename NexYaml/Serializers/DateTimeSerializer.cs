@@ -4,14 +4,14 @@ using Stride.Core;
 
 namespace NexYaml.Serializers;
 
-public class DateTimeSerializer : YamlSerializer<DateTime>
+public class DateTimeSerializer : IYamlSerializer<DateTime>
 {
-    public override void Write<X>(WriteContext<X> context, DateTime value, DataStyle style)
+    public void Write<X>(WriteContext<X> context, DateTime value, DataStyle style) where X : Node
     {
         context.WriteType(value.ToString(), style);
     }
 
-    public override ValueTask<DateTime> Read(Scope scope, DateTime parseResult)
+    public ValueTask<DateTime> Read(Scope scope, DateTime parseResult)
     {
         var scalarScope = scope.As<ScalarScope>();
         return new(DateTime.Parse(scalarScope.Value));

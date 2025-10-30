@@ -5,16 +5,16 @@ using Stride.Core;
 
 namespace NexYaml.Serializers;
 
-public class UInt16Serializer : YamlSerializer<ushort>
+public class UInt16Serializer : IYamlSerializer<ushort>
 {
-    public override void Write<X>(WriteContext<X> context, ushort value, DataStyle style)
+    public void Write<X>(WriteContext<X> context, ushort value, DataStyle style) where X : Node
     {
         Span<char> span = stackalloc char[5];
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
         context.WriteScalar(span[..written]);
     }
 
-    public override ValueTask<ushort> Read(Scope scope, ushort parseResult)
+    public ValueTask<ushort> Read(Scope scope, ushort parseResult)
     {
         var scalarScope = scope.As<ScalarScope>();
         return new(ushort.Parse(scalarScope.Value, CultureInfo.InvariantCulture));

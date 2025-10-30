@@ -19,6 +19,6 @@ public interface IYamlSerializerFactory
     /// The serializer is responsible for serializing and deserializing objects of the given type.
     /// </summary>
     /// <param name="target">The target type for which a serializer is to be instantiated.</param>
-    /// <returns>A <see cref="YamlSerializer"/> instance for the specified type.</returns>
-    public YamlSerializer Instantiate(Type target);
+    /// <returns>A <see cref="IYamlSerializer"/> instance for the specified type.</returns>
+    public IYamlSerializer Instantiate(Type target);
 }

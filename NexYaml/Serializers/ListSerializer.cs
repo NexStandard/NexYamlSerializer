@@ -4,10 +4,10 @@ using Stride.Core;
 
 namespace NexYaml.Serializers;
 
-public class ListSerializer<T> : YamlSerializer<List<T?>>
+public class ListSerializer<T> : IYamlSerializer<List<T?>>
 {
     public string? CustomTag { get; init; }
-    public override void Write<X>(WriteContext<X> context, List<T?> value, DataStyle style)
+    public void Write<X>(WriteContext<X> context, List<T?> value, DataStyle style) where X : Node
     {
         bool hasIdentifiable = false;
         if (value.Count == 0)
@@ -33,7 +33,6 @@ public class ListSerializer<T> : YamlSerializer<List<T?>>
                 if (element is IIdentifiable identifiable
                     && !context.Writer.References.Contains(identifiable.Id))
                 {
-                    context.Writer.References.Add(identifiable.Id);
                     reservedIds.Add(identifiable);
                 }
             }
@@ -63,7 +62,7 @@ public class ListSerializer<T> : YamlSerializer<List<T?>>
         result.End(context);
     }
 
-    public override async ValueTask<List<T?>?> Read(Scope scope, List<T?>? parseResult)
+    public async ValueTask<List<T?>> Read(Scope scope, List<T?>? parseResult)
     {
         var sequenceScope = scope.As<SequenceScope>();
         var list = new List<T?>();
@@ -97,65 +96,27 @@ public class ListSerializerFactory : IYamlSerializerFactory
         resolver.Register(this, typeof(List<>), typeof(IEnumerable<>));
     }
 
-    public YamlSerializer Instantiate(Type target)
+    public IYamlSerializer Instantiate(Type target)
     {
-        if (target.GetGenericTypeDefinition() == typeof(IList<>))
+        var generatorType = typeof(ListSerializer<>);
+        var genericParams = target.GenericTypeArguments;
+        var genericTypeDef = target.GetGenericTypeDefinition();
+
+        Type filledGeneratorType;
+        if (genericTypeDef == typeof(IList<>) ||
+            genericTypeDef == typeof(ICollection<>) ||
+            genericTypeDef == typeof(IReadOnlyList<>) ||
+            genericTypeDef == typeof(IReadOnlyCollection<>) ||
+            genericTypeDef == typeof(IEnumerable<>) ||
+            genericTypeDef == typeof(List<>))
         {
-            var generatorType = typeof(ListSerializer<>);
-            var genericParams = target.GenericTypeArguments;
-            var param = new Type[] { genericParams[0] };
-            var filledGeneratorType = generatorType.MakeGenericType(param);
-            return (YamlSerializer)Activator.CreateInstance(filledGeneratorType)!;
+            filledGeneratorType = generatorType.MakeGenericType(genericParams[0]);
+        }
+        else
+        {
+            filledGeneratorType = generatorType.MakeGenericType(genericParams);
         }
 
-        if (target.GetGenericTypeDefinition() == typeof(ICollection<>))
-        {
-            var generatorType = typeof(ListSerializer<>);
-            var genericParams = target.GenericTypeArguments;
-            var param = new Type[] { genericParams[0] };
-            var filledGeneratorType = generatorType.MakeGenericType(param);
-            return (YamlSerializer)Activator.CreateInstance(filledGeneratorType)!;
-        }
-
-        if (target.GetGenericTypeDefinition() == typeof(IReadOnlyList<>))
-        {
-            var generatorType = typeof(ListSerializer<>);
-            var genericParams = target.GenericTypeArguments;
-            var param = new Type[] { genericParams[0] };
-            var filledGeneratorType = generatorType.MakeGenericType(param);
-            return (YamlSerializer)Activator.CreateInstance(filledGeneratorType)!;
-        }
-
-        if (target.GetGenericTypeDefinition() == typeof(IReadOnlyCollection<>))
-        {
-            var generatorType = typeof(ListSerializer<>);
-            var genericParams = target.GenericTypeArguments;
-            var param = new Type[] { genericParams[0] };
-            var filledGeneratorType = generatorType.MakeGenericType(param);
-            return (YamlSerializer)Activator.CreateInstance(filledGeneratorType)!;
-        }
-
-        if (target.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-        {
-            var generatorType = typeof(ListSerializer<>);
-            var genericParams = target.GenericTypeArguments;
-            var param = new Type[] { genericParams[0] };
-            var filledGeneratorType = generatorType.MakeGenericType(param);
-            return (YamlSerializer)Activator.CreateInstance(filledGeneratorType)!;
-        }
-
-        if (target.GetGenericTypeDefinition() == typeof(List<>))
-        {
-            var generatorType = typeof(ListSerializer<>);
-            var genericParams = target.GenericTypeArguments;
-            var param = new Type[] { genericParams[0] };
-            var filledGeneratorType = generatorType.MakeGenericType(param);
-            return (YamlSerializer)Activator.CreateInstance(filledGeneratorType)!;
-        }
-
-        var gen = typeof(ListSerializer<>);
-        var genParams = target.GenericTypeArguments;
-        var fillGen = gen.MakeGenericType(genParams);
-        return (YamlSerializer)Activator.CreateInstance(fillGen)!;
+        return (IYamlSerializer)Activator.CreateInstance(filledGeneratorType)!;
     }
 }
