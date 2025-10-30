@@ -21,13 +21,6 @@ internal readonly struct EmitStringInfo(int lines, bool needsQuotes, bool isRese
 internal static class EmitStringAnalyzer
 {
     private static ReadOnlySpan<char> SpecialTokens => [':', '{', '[', ']', ',', '#', '`', '"', ' ', '\''];
-    private static char[] whiteSpaces =
-    [
-        ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-        ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-        ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-        ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-    ];
 
     public static EmitStringInfo Analyze(string value)
     {
@@ -83,29 +76,42 @@ internal static class EmitStringAnalyzer
     /// Each line of <paramref name="originalValue"/> is indented by
     /// <paramref name="indentCharCount"/> spaces after the block header.
     /// </remarks>
-    public static StringBuilder BuildLiteralScalar(ReadOnlySpan<char> originalValue, int indentCharCount)
+    public static Span<char> BuildLiteralScalar(ReadOnlySpan<char> originalValue, int indentCharCount)
     {
-        // Choose chomping indicator:
-        // If the value already ends with '\n', emit '-' so the reader trims one back.
-        // Otherwise emit '+' so the reader preserves the trailing content as-is.
         char chompHint = (originalValue.Length > 0 && originalValue[^1] == '\n') ? '-' : '+';
 
-        var sb = new StringBuilder();
-        sb.Append('|');
-        sb.Append(chompHint);
-        sb.Append('\n');
-        AppendWhiteSpace(sb, indentCharCount);
+        // Precompute length
+        int extraIndents = 0;
+        for (int i = 0; i < originalValue.Length - 1; i++)
+            if (originalValue[i] == '\n')
+                extraIndents++;
+
+        int totalLength = 1 + 1 + 1 + indentCharCount + originalValue.Length + extraIndents * indentCharCount;
+
+        Span<char> span = new char[totalLength];
+
+        int pos = 0;
+
+        span[pos++] = '|';
+        span[pos++] = chompHint;
+        span[pos++] = '\n';
+
+        for (int j = 0; j < indentCharCount; j++)
+            span[pos++] = ' ';
 
         for (int i = 0; i < originalValue.Length; i++)
         {
             char ch = originalValue[i];
-            sb.Append(ch);
+            span[pos++] = ch;
 
             if (ch == '\n' && i < originalValue.Length - 1)
-                AppendWhiteSpace(sb, indentCharCount);
+            {
+                for (int j = 0; j < indentCharCount; j++)
+                    span[pos++] = ' ';
+            }
         }
 
-        return sb;
+        return span;
     }
 
     private static bool IsReservedWord(string value)
@@ -113,11 +119,5 @@ internal static class EmitStringAnalyzer
         return value is "~" or "null" or "Null" or "NULL" or "true" or "True" or "TRUE" or "false" or "False" or "FALSE";
     }
 
-    private static void AppendWhiteSpace(StringBuilder stringBuilder, int length)
-    {
-        if (length > whiteSpaces.Length)
-            whiteSpaces = Enumerable.Repeat(' ', length * 2).ToArray();
-        stringBuilder.Append(whiteSpaces.AsSpan(0, length));
-    }
 }
 
