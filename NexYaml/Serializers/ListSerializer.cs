@@ -31,7 +31,7 @@ public class ListSerializer<T> : IYamlSerializer<List<T?>>
             {
                 var element = value[i];
                 if (element is IIdentifiable identifiable
-                    && !context.Writer.References.Contains(identifiable.Id))
+                    && context.Writer.References.Add(identifiable.Id))
                 {
                     reservedIds.Add(identifiable);
                 }
