@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NexYaml.SourceGenerator.MemberApi.Data;
 
 namespace NexYaml.SourceGenerator.Templates;
@@ -27,6 +30,15 @@ internal static class SourceCreator
         var awaitsNew = new StringBuilder();
         var map = package.MemberSymbols;
         // needs ID at first place to avoid deadlock on awaits for reference resolving
+
+        var charMembers = new StringBuilder();
+
+        foreach (var member in package.MemberSymbols)
+        {
+            charMembers
+                .AppendLine($"var UTF8{member.Name} = \"{member.Name}\";");
+        }
+
         var orderedSymbols = package.MemberSymbols.OrderByDescending(s => s.Name == "Id").ToList();
         ///
         if (info.TypeKind is Microsoft.CodeAnalysis.TypeKind.Struct)
@@ -52,11 +64,11 @@ internal static class SourceCreator
             objTempVariables.AppendLine($"\t\tvar var_{member.Name} = default(ValueTask<{(member.IsArray ? member.Type + "[]" : member.Type)}>);");
             if (member.Context.Mode == MemberApi.UniversalAnalyzers.MemberMode.Content)
             {
-                ifStatementNew.AppendLine($"\t\t\tif (map.Key == UTF8{member.Name}){{ var_{member.Name} = map.Value.Read<{(member.IsArray ? member.Type + "[]" : member.Type)}>(res.{member.Name}); continue; }}");
+                ifStatementNew.AppendLine($"\t\t\tif (map.Key == UTF8{member.Name}){{ var_{member.Name} = map.Value.Read(res.{member.Name}); continue; }}");
             }
             else
             {
-                ifStatementNew.AppendLine($"\t\t\tif (map.Key == UTF8{member.Name}){{ var_{member.Name} = map.Value.Read<{(member.IsArray ? member.Type + "[]" : member.Type)}>(default!); continue; }}");
+                ifStatementNew.AppendLine($"\t\t\tif (map.Key == UTF8{member.Name}){{ var_{member.Name} = map.Value.Read(default({(member.IsArray ? member.Type + "[]" : member.Type)})!); continue; }}");
             }
             if (member.Context.Mode is MemberApi.UniversalAnalyzers.MemberMode.Content)
             {
@@ -76,9 +88,46 @@ internal static class SourceCreator
             }
 
         }
-
-        ///
-        string writeString = isEmpty ? $"       context.WriteEmptyMapping(\"!{tag}\");" :
+        var s = $$"""
+            {{info.Accessibility.ToString().ToLower()}} static class {{info.GeneratorName}}_Extension
+            {
+                public static async ValueTask<{{info.NameDefinition}}> Read{{info.TypeParameterArguments}}(this Scope scope, {{info.NameDefinition}} context = default)
+                {
+                    if(scope is ScalarScope scalar && scalar.Value == "!!null")
+                        return default;
+            {{charMembers}}
+            {{objTempVariables}}
+                    var mapping = scope.As<MappingScope>();
+                    foreach(var map in mapping)
+                    {
+            {{ifStatementNew}}
+                    }
+            {{awaitsNew}}
+                    return res;
+                }
+            """;
+        if(info.TypeKind == Microsoft.CodeAnalysis.TypeKind.Struct)
+        {
+            s += $$"""
+            public static async ValueTask<{{info.NameDefinition}}?> Read{{info.TypeParameterArguments}}(this Scope scope, {{info.NameDefinition}}? context = default)
+            {
+                if(scope is ScalarScope scalar && scalar.Value == "!!null")
+                    return default;
+        {{charMembers}}
+        {{objTempVariables}}
+                var mapping = scope.As<MappingScope>();
+                foreach(var map in mapping)
+                {
+        {{ifStatementNew}}
+                }
+        {{awaitsNew}}
+                return res;
+            }
+        """;
+        }
+        s += "}";
+    ///
+    string writeString = isEmpty ? $"       context.WriteEmptyMapping(\"!{tag}\");" :
         $"""
         var preferedStyle = style is DataStyle.Any or DataStyle.Normal ? Style : style;
         context.BeginMapping("!{tag}",preferedStyle)
@@ -131,6 +180,7 @@ file sealed class {{info.GeneratorName + info.TypeParameterArguments}} : YamlSer
 
     public override async ValueTask<{{info.NameDefinition}}> Read(Scope scope, {{info.NameDefinition}} context)
     {
+
 {{objTempVariables}}
         var mapping = scope.As<MappingScope>();
         foreach(var map in mapping)
@@ -141,6 +191,7 @@ file sealed class {{info.GeneratorName + info.TypeParameterArguments}} : YamlSer
         return res;
     }
 }
+{{(info.TypeKind == Microsoft.CodeAnalysis.TypeKind.Struct || info.IsSealed ? s : "")}}
 """;
     }
 }

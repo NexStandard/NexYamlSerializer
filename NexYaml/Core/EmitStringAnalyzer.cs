@@ -4,11 +4,10 @@ using Stride.Core;
 
 namespace NexYaml.Core;
 
-internal readonly struct EmitStringInfo(int lines, bool needsQuotes, bool isReservedWord)
+internal readonly struct EmitStringInfo(int lines, bool needsQuotes)
 {
     public int Lines { get; } = lines;
     public bool NeedsQuotes { get; } = needsQuotes;
-    public bool IsReservedWord { get; } = isReservedWord;
 
     public ScalarStyle SuggestScalarStyle()
     {
@@ -25,16 +24,13 @@ internal static class EmitStringAnalyzer
     public static EmitStringInfo Analyze(string value)
     {
         if (value.Length <= 0)
-            return new EmitStringInfo(0, true, false);
-
-        var isReservedWord = IsReservedWord(value);
+            return new EmitStringInfo(0, true);
 
         var first = value[0];
         var last = value[^1];
         var span = value.AsSpan();
 
-        var needsQuotes = isReservedWord ||
-                          first == YamlCodes.Space ||
+        var needsQuotes = first == YamlCodes.Space ||
                           last == YamlCodes.Space ||
                           first is '&' or '*' or '?' or '|' or '-' or '<' or '>' or '=' or '!' or '%' or '@' or '.' ||
                           span.ContainsAny(SpecialTokens);
@@ -43,7 +39,7 @@ internal static class EmitStringAnalyzer
 
 
 
-        return new EmitStringInfo(lines, needsQuotes, isReservedWord);
+        return new EmitStringInfo(lines, needsQuotes);
     }
 
     /// <summary>
@@ -113,11 +109,5 @@ internal static class EmitStringAnalyzer
 
         return span;
     }
-
-    private static bool IsReservedWord(string value)
-    {
-        return value is "~" or "null" or "Null" or "NULL" or "true" or "True" or "TRUE" or "false" or "False" or "FALSE";
-    }
-
 }
 
