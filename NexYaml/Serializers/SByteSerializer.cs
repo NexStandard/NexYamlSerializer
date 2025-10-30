@@ -14,7 +14,7 @@ public class SByteSerializer : YamlSerializer<sbyte>
         context.WriteScalar(span[..written]);
     }
 
-    public override ValueTask<sbyte> Read(Scope scope, ParseContext parseResult)
+    public override ValueTask<sbyte> Read(Scope scope, sbyte parseResult)
     {
         var scalarScope = scope.As<ScalarScope>();
         return new(sbyte.Parse(scalarScope.Value, CultureInfo.InvariantCulture));

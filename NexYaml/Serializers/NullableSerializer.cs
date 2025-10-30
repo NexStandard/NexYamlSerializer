@@ -12,9 +12,16 @@ internal class NullableSerializer<T> : YamlSerializer<Nullable<T>>
         // do nothing?
     }
 
-    public override async ValueTask<T?> Read(Scope scope, ParseContext parseResult)
+    public override async ValueTask<T?> Read(Scope scope, T? parseResult)
     {
-        return new T?(await scope.Read<T>(parseResult));
+        if (parseResult.HasValue)
+        {
+            return new T?(await scope.Read<T>(parseResult.Value));
+        }
+        else
+        {
+            return new T?(await scope.Read<T>(default));
+        }
     }
 }
 public struct NullableFactory : IYamlSerializerFactory

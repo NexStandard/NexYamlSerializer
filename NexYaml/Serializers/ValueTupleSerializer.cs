@@ -14,12 +14,12 @@ public class ValueTupleSerializer<T1, T2> : YamlSerializer<ValueTuple<T1?, T2?>>
             .End(context);
     }
 
-    public override async ValueTask<(T1?, T2?)> Read(Scope scope, ParseContext parseResult)
+    public override async ValueTask<(T1?, T2?)> Read(Scope scope, (T1?, T2?) parseResult)
     {
         var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
-        var item1 = scalarList[0].Read<T1?>(new ParseContext());
-        var item2 = scalarList[1].Read<T2?>(new ParseContext());
+        var item1 = scalarList[0].Read<T1?>(default);
+        var item2 = scalarList[1].Read<T2?>(default);
         return new ValueTuple<T1?, T2?>(await item1, await item2);
     }
 }
@@ -51,13 +51,13 @@ public class ValueTupleSerializer<T1, T2, T3> : YamlSerializer<ValueTuple<T1?, T
             .End(context);
     }
 
-    public override async ValueTask<(T1?, T2?, T3?)> Read(Scope scope, ParseContext parseResult)
+    public override async ValueTask<(T1?, T2?, T3?)> Read(Scope scope, (T1?, T2?, T3?) parseResult)
     {
         var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
-        var item1 = scalarList[0].Read<T1?>(new ParseContext());
-        var item2 = scalarList[1].Read<T2?>(new ParseContext());
-        var item3 = scalarList[2].Read<T3?>(new ParseContext());
+        var item1 = scalarList[0].Read<T1?>(default);
+        var item2 = scalarList[1].Read<T2?>(default);
+        var item3 = scalarList[2].Read<T3?>(default);
         return new ValueTuple<T1?, T2?, T3?>(await item1, await item2, await item3);
     }
 }
@@ -90,14 +90,14 @@ public class ValueTupleSerializer<T1, T2, T3, T4> : YamlSerializer<ValueTuple<T1
             .End(context);
     }
 
-    public override async ValueTask<(T1?, T2?, T3?, T4?)> Read(Scope scope, ParseContext parseResult)
+    public override async ValueTask<(T1?, T2?, T3?, T4?)> Read(Scope scope, (T1?, T2?, T3?, T4?) parseResult)
     {
         var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
-        var item1 = scalarList[0].Read<T1?>(new ParseContext());
-        var item2 = scalarList[1].Read<T2?>(new ParseContext());
-        var item3 = scalarList[2].Read<T3?>(new ParseContext());
-        var item4 = scalarList[3].Read<T4?>(new ParseContext());
+        var item1 = scalarList[0].Read<T1?>(default);
+        var item2 = scalarList[1].Read<T2?>(default);
+        var item3 = scalarList[2].Read<T3?>(default);
+        var item4 = scalarList[3].Read<T4?>(default);
         return new ValueTuple<T1?, T2?, T3?, T4?>(await item1, await item2, await item3, await item4);
     }
 }
@@ -131,15 +131,15 @@ public class ValueTupleSerializer<T1, T2, T3, T4, T5> : YamlSerializer<ValueTupl
             .End(context);
     }
 
-    public override async ValueTask<(T1?, T2?, T3?, T4?, T5?)> Read(Scope scope, ParseContext parseResult)
+    public override async ValueTask<(T1?, T2?, T3?, T4?, T5?)> Read(Scope scope, (T1?, T2?, T3?, T4?, T5?) parseResult)
     {
         var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
-        var item1 = scalarList[0].Read<T1?>(new ParseContext());
-        var item2 = scalarList[1].Read<T2?>(new ParseContext());
-        var item3 = scalarList[2].Read<T3?>(new ParseContext());
-        var item4 = scalarList[3].Read<T4?>(new ParseContext());
-        var item5 = scalarList[4].Read<T5?>(new ParseContext());
+        var item1 = scalarList[0].Read<T1?>(default);
+        var item2 = scalarList[1].Read<T2?>(default);
+        var item3 = scalarList[2].Read<T3?>(default);
+        var item4 = scalarList[3].Read<T4?>(default);
+        var item5 = scalarList[4].Read<T5?>(default);
         return new ValueTuple<T1?, T2?, T3?, T4?, T5?>(await item1, await item2, await item3, await item4, await item5);
     }
 }
@@ -175,16 +175,16 @@ public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6> : YamlSerializer<Value
             .End(context);
     }
 
-    public override async ValueTask<(T1?, T2?, T3?, T4?, T5?, T6?)> Read(Scope scope, ParseContext parseResult)
+    public override async ValueTask<(T1?, T2?, T3?, T4?, T5?, T6?)> Read(Scope scope, (T1?, T2?, T3?, T4?, T5?, T6?) parseResult)
     {
         var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
-        var item1 = scalarList[0].Read<T1?>(new ParseContext());
-        var item2 = scalarList[1].Read<T2?>(new ParseContext());
-        var item3 = scalarList[2].Read<T3?>(new ParseContext());
-        var item4 = scalarList[3].Read<T4?>(new ParseContext());
-        var item5 = scalarList[4].Read<T5?>(new ParseContext());
-        var item6 = scalarList[5].Read<T6?>(new ParseContext());
+        var item1 = scalarList[0].Read<T1?>(default);
+        var item2 = scalarList[1].Read<T2?>(default);
+        var item3 = scalarList[2].Read<T3?>(default);
+        var item4 = scalarList[3].Read<T4?>(default);
+        var item5 = scalarList[4].Read<T5?>(default);
+        var item6 = scalarList[5].Read<T6?>(default);
         return new ValueTuple<T1?, T2?, T3?, T4?, T5?, T6?>(await item1, await item2, await item3, await item4, await item5, await item6);
     }
 }
@@ -220,17 +220,17 @@ public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<V
             .End(context);
     }
 
-    public override async ValueTask<(T1?, T2?, T3?, T4?, T5?, T6?, T7?)> Read(Scope scope, ParseContext parseResult)
+    public override async ValueTask<(T1?, T2?, T3?, T4?, T5?, T6?, T7?)> Read(Scope scope, (T1?, T2?, T3?, T4?, T5?, T6?, T7?) parseResult)
     {
         var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
-        var item1 = scalarList[0].Read<T1?>(new ParseContext());
-        var item2 = scalarList[1].Read<T2?>(new ParseContext());
-        var item3 = scalarList[2].Read<T3?>(new ParseContext());
-        var item4 = scalarList[3].Read<T4?>(new ParseContext());
-        var item5 = scalarList[4].Read<T5?>(new ParseContext());
-        var item6 = scalarList[5].Read<T6?>(new ParseContext());
-        var item7 = scalarList[6].Read<T7?>(new ParseContext());
+        var item1 = scalarList[0].Read<T1?>(default);
+        var item2 = scalarList[1].Read<T2?>(default);
+        var item3 = scalarList[2].Read<T3?>(default);
+        var item4 = scalarList[3].Read<T4?>(default);
+        var item5 = scalarList[4].Read<T5?>(default);
+        var item6 = scalarList[5].Read<T6?>(default);
+        var item7 = scalarList[6].Read<T7?>(default);
         return new ValueTuple<T1?, T2?, T3?, T4?, T5?, T6?, T7?>(await item1, await item2, await item3, await item4, await item5, await item6, await item7);
     }
 }

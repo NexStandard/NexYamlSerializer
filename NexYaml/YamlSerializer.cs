@@ -21,7 +21,7 @@ public abstract class YamlSerializer
     /// <param name="value">The object to serialize.</param>
     /// <param name="style">The <see cref="DataStyle"/>.</param>
     public abstract void Write<X>(WriteContext<X> context, object value, DataStyle style) where X : Node;
-    public abstract ValueTask<object?> ReadUnknown(Scope scope, ParseContext context);
+    public abstract ValueTask<object?> ReadUnknown(Scope scope, object? context);
 }
 /// <summary>
 /// Provides methods for serializing and deserializing objects of type <typeparamref name="T"/> to/from YAML.
@@ -33,9 +33,9 @@ public abstract class YamlSerializer<T> : YamlSerializer
     {
         Write(context, (T)value, style);
     }
-    public override async ValueTask<object?> ReadUnknown(Scope scope, ParseContext parseResult)
+    public override async ValueTask<object?> ReadUnknown(Scope scope, object? parseResult)
     {
-        return await Read(scope, parseResult);
+        return await Read(scope, (T)parseResult);
     }
     /// <summary>
     /// Serializes the specified value of type <typeparamref name="T"/> into YAML.
@@ -46,5 +46,5 @@ public abstract class YamlSerializer<T> : YamlSerializer
     /// <param name="style">The <see cref="DataStyle"/>.</param>
     public abstract void Write<X>(WriteContext<X> context, T value, DataStyle style) where X : Node;
 
-    public abstract ValueTask<T?> Read(Scope scope, ParseContext parseResult);
+    public abstract ValueTask<T?> Read(Scope scope, T? parseResult);
 }

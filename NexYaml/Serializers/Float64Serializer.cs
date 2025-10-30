@@ -14,7 +14,7 @@ public class Float64Serializer : YamlSerializer<double>
         context.WriteScalar(span[..written]);
     }
 
-    public override ValueTask<double> Read(Scope scope, ParseContext parseResult)
+    public override ValueTask<double> Read(Scope scope, double parseResult)
     {
         var scalarScope = scope.As<ScalarScope>();
         return new(double.Parse(scalarScope.Value, CultureInfo.InvariantCulture));

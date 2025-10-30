@@ -11,7 +11,7 @@ public class TimeSpanSerializer : YamlSerializer<TimeSpan>
         context.WriteString(value.ToString());
     }
 
-    public override ValueTask<TimeSpan> Read(Scope scope, ParseContext parseResult)
+    public override ValueTask<TimeSpan> Read(Scope scope, TimeSpan parseResult)
     {
         var scalarScope = scope.As<ScalarScope>();
         return new(TimeSpan.Parse(scalarScope.Value));

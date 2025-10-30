@@ -45,16 +45,17 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
         }
     }
 
-    public override async ValueTask<Dictionary<TKey, TValue?>?> Read(Scope scope, ParseContext parseResult)
+    public override async ValueTask<Dictionary<TKey, TValue?>?> Read(Scope scope, Dictionary<TKey, TValue?>? parseResult)
     {
-        var map = parseResult.DataMemberMode is DataMemberMode.Content ? (Dictionary<TKey, TValue?>)parseResult.Value! : [];
+
+        Dictionary<TKey, TValue?>? map = parseResult ;
         if (scope is MappingScope mapping && DictionarySerializer<TKey, TValue>.IsPrimitive(typeof(TKey)))
         {
             List<ValueTask<KeyValuePair<TKey, TValue?>>> tasks = new();
             foreach (var kvp in mapping)
             {
                 var key = ParsePrimitive<TKey>(kvp.Key);
-                var value = kvp.Value.Read<TValue>(new ParseContext());
+                var value = kvp.Value.Read<TValue>(default);
                 tasks.Add(DictionarySerializer<TKey, TValue>.ConvertToKeyValuePair(key!, value));
             }
             foreach(var result in tasks)
@@ -67,7 +68,7 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
         else
         {
             var listSerializer = new ListSerializer<KeyValuePair<TKey, TValue?>>();
-            var kvp = await listSerializer.Read(scope, new ParseContext());
+            var kvp = await listSerializer.Read(scope, default);
 
             // can't be null as !!null wouldnt reach this serializer
             kvp!.ForEach(x => map.Add(x.Key!, x.Value));

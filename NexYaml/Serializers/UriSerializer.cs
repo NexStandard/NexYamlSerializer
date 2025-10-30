@@ -11,7 +11,7 @@ public class UriSerializer : YamlSerializer<Uri>
         context.WriteScalar(value.ToString());
     }
 
-    public override ValueTask<Uri?> Read(Scope scope, ParseContext parseResult)
+    public override ValueTask<Uri?> Read(Scope scope, Uri? parseResult)
     {
         var scalarScope = scope.As<ScalarScope>();
         return new(new Uri(scalarScope.Value, UriKind.RelativeOrAbsolute));

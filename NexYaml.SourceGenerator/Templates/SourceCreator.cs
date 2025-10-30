@@ -12,7 +12,8 @@ internal static class SourceCreator
         var isEmpty = package.MemberSymbols.Count == 0;
         foreach (var member in package.MemberSymbols)
         {
-            tempVariables.AppendLine($"var temp_{member.Name} = context.DataMemberMode == DataMemberMode.Content ? ({info.NameDefinition})context.Value : default({member.Type});");
+
+                tempVariables.AppendLine($"var temp_{member.Name} = context.DataMemberMode == DataMemberMode.Content ? ({info.NameDefinition})context.Value : default({member.Type});");
         }
         var tag = package.ClassInfo.AliasTag?.Length == 0 ?
             $"{info.NameSpace}.{info.TypeName},{info.NameSpace.Split('.')[0]}" :
@@ -28,14 +29,22 @@ internal static class SourceCreator
         // needs ID at first place to avoid deadlock on awaits for reference resolving
         var orderedSymbols = package.MemberSymbols.OrderByDescending(s => s.Name == "Id").ToList();
         ///
-        objTempVariables.AppendLine($"\t\tvar res = context.DataMemberMode is DataMemberMode.Content ? ({info.NameDefinition})context.Value :  new {info.NameDefinition}() {{");
-        foreach (var member in orderedSymbols)
+        if (info.TypeKind is Microsoft.CodeAnalysis.TypeKind.Struct)
         {
-            if (member.IsRequired)
-            {
-                objTempVariables.AppendLine($"{member.Name} = default,");
-            }
+
+            objTempVariables.AppendLine($"\t\tvar res = new {info.NameDefinition}() {{");
         }
+        else
+        {
+            objTempVariables.AppendLine($"\t\tvar res = context is not null ? context : new {info.NameDefinition}() {{");
+        }
+            foreach (var member in orderedSymbols)
+            {
+                if (member.IsRequired)
+                {
+                    objTempVariables.AppendLine($"{member.Name} = default,");
+                }
+            }
 
         objTempVariables.AppendLine("};");
         foreach (var member in orderedSymbols)
@@ -43,15 +52,15 @@ internal static class SourceCreator
             objTempVariables.AppendLine($"\t\tvar var_{member.Name} = default(ValueTask<{(member.IsArray ? member.Type + "[]" : member.Type)}>);");
             if (member.Context.Mode == MemberApi.UniversalAnalyzers.MemberMode.Content)
             {
-                objTempVariables.AppendLine($"\t\tvar context_{member.Name} = new ParseContext() {{ DataMemberMode = DataMemberMode.Content, Value = res.{member.Name} }};");
+                ifStatementNew.AppendLine($"\t\t\tif (map.Key == UTF8{member.Name}){{ var_{member.Name} = map.Value.Read<{(member.IsArray ? member.Type + "[]" : member.Type)}>(res.{member.Name}); continue; }}");
             }
             else
             {
-                objTempVariables.AppendLine($"\t\tvar context_{member.Name} = new ParseContext();");
+                ifStatementNew.AppendLine($"\t\t\tif (map.Key == UTF8{member.Name}){{ var_{member.Name} = map.Value.Read<{(member.IsArray ? member.Type + "[]" : member.Type)}>(default!); continue; }}");
             }
             if (member.Context.Mode is MemberApi.UniversalAnalyzers.MemberMode.Content)
             {
-                awaitsNew.AppendLine($"if(context.DataMemberMode is DataMemberMode.Content) {{ res.{member.Name} = await var_{member.Name}; }} else {{ await var_{member.Name};}}");
+                awaitsNew.AppendLine($"if(context is not null) {{ res.{member.Name} = await var_{member.Name}; }} else {{ await var_{member.Name};}}");
             }
             else if (member.IsInit)
             {
@@ -65,7 +74,6 @@ internal static class SourceCreator
             {
                 awaitsNew.AppendLine("\t\tscope.Context.IdentifiableResolver.RegisterIdentifiable(res.Id, res);");
             }
-            ifStatementNew.AppendLine($"\t\t\tif (map.Key == UTF8{member.Name}){{ var_{member.Name} = map.Value.Read<{(member.IsArray ? member.Type + "[]" : member.Type)}>(context_{member.Name}); continue; }}");
 
         }
 
@@ -121,7 +129,7 @@ file sealed class {{info.GeneratorName + info.TypeParameterArguments}} : YamlSer
         {{writeString}}
     }
 
-    public override async ValueTask<{{info.NameDefinition}}> Read(Scope scope, ParseContext context)
+    public override async ValueTask<{{info.NameDefinition}}> Read(Scope scope, {{info.NameDefinition}} context)
     {
 {{objTempVariables}}
         var mapping = scope.As<MappingScope>();

@@ -18,6 +18,7 @@ internal class FieldAnalyzer(ReferencePackage package) : IMemberSymbolAnalyzer<I
             DataStyle = new DataStyleAnalyzer(context.Symbol, package).Analyze(),
             Type = typeBundle,
             IsAbstract = context.Symbol.Type.IsAbstract,
+            IsStruct = context.Symbol.Type.IsValueType,
             IsInterface = context.Symbol.Type.TypeKind == TypeKind.Interface,
             Context = context.DataMemberContext,
             IsArray = context.Symbol.Type.TypeKind == TypeKind.Array,

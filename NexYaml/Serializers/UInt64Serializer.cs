@@ -14,7 +14,7 @@ public class UInt64Serializer : YamlSerializer<ulong>
         context.WriteScalar(span[..written]);
     }
 
-    public override ValueTask<ulong> Read(Scope scope, ParseContext parseResult)
+    public override ValueTask<ulong> Read(Scope scope, ulong parseResult)
     {
         var scalarScope = scope.As<ScalarScope>();
         return new(ulong.Parse(scalarScope.Value, CultureInfo.InvariantCulture));

@@ -14,7 +14,7 @@ public class Int64Serializer : YamlSerializer<long>
         context.WriteScalar(span[..written]);
     }
 
-    public override ValueTask<long> Read(Scope scope, ParseContext parseResult)
+    public override ValueTask<long> Read(Scope scope, long parseResult)
     {
         var scalarScope = scope.As<ScalarScope>();
         return new(long.Parse(scalarScope.Value, CultureInfo.InvariantCulture));

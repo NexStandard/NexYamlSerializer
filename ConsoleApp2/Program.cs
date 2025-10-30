@@ -23,7 +23,7 @@ public class PersonSerializer : YamlSerializer<Person>
     {
         throw new NotImplementedException();
     }
-    public override async ValueTask<Person?> Read(Scope scope, NexYaml.Parser.ParseContext parseResult)
+    public override async ValueTask<Person?> Read(Scope scope, Person parseResult)
     {
         var mapping = scope.As<SequenceScope>();
         int id = default;

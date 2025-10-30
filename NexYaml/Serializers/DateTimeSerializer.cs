@@ -11,7 +11,7 @@ public class DateTimeSerializer : YamlSerializer<DateTime>
         context.WriteType(value.ToString(), style);
     }
 
-    public override ValueTask<DateTime> Read(Scope scope, ParseContext parseResult)
+    public override ValueTask<DateTime> Read(Scope scope, DateTime parseResult)
     {
         var scalarScope = scope.As<ScalarScope>();
         return new(DateTime.Parse(scalarScope.Value));
