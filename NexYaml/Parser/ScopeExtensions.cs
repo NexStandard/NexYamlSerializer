@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using NexYaml.Core;
 using NexYaml.Serializers;
 using Stride.Core.Extensions;
 
@@ -12,7 +13,7 @@ namespace NexYaml.Parser
         }
         public static ValueTask<T?> Read<T>(this Scope scope,T? context)
         {
-            if (scope is ScalarScope scalar && scalar.Value == "!!null")
+            if (scope is ScalarScope scalar && scalar.Value == YamlCodes.Null)
             {
                 return new ValueTask<T?>(default(T));
             }
@@ -71,56 +72,56 @@ namespace NexYaml.Parser
         public static ValueTask<Guid> Read(this Scope scope, Guid value = default)
         {
             var scalarScope = scope.As<ScalarScope>();
-            if (scalarScope.Value == "!!null")
+            if (scalarScope.Value == YamlCodes.Null)
                 return default;
             return new(Guid.Parse(scalarScope.Value));
         }
         public static ValueTask<Guid?> Read(this Scope scope, Guid? value = default)
         {
             var scalarScope = scope.As<ScalarScope>();
-            if (scalarScope.Value == "!!null")
+            if (scalarScope.Value == YamlCodes.Null)
                 return default;
             return new(Guid.Parse(scalarScope.Value));
         }
         public static ValueTask<bool> Read(this Scope scope, bool value = default)
         {
             var scalarScope = scope.As<ScalarScope>();
-            if (scalarScope.Value == "!!null")
+            if (scalarScope.Value == YamlCodes.Null)
                 return default;
             return new(bool.Parse(scalarScope.Value));
         }
         public static ValueTask<bool?> Read(this Scope scope, bool? value = default)
         {
             var scalarScope = scope.As<ScalarScope>();
-            if (scalarScope.Value == "!!null")
+            if (scalarScope.Value == YamlCodes.Null)
                 return default;
             return new(bool.Parse(scalarScope.Value));
         }
         public static ValueTask<byte> Read(this Scope scope, byte value = default)
         {
             var scalarScope = scope.As<ScalarScope>();
-            if (scalarScope.Value == "!!null")
+            if (scalarScope.Value == YamlCodes.Null)
                 return default;
             return new(byte.Parse(scalarScope.Value));
         }
         public static ValueTask<byte?> Read(this Scope scope, byte? value = default)
         {
             var scalarScope = scope.As<ScalarScope>();
-            if (scalarScope.Value == "!!null")
+            if (scalarScope.Value == YamlCodes.Null)
                 return default;
             return new(byte.Parse(scalarScope.Value));
         }
         public static ValueTask<int> Read(this Scope scope, int value = default)
         {
             var scalarScope = scope.As<ScalarScope>();
-            if (scalarScope.Value == "!!null")
+            if (scalarScope.Value == YamlCodes.Null)
                 return default;
             return new(int.Parse(scalarScope.Value, CultureInfo.InvariantCulture));
         }
         public static ValueTask<int?> Read(this Scope scope, int? value = default)
         {
             var scalarScope = scope.As<ScalarScope>();
-            if (scalarScope.Value == "!!null")
+            if (scalarScope.Value == YamlCodes.Null)
                 return default;
             return new(int.Parse(scalarScope.Value, CultureInfo.InvariantCulture));
         }
@@ -128,7 +129,7 @@ namespace NexYaml.Parser
         public static ValueTask<string?> Read(this Scope scope, string? value = default)
         {
             var scalarScope = scope.As<ScalarScope>();
-            if (scalarScope.Value == "!!null")
+            if (scalarScope.Value == YamlCodes.Null)
                 return default;
             return new(scalarScope.Value);
         }

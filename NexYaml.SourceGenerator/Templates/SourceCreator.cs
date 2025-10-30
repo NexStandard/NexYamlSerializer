@@ -111,7 +111,7 @@ internal static class SourceCreator
             s += $$"""
             public static async ValueTask<{{info.NameDefinition}}?> Read{{info.TypeParameterArguments}}(this Scope scope, {{info.NameDefinition}}? context = default)
             {
-                if(scope is ScalarScope scalar && scalar.Value == "!!null")
+                if(scope is ScalarScope scalar && scalar.Value == YamlCodes.Null)
                     return default;
         {{charMembers}}
         {{objTempVariables}}
@@ -146,6 +146,7 @@ using System.Collections.Generic;
 using NexYaml;
 using NexYaml.Serialization;
 using NexYaml.Parser;
+using NexYaml.Core;
 using Stride.Core;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;

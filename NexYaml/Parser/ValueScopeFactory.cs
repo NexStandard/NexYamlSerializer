@@ -1,11 +1,12 @@
 ﻿using NexYaml;
+using NexYaml.Core;
 using NexYaml.Parser;
 
 class ValueScopeFactory
 {
     public Scope Parse(ScopeContext context, string val, int indent, string tag)
     {
-        if (val.StartsWith('!') && val != "!!null")
+        if (val.StartsWith('!') && val != YamlCodes.Null)
         {
             var segs = val.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
             string childTag = segs[0];
@@ -78,7 +79,7 @@ class ValueScopeFactory
 
     protected static void ExtractTag(ref ReadOnlySpan<char> itemSpan, ref string childTag)
     {
-        if (!itemSpan.IsEmpty && itemSpan[0] == '!' && !itemSpan.SequenceEqual("!!null".AsSpan()))
+        if (!itemSpan.IsEmpty && itemSpan[0] == '!' && !itemSpan.SequenceEqual(YamlCodes.Null.AsSpan()))
         {
             int spaceIdx = itemSpan.IndexOf(' ');
             if (spaceIdx >= 0)
