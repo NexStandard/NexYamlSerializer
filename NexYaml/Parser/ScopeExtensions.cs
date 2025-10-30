@@ -13,6 +13,7 @@ namespace NexYaml.Parser
             {
                 return new ValueTask<T?>(default(T));
             }
+
             if (typeof(T).IsArray)
             {
                 var t = typeof(T).GetElementType()!;
@@ -22,7 +23,8 @@ namespace NexYaml.Parser
                 var value = Convert<T>(arraySerializer.ReadUnknown(scope, context));
                 return value;
             }
-            Type type = typeof(T);
+
+            var type = typeof(T);
 
             if (scope.Tag.SequenceEqual("!!ref"))
             {
@@ -37,34 +39,34 @@ namespace NexYaml.Parser
                 }
             }
 
-            ValueTask<T?> result;
             if (type.IsInterface || type.IsAbstract || type.IsGenericType)
             {
-                IYamlSerializer? serializer;
                 if (scope.Tag.IsNullOrEmpty())
                 {
                     var formatt = scope.Context.Resolver.GetSerializer<T>();
-                    result = formatt.Read(scope, context);
+                    return formatt.Read(scope, context)!;
                 }
                 else
                 {
                     Type alias = scope.Context.Resolver.GetAliasType(scope.Tag);
-                    serializer = scope.Context.Resolver.GetSerializer(alias, type);
+                    var serializer = scope.Context.Resolver.GetSerializer(alias, type);
 
                     var res = serializer.ReadUnknown(scope, context);
-                    result = Convert<T>(res);
+                    return Convert<T>(res);
                 }
             }
             else
             {
-                result = scope.Context.Resolver.GetSerializer<T?>().Read(scope, context);
+                return scope.Context.Resolver.GetSerializer<T?>().Read(scope, context);
             }
-            return result;
         }
+
         private static async ValueTask<T?> Convert<T>(ValueTask<object?> task)
         {
             return (T?)(await task);
         }
+
+        // What are all of these for ? value is left unused ... -Eideren
         public static ValueTask<Guid> Read(this Scope scope, Guid value = default)
         {
             var scalarScope = scope.As<ScalarScope>();
@@ -135,8 +137,7 @@ namespace NexYaml.Parser
             var scalarScope = scope.As<ScalarScope>();
             if (scalarScope.Value == YamlCodes.Null)
                 return default;
-            var s = new ArraySerializer<T>();
-            return s.Read(scope);
+            return new ArraySerializer<T>().Read(scope)!;
         }
     }
 }
