@@ -85,7 +85,8 @@ public static class WriteContextExtensions
     public static void WriteEmptyMapping<T>(this WriteContext<T> context, string tag)
         where T : Node
     {
-        context.WriteScalar(tag + " { }");
+        context.WriteScalar(tag);
+        context.WriteScalar(" { }");
     }
 
     /// <summary>
@@ -97,7 +98,8 @@ public static class WriteContextExtensions
     public static void WriteEmptySequence<T>(this WriteContext<T> context, string tag)
         where T : Node
     {
-        context.WriteScalar(tag + " [ ]");
+        context.WriteScalar(tag);
+        context.WriteScalar(" [ ]");
     }
 
     /// <summary>

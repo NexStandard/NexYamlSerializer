@@ -46,7 +46,9 @@ class BlockSequence : Sequence
         // - The sequence identifier ("- ") does NOT use increased indentation.
         // - The indent can NOT be below 0
         // - Only the subsequent nodes follow deeper indentation levels.
-        context.WriteScalar("\n" + new string(' ', Math.Max(context.Indent - 2, 0)) + "- ");
+        context.WriteScalar("\n");
+        context.WriteScalar(new string(' ', Math.Max(context.Indent - 2, 0)));
+        context.WriteScalar("- ");
         context.WriteType(value, style);
         return context;
     }

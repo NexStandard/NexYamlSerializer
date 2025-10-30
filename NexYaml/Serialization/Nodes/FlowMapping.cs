@@ -29,7 +29,8 @@ class FlowMapping : Mapping
     public override WriteContext<Mapping> Write<T>(WriteContext<Mapping> context, string key, T value, DataStyle style)
     {
         // First Node is {KEY: VALUE}
-        context.WriteScalar(key + ": ");
+        context.WriteScalar(key);
+        context.WriteScalar(": ");
         context.WriteType(value, style);
 
         // all following Nodes need a prefix

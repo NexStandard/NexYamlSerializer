@@ -55,7 +55,8 @@ public abstract class Writer(IYamlSerializerResolver resolver)
         {
             if (context.Writer.References.Contains(id.Id))
             {
-                context.WriteScalar("!!ref " + id.Id);
+                context.WriteScalar("!!ref ");
+                context.WriteScalar(id.Id.ToString());
                 return;
             }
             else

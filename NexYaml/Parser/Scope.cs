@@ -67,68 +67,7 @@ namespace NexYaml.Parser
             Indent = indent;
             Context = context;
         }
-        public ValueTask<T?> Read<T>()
-        {
-            return Read<T>(default);
-        }
-        public ValueTask<T?> Read<T>(T? context)
-        {
-            if (this is ScalarScope scalar && scalar.Value == "!!null")
-            {
-                return new ValueTask<T?>(default(T));
-            }
-            if (typeof(T).IsArray)
-            {
-                var t = typeof(T).GetElementType()!;
-                var arraySerializerType = typeof(ArraySerializer<>).MakeGenericType(t);
-                var arraySerializer = (YamlSerializer)Activator.CreateInstance(arraySerializerType)!;
-
-                var value = Convert<T>(arraySerializer.ReadUnknown(this, context));
-                return value;
-            }
-            Type type = typeof(T);
-
-            if (Tag.SequenceEqual("!!ref"))
-            {
-                var refScalar = this.As<ScalarScope>();
-                if (Guid.TryParse(refScalar.Value, out var id))
-                {
-                    return Context.IdentifiableResolver.AsyncGetRef<T?>(id);
-                }
-                else
-                {
-                    throw new InvalidCastException($"couldnt cast ref {refScalar.Value}");
-                }
-            }
-
-            ValueTask<T?> result;
-            if (type.IsInterface || type.IsAbstract || type.IsGenericType)
-            {
-                YamlSerializer? serializer;
-                if (Tag.IsNullOrEmpty())
-                {
-                    var formatt = Context.Resolver.GetSerializer<T>();
-                    result = formatt.Read(this, context);
-                }
-                else
-                {
-                    Type alias = Context.Resolver.GetAliasType(Tag);
-                    serializer = Context.Resolver.GetSerializer(alias, type);
-
-                    var res = serializer.ReadUnknown(this, context);
-                    result = Convert<T>(res);
-                }
-            }
-            else
-            {
-                result = Context.Resolver.GetSerializer<T?>().Read(this, context);
-            }
-            return result;
-        }
-        private static async ValueTask<T?> Convert<T>(ValueTask<object?> task)
-        {
-            return (T?)(await task);
-        }
+ 
         protected static string ParseLiteralScalar(ScopeContext context, int indent, char chompHint)
         {
             var sb = new System.Text.StringBuilder();

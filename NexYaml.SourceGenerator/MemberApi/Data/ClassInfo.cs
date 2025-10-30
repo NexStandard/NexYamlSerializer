@@ -38,6 +38,7 @@ internal record ClassInfo
     internal string TypeParameterRestrictions { get; private set; }
     internal string TypeParameterArgumentsShort { get; private set; }
     internal Accessibility Accessibility { get; private set; }
+    internal bool IsSealed { get; private set; }
     internal ClassInfo() { }
     internal bool IsGeneric { get; private set; }
     internal bool IsIIdentifiable { get; private set; } = false;
@@ -103,6 +104,7 @@ internal record ClassInfo
             AllInterfaces = GetDataPackages(namedType.AllInterfaces),
             AllAbstracts = GetDataPackages(namedType.FindBase(package)),
             GeneratorName = CreateGeneratorName(namedType),
+            IsSealed = namedType.IsSealed,
             IsIIdentifiable = FillIsIIdentifiable(namedType.AllInterfaces, package),
         };
     }

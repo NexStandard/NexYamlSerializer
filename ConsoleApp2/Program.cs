@@ -16,6 +16,7 @@ class Program
     }
 }
 public record Person(int Id, string Name, bool Female);
+
 public class PersonSerializer : YamlSerializer<Person>
 {
 
