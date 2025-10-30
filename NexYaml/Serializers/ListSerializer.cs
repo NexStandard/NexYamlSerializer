@@ -70,7 +70,7 @@ public class ListSerializer<T> : YamlSerializer<List<T?>>
         var tasks = new List<ValueTask<T?>>();
         foreach (var element in sequenceScope)
         {
-            tasks.Add(element.Read<T>(default));
+            tasks.Add(element.Read<T>());
         }
         foreach( var task in tasks)
         {

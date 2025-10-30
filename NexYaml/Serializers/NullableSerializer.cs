@@ -20,7 +20,7 @@ internal class NullableSerializer<T> : YamlSerializer<Nullable<T>>
         }
         else
         {
-            return new T?(await scope.Read<T>(default));
+            return new T?(await scope.Read<T>());
         }
     }
 }

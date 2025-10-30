@@ -20,8 +20,8 @@ public class TupleSerializer<T1, T2> : YamlSerializer<Tuple<T1?, T2?>>
     {
         var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
-        var item1 = scalarList[0].Read<T1?>(default);
-        var item2 = scalarList[1].Read<T2?>(default);
+        var item1 = scalarList[0].Read<T1?>();
+        var item2 = scalarList[1].Read<T2?>();
         return new(await item1, await item2);
     }
 }
@@ -60,9 +60,9 @@ public class TupleSerializer<T1, T2, T3> : YamlSerializer<Tuple<T1?, T2?, T3?>>
     {
         var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
-        var item1 = scalarList[0].Read<T1?>(default);
-        var item2 = scalarList[1].Read<T2?>(default);
-        var item3 = scalarList[2].Read<T3?>(default);
+        var item1 = scalarList[0].Read<T1?>();
+        var item2 = scalarList[1].Read<T2?>();
+        var item3 = scalarList[2].Read<T3?>();
         return new(await item1, await item2, await item3);
     }
 }
@@ -102,10 +102,10 @@ public class TupleSerializer<T1, T2, T3, T4> : YamlSerializer<Tuple<T1?, T2?, T3
     {
         var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
-        var item1 = scalarList[0].Read<T1?>(default);
-        var item2 = scalarList[1].Read<T2?>(default);
-        var item3 = scalarList[2].Read<T3?>(default);
-        var item4 = scalarList[3].Read<T4?>(default);
+        var item1 = scalarList[0].Read<T1?>();
+        var item2 = scalarList[1].Read<T2?>();
+        var item3 = scalarList[2].Read<T3?>();
+        var item4 = scalarList[3].Read<T4?>();
         return new(await item1, await item2, await item3, await item4);
     }
 }
@@ -147,11 +147,11 @@ public class TupleSerializer<T1, T2, T3, T4, T5> : YamlSerializer<Tuple<T1?, T2?
     {
         var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
-        var item1 = scalarList[0].Read<T1?>(default);
-        var item2 = scalarList[1].Read<T2?>(default);
-        var item3 = scalarList[2].Read<T3?>(default);
-        var item4 = scalarList[3].Read<T4?>(default);
-        var item5 = scalarList[4].Read<T5?>(default);
+        var item1 = scalarList[0].Read<T1?>();
+        var item2 = scalarList[1].Read<T2?>();
+        var item3 = scalarList[2].Read<T3?>();
+        var item4 = scalarList[3].Read<T4?>();
+        var item5 = scalarList[4].Read<T5?>();
         return new(await item1, await item2, await item3, await item4, await item5);
     }
 }
@@ -195,12 +195,12 @@ public class TupleSerializer<T1, T2, T3, T4, T5, T6> : YamlSerializer<Tuple<T1?,
     {
         var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
-        var item1 = scalarList[0].Read<T1?>(default);
-        var item2 = scalarList[1].Read<T2?>(default);
-        var item3 = scalarList[2].Read<T3?>(default);
-        var item4 = scalarList[3].Read<T4?>(default);
-        var item5 = scalarList[4].Read<T5?>(default);
-        var item6 = scalarList[5].Read<T6?>(default);
+        var item1 = scalarList[0].Read<T1?>();
+        var item2 = scalarList[1].Read<T2?>();
+        var item3 = scalarList[2].Read<T3?>();
+        var item4 = scalarList[3].Read<T4?>();
+        var item5 = scalarList[4].Read<T5?>();
+        var item6 = scalarList[5].Read<T6?>();
         return new(await item1, await item2, await item3, await item4, await item5, await item6);
     }
 }
@@ -244,13 +244,13 @@ public class TupleSerializer<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<Tuple<
     {
         var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
-        var item1 = scalarList[0].Read<T1?>(default);
-        var item2 = scalarList[1].Read<T2?>(default);
-        var item3 = scalarList[2].Read<T3?>(default);
-        var item4 = scalarList[3].Read<T4?>(default);
-        var item5 = scalarList[4].Read<T5?>(default);
-        var item6 = scalarList[5].Read<T6?>(default);
-        var item7 = scalarList[6].Read<T7?>(default);
+        var item1 = scalarList[0].Read<T1?>();
+        var item2 = scalarList[1].Read<T2?>();
+        var item3 = scalarList[2].Read<T3?>();
+        var item4 = scalarList[3].Read<T4?>();
+        var item5 = scalarList[4].Read<T5?>();
+        var item6 = scalarList[5].Read<T6?>();
+        var item7 = scalarList[6].Read<T7?>();
         return new(await item1, await item2, await item3, await item4, await item5, await item6, await item7);
     }
 }

@@ -27,7 +27,7 @@ public class ArraySerializer<T> : YamlSerializer<T?[]>
         var tasks = new List<Task<T?>>();
         foreach (var element in sequenceScope)
         {
-            tasks.Add(element.Read<T>(default).AsTask());
+            tasks.Add(element.Read<T>().AsTask());
         }
         return (await Task.WhenAll(tasks)).ToArray();
     }

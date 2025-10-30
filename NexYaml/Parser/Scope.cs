@@ -67,7 +67,11 @@ namespace NexYaml.Parser
             Indent = indent;
             Context = context;
         }
-        public ValueTask<T?> Read<T>(T context)
+        public ValueTask<T?> Read<T>()
+        {
+            return Read<T>(default);
+        }
+        public ValueTask<T?> Read<T>(T? context)
         {
             if (this is ScalarScope scalar && scalar.Value == "!!null")
             {
