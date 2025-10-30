@@ -10,37 +10,29 @@ public class DictionarySerializer<TKey, TValue> : IYamlSerializer<Dictionary<TKe
 {
     public void Write<X>(WriteContext<X> context, Dictionary<TKey, TValue?> value, DataStyle style) where X : Node
     {
+        if (value.Count == 0)
+        {
+            context.WriteEmptySequence("!Dictionary");
+            return;
+        }
+
         if (IsPrimitive(typeof(TKey)))
         {
-            if (value.Count == 0)
-            {
-                context.WriteEmptyMapping("!Dictionary");
-            }
-            else
-            {
-                var resultContext = context.BeginMapping("!Dictionary", style);
+            var resultContext = context.BeginMapping("!Dictionary", style);
 
-                foreach (var x in value)
-                {
-                    resultContext = resultContext.Write(x.Key.ToString() ?? "", x.Value, style);
-                }
-                resultContext.End(context);
+            foreach (var x in value)
+            {
+                resultContext = resultContext.Write(x.Key.ToString() ?? "", x.Value, style);
             }
+            resultContext.End(context);
         }
         else
         {
-            if (value.Count == 0)
+            var serializer = new ListSerializer<KeyValuePair<TKey, TValue?>>()
             {
-                context.WriteEmptySequence("!Dictionary");
-            }
-            else
-            {
-                var serializer = new ListSerializer<KeyValuePair<TKey, TValue?>>()
-                {
-                    CustomTag = "!Dictionary"
-                };
-                serializer.Write(context, value.ToList(), style);
-            }
+                CustomTag = "!Dictionary"
+            };
+            serializer.Write(context, value.ToList(), style);
         }
     }
 
