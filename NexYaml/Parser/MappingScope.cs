@@ -12,17 +12,17 @@ namespace NexYaml.Parser
         private string startString;
         private string startKey;
 
-        internal MappingScope(int nonsense, int indent, ScopeContext context, string tag = "", int initialCapacity = 10)
+        internal MappingScope(int indent, ScopeContext context, string tag = "", int initialCapacity = 10)
     : base(tag, indent, context)
         {
         }
-        internal MappingScope(int nonsense, string value, int indent, ScopeContext context, string tag = "", int initialCapacity = 10)
+        internal MappingScope(string value, int indent, ScopeContext context, string tag = "", int initialCapacity = 10)
 : base(tag, indent, context)
         {
             flow = true;
             this.value = value;
         }
-        internal MappingScope(int nonsense, string startValue, string startKey, int indent, ScopeContext context, string tag = "", int initialCapacity = 10)
+        internal MappingScope(string startValue, string startKey, int indent, ScopeContext context, string tag = "", int initialCapacity = 10)
 : base(tag, indent, context)
         {
             this.startValue = true;
@@ -53,12 +53,12 @@ namespace NexYaml.Parser
 
         public static MappingScope Parse(ScopeContext context, int indent, string tag)
         {
-            var map = new MappingScope(1, indent, context, tag);
+            var map = new MappingScope(indent, context, tag);
             return map;
         }
         public static MappingScope ParseFlow(ScopeContext context, string value, int indent, string tag)
         {
-            return new MappingScope(1, value, indent, context, tag);
+            return new MappingScope(value, indent, context, tag);
         }
         public KeyValuePair<string, Scope> StandardMappingResolve(ScopeContext context, MappingScope map, string key, string val, string childTag)
         {
@@ -66,9 +66,9 @@ namespace NexYaml.Parser
                 return new(key, new ScalarScope(Unquote(val), map.Indent + 2, context, childTag));
             else if (val.StartsWith('|'))
                 return new(key, new ScalarScope(ParseLiteralScalar(map.Context, map.Indent + 1, val[1]), map.Indent + 2, context, childTag));
-            else if (val.StartsWith('{') && val.EndsWith("}"))
+            else if (val.StartsWith('{') && val.EndsWith('}'))
                 return new(key, MappingScope.ParseFlow(context, val, map.Indent + 2, childTag));
-            else if (val.StartsWith('[') && val.EndsWith("]"))
+            else if (val.StartsWith('[') && val.EndsWith(']'))
                 return new(key, SequenceScope.ParseFlow(context, val, map.Indent + 2, childTag));
             else
                 return new(key, new ScalarScope(val, map.Indent + 2, context, childTag));
@@ -98,7 +98,7 @@ public struct BlockMappingPrefixedParse(MappingScope scope, string startKey, str
         {
             if (!string.IsNullOrEmpty(initialValue))
             {
-                string childTag = "";
+                string childTag = string.Empty;
                 ReadOnlySpan<char> valSpan = initialValue.AsSpan();
 
                 if (valSpan[0] == '!' && !valSpan.SequenceEqual("!!null".AsSpan()))
@@ -129,13 +129,13 @@ public struct BlockMappingPrefixedParse(MappingScope scope, string startKey, str
                     if (nextIndent > scope.Indent)
                     {
                         if (nextTrim[0] == '-')
-                            yield return new(startKey, SequenceScope.Parse(scope.Context, scope.Indent + 2, ""));
+                            yield return new(startKey, SequenceScope.Parse(scope.Context, scope.Indent + 2, string.Empty));
                         else
-                            yield return new(startKey, MappingScope.Parse(scope.Context, scope.Indent + 2, ""));
+                            yield return new(startKey, MappingScope.Parse(scope.Context, scope.Indent + 2, string.Empty));
                     }
                     else
                     {
-                        yield return new(startKey, new ScalarScope(string.Empty, scope.Indent + 2, scope.Context, ""));
+                        yield return new(startKey, new ScalarScope(string.Empty, scope.Indent + 2, scope.Context, string.Empty));
                     }
                 }
             }
@@ -167,12 +167,12 @@ public struct BlockFlowParse(MappingScope scope, string value) : IEnumerable<Key
             var key = kv[0].Trim();
             var val = kv[1].Trim();
 
-            string childTag = "";
+            string childTag = string.Empty;
             if (val.StartsWith('!') && val != "!!null")
             {
                 var segs = val.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
                 childTag = segs[0];
-                val = segs.Length > 1 ? segs[1].Trim() : "";
+                val = segs.Length > 1 ? segs[1].Trim() : string.Empty;
             }
 
             yield return scope.StandardMappingResolve(scope.Context, scope, key, val, childTag);
@@ -224,7 +224,7 @@ public struct BlockMappingParse(MappingScope scope) : IEnumerable<KeyValuePair<s
             string key = keySpan.ToString();
             ReadOnlySpan<char> val = valSpan;
 
-            string childTag = "";
+            string childTag = string.Empty;
 
             // Inline tag handling
             MappingScope.ExtractTag(ref val, ref childTag);

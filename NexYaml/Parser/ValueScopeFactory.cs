@@ -17,7 +17,7 @@ class ValueScopeFactory : ScopeFactory<Scope>
         {
             var segs = val.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
             string childTag = segs[0];
-            string rest = segs.Length > 1 ? segs[1].Trim() : "";
+            string rest = segs.Length > 1 ? segs[1].Trim() : string.Empty;
             return Parse(context, rest, indent, childTag);
         }
 

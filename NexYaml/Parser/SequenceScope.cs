@@ -8,13 +8,13 @@ namespace NexYaml.Parser
         private bool nextGeneration = false;
         private string value;
         private bool flow;
-        internal SequenceScope(int nonsense, int indent, ScopeContext context, string tag = "", int initialCapacity = 10)
+        internal SequenceScope(int nonsense, int indent, ScopeContext context, string tag, int initialCapacity = 10)
 : base(tag, indent, context)
         {
             nextGeneration = true;
             _count = 0;
         }
-        internal SequenceScope(int nonsense, string value, int indent, ScopeContext context, string tag = "", int initialCapacity = 10)
+        internal SequenceScope(int nonsense, string value, int indent, ScopeContext context, string tag, int initialCapacity = 10)
 : base(tag, indent, context)
         {
             nextGeneration = true;
@@ -70,7 +70,7 @@ namespace NexYaml.Parser
                     i++;
 
                 var itemSpan = line.Slice(i).Trim();
-                string childTag = "";
+                string childTag = string.Empty;
 
                 // tag detection
                 ExtractTag(ref itemSpan, ref childTag);
@@ -108,7 +108,7 @@ namespace NexYaml.Parser
                                 ? itemSpan.Slice(colonIdx + 1).Trim()
                                 : ReadOnlySpan<char>.Empty;
 
-                            yield return new MappingScope(1,  valSpan.ToString(), keySpan.ToString(), indent + 2, context, childTag);
+                            yield return new MappingScope(valSpan.ToString(), keySpan.ToString(), indent + 2, context, childTag);
                         }
                         else
                         {
@@ -143,12 +143,12 @@ namespace NexYaml.Parser
             var inner = value.Substring(1, value.Length - 2).Trim();
             if (inner.Length == 0)
                 yield break;
-            string bufferedTag = "";
+            string bufferedTag = string.Empty;
             foreach (var raw in SplitFlowItems(inner))
             {
-                string childTag = "";
+                string childTag = string.Empty;
                 string item = raw;
-                if (bufferedTag == "")
+                if (bufferedTag == string.Empty)
                 {
                     if (item.StartsWith('!') && item != "!!null")
                     {
@@ -161,7 +161,7 @@ namespace NexYaml.Parser
                         else
                         {
                             childTag = segs[0];
-                            item = segs.Length > 1 ? segs[1].Trim() : "";
+                            item = segs.Length > 1 ? segs[1].Trim() : string.Empty;
 
                         }
                     }
@@ -169,7 +169,7 @@ namespace NexYaml.Parser
                 else
                 {
                     childTag = bufferedTag;
-                    bufferedTag = "";
+                    bufferedTag = string.Empty;
                 }
 
                 if (IsQuoted(item))

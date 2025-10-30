@@ -52,7 +52,7 @@ namespace NexYaml
                     _reader.Move(out var scope);
                     int spaceIndex = trimmed.IndexOf(' ');
                     string tag = spaceIndex > 0 ? trimmed.Substring(0, spaceIndex) : trimmed;
-                    string inline = spaceIndex > 0 ? trimmed.Substring(spaceIndex + 1).Trim() : "";
+                    string inline = spaceIndex > 0 ? trimmed.Substring(spaceIndex + 1).Trim() : string.Empty;
 
                     if (inline.Length > 0)
                     {
@@ -87,17 +87,17 @@ namespace NexYaml
                 // Sequence root
                 if (trimmed.StartsWith('-'))
                 {
-                    yield return MappingScope.Parse(context, indent, "");
+                    yield return MappingScope.Parse(context, indent, string.Empty);
                 }
                 // Mapping root
                 else if (trimmed.Contains(':'))
                 {
-                    yield return MappingScope.Parse(context, indent, "");
+                    yield return MappingScope.Parse(context, indent, string.Empty);
                 }
                 // Scalar root
                 else
                 {
-                    yield return ValueScope.Parse(context, indent, "");
+                    yield return ValueScope.Parse(context, indent, string.Empty);
                 }
             }
         }

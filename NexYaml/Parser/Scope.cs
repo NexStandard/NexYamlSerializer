@@ -191,9 +191,9 @@ namespace NexYaml.Parser
         {
             return IsQuoted(s) ? s.Substring(1, s.Length - 2) : s;
         }
-        public static string Unquote(ReadOnlySpan<char> s)
+        public static ReadOnlySpan<char> Unquote(ReadOnlySpan<char> s)
         {
-            return IsQuoted(s) ? s.Slice(1, s.Length - 2).ToString() : s.ToString();
+            return IsQuoted(s) ? s.Slice(1, s.Length - 2) : s;
         }
         public static int CountIndent(string line)
         {
