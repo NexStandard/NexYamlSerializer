@@ -59,9 +59,9 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
             }
             foreach(var result in tasks)
             {
-                map.Add(await result);
+                var kvp = await result;
+                map.Add(kvp.Key,kvp.Value);
             }
-            (await Task.WhenAll(tasks)).ForEach(x => map.Add(x.Key, x.Value));
             return map;
         }
         else
