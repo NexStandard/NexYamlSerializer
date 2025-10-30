@@ -7,11 +7,7 @@ namespace NexYaml.Parser
 {
     public static class ScopeExtensions
     {
-        public static ValueTask<T?> Read<T>(this Scope scope)
-        {
-            return scope.Read<T>(default);
-        }
-        public static ValueTask<T?> Read<T>(this Scope scope,T? context)
+        public static ValueTask<T?> Read<T>(this Scope scope, T? context = default)
         {
             if (scope is ScalarScope scalar && scalar.Value == YamlCodes.Null)
             {
@@ -134,5 +130,13 @@ namespace NexYaml.Parser
             return new(scalarScope.Value);
         }
 
+        public static ValueTask<T?[]?> Read<T>(this Scope scope, T?[]? value)
+        {
+            var scalarScope = scope.As<ScalarScope>();
+            if (scalarScope.Value == YamlCodes.Null)
+                return default;
+            var s = new ArraySerializer<T>();
+            return s.Read(scope);
+        }
     }
 }

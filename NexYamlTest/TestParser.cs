@@ -22,7 +22,7 @@ namespace NexYamlTest
             Console.WriteLine(first.Dump());
             reader.BaseStream.Position = 0;
             var f = parser.Parse().First();
-            return await f.Read<T>(default);
+            return await f.Read<T>(default(T?));
         }
     }
 }
