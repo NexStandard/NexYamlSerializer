@@ -10,7 +10,7 @@ public class BooleanSerializer : YamlSerializer<bool>
         context.WriteScalar(value ? ['t', 'r', 'u', 'e'] : ['f', 'a', 'l', 's', 'e']);
     }
 
-    public override ValueTask<bool> Read(Scope scope, ParseContext parseResult)
+    public override ValueTask<bool> Read(Scope scope, bool parseResult)
     {
         var s = scope.As<ScalarScope>();
         return new(bool.Parse(s.Value));

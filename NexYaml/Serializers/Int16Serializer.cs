@@ -14,7 +14,7 @@ public class Int16Serializer : YamlSerializer<short>
         context.WriteScalar(span[..written]);
     }
 
-    public override ValueTask<short> Read(Scope scope, ParseContext parseResult)
+    public override ValueTask<short> Read(Scope scope, short parseResult)
     {
         var scalarScope = scope.As<ScalarScope>();
         return new(short.Parse(scalarScope.Value, CultureInfo.InvariantCulture));

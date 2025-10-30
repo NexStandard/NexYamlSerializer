@@ -11,7 +11,7 @@ public class GuidSerializer : YamlSerializer<Guid>
         context.WriteString(value.ToString());
     }
 
-    public override ValueTask<Guid> Read(Scope scope, ParseContext parseResult)
+    public override ValueTask<Guid> Read(Scope scope, Guid parseResult)
     {
         var scalarScope = scope.As<ScalarScope>();
         return new(Guid.Parse(scalarScope.Value));

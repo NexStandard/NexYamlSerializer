@@ -14,7 +14,7 @@ public class ByteSerializer : YamlSerializer<byte>
         context.WriteScalar(span[..written]);
     }
 
-    public override ValueTask<byte> Read(Scope scope, ParseContext parseResult)
+    public override ValueTask<byte> Read(Scope scope, byte parseResult)
     {
         var scalarScope = scope.As<ScalarScope>();
         return new(byte.Parse(scalarScope.Value));

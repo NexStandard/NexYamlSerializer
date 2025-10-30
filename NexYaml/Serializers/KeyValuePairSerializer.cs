@@ -14,12 +14,12 @@ public class KeyValuePairSerializer<TKey, TValue> : YamlSerializer<KeyValuePair<
             .End(context);
     }
 
-    public override async ValueTask<KeyValuePair<TKey?, TValue?>> Read(Scope scope, ParseContext parseResult)
+    public override async ValueTask<KeyValuePair<TKey?, TValue?>> Read(Scope scope, KeyValuePair<TKey?, TValue?> parseResult)
     {
         List<Task<KeyValuePair<TKey, TValue>>> tasks = new();
         var scalarScope = scope.As<SequenceScope>().ToList();
-        var k = await scalarScope[0].Read<TKey?>(new ParseContext());
-        var v = await scalarScope[1].Read<TValue?>(new ParseContext());
+        var k = await scalarScope[0].Read<TKey?>();
+        var v = await scalarScope[1].Read<TValue?>();
         return new KeyValuePair<TKey?, TValue?>(k, v);
     }
 }

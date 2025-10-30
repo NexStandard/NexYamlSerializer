@@ -21,13 +21,13 @@ public class ArraySerializer<T> : YamlSerializer<T?[]>
         result.End(context);
     }
 
-    public override async ValueTask<T?[]?> Read(Scope scope, ParseContext parseResult)
+    public override async ValueTask<T?[]?> Read(Scope scope, T?[]? parseResult)
     {
         var sequenceScope = scope.As<SequenceScope>();
         var tasks = new List<Task<T?>>();
         foreach (var element in sequenceScope)
         {
-            tasks.Add(element.Read<T>(new ParseContext()).AsTask());
+            tasks.Add(element.Read<T>().AsTask());
         }
         return (await Task.WhenAll(tasks)).ToArray();
     }

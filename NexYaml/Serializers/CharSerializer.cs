@@ -11,7 +11,7 @@ public class CharSerializer : YamlSerializer<char>
         context.WriteScalar(['\'', value, '\'']);
     }
 
-    public override ValueTask<char> Read(Scope scope, ParseContext parseResult)
+    public override ValueTask<char> Read(Scope scope, char parseResult)
     {
         var scalarScope = scope.As<ScalarScope>();
         return new(char.Parse(scalarScope.Value));

@@ -11,31 +11,28 @@ namespace Test;
 public class Benchmarker
 {
     static Collections values = new Collections();
-    IEnumerable<Scope> parser;
+
     static IYamlSerializerResolver? resolver = NexYamlSerializerRegistry.Create(typeof(Collections).Assembly);
-    string x;
-    string w;
-    StreamReader red;
+    static string s;
+    static string w;
     static Benchmarker()
     {
+       w = Yaml.Write(values, DataStyle.Normal, resolver);
+        s = JsonSerializer.Serialize(values, MyJsonContext.Default.Collections);
     }
-    [IterationSetup]
-    public void Setup()
-    {
-        w = Yaml.Write(values, DataStyle.Normal, resolver);
-        x = JsonSerializer.Serialize(values, MyJsonContext.Default.Collections);
-    }
+
+
     [Benchmark]
     public async Task YamlB()
     {
-        parser = new YamlParser(w, resolver).Parse();
+        var parser = new YamlParser(w, resolver).Parse();
         parser.First().EmptyDump();
     }
     [Benchmark()]
     public void JsonB()
     {
 
-        var d = JsonSerializer.Deserialize<Collections>(x);
+        var d = JsonSerializer.Deserialize<Collections>(s);
     }
 
 }

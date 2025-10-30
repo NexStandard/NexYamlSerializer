@@ -11,7 +11,7 @@ public class NullableStringSerializer : YamlSerializer<string>
         context.WriteScalar(context.Writer.FormatString(context, value, style));
     }
 
-    public override ValueTask<string?> Read(Scope scope, ParseContext parseResult)
+    public override ValueTask<string?> Read(Scope scope, string? parseResult)
     {
         return new(scope.As<ScalarScope>().Value);
     }

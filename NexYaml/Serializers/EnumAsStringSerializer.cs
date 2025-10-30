@@ -72,7 +72,7 @@ public class EnumAsStringSerializer<T> : YamlSerializer<T>
         }
     }
 
-    public override ValueTask<T?> Read(Scope scope, ParseContext parseResult)
+    public override ValueTask<T?> Read(Scope scope, T? parseResult)
     {
         throw new NotImplementedException();
     }

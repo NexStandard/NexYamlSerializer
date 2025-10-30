@@ -17,6 +17,7 @@ internal class PropertyAnalyzer(ReferencePackage package) : IMemberSymbolAnalyze
             TypeKind = SymbolKind.Property,
             DataStyle = dataStyle,
             IsAbstract = context.Symbol.Type.IsAbstract,
+            IsStruct = context.Symbol.Type.IsValueType,
             IsInterface = context.Symbol.Type.TypeKind == TypeKind.Interface,
             Type = typeName,
             Context = context.DataMemberContext,

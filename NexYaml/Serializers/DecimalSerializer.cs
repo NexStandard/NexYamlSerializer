@@ -14,7 +14,7 @@ public class DecimalSerializer : YamlSerializer<decimal>
         context.WriteScalar(span[..written]);
     }
 
-    public override ValueTask<decimal> Read(Scope scope, ParseContext parseResult)
+    public override ValueTask<decimal> Read(Scope scope, decimal parseResult)
     {
         var scalarScope = scope.As<ScalarScope>();
         return new(decimal.Parse(scalarScope.Value, CultureInfo.InvariantCulture));
