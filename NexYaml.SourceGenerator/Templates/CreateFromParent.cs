@@ -22,10 +22,10 @@ internal static class CreateFromParent
     public IYamlSerializer Instantiate(Type type)
     {
         var genericTypeDefinition = type.GetGenericTypeDefinition();
+{{w}}
         var gen = typeof({{package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}});
         var genParams = type.GenericTypeArguments;
         var fillGen = gen.MakeGenericType(genParams);
-{{w}}
         return (IYamlSerializer)Activator.CreateInstance(fillGen)!;
     }
 """;
