@@ -6,9 +6,9 @@ using Stride.Core;
 
 namespace NexYaml.Serializers;
 
-public class TupleSerializer<T1, T2> : YamlSerializer<Tuple<T1?, T2?>>
+public class TupleSerializer<T1, T2> : IYamlSerializer<Tuple<T1?, T2?>>
 {
-    public override void Write<X>(WriteContext<X> context, Tuple<T1?, T2?> value, DataStyle style)
+    public void Write<X>(WriteContext<X> context, Tuple<T1?, T2?> value, DataStyle style) where X : Node
     {
         context.BeginSequence("!Tuple2", style)
             .Write(value!.Item1, DataStyle.Compact)
@@ -16,7 +16,7 @@ public class TupleSerializer<T1, T2> : YamlSerializer<Tuple<T1?, T2?>>
             .End(context);
     }
 
-    public override async ValueTask<Tuple<T1?, T2?>?> Read(Scope scope, Tuple<T1?, T2?>? parseResult)
+    public async ValueTask<Tuple<T1?, T2?>> Read(Scope scope, Tuple<T1?, T2?>? parseResult)
     {
         var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
@@ -37,17 +37,17 @@ public struct Tuple2Factory : IYamlSerializerFactory
         resolver.Register(this, typeof(Tuple<,>), typeof(IComparable));
         resolver.Register(this, typeof(Tuple<,>), typeof(ITuple));
     }
-    public YamlSerializer Instantiate(Type type)
+    public IYamlSerializer Instantiate(Type type)
     {
         var gen = typeof(TupleSerializer<,>);
         var genParams = type.GenericTypeArguments;
         var fillGen = gen.MakeGenericType(genParams);
-        return (YamlSerializer)Activator.CreateInstance(fillGen)!;
+        return (IYamlSerializer)Activator.CreateInstance(fillGen)!;
     }
 }
-public class TupleSerializer<T1, T2, T3> : YamlSerializer<Tuple<T1?, T2?, T3?>>
+public class TupleSerializer<T1, T2, T3> : IYamlSerializer<Tuple<T1?, T2?, T3?>>
 {
-    public override void Write<X>(WriteContext<X> context, Tuple<T1?, T2?, T3?> value, DataStyle style)
+    public void Write<X>(WriteContext<X> context, Tuple<T1?, T2?, T3?> value, DataStyle style) where X : Node
     {
         context.BeginSequence("!Tuple3", style)
             .Write(value!.Item1, DataStyle.Compact)
@@ -56,7 +56,7 @@ public class TupleSerializer<T1, T2, T3> : YamlSerializer<Tuple<T1?, T2?, T3?>>
             .End(context);
     }
 
-    public override async ValueTask<Tuple<T1?, T2?, T3?>?> Read(Scope scope, Tuple<T1?, T2?, T3?>? parseResult)
+    public async ValueTask<Tuple<T1?, T2?, T3?>> Read(Scope scope, Tuple<T1?, T2?, T3?>? parseResult)
     {
         var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
@@ -78,17 +78,17 @@ public struct Tuple3Factory : IYamlSerializerFactory
         resolver.Register(this, typeof(Tuple<,,>), typeof(IComparable));
         resolver.Register(this, typeof(Tuple<,,>), typeof(ITuple));
     }
-    public YamlSerializer Instantiate(Type type)
+    public IYamlSerializer Instantiate(Type type)
     {
         var gen = typeof(TupleSerializer<,,>);
         var genParams = type.GenericTypeArguments;
         var fillGen = gen.MakeGenericType(genParams);
-        return (YamlSerializer)Activator.CreateInstance(fillGen)!;
+        return (IYamlSerializer)Activator.CreateInstance(fillGen)!;
     }
 }
-public class TupleSerializer<T1, T2, T3, T4> : YamlSerializer<Tuple<T1?, T2?, T3?, T4?>>
+public class TupleSerializer<T1, T2, T3, T4> : IYamlSerializer<Tuple<T1?, T2?, T3?, T4?>>
 {
-    public override void Write<X>(WriteContext<X> context, Tuple<T1?, T2?, T3?, T4?> value, DataStyle style)
+    public void Write<X>(WriteContext<X> context, Tuple<T1?, T2?, T3?, T4?> value, DataStyle style) where X : Node
     {
         context.BeginSequence("!Tuple4", style)
             .Write(value!.Item1, DataStyle.Compact)
@@ -98,7 +98,7 @@ public class TupleSerializer<T1, T2, T3, T4> : YamlSerializer<Tuple<T1?, T2?, T3
             .End(context);
     }
 
-    public override async ValueTask<Tuple<T1?, T2?, T3?, T4?>?> Read(Scope scope, Tuple<T1?, T2?, T3?, T4?>? parseResult)
+    public async ValueTask<Tuple<T1?, T2?, T3?, T4?>> Read(Scope scope, Tuple<T1?, T2?, T3?, T4?>? parseResult)
     {
         var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
@@ -121,17 +121,17 @@ public struct Tuple4Factory : IYamlSerializerFactory
         resolver.Register(this, typeof(Tuple<,,,>), typeof(IComparable));
         resolver.Register(this, typeof(Tuple<,,,>), typeof(ITuple));
     }
-    public YamlSerializer Instantiate(Type type)
+    public IYamlSerializer Instantiate(Type type)
     {
         var gen = typeof(TupleSerializer<,,,>);
         var genParams = type.GenericTypeArguments;
         var fillGen = gen.MakeGenericType(genParams);
-        return (YamlSerializer)Activator.CreateInstance(fillGen)!;
+        return (IYamlSerializer)Activator.CreateInstance(fillGen)!;
     }
 }
-public class TupleSerializer<T1, T2, T3, T4, T5> : YamlSerializer<Tuple<T1?, T2?, T3?, T4?, T5?>>
+public class TupleSerializer<T1, T2, T3, T4, T5> : IYamlSerializer<Tuple<T1?, T2?, T3?, T4?, T5?>>
 {
-    public override void Write<X>(WriteContext<X> context, Tuple<T1?, T2?, T3?, T4?, T5?> value, DataStyle style)
+    public void Write<X>(WriteContext<X> context, Tuple<T1?, T2?, T3?, T4?, T5?> value, DataStyle style) where X : Node
     {
         context.BeginSequence("!Tuple5", style)
             .Write(value!.Item1, DataStyle.Compact)
@@ -143,7 +143,7 @@ public class TupleSerializer<T1, T2, T3, T4, T5> : YamlSerializer<Tuple<T1?, T2?
 
     }
 
-    public override async ValueTask<Tuple<T1?, T2?, T3?, T4?, T5?>?> Read(Scope scope, Tuple<T1?, T2?, T3?, T4?, T5?>? parseResult)
+    public async ValueTask<Tuple<T1?, T2?, T3?, T4?, T5?>> Read(Scope scope, Tuple<T1?, T2?, T3?, T4?, T5?>? parseResult)
     {
         var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
@@ -168,18 +168,18 @@ public struct Tuple5Factory : IYamlSerializerFactory
         resolver.Register(this, typeof(Tuple<,,,,>), typeof(IComparable));
         resolver.Register(this, typeof(Tuple<,,,,>), typeof(ITuple));
     }
-    public YamlSerializer Instantiate(Type type)
+    public IYamlSerializer Instantiate(Type type)
     {
         var gen = typeof(TupleSerializer<,,,,>);
         var genParams = type.GenericTypeArguments;
         var fillGen = gen.MakeGenericType(genParams);
-        return (YamlSerializer)Activator.CreateInstance(fillGen)!;
+        return (IYamlSerializer)Activator.CreateInstance(fillGen)!;
     }
 }
 
-public class TupleSerializer<T1, T2, T3, T4, T5, T6> : YamlSerializer<Tuple<T1?, T2?, T3?, T4?, T5?, T6?>>
+public class TupleSerializer<T1, T2, T3, T4, T5, T6> : IYamlSerializer<Tuple<T1?, T2?, T3?, T4?, T5?, T6?>>
 {
-    public override void Write<X>(WriteContext<X> context, Tuple<T1?, T2?, T3?, T4?, T5?, T6?> value, DataStyle style)
+    public void Write<X>(WriteContext<X> context, Tuple<T1?, T2?, T3?, T4?, T5?, T6?> value, DataStyle style) where X : Node
     {
         context.BeginSequence("!Tuple6", style)
             .Write(value!.Item1, DataStyle.Compact)
@@ -191,7 +191,7 @@ public class TupleSerializer<T1, T2, T3, T4, T5, T6> : YamlSerializer<Tuple<T1?,
             .End(context);
     }
 
-    public override async ValueTask<Tuple<T1?, T2?, T3?, T4?, T5?, T6?>?> Read(Scope scope, Tuple<T1?, T2?, T3?, T4?, T5?, T6?>? parseResult)
+    public async ValueTask<Tuple<T1?, T2?, T3?, T4?, T5?, T6?>> Read(Scope scope, Tuple<T1?, T2?, T3?, T4?, T5?, T6?>? parseResult)
     {
         var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
@@ -217,17 +217,17 @@ public struct Tuple6Factory : IYamlSerializerFactory
         resolver.Register(this, typeof(Tuple<,,,,,>), typeof(IComparable));
         resolver.Register(this, typeof(Tuple<,,,,,>), typeof(ITuple));
     }
-    public YamlSerializer Instantiate(Type type)
+    public IYamlSerializer Instantiate(Type type)
     {
         var gen = typeof(TupleSerializer<,,,,,>);
         var genParams = type.GenericTypeArguments;
         var fillGen = gen.MakeGenericType(genParams);
-        return (YamlSerializer)Activator.CreateInstance(fillGen)!;
+        return (IYamlSerializer)Activator.CreateInstance(fillGen)!;
     }
 }
-public class TupleSerializer<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<Tuple<T1?, T2?, T3?, T4?, T5?, T6?, T7?>>
+public class TupleSerializer<T1, T2, T3, T4, T5, T6, T7> : IYamlSerializer<Tuple<T1?, T2?, T3?, T4?, T5?, T6?, T7?>>
 {
-    public override void Write<X>(WriteContext<X> context, Tuple<T1?, T2?, T3?, T4?, T5?, T6?, T7?> value, DataStyle style)
+    public void Write<X>(WriteContext<X> context, Tuple<T1?, T2?, T3?, T4?, T5?, T6?, T7?> value, DataStyle style) where X : Node
     {
         context.BeginSequence("!Tuple7", style)
             .Write(value!.Item1, DataStyle.Compact)
@@ -240,7 +240,7 @@ public class TupleSerializer<T1, T2, T3, T4, T5, T6, T7> : YamlSerializer<Tuple<
             .End(context);
     }
 
-    public override async ValueTask<Tuple<T1?, T2?, T3?, T4?, T5?, T6?, T7?>?> Read(Scope scope, Tuple<T1?, T2?, T3?, T4?, T5?, T6?, T7?>? parseResult)
+    public async ValueTask<Tuple<T1?, T2?, T3?, T4?, T5?, T6?, T7?>> Read(Scope scope, Tuple<T1?, T2?, T3?, T4?, T5?, T6?, T7?>? parseResult)
     {
         var scalarScope = scope.As<SequenceScope>();
         var scalarList = scalarScope.ToList();
@@ -266,11 +266,11 @@ public struct Tuple7Factory : IYamlSerializerFactory
         resolver.Register(this, typeof(Tuple<,,,,,,>), typeof(IComparable));
         resolver.Register(this, typeof(Tuple<,,,,,,>), typeof(ITuple));
     }
-    public YamlSerializer Instantiate(Type type)
+    public IYamlSerializer Instantiate(Type type)
     {
         var gen = typeof(TupleSerializer<,,,,,,>);
         var genParams = type.GenericTypeArguments;
         var fillGen = gen.MakeGenericType(genParams);
-        return (YamlSerializer)Activator.CreateInstance(fillGen)!;
+        return (IYamlSerializer)Activator.CreateInstance(fillGen)!;
     }
 }

@@ -4,14 +4,14 @@ using Stride.Core;
 
 namespace NexYaml.Serializers;
 
-public class UriSerializer : YamlSerializer<Uri>
+public class UriSerializer : IYamlSerializer<Uri>
 {
-    public override void Write<X>(WriteContext<X> context, Uri value, DataStyle style)
+    public void Write<X>(WriteContext<X> context, Uri value, DataStyle style) where X : Node
     {
         context.WriteScalar(value.ToString());
     }
 
-    public override ValueTask<Uri?> Read(Scope scope, Uri? parseResult)
+    public ValueTask<Uri> Read(Scope scope, Uri? parseResult)
     {
         var scalarScope = scope.As<ScalarScope>();
         return new(new Uri(scalarScope.Value, UriKind.RelativeOrAbsolute));

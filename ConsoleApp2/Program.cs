@@ -17,14 +17,14 @@ class Program
 }
 public record Person(int Id, string Name, bool Female);
 
-public class PersonSerializer : YamlSerializer<Person>
+public class PersonSerializer : IYamlSerializer<Person>
 {
 
-    public override void Write<X>(NexYaml.Serialization.WriteContext<X> context, Person value, DataStyle style)
+    public void Write<X>(NexYaml.Serialization.WriteContext<X> context, Person value, DataStyle style) where X : NexYaml.Serialization.Node
     {
         throw new NotImplementedException();
     }
-    public override async ValueTask<Person?> Read(Scope scope, Person parseResult)
+    public ValueTask<Person> Read(Scope scope, Person? parseResult)
     {
         var mapping = scope.As<SequenceScope>();
         int id = default;
@@ -35,6 +35,6 @@ public class PersonSerializer : YamlSerializer<Person>
 
         }
 
-        return new Person(id, name, female);
+        return new(new Person(id, name, female));
     }
 }

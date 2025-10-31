@@ -6,7 +6,7 @@ using NexYaml.Serializers;
 namespace NexYaml;
 /// <summary>
 /// Default Implementation for a <see cref="IYamlSerializerResolver"/> Registry to retrieve the types from.
-/// Will be used if no <see cref="IYamlSerializerResolver"/> is given in the <see cref="YamlSerializerOptions"/> when using <see cref="YamlSerializer"/>
+/// Will be used if no <see cref="IYamlSerializerResolver"/> is given in the <see cref="YamlSerializerOptions"/> when using <see cref="IYamlSerializer"/>
 /// </summary>
 public class NexYamlSerializerRegistry : IYamlSerializerResolver
 {
@@ -18,11 +18,11 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
         return SerializerRegistry.TypeMap[alias];
     }
 
-    public YamlSerializer<T> GetSerializer<T>()
+    public IYamlSerializer<T> GetSerializer<T>()
     {
         if (SerializerRegistry.DefinedSerializers.TryGetValue(typeof(T), out var serializer))
         {
-            return (YamlSerializer<T>)serializer;
+            return (IYamlSerializer<T>)serializer;
         }
         // search if there is a Factory
         if (SerializerRegistry.SerializerFactory.TryGetValue(typeof(T), out var s2))
@@ -32,7 +32,7 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
             {
                 var tempSerializer = t.Instantiate(typeof(T));
                 SerializerRegistry.DefinedSerializers[typeof(T)] = tempSerializer;
-                return (YamlSerializer<T>)tempSerializer;
+                return (IYamlSerializer<T>)tempSerializer;
             }
         }
         var s = EmptySerializer<T>.EmptyS();
@@ -56,7 +56,7 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
         }
     }
 
-    public YamlSerializer GetSerializer(Type type, Type origin)
+    public IYamlSerializer GetSerializer(Type type, Type origin)
     {
         // search if the actual type is in the standard serializers
         if (SerializerRegistry.DefinedSerializers.TryGetValue(type, out var serializer1))
@@ -76,8 +76,8 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
         }
         var genericSerializer = typeof(EmptySerializer<>);
         var genericType = genericSerializer.MakeGenericType(origin);
-        var emptySerializer = (YamlSerializer?)Activator.CreateInstance(genericType);
-        return emptySerializer!;
+        var emptySerializer = (IYamlSerializer)Activator.CreateInstance(genericType)!;
+        return emptySerializer;
     }
     static bool s_isReady = false;
 #if NET9_0_OR_GREATER
@@ -139,7 +139,7 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
         }
     }
 
-    public void RegisterSerializer<T>(YamlSerializer<T> serializer)
+    public void RegisterSerializer<T>(IYamlSerializer<T> serializer)
     {
         var keyType = typeof(T);
         SerializerRegistry.DefinedSerializers[keyType] = serializer;
@@ -173,7 +173,7 @@ internal class SerializerRegistry
     internal Dictionary<Type, Type> GenericSerializerBuffer { get; } = new Dictionary<Type, Type>(new GenericEqualityComparer());
     internal Dictionary<string, Type> TypeMap { get; } = [];
     internal Dictionary<Type, string> AliasMap { get; } = [];
-    internal Dictionary<Type, YamlSerializer> DefinedSerializers { get; } = new Dictionary<Type, YamlSerializer>()
+    internal Dictionary<Type, IYamlSerializer> DefinedSerializers { get; } = new Dictionary<Type, IYamlSerializer>()
     {
             // Primitive
             { typeof(short), new Int16Serializer() },

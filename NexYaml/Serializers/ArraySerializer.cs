@@ -4,9 +4,9 @@ using Stride.Core;
 
 namespace NexYaml.Serializers;
 
-public class ArraySerializer<T> : YamlSerializer<T?[]>
+public class ArraySerializer<T> : IYamlSerializer<T?[]>
 {
-    public override void Write<X>(WriteContext<X> context, T?[] value, DataStyle style)
+    public void Write<X>(WriteContext<X> context, T?[] value, DataStyle style) where X : Node
     {
         if (value.Length == 0)
         {
@@ -21,7 +21,7 @@ public class ArraySerializer<T> : YamlSerializer<T?[]>
         result.End(context);
     }
 
-    public override async ValueTask<T?[]?> Read(Scope scope, T?[]? parseResult)
+    public async ValueTask<T?[]> Read(Scope scope, T?[]? parseResult = null)
     {
         var sequenceScope = scope.As<SequenceScope>();
         var list = new List<T?>();

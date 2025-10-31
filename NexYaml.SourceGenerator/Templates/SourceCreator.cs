@@ -15,8 +15,7 @@ internal static class SourceCreator
         var isEmpty = package.MemberSymbols.Count == 0;
         foreach (var member in package.MemberSymbols)
         {
-
-                tempVariables.AppendLine($"var temp_{member.Name} = context.DataMemberMode == DataMemberMode.Content ? ({info.NameDefinition})context.Value : default({member.Type});");
+            tempVariables.AppendLine($"var temp_{member.Name} = context.DataMemberMode == DataMemberMode.Content ? ({info.NameDefinition})context.Value : default({member.Type});");
         }
         var tag = package.ClassInfo.AliasTag?.Length == 0 ?
             $"{info.NameSpace}.{info.TypeName},{info.NameSpace.Split('.')[0]}" :
@@ -174,12 +173,12 @@ file sealed class {{info.GeneratorName + info.TypeParameterArguments}} : YamlSer
     {{(info.DataStyle != "DataStyle.Any" ? $"protected override DataStyle Style =>{info.DataStyle};" : "")}}
     {{package.CreateUTF8Members()}}
 
-    public override void Write<X>(WriteContext<X> context, {{info.NameDefinition}} value, DataStyle style)
+    public void Write<X>(WriteContext<X> context, {{info.NameDefinition}} value, DataStyle style) where X : Node
     {
         {{writeString}}
     }
 
-    public override async ValueTask<{{info.NameDefinition}}> Read(Scope scope, {{info.NameDefinition}} context)
+    public async ValueTask<{{info.NameDefinition}}> Read(Scope scope, {{info.NameDefinition}} context)
     {
 
 {{objTempVariables}}

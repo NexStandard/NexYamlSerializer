@@ -6,21 +6,31 @@ class ValueScopeFactory
 {
     public Scope Parse(ScopeContext context, string val, int indent, string tag)
     {
-        if (val.StartsWith('!') && val != YamlCodes.Null)
+        var valSpan = val.AsSpan();
+        if (valSpan.StartsWith('!') && val != YamlCodes.Null)
         {
-            var segs = val.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
-            string childTag = segs[0];
-            string rest = segs.Length > 1 ? segs[1].Trim() : string.Empty;
+            var spaceIdx = valSpan.IndexOf(' ');
+            var childTag = valSpan[..spaceIdx].ToString();
+
+            // Skip spaces
+            do
+            {
+                spaceIdx++;
+            } while (spaceIdx < valSpan.Length && valSpan[spaceIdx] == ' ');
+
+            // Skip first character
+            // Replicated the base logic, but not sure why we would skip the first character of what's after the space though -Eideren
+            string rest = spaceIdx + 1 < val.Length ? valSpan[(spaceIdx + 1)..].ToString() : string.Empty;
             return Parse(context, rest, indent, childTag);
         }
 
-        if (IsQuoted(val))
+        if (IsQuoted(valSpan))
             return new ScalarScope(Unquote(val), indent, context, tag);
-        if (val.StartsWith('|'))
-            return new ScalarScope(ParseLiteralScalar(context, indent, val[1]), indent, context, tag);
-        if (val.StartsWith('{') && val.EndsWith('}'))
+        if (valSpan.StartsWith('|'))
+            return new ScalarScope(ParseLiteralScalar(context, indent, valSpan[1]), indent, context, tag);
+        if (valSpan.StartsWith('{') && valSpan.EndsWith('}'))
             return MappingScope.ParseFlow(context, val, indent, tag);
-        if (val.StartsWith('[') && val.EndsWith(']'))
+        if (valSpan.StartsWith('[') && valSpan.EndsWith(']'))
             return SequenceScope.ParseFlow(context, val, indent, tag);
 
         return new ScalarScope(val, indent, context, tag);
@@ -48,25 +58,25 @@ class ValueScopeFactory
 
             context.Reader.Move();
 
-            string content = lineIndent >= indent
-                ? next.Substring(indent)
-                : next;
+            if (lineIndent >= indent)
+                sb.Append(next.AsSpan()[indent..]);
+            else
+                sb.Append(next);
 
-            sb.Append(content);
             sb.Append('\n'); // normalize to LF
         }
-
-        string result = sb.ToString();
 
         // Apply chomping
         if (chompHint == '+')
         {
             // Strip exactly one trailing newline if present
-            if (result.EndsWith('\n'))
-                result = result.Substring(0, result.Length - 1);
+            if (sb[^1] == '\n')
+            {
+                sb.Remove(sb.Length - 1, 1);
+            }
         }
 
-        return result;
+        return sb.ToString();
     }
 
     protected static int CountIndent(string line)
@@ -84,8 +94,8 @@ class ValueScopeFactory
             int spaceIdx = itemSpan.IndexOf(' ');
             if (spaceIdx >= 0)
             {
-                childTag = itemSpan.Slice(0, spaceIdx).ToString();
-                itemSpan = itemSpan.Slice(spaceIdx + 1).Trim();
+                childTag = itemSpan[..spaceIdx].ToString();
+                itemSpan = itemSpan[(spaceIdx + 1)..].Trim();
             }
             else
             {
@@ -97,8 +107,8 @@ class ValueScopeFactory
     protected static bool IsQuoted(ReadOnlySpan<char> s)
     {
         return s.Length >= 2 &&
-               ((s[0] == '\"' && s[s.Length - 1] == '\"') ||
-                (s[0] == '\'' && s[s.Length - 1] == '\''));
+               ((s[0] == '\"' && s[^1] == '\"') ||
+                (s[0] == '\'' && s[^1] == '\''));
     }
     protected static string Unquote(string s)
     {

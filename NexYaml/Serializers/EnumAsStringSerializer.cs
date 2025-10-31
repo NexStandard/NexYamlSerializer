@@ -6,7 +6,7 @@ using Stride.Core;
 
 namespace NexYaml.Serializers;
 
-public class EnumAsStringSerializer<T> : YamlSerializer<T>
+public class EnumAsStringSerializer<T> : IYamlSerializer<T>
     where T : Enum
 {
     private static readonly Dictionary<string, T> NameValueMapping;
@@ -60,7 +60,7 @@ public class EnumAsStringSerializer<T> : YamlSerializer<T>
         return buf.ToString();
     }
 
-    public override void Write<X>(WriteContext<X> context, T value, DataStyle style)
+    public void Write<X>(WriteContext<X> context, T value, DataStyle style) where X : Node
     {
         if (ValueNameMapping.TryGetValue(value, out var name))
         {
@@ -72,7 +72,7 @@ public class EnumAsStringSerializer<T> : YamlSerializer<T>
         }
     }
 
-    public override ValueTask<T?> Read(Scope scope, T? parseResult)
+    public ValueTask<T> Read(Scope scope, T? parseResult)
     {
         throw new NotImplementedException();
     }

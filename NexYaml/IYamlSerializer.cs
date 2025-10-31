@@ -6,12 +6,12 @@ namespace NexYaml;
 /// <summary>
 /// Provides methods for serializing/deserializing objects to YAML format.
 /// </summary>
-public abstract class YamlSerializer
+public interface IYamlSerializer
 {
     /// <summary>
-    /// Gets the prefered <see cref="DataStyle"/>
+    /// Gets the preferred <see cref="DataStyle"/>
     /// </summary>
-    protected virtual DataStyle Style { get; } = DataStyle.Any;
+    DataStyle Style { get; }
 
     /// <summary>
     /// Serializes the specified object into YAML.
@@ -20,25 +20,27 @@ public abstract class YamlSerializer
     /// <param name="context">The <see cref="WriteContext{T}"/>.</param>
     /// <param name="value">The object to serialize.</param>
     /// <param name="style">The <see cref="DataStyle"/>.</param>
-    public abstract void Write<X>(WriteContext<X> context, object value, DataStyle style) where X : Node;
-    public abstract ValueTask<object?> ReadUnknown(Scope scope, object? context);
-    public abstract ValueTask<object?> ReadUnknown(Scope scope);
+    void Write<X>(WriteContext<X> context, object value, DataStyle style) where X : Node;
+    ValueTask<object?> ReadUnknown(Scope scope, object? context);
+    ValueTask<object?> ReadUnknown(Scope scope);
 }
 /// <summary>
 /// Provides methods for serializing and deserializing objects of type <typeparamref name="T"/> to/from YAML.
 /// </summary>
 /// <typeparam name="T">The type handled by the serializer.</typeparam>
-public abstract class YamlSerializer<T> : YamlSerializer
+public interface IYamlSerializer<T> : IYamlSerializer
 {
-    public override void Write<X>(WriteContext<X> context, object value, DataStyle style)
+    DataStyle IYamlSerializer.Style => DataStyle.Any;
+
+    void IYamlSerializer.Write<X>(WriteContext<X> context, object value, DataStyle style)
     {
         Write(context, (T)value, style);
     }
-    public override async ValueTask<object?> ReadUnknown(Scope scope, object? parseResult)
+    async ValueTask<object?> IYamlSerializer.ReadUnknown(Scope scope, object? parseResult)
     {
-        return await Read(scope, (T)parseResult);
+        return await Read(scope, (T?)parseResult);
     }
-    public override async ValueTask<object?> ReadUnknown(Scope scope)
+    async ValueTask<object?> IYamlSerializer.ReadUnknown(Scope scope)
     {
         return await Read(scope);
     }
@@ -50,11 +52,7 @@ public abstract class YamlSerializer<T> : YamlSerializer
     /// <param name="context">The <see cref="WriteContext{T}"/>.</param>
     /// <param name="value">The value to serialize.</param>
     /// <param name="style">The <see cref="DataStyle"/>.</param>
-    public abstract void Write<X>(WriteContext<X> context, T value, DataStyle style) where X : Node;
+    public void Write<X>(WriteContext<X> context, T value, DataStyle style) where X : Node;
 
-    public abstract ValueTask<T?> Read(Scope scope, T? parseResult);
-    public ValueTask<T?> Read(Scope scope)
-    {
-        return Read(scope, default);
-    }
+    public ValueTask<T> Read(Scope scope, T? parseResult = default);
 }

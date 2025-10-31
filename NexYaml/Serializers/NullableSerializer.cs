@@ -4,23 +4,23 @@ using Stride.Core;
 
 namespace NexYaml.Serializers;
 
-internal class NullableSerializer<T> : YamlSerializer<Nullable<T>>
+internal class NullableSerializer<T> : IYamlSerializer<T?>
     where T : struct
 {
-    public override void Write<X>(Serialization.WriteContext<X> context, T? value, DataStyle style)
+    public void Write<X>(WriteContext<X> context, T? value, DataStyle style) where X : Node
     {
         // do nothing?
     }
 
-    public override async ValueTask<T?> Read(Scope scope, T? parseResult)
+    public async ValueTask<T?> Read(Scope scope, T? parseResult)
     {
         if (parseResult.HasValue)
         {
-            return new T?(await scope.Read<T>(parseResult.Value));
+            return await scope.Read(parseResult.Value);
         }
         else
         {
-            return new T?(await scope.Read<T>());
+            return await scope.Read<T>();
         }
     }
 }
@@ -33,11 +33,11 @@ public struct NullableFactory : IYamlSerializerFactory
         resolver.Register(this, typeof(Nullable<>), typeof(Nullable<>));
         resolver.Register(this, typeof(Nullable<>), typeof(System.ValueType));
     }
-    public YamlSerializer Instantiate(Type type)
+    public IYamlSerializer Instantiate(Type type)
     {
         var gen = typeof(NullableSerializer<>);
         var genParams = type.GenericTypeArguments;
         var fillGen = gen.MakeGenericType(genParams);
-        return (YamlSerializer)Activator.CreateInstance(fillGen)!;
+        return (IYamlSerializer)Activator.CreateInstance(fillGen)!;
     }
 }

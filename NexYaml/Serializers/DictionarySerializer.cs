@@ -1,77 +1,69 @@
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
-using Stride.Core.Extensions;
 
 namespace NexYaml.Serializers;
 
 [CustomYamlSerializer(TargetType = typeof(Dictionary<,>))]
-public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey, TValue?>>
+public class DictionarySerializer<TKey, TValue> : IYamlSerializer<Dictionary<TKey, TValue?>>
     where TKey : notnull
 {
-    public override void Write<X>(WriteContext<X> context, Dictionary<TKey, TValue?> value, DataStyle style)
+    public void Write<X>(WriteContext<X> context, Dictionary<TKey, TValue?> value, DataStyle style) where X : Node
     {
+        if (value.Count == 0)
+        {
+            context.WriteEmptySequence("!Dictionary");
+            return;
+        }
+
         if (IsPrimitive(typeof(TKey)))
         {
-            if (value!.Count == 0)
-            {
-                context.WriteEmptyMapping("!Dictionary");
-            }
-            else
-            {
-                var resultContext = context.BeginMapping("!Dictionary", style);
+            var resultContext = context.BeginMapping("!Dictionary", style);
 
-                foreach (var x in value)
-                {
-                    resultContext = resultContext.Write(x.Key.ToString()!, x.Value, style);
-                }
-                resultContext.End(context);
+            foreach (var x in value)
+            {
+                resultContext = resultContext.Write(x.Key.ToString() ?? "", x.Value, style);
             }
+            resultContext.End(context);
         }
         else
         {
-            if (value.Count == 0)
+            var serializer = new ListSerializer<KeyValuePair<TKey, TValue?>>()
             {
-                context.WriteEmptySequence("!Dictionary");
-            }
-            else
-            {
-                var serializer = new ListSerializer<KeyValuePair<TKey, TValue?>>()
-                {
-                    CustomTag = "!Dictionary"
-                };
-                serializer.Write(context, value.ToList(), style);
-            }
+                CustomTag = "!Dictionary"
+            };
+            serializer.Write(context, value.ToList(), style);
         }
     }
 
-    public override async ValueTask<Dictionary<TKey, TValue?>?> Read(Scope scope, Dictionary<TKey, TValue?>? parseResult)
+    public async ValueTask<Dictionary<TKey, TValue?>> Read(Scope scope, Dictionary<TKey, TValue?>? parseResult)
     {
+        // This method accepts null for parseResult, but the body of this method would throw in such a case.
+        // I think it would be best if we ctor one in the edge case where it is null ? -Eideren
 
-        Dictionary<TKey, TValue?>? map = parseResult ;
-        if (scope is MappingScope mapping && DictionarySerializer<TKey, TValue>.IsPrimitive(typeof(TKey)))
+        var map = parseResult ?? new();
+        if (scope is MappingScope mapping && IsPrimitive(typeof(TKey)))
         {
-            List<ValueTask<KeyValuePair<TKey, TValue?>>> tasks = new();
+            var tasks = new List<ValueTask<KeyValuePair<TKey, TValue?>>>();
             foreach (var kvp in mapping)
             {
                 var key = ParsePrimitive<TKey>(kvp.Key);
                 var value = kvp.Value.Read<TValue>();
-                tasks.Add(DictionarySerializer<TKey, TValue>.ConvertToKeyValuePair(key!, value));
+                tasks.Add(ConvertToKeyValuePair(key, value));
             }
             foreach(var result in tasks)
             {
                 var kvp = await result;
                 map.Add(kvp.Key,kvp.Value);
             }
-            return map;
         }
         else
         {
             var listSerializer = new ListSerializer<KeyValuePair<TKey, TValue?>>();
-            var kvp = await listSerializer.Read(scope, default);
+            var kvp = await listSerializer.Read(scope, null);
 
-            // can't be null as !!null wouldnt reach this serializer
-            kvp!.ForEach(x => map.Add(x.Key!, x.Value));
+            // can't be null as !!null wouldn't reach this serializer
+            kvp.ForEach(x => map.Add(x.Key, x.Value));
         }
         return map;
     }
@@ -107,18 +99,6 @@ public class DictionarySerializer<TKey, TValue> : YamlSerializer<Dictionary<TKey
     private static bool IsPrimitive(Type type)
     {
         return type.IsPrimitive ||
-               type == typeof(bool) ||
-               type == typeof(byte) ||
-               type == typeof(sbyte) ||
-               type == typeof(char) ||
-               type == typeof(short) ||
-               type == typeof(ushort) ||
-               type == typeof(int) ||
-               type == typeof(uint) ||
-               type == typeof(long) ||
-               type == typeof(ulong) ||
-               type == typeof(float) ||
-               type == typeof(double) ||
                type == typeof(decimal) ||
                type == typeof(string) ||
                type == typeof(DateTime) ||
@@ -138,29 +118,23 @@ internal class DictionarySerializerFactory : IYamlSerializerFactory
         resolver.Register(this, typeof(Dictionary<,>), typeof(IReadOnlyDictionary<,>));
     }
 
-    public YamlSerializer Instantiate(Type type)
+    public IYamlSerializer Instantiate(Type type)
     {
-        if (type.GetGenericTypeDefinition() == typeof(IDictionary<,>))
+        var generatorType = typeof(DictionarySerializer<,>);
+        var genericParams = type.GenericTypeArguments;
+
+        var genericTypeDefinition = type.GetGenericTypeDefinition();
+        Type filledGeneratorType;
+        if (genericTypeDefinition == typeof(IDictionary<,>)
+            || genericTypeDefinition == typeof(IReadOnlyDictionary<,>))
         {
-            var generatorType = typeof(DictionarySerializer<,>);
-            var genericParams = type.GenericTypeArguments;
-            var param = new Type[] { genericParams[0], genericParams[1] };
-            var filledGeneratorType = generatorType.MakeGenericType(param);
-            return (YamlSerializer)Activator.CreateInstance(filledGeneratorType)!;
+            filledGeneratorType = generatorType.MakeGenericType(genericParams[0], genericParams[1]);
+        }
+        else
+        {
+            filledGeneratorType = generatorType.MakeGenericType(genericParams);
         }
 
-        if (type.GetGenericTypeDefinition() == typeof(IReadOnlyDictionary<,>))
-        {
-            var generatorType = typeof(DictionarySerializer<,>);
-            var genericParams = type.GenericTypeArguments;
-            var param = new Type[] { genericParams[0], genericParams[1] };
-            var filledGeneratorType = generatorType.MakeGenericType(param);
-            return (YamlSerializer)Activator.CreateInstance(filledGeneratorType)!;
-        }
-
-        var gen = typeof(DictionarySerializer<,>);
-        var genParams = type.GenericTypeArguments;
-        var fillGen = gen.MakeGenericType(genParams);
-        return (YamlSerializer)Activator.CreateInstance(fillGen)!;
+        return (IYamlSerializer)Activator.CreateInstance(filledGeneratorType)!;
     }
 }
