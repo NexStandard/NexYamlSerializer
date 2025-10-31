@@ -22,10 +22,10 @@ internal static class CreateFromParent
     public IYamlSerializer Instantiate(Type type)
     {
         var genericTypeDefinition = type.GetGenericTypeDefinition();
-{{w}}
         var gen = typeof({{package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}});
         var genParams = type.GenericTypeArguments;
         var fillGen = gen.MakeGenericType(genParams);
+{{w}}
         return (IYamlSerializer)Activator.CreateInstance(fillGen)!;
     }
 """;
@@ -35,8 +35,6 @@ internal static class CreateFromParent
             s = $$"""
             public IYamlSerializer Instantiate(Type type)
             {
-                var generatorType = typeof({{package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}});
-                var genericParams = type.GenericTypeArguments;
         {{w}}
                 return new {{package.ClassInfo.GeneratorName}}();
             }
@@ -60,7 +58,10 @@ internal static class CreateFromParent
                 stringBuilder.AppendLine($$"""
                         if({{compare}} == typeof({{data.ShortDisplayString}})) 
                         {
+                            var generatorType = typeof({{package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}});
+                            var genericParams = type.GenericTypeArguments;
                             var param = {{indexArray}};
+                         
                             var filledGeneratorType = generatorType.MakeGenericType(param);
                             return ({{cast}})Activator.CreateInstance(filledGeneratorType)!;
                         }
