@@ -168,9 +168,9 @@ file sealed class ExternWrapper{{info.TypeParameterArguments}} {{info.TypeParame
 {{package.CreateExternCalls()}}
 }
 [System.CodeDom.Compiler.GeneratedCode("NexVYaml","1.0.0.0")]
-file sealed class {{info.GeneratorName + info.TypeParameterArguments}} : YamlSerializer<{{info.NameDefinition}}> {{info.TypeParameterRestrictions}}
+file sealed class {{info.GeneratorName + info.TypeParameterArguments}} : IYamlSerializer<{{info.NameDefinition}}> {{info.TypeParameterRestrictions}}
 {
-    {{(info.DataStyle != "DataStyle.Any" ? $"protected override DataStyle Style =>{info.DataStyle};" : "")}}
+    {{(info.DataStyle != "DataStyle.Any" ? $"private DataStyle Style =>{info.DataStyle};" : "private DataStyle Style => DataStyle.Any;")}}
     {{package.CreateUTF8Members()}}
 
     public void Write<X>(WriteContext<X> context, {{info.NameDefinition}} value, DataStyle style) where X : Node

@@ -9,31 +9,31 @@ internal static class CreateFromParent
         StringBuilder w = new();
         foreach (var inter in package.ClassInfo.AllInterfaces)
         {
-            w.Append(CreateIfs(package, inter, "YamlSerializer"));
+            w.Append(CreateIfs(package, inter, "IYamlSerializer"));
         }
         foreach (var inter in package.ClassInfo.AllAbstracts)
         {
-            w.Append(CreateIfs(package, inter, "YamlSerializer"));
+            w.Append(CreateIfs(package, inter, "IYamlSerializer"));
         }
         string s;
         if (package.ClassInfo.IsGeneric)
         {
             s = $$"""
-    public YamlSerializer Instantiate(Type type)
+    public IYamlSerializer Instantiate(Type type)
     {
         var genericTypeDefinition = type.GetGenericTypeDefinition();
 {{w}}
         var gen = typeof({{package.ClassInfo.GeneratorName + package.ClassInfo.TypeParameterArgumentsShort}});
         var genParams = type.GenericTypeArguments;
         var fillGen = gen.MakeGenericType(genParams);
-        return (YamlSerializer)Activator.CreateInstance(fillGen)!;
+        return (IYamlSerializer)Activator.CreateInstance(fillGen)!;
     }
 """;
         }
         else
         {
             s = $$"""
-            public YamlSerializer Instantiate(Type type)
+            public IYamlSerializer Instantiate(Type type)
             {
         {{w}}
                 return new {{package.ClassInfo.GeneratorName}}();
