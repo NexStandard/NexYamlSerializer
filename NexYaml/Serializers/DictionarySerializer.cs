@@ -38,10 +38,9 @@ public class DictionarySerializer<TKey, TValue> : IYamlSerializer<Dictionary<TKe
 
     public async ValueTask<Dictionary<TKey, TValue?>> Read(Scope scope, Dictionary<TKey, TValue?>? parseResult)
     {
-        // This method accepts null for parseResult, but the body of this method would throw in such a case.
-        // I think it would be best if we ctor one in the edge case where it is null ? -Eideren
-
         var map = parseResult ?? new();
+        map.Clear();
+
         if (scope is MappingScope mapping && IsPrimitive(typeof(TKey)))
         {
             var tasks = new List<ValueTask<KeyValuePair<TKey, TValue?>>>();

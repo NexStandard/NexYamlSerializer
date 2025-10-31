@@ -65,7 +65,9 @@ public class ListSerializer<T> : IYamlSerializer<List<T?>>
     public async ValueTask<List<T?>> Read(Scope scope, List<T?>? parseResult)
     {
         var sequenceScope = scope.As<SequenceScope>();
-        var list = new List<T?>();
+        var list =  parseResult ?? new List<T?>();
+        list.Clear();
+
         var tasks = new List<ValueTask<T?>>();
         foreach (var element in sequenceScope)
         {

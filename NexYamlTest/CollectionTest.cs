@@ -71,6 +71,26 @@ public class CollectionTest
         Assert.IsType<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>(d2[1]);
     }
     [Fact]
+    public async Task EmptyDictionary_int()
+    {
+        NexYamlSerializerRegistry.Init();
+        var dictionary = new Dictionary<int, TempData>();
+        var s = Yaml.Write(dictionary);
+        var d = await TestParser.Read<Dictionary<int, TempData>>(s);
+        Assert.NotNull(d);
+        Assert.Empty(d);
+    }
+    [Fact]
+    public async Task EmptyDictionary_Complex()
+    {
+        NexYamlSerializerRegistry.Init();
+        var dictionary = new Dictionary<TempData, TempData>();
+        var s = Yaml.Write(dictionary);
+        var d = await TestParser.Read<Dictionary<TempData, TempData>>(s);
+        Assert.NotNull(d);
+        Assert.Empty(d);
+    }
+    [Fact]
     public async Task EmitMixedCollectionCompact()
     {
         var list = new List<GenericAbstract<int, int>>
