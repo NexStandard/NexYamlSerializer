@@ -7,76 +7,18 @@ namespace NexYaml.Serializers;
 public class ListSerializer<T> : IYamlSerializer<List<T?>>
 {
     public string? CustomTag { get; init; }
+
     public void Write<X>(WriteContext<X> context, List<T?> value, DataStyle style) where X : Node
     {
-        bool hasIdentifiable = false;
-        if (value.Count == 0)
-        {
-            context.WriteEmptySequence(CustomTag ?? "!List");
-            return;
-        }
-        foreach (var item in value)
-        {
-            if (item is IIdentifiable)
-            {
-                hasIdentifiable = true;
-                break;
-            }
-        }
-        if (hasIdentifiable)
-        {
-            List<IIdentifiable> reservedIds = new();
-
-            for (var i = 0; i < value.Count; i++)
-            {
-                var element = value[i];
-                if (element is IIdentifiable identifiable
-                    && context.Writer.References.Add(identifiable.Id))
-                {
-                    reservedIds.Add(identifiable);
-                }
-            }
-            List<IIdentifiable> removedIds = new();
-            var resultContext = context.BeginSequence(CustomTag ?? "!List", style);
-            for (var i = 0; i < value.Count; i++)
-            {
-                var element = value[i];
-                if (element is IIdentifiable identifiable
-                    && reservedIds.Contains(identifiable) &&
-                    !removedIds.Contains(identifiable))
-                {
-                    context.Writer.References.Remove(identifiable.Id);
-                    removedIds.Add(identifiable);
-                }
-                resultContext = resultContext.Write(element, DataStyle.Any);
-            }
-            resultContext.End(context);
-            return;
-        }
-        var result = context.BeginSequence(CustomTag ?? "!List", style);
-
-        foreach (var x in value)
-        {
-            result = result.Write(x, DataStyle.Any);
-        }
-        result.End(context);
+        CollectionSerialization.WriteCollection<X, T, List<T?>>(context, value, style, "!List");
     }
 
     public async ValueTask<List<T?>> Read(Scope scope, List<T?>? parseResult)
     {
-        var sequenceScope = scope.As<SequenceScope>();
         var list =  parseResult ?? new List<T?>();
         list.Clear();
 
-        var tasks = new List<ValueTask<T?>>();
-        foreach (var element in sequenceScope)
-        {
-            tasks.Add(element.Read<T>());
-        }
-        foreach( var task in tasks)
-        {
-            list.Add(await task);
-        }
+        await CollectionSerialization.ReadCollection<T, List<T?>>(scope, list);
         return list;
     }
 }

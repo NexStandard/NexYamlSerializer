@@ -23,19 +23,31 @@ public class ArraySerializer<T> : IYamlSerializer<T?[]>
 
     public async ValueTask<T?[]> Read(Scope scope, T?[]? parseResult = null)
     {
-        var sequenceScope = scope.As<SequenceScope>();
-        var list = parseResult?.ToList() ?? new List<T?>();
-        list.Clear();
-
         var tasks = new List<ValueTask<T?>>();
-        foreach (var element in sequenceScope)
+        foreach (var element in scope.As<SequenceScope>())
         {
             tasks.Add(element.Read<T>());
         }
-        foreach (var task in tasks)
+
+        if (parseResult != null)
         {
-            list.Add(await task);
+            for (var i = 0; i < tasks.Count; i++)
+            {
+                var result = await tasks[i];
+                if (i < parseResult.Length)
+                    parseResult[i] = result;
+            }
+
+            return parseResult;
         }
-        return list.ToArray();
+        else
+        {
+            var list = new List<T?>();
+            foreach (var task in tasks)
+            {
+                list.Add(await task);
+            }
+            return list.ToArray();
+        }
     }
 }
