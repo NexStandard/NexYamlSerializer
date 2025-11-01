@@ -68,8 +68,8 @@ namespace NexYaml.Parser
             Indent = indent;
             Context = context;
         }
- 
-        protected static string ParseLiteralScalar(ScopeContext context, int indent, char chompHint)
+
+        public static string ParseLiteralScalar(ScopeContext context, int indent, char chompHint)
         {
             var sb = new System.Text.StringBuilder();
 
@@ -81,64 +81,63 @@ namespace NexYaml.Parser
 
                 context.Reader.Move();
 
-                string content = lineIndent >= indent
-                    ? next.Substring(indent)
-                    : next;
+                if (lineIndent >= indent)
+                    sb.Append(next.AsSpan()[indent..]);
+                else
+                    sb.Append(next);
 
-                sb.Append(content);
                 sb.Append('\n'); // normalize to LF
             }
-
-            string result = sb.ToString();
 
             // Apply chomping
             if (chompHint == '+')
             {
                 // Strip exactly one trailing newline if present
-                if (result.EndsWith('\n'))
-                    result = result.Substring(0, result.Length - 1);
+                if (sb[^1] == '\n')
+                {
+                    sb.Remove(sb.Length - 1, 1);
+                }
             }
 
-            return result;
+            return sb.ToString();
         }
 
-        public static void ExtractTag(ref ReadOnlySpan<char> itemSpan, ref string childTag)
+        public static void ExtractTag(ref ReadOnlySpan<char> itemSpan, out ReadOnlySpan<char> childTag)
         {
             if (!itemSpan.IsEmpty && itemSpan[0] == '!' && !itemSpan.SequenceEqual(YamlCodes.Null.AsSpan()))
             {
                 int spaceIdx = itemSpan.IndexOf(' ');
                 if (spaceIdx >= 0)
                 {
-                    childTag = itemSpan.Slice(0, spaceIdx).ToString();
-                    itemSpan = itemSpan.Slice(spaceIdx + 1).Trim();
+                    childTag = itemSpan[..spaceIdx];
+                    itemSpan = itemSpan[(spaceIdx + 1)..].Trim();
                 }
                 else
                 {
-                    childTag = itemSpan.ToString();
+                    childTag = itemSpan;
                     itemSpan = ReadOnlySpan<char>.Empty;
                 }
             }
+            else
+            {
+                childTag = ReadOnlySpan<char>.Empty;
+            }
         }
-        public static bool IsQuoted(string s)
+
+        public static bool TryGetQuotedText(ReadOnlySpan<char> s, out ReadOnlySpan<char> unquoted)
         {
-            return s.Length >= 2 &&
-                   ((s.StartsWith('\"') && s.EndsWith('\"')) ||
-                    (s.StartsWith('\'') && s.EndsWith('\'')));
+            if (s.Length >= 2 &&
+                ((s[0] == '\"' && s[^1] == '\"') ||
+                 (s[0] == '\'' && s[^1] == '\'')))
+            {
+                unquoted = s.Slice(1, s.Length - 2);
+                return true;
+            }
+
+            unquoted = default;
+            return false;
         }
-        public static bool IsQuoted(ReadOnlySpan<char> s)
-        {
-            return s.Length >= 2 &&
-                   ((s[0] == '\"' && s[s.Length - 1] == '\"') ||
-                    (s[0] == '\'' && s[s.Length - 1] == '\''));
-        }
-        public static string Unquote(string s)
-        {
-            return IsQuoted(s) ? s.Substring(1, s.Length - 2) : s;
-        }
-        public static ReadOnlySpan<char> Unquote(ReadOnlySpan<char> s)
-        {
-            return IsQuoted(s) ? s.Slice(1, s.Length - 2) : s;
-        }
+
         public static int CountIndent(string line)
         {
             int i = 0;
@@ -146,6 +145,7 @@ namespace NexYaml.Parser
                 i++;
             return i;
         }
+
         public static IEnumerable<string> SplitFlowItems(string input)
         {
             int depth = 0;
@@ -159,51 +159,54 @@ namespace NexYaml.Parser
             {
                 char c = input[i];
 
-                if (inQuotes)
+                switch (c)
                 {
-                    if (c == quoteChar) inQuotes = false;
-                    continue;
+                    case '"' or '\'':
+                        if (inQuotes)
+                        {
+                            if (c == quoteChar)
+                                inQuotes = false;
+                        }
+                        else
+                        {
+                            inQuotes = true;
+                            quoteChar = c;
+                        }
+
+                        continue;
+
+                    case '!' when input.AsSpan()[tokenStart .. (i - tokenStart)].Trim().Length == 0:
+                        inTag = true;
+                        continue;
+
+                    case ' ' or '[' or '{' when inTag:
+                        inTag = false;
+                        goto YIELD_FROM_TOKEN_TO_I;
+                    case ',' when depth == 0 && !inTag:
+                        goto YIELD_FROM_TOKEN_TO_I;
+
+                    case '[' or '{':
+                        depth++;
+                        continue;
+                    case ']' or '}':
+                        depth--;
+                        continue;
                 }
 
-                if (c == '"' || c == '\'')
-                {
-                    inQuotes = true;
-                    quoteChar = c;
-                    continue;
-                }
+                continue;
 
-                if (c == '!' && string.IsNullOrWhiteSpace(input.Substring(tokenStart, i - tokenStart)))
-                {
-                    inTag = true;
-                }
-
-                if ((c == ' ' || c == '[' || c == '{') && inTag)
-                {
-                    inTag = false;
-                    var s = input.Substring(tokenStart, i - tokenStart).Trim();
-                    if (s.Length > 0)
-                        yield return s;
-                    tokenStart = i + 1;
-                    continue;
-                }
-
-                if (c == '[' || c == '{') depth++;
-                if (c == ']' || c == '}') depth--;
-
-                if (c == ',' && depth == 0 && !inTag)
-                {
-                    var s = input.Substring(tokenStart, i - tokenStart).Trim();
-                    if (s.Length > 0)
-                        yield return s;
-                    tokenStart = i + 1;
-                }
+                YIELD_FROM_TOKEN_TO_I:
+                var s = input.AsSpan()[tokenStart .. (i - tokenStart)].Trim();
+                if (s.Length > 0)
+                    yield return s.ToString();
+                tokenStart = i + 1;
             }
 
             if (tokenStart < input.Length)
             {
-                var s = input.Substring(tokenStart).Trim();
+                var s = input.AsSpan()[tokenStart..].Trim();
                 if (s.Length > 0)
-                    yield return s;
+                    yield return s.ToString();
             }
         }
     }

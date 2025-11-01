@@ -5,116 +5,105 @@ namespace NexYaml.Parser
 {
     public sealed class SequenceScope : Scope, IEnumerable<Scope>
     {
-        private int _count;
-        private bool nextGeneration = false;
-        private string value;
-        private bool flow;
-        internal SequenceScope(int nonsense, int indent, ScopeContext context, string tag, int initialCapacity = 10)
-: base(tag, indent, context)
+        private string? flowValue;
+
+        public override ScopeKind Kind => ScopeKind.Sequence;
+
+        internal SequenceScope(int indent, ScopeContext context, string tag) : base(tag, indent, context)
         {
-            nextGeneration = true;
-            _count = 0;
+            flowValue = null;
         }
-        internal SequenceScope(int nonsense, string value, int indent, ScopeContext context, string tag, int initialCapacity = 10)
-: base(tag, indent, context)
+
+        internal SequenceScope(string flowValueParam, int indent, ScopeContext context, string tag) : base(tag, indent, context)
         {
-            nextGeneration = true;
-            flow = true;
-            this.value = value;
-            _count = 0;
+            flowValue = flowValueParam;
         }
+
         public static SequenceScope Parse(ScopeContext context, int indent, string tag)
         {
-            var map = new SequenceScope(1, indent, context, tag);
-            return map;
+            return new SequenceScope(indent, context, tag);
         }
+
         public static SequenceScope ParseFlow(ScopeContext context, string value, int indent, string tag)
         {
-            return new SequenceScope(1, value, indent, context, tag);
+            return new SequenceScope(value, indent, context, tag);
         }
-        public override ScopeKind Kind => ScopeKind.Sequence;
 
         public IEnumerator<Scope> GetEnumerator()
         {
-            if (flow)
+            if (flowValue is not null)
             {
-                foreach(var ele in ParseSequenceFlow(Context, value, Indent, Tag))
+                foreach(var ele in ParseSequenceFlow(Context, flowValue, Indent))
                 {
                     yield return ele;
                 }
             }
             else
             {
-                foreach(var ele in ParseSequence(Context, Indent, Tag))
+                foreach(var ele in ParseSequence(Context, Indent))
                 {
                     yield return ele;
                 }
             }
         }
-        private IEnumerable<Scope> ParseSequence(ScopeContext context, int indent, string tag)
+
+        private IEnumerable<Scope> ParseSequence(ScopeContext context, int indent)
         {
             while (context.Reader.Peek(out var next))
             {
                 int lineIndent = CountIndent(next);
-                if (lineIndent < indent) yield break;
-                if (lineIndent != indent) yield break;
+                if (lineIndent != indent)
+                    yield break;
 
                 ReadOnlySpan<char> line = next.AsSpan(lineIndent);
-                if (line.Length == 0 || line[0] != '-') yield break;
+                if (line.Length == 0 || line[0] != '-')
+                    yield break;
 
                 // consume this line
                 context.Reader.Move();
 
                 // skip the leading '-' and any following spaces
-                int i = 1;
-                while (i < line.Length && line[i] == ' ')
-                    i++;
-
-                var itemSpan = line.Slice(i).Trim();
-                string childTag = string.Empty;
+                var itemSpan = line[1..].Trim();
 
                 // tag detection
-                ExtractTag(ref itemSpan, ref childTag);
+                ExtractTag(ref itemSpan, out var childTag);
 
                 if (itemSpan.Length > 0)
                 {
-                    // quoted scalar
-                    if (IsQuoted(itemSpan))
+                    switch (itemSpan[0])
                     {
-                        yield return new ScalarScope(Unquote(itemSpan.ToString()), indent + 2, context, childTag);
-                    }
-                    // literal block scalar
-                    else if (itemSpan[0] == '|')
-                    {
-                        yield return new ScalarScope(ParseLiteralScalar(Context, indent + 1, itemSpan[1]), indent + 2, context, childTag);
-                    }
-                    // flow mapping
-                    else if (itemSpan[0] == '{' && itemSpan[^1] == '}')
-                    {
-                        yield return MappingScope.ParseFlow(context, itemSpan.ToString(), indent + 2, childTag);
-                    }
-                    // flow sequence
-                    else if (itemSpan[0] == '[' && itemSpan[^1] == ']')
-                    {
-                        yield return ParseFlow(context, itemSpan.ToString(), indent + 2, childTag);
-                    }
-                    // inline mapping (key: value)
-                    else
-                    {
-                        int colonIdx = itemSpan.IndexOf(':');
-                        if (colonIdx >= 0)
-                        {
-                            var keySpan = itemSpan.Slice(0, colonIdx).Trim();
-                            var valSpan = colonIdx + 1 < itemSpan.Length
-                                ? itemSpan.Slice(colonIdx + 1).Trim()
-                                : ReadOnlySpan<char>.Empty;
+                        // quoted scalar
+                        case '\"' when TryGetQuotedText(itemSpan, out var unquotedItemSpan):
+                            yield return new ScalarScope(unquotedItemSpan.ToString(), indent + 2, context, childTag.ToString());
+                            continue;
+                        // literal block scalar
+                        case '|':
+                            yield return new ScalarScope(ParseLiteralScalar(Context, indent + 1, itemSpan[1]), indent + 2, context, childTag.ToString());
+                            continue;
+                        // flow mapping
+                        case '{' when itemSpan[^1] == '}':
+                            yield return MappingScope.ParseFlow(context, itemSpan.ToString(), indent + 2, childTag.ToString());
+                            continue;
+                        // flow sequence
+                        case '[' when itemSpan[^1] == ']':
+                            yield return ParseFlow(context, itemSpan.ToString(), indent + 2, childTag.ToString());
+                            continue;
+                        // inline mapping (key: value)
+                        default:
+                            int colonIdx = itemSpan.IndexOf(':');
+                            if (colonIdx >= 0)
+                            {
+                                var keySpan = itemSpan[..colonIdx].Trim();
+                                var valSpan = itemSpan[(colonIdx + 1)..].Trim();
 
-                            yield return new MappingScope(valSpan.ToString(), keySpan.ToString(), indent + 2, context, childTag);
-                        }
-                        else
-                        {
-                            yield return new ScalarScope(itemSpan.ToString(), indent + 2, context, childTag);
-                        }
+                                yield return new MappingScope(valSpan.ToString(), keySpan.ToString(), indent + 2, context, childTag.ToString());
+                            }
+                            else
+                            {
+                                yield return new ScalarScope(itemSpan.ToString(), indent + 2, context, childTag.ToString());
+                            }
+
+                            continue;
                     }
                 }
                 else
@@ -128,22 +117,24 @@ namespace NexYaml.Parser
                         if (nextIndent > indent)
                         {
                             if (nextTrim.Length > 0 && nextTrim[0] == '-')
-                                yield return Parse(context, indent + 2, childTag);
+                                yield return Parse(context, indent + 2, childTag.ToString());
                             else
-                                yield return MappingScope.Parse(context, indent + 2, childTag);
+                                yield return MappingScope.Parse(context, indent + 2, childTag.ToString());
                             continue;
                         }
                     }
 
-                    yield return new ScalarScope(string.Empty, indent + 2, context, childTag);
+                    yield return new ScalarScope(string.Empty, indent + 2, context, childTag.ToString());
                 }
             }
         }
-        public IEnumerable<Scope> ParseSequenceFlow(ScopeContext context, string value, int indent, string tag)
+
+        public IEnumerable<Scope> ParseSequenceFlow(ScopeContext context, string value, int indent)
         {
             var inner = value.Substring(1, value.Length - 2).Trim();
             if (inner.Length == 0)
                 yield break;
+
             string bufferedTag = string.Empty;
             foreach (var raw in SplitFlowItems(inner))
             {
@@ -173,8 +164,8 @@ namespace NexYaml.Parser
                     bufferedTag = string.Empty;
                 }
 
-                if (IsQuoted(item))
-                    yield return new ScalarScope(Unquote(item), indent + 2, context, childTag);
+                if (TryGetQuotedText(item, out var unquotedItem))
+                    yield return new ScalarScope(unquotedItem.ToString(), indent + 2, context, childTag);
                 else if (item.StartsWith('|'))
                     yield return new ScalarScope(ParseLiteralScalar(context, indent + 2, item[1]), indent + 2, context, childTag);
                 else if (item.StartsWith('{') && item.EndsWith('}'))
