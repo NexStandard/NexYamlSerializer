@@ -19,7 +19,6 @@ public class DictionarySerializer<TKey, TValue> : IYamlSerializer<Dictionary<TKe
         if (IsPrimitive(typeof(TKey)))
         {
             var resultContext = context.BeginMapping("!Dictionary", style);
-
             foreach (var x in value)
             {
                 resultContext = resultContext.Write(x.Key.ToString() ?? "", x.Value, style);
@@ -28,11 +27,7 @@ public class DictionarySerializer<TKey, TValue> : IYamlSerializer<Dictionary<TKe
         }
         else
         {
-            var serializer = new ListSerializer<KeyValuePair<TKey, TValue?>>()
-            {
-                CustomTag = "!Dictionary"
-            };
-            serializer.Write(context, value.ToList(), style);
+            CollectionSerialization.WriteCollection<X, KeyValuePair<TKey, TValue?>, Dictionary<TKey, TValue?>>(context, value, style, "!Dictionary");
         }
     }
 
@@ -43,29 +38,26 @@ public class DictionarySerializer<TKey, TValue> : IYamlSerializer<Dictionary<TKe
 
         if (scope is MappingScope mapping && IsPrimitive(typeof(TKey)))
         {
-            var tasks = new List<ValueTask<KeyValuePair<TKey, TValue?>>>();
+            var tasks = new List<(TKey Key, ValueTask<TValue?> ValueTask)>();
             foreach (var kvp in mapping)
             {
                 var key = ParsePrimitive<TKey>(kvp.Key);
                 var value = kvp.Value.Read<TValue>();
-                tasks.Add(ConvertToKeyValuePair(key, value));
+                tasks.Add((key, value));
             }
+
             foreach(var result in tasks)
             {
-                var kvp = await result;
-                map.Add(kvp.Key,kvp.Value);
+                map.Add(result.Key, await result.ValueTask);
             }
         }
         else
         {
-            var listSerializer = new ListSerializer<KeyValuePair<TKey, TValue?>>();
-            var kvp = await listSerializer.Read(scope, null);
-
-            // can't be null as !!null wouldn't reach this serializer
-            kvp.ForEach(x => map.Add(x.Key, x.Value));
+            await CollectionSerialization.ReadCollection<KeyValuePair<TKey, TValue?>, Dictionary<TKey, TValue?>>(scope, map);
         }
         return map;
     }
+
     private static T ParsePrimitive<T>(string key)
     {
         var type = typeof(T);
@@ -89,12 +81,7 @@ public class DictionarySerializer<TKey, TValue> : IYamlSerializer<Dictionary<TKe
 
         throw new NotSupportedException($"Unsupported primitive type: {type.Name}");
     }
-    private static async ValueTask<KeyValuePair<TKey, TValue?>> ConvertToKeyValuePair(TKey key, ValueTask<TValue?> value)
-    {
-        var k = key;
-        var v = await value;
-        return new KeyValuePair<TKey, TValue?>(k, v);
-    }
+
     private static bool IsPrimitive(Type type)
     {
         return type.IsPrimitive ||

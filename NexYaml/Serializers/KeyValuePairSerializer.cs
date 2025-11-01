@@ -16,11 +16,20 @@ public class KeyValuePairSerializer<TKey, TValue> : IYamlSerializer<KeyValuePair
 
     public async ValueTask<KeyValuePair<TKey?, TValue?>> Read(Scope scope, KeyValuePair<TKey?, TValue?> parseResult)
     {
-        List<Task<KeyValuePair<TKey, TValue>>> tasks = new();
-        var scalarScope = scope.As<SequenceScope>().ToList();
-        var k = await scalarScope[0].Read<TKey?>();
-        var v = await scalarScope[1].Read<TValue?>();
-        return new KeyValuePair<TKey?, TValue?>(k, v);
+        ValueTask<TKey?> kTask = default;
+        ValueTask<TValue?> vTask = default;
+        int i = 0;
+
+        foreach (var subscope in scope.As<SequenceScope>())
+        {
+            if (i == 0)
+                kTask = subscope.Read<TKey?>();
+            else if (i == 1)
+                vTask = subscope.Read<TValue?>();
+            i++;
+        }
+
+        return new KeyValuePair<TKey?, TValue?>(await kTask, await vTask);
     }
 }
 file sealed class KeyValuePairSerializerFactory : IYamlSerializerFactory
@@ -40,4 +49,3 @@ file sealed class KeyValuePairSerializerFactory : IYamlSerializerFactory
         return (IYamlSerializer)Activator.CreateInstance(fillGen)!;
     }
 }
-
