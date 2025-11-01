@@ -62,9 +62,9 @@ public static class CollectionSerialization
     }
 
     /// <summary>
-    /// Similar to <see cref="Read"/> but fills in an arbitrary collection instead
+    /// Append each element inside <paramref name="scope"/> to <paramref name="collection"/>
     /// </summary>
-    public static async ValueTask ReadCollection<T, TCol>(Scope scope, TCol parseResult) where TCol : ICollection<T?>
+    public static async ValueTask ReadCollection<T, TCol>(Scope scope, TCol collection) where TCol : ICollection<T?>
     {
         var tasks = new List<ValueTask<T?>>();
         foreach (var element in scope.As<SequenceScope>())
@@ -73,7 +73,7 @@ public static class CollectionSerialization
         }
         foreach( var task in tasks)
         {
-            parseResult.Add(await task);
+            collection.Add(await task);
         }
     }
 }
