@@ -8,17 +8,7 @@ public class ArraySerializer<T> : IYamlSerializer<T?[]>
 {
     public void Write<X>(WriteContext<X> context, T?[] value, DataStyle style) where X : Node
     {
-        if (value.Length == 0)
-        {
-            context.WriteEmptySequence("!Array");
-        }
-        var result = context.BeginSequence("!Array", style);
-
-        foreach (var element in value)
-        {
-            result = result.Write(element, style);
-        }
-        result.End(context);
+        CollectionSerialization.WriteCollection<X, T, T?[]>(context, value, style, "!Array");
     }
 
     public async ValueTask<T?[]> Read(Scope scope, T?[]? parseResult = null)
