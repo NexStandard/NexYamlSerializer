@@ -47,6 +47,7 @@ public static class Yaml
     {
         options ??= IYamlSerializerResolver.Default;
         StringBuilder sb = new StringBuilder(256);
+        Write(value, (span) => { sb.Append(span); }, style, options);
         return sb.ToString();
     }
 
