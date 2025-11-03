@@ -159,55 +159,59 @@ namespace NexYaml.Parser
             {
                 char c = input[i];
 
+                if (inQuotes)
+                {
+                    if (c == quoteChar)
+                        inQuotes = false;
+                    continue;
+                }
+
                 switch (c)
                 {
                     case '"' or '\'':
-                        if (inQuotes)
+                        inQuotes = true;
+                        quoteChar = c;
+                        break;
+
+                    case '!':
+                        if (string.IsNullOrWhiteSpace(input.Substring(tokenStart, i - tokenStart)))
+                            inTag = true;
+                        break;
+
+                    case ' ' or '[' or '{':
+                        if (inTag)
                         {
-                            if (c == quoteChar)
-                                inQuotes = false;
+                            inTag = false;
+                            var s = input.Substring(tokenStart, i - tokenStart).Trim();
+                            if (s.Length > 0)
+                                yield return s;
+                            tokenStart = i + 1;
                         }
-                        else
-                        {
-                            inQuotes = true;
-                            quoteChar = c;
-                        }
-
-                        continue;
-
-                    case '!' when input.AsSpan()[tokenStart .. (i - tokenStart)].Trim().Length == 0:
-                        inTag = true;
-                        continue;
-
-                    case ' ' or '[' or '{' when inTag:
-                        inTag = false;
-                        goto YIELD_FROM_TOKEN_TO_I;
-                    case ',' when depth == 0 && !inTag:
-                        goto YIELD_FROM_TOKEN_TO_I;
-
-                    case '[' or '{':
-                        depth++;
-                        continue;
+                        if (c == '[' || c == '{')
+                            depth++;
+                        break;
                     case ']' or '}':
                         depth--;
-                        continue;
+                        break;
+                    case ',':
+                        if (depth == 0 && !inTag)
+                        {
+                            var s = input.Substring(tokenStart, i - tokenStart).Trim();
+                            if (s.Length > 0)
+                                yield return s;
+                            tokenStart = i + 1;
+                        }
+                        break;
                 }
-
-                continue;
-
-                YIELD_FROM_TOKEN_TO_I:
-                var s = input.AsSpan()[tokenStart .. (i - tokenStart)].Trim();
-                if (s.Length > 0)
-                    yield return s.ToString();
-                tokenStart = i + 1;
             }
 
             if (tokenStart < input.Length)
             {
-                var s = input.AsSpan()[tokenStart..].Trim();
+                var s = input.Substring(tokenStart).Trim();
                 if (s.Length > 0)
-                    yield return s.ToString();
+                    yield return s;
             }
         }
     }
 }
+
