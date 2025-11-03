@@ -49,7 +49,7 @@ namespace NexYaml.Parser
         /// <summary>
         /// Gets or sets the indentation level of this scope in the source document.
         /// </summary>
-        public int Indent { get; set; }
+        public int Indent { get; }
 
         /// <summary>
         /// Gets the parsing <see cref="ScopeContext"/> that created this scope.

@@ -170,15 +170,15 @@ public struct BlockMappingParse(MappingScope scope) : IEnumerable<KeyValuePair<s
 {
     public IEnumerator<KeyValuePair<string, Scope>> GetEnumerator()
     {
-
+        int loopIndent = scope.Indent;
         while (scope.Context.Reader.Peek(out var next))
         {
             // Work with spans to avoid allocations
             ReadOnlySpan<char> line = next.AsSpan();
 
             int lineIndent = Scope.CountIndent(next);
-            if (lineIndent < scope.Indent) break;
-            scope.Indent = lineIndent;
+            if (lineIndent < scope.Indent || lineIndent < loopIndent) break;
+            loopIndent = lineIndent;
 
             // Slice off leading spaces
             ReadOnlySpan<char> trimmed = line.Slice(lineIndent);
