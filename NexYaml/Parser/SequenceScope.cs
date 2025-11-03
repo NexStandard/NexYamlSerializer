@@ -129,7 +129,7 @@ namespace NexYaml.Parser
             }
         }
 
-        public IEnumerable<Scope> ParseSequenceFlow(ScopeContext context, string value, int indent)
+        public static IEnumerable<Scope> ParseSequenceFlow(ScopeContext context, string value, int indent)
         {
             var inner = value.Substring(1, value.Length - 2).Trim();
             if (inner.Length == 0)

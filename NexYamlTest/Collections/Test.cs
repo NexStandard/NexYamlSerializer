@@ -1,4 +1,5 @@
-﻿using NexYamlTest;
+﻿using NexYaml;
+using NexYamlTest;
 using NexYamlTest.ComplexCases;
 using NexYamlTest.DataStyleTests;
 using NexYamlTest.SimpleClasses;
@@ -10,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace NexYaml.Collections;
+namespace NexYamlTest.Collections;
 
 public class CollectionTest
 {
@@ -49,12 +50,6 @@ public class CollectionTest
         Assert.NotNull(d);
         Assert.IsType<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>(d[0]);
         Assert.IsType<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>(d[1]);
-
-        var s2 = Yaml.Write(list, DataStyle.Normal);
-        var d2 = await TestParser.Read<IList<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>>(s);
-        Assert.NotNull(d2);
-        Assert.IsType<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>(d2[0]);
-        Assert.IsType<List<GenericAbstractLessParams<GenericAbstractLessParams<int>>>>(d2[1]);
     }
 
     [Fact]

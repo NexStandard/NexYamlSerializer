@@ -33,6 +33,7 @@ public class ComplexTests
     public async Task Generic_Serialization_Same_Count_Generic_Parameters_Than_Interface()
     {
         Setup();
+#pragma warning disable CA1859 // Verwenden Sie nach Möglichkeit konkrete Typen, um die Leistung zu verbessern.
         IGenericInterface<int, int> genericInterface = new GenericImplementedClass<int, int>()
         {
             Generic2 = 1,
@@ -48,6 +49,7 @@ public class ComplexTests
     public async Task Generic_Serialization_Less_Generic_Parameters_Than_Interface()
     {
         Setup();
+#pragma warning disable CA1859 // intentional for test
         IGenericInterface<int, int> genericInterface = new GenericImplementedClassWithLessParams<int>()
         {
             Generic2 = 1,
@@ -63,6 +65,7 @@ public class ComplexTests
     public async Task Generic_Serialization_Nested_Generic_Parameters()
     {
         Setup();
+#pragma warning disable CA1859 // intentional for test
         IGenericInterface<IGenericInterface<int, int>, int> genericInterface = new GenericImplementedClassWithLessParams<IGenericInterface<int, int>>()
         {
             Generic2 = 1,
@@ -72,6 +75,7 @@ public class ComplexTests
                 Generic = 4
             }
         };
+#pragma warning restore CA1859 // Verwenden Sie nach Möglichkeit konkrete Typen, um die Leistung zu verbessern.
         var s = Yaml.Write(genericInterface);
         var d = await TestParser.Read<IGenericInterface<IGenericInterface<int, int>, int>>(s);
         Assert.NotNull(d);
@@ -83,6 +87,7 @@ public class ComplexTests
     public async Task Generic_Serialization_Fixed_Generic_Parameters_Of_Interface()
     {
         Setup();
+#pragma warning disable CA1859 // intentional for test
         IGenericInterface<int, int> genericInterface = new GenericImplementedClassWithNoParams()
         {
             Generic2 = 1,

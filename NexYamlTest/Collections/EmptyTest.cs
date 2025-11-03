@@ -1,5 +1,4 @@
 ﻿using NexYaml;
-using NexYaml.Collections;
 using NexYamlTest.SimpleClasses;
 using System;
 using System.Collections.Generic;

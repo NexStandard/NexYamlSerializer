@@ -15,6 +15,10 @@ internal class GenericEqualityComparer : IEqualityComparer<Type>
     /// <returns><c>true</c> if the generic type definitions of the two <see cref="Type"/> objects are equal, otherwise <c>false</c>.</returns>
     public bool Equals(Type? x, Type? y)
     {
+        if(x is null || y is null)
+        {
+            return false;
+        }
         var thisGenericType = x.IsGenericType ? x.GetGenericTypeDefinition() : x;
         var otherGenericType = y.IsGenericType ? y.GetGenericTypeDefinition() : y;
 

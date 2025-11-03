@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NexYaml.Collections;
+namespace NexYamlTest.Collections;
 
 [DataContract]
 public class NullDictionary
