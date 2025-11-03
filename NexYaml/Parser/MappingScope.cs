@@ -7,44 +7,28 @@ namespace NexYaml.Parser;
 
 public sealed class MappingScope : Scope, IEnumerable<KeyValuePair<string, Scope>>
 {
-    private string? flowValue;
-    private bool startValue;
-    private string? startString;
-    private string? startKey;
+    IEnumerator<KeyValuePair<string, Scope>> enumerator;
 
     internal MappingScope(int indent, ScopeContext context, string tag = "")
 : base(tag, indent, context)
     {
+        enumerator = new BlockMappingParse(this).GetEnumerator();
     }
     internal MappingScope(string value, int indent, ScopeContext context, string tag = "")
 : base(tag, indent, context)
     {
-        flowValue = value;
+        enumerator = new BlockFlowParse(this, value).GetEnumerator();
     }
     internal MappingScope(string startValue, string startKey, int indent, ScopeContext context, string tag = "")
 : base(tag, indent, context)
     {
-        this.startValue = true;
-        this.startString = startValue;
-        this.startKey = startKey;
+        enumerator = new BlockMappingPrefixedParse(this, startKey, startValue).GetEnumerator();
     }
     public override ScopeKind Kind => ScopeKind.Mapping;
 
     public IEnumerator<KeyValuePair<string, Scope>> GetEnumerator()
     {
-        if (flowValue is not null)
-        {
-            return new BlockFlowParse(this, flowValue).GetEnumerator();
-        }
-        else if (startValue)
-        {
-            return new BlockMappingPrefixedParse(this, startKey, startString).GetEnumerator();
-        }
-        else
-        {
-            return new BlockMappingParse(this).GetEnumerator();
-        }
-
+        return enumerator;
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -150,6 +134,7 @@ public struct BlockMappingPrefixedParse(MappingScope scope, string startKey, str
 }
 public struct BlockFlowParse(MappingScope scope, string value) : IEnumerable<KeyValuePair<string, Scope>>
 {
+    private readonly string value = value;
     public IEnumerator<KeyValuePair<string, Scope>> GetEnumerator()
     {
         var inner = value.Substring(1, value.Length - 2).Trim();

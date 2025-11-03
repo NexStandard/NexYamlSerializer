@@ -30,7 +30,8 @@ class BlockMapping : Mapping
     {
         // "{KEY}: {OPTIONAL TAG}" OR "- {OPTIONAL TAG}"
         // "{NEWLINE}{INDENT}{KEY}: {OUTPUT FROM WriteType}"
-        context.WriteScalar("\n" + new string(' ', context.Indent));
+        context.WriteScalar("\n");
+        context.WriteScalar(new string(' ', context.Indent));
 
         // The key may contain YAML tokens, so it must be validated according to the ScalarStyle rules.
         context.WriteString(key);
