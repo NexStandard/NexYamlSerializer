@@ -172,19 +172,16 @@ namespace NexYaml.Parser
                         inQuotes = true;
                         quoteChar = c;
                         break;
-
                     case '!':
-                        if (string.IsNullOrWhiteSpace(input.Substring(tokenStart, i - tokenStart)))
-                            inTag = true;
+                        inTag = true;
                         break;
-
                     case ' ' or '[' or '{':
                         if (inTag)
                         {
                             inTag = false;
-                            var s = input.Substring(tokenStart, i - tokenStart).Trim();
+                            var s = input.AsSpan().Slice(tokenStart, i - tokenStart).Trim();
                             if (s.Length > 0)
-                                yield return s;
+                                yield return s.ToString();
                             tokenStart = i + 1;
                         }
                         if (c == '[' || c == '{')
@@ -196,9 +193,9 @@ namespace NexYaml.Parser
                     case ',':
                         if (depth == 0 && !inTag)
                         {
-                            var s = input.Substring(tokenStart, i - tokenStart).Trim();
+                            var s = input.AsSpan().Slice(tokenStart, i - tokenStart).Trim();
                             if (s.Length > 0)
-                                yield return s;
+                                yield return s.ToString();
                             tokenStart = i + 1;
                         }
                         break;
@@ -207,9 +204,9 @@ namespace NexYaml.Parser
 
             if (tokenStart < input.Length)
             {
-                var s = input.Substring(tokenStart).Trim();
+                var s = input.AsSpan().Slice(tokenStart).Trim();
                 if (s.Length > 0)
-                    yield return s;
+                    yield return s.ToString();
             }
         }
     }
