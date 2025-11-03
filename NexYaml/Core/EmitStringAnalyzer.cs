@@ -19,7 +19,7 @@ internal readonly struct EmitStringInfo(int lines, bool needsQuotes)
 
 internal static class EmitStringAnalyzer
 {
-    private static ReadOnlySpan<char> SpecialTokens => [':', '{', '[', ']', ',', '#', '`', '"', ' ', '\''];
+    private static readonly SearchValues<char> searchValues = SearchValues.Create(":{[],#`\" '");
 
     public static EmitStringInfo Analyze(string value)
     {
@@ -33,7 +33,7 @@ internal static class EmitStringAnalyzer
         var needsQuotes = first == YamlCodes.Space ||
                           last == YamlCodes.Space ||
                           first is '&' or '*' or '?' or '|' or '-' or '<' or '>' or '=' or '!' or '%' or '@' or '.' ||
-                          span.ContainsAny(SpecialTokens);
+                          span.ContainsAny(searchValues);
 
         var lines = span.Count('\n');
 
