@@ -34,7 +34,6 @@ namespace NexYaml.Parser
 
         public IEnumerator<KeyValuePair<string, Scope>> GetEnumerator()
         {
-
             if (flow)
             {
                 return new BlockFlowParse(this, value).GetEnumerator();
@@ -63,8 +62,8 @@ namespace NexYaml.Parser
         }
         public KeyValuePair<string, Scope> StandardMappingResolve(ScopeContext context, MappingScope map, string key, string val, string childTag)
         {
-            if (IsQuoted(val))
-                return new(key, new ScalarScope(Unquote(val), map.Indent + 2, context, childTag));
+            if (TryGetQuotedText(val, out var valUnquoted))
+                return new(key, new ScalarScope(valUnquoted.ToString(), map.Indent + 2, context, childTag));
             else if (val.StartsWith('|'))
                 return new(key, new ScalarScope(ParseLiteralScalar(map.Context, map.Indent + 1, val[1]), map.Indent + 2, context, childTag));
             else if (val.StartsWith('{') && val.EndsWith('}'))
@@ -74,11 +73,11 @@ namespace NexYaml.Parser
             else
                 return new(key, new ScalarScope(val, map.Indent + 2, context, childTag));
         }
- 
+
         public KeyValuePair<string, Scope> StandardMappingResolve(MappingScope map, string key, string val, string childTag)
         {
-            if (IsQuoted(val))
-                return new(key, new ScalarScope(Unquote(val), map.Indent + 2, map.Context, childTag));
+            if (TryGetQuotedText(val, out var valUnquoted))
+                return new(key, new ScalarScope(valUnquoted.ToString(), map.Indent + 2, map.Context, childTag));
             else if (val.StartsWith('|'))
                 return new(key, new ScalarScope(ParseLiteralScalar(map.Context, map.Indent + 2, val[1]), map.Indent + 2, map.Context, childTag));
             else if (val.StartsWith('{') && val.EndsWith('}'))
@@ -194,7 +193,7 @@ public struct BlockMappingParse(MappingScope scope) : IEnumerable<KeyValuePair<s
             // Work with spans to avoid allocations
             ReadOnlySpan<char> line = next.AsSpan();
 
-            int lineIndent = MappingScope.CountIndent(next);
+            int lineIndent = Scope.CountIndent(next);
             if (lineIndent < scope.Indent) break;
             scope.Indent = lineIndent;
 
@@ -225,44 +224,41 @@ public struct BlockMappingParse(MappingScope scope) : IEnumerable<KeyValuePair<s
             string key = keySpan.ToString();
             ReadOnlySpan<char> val = valSpan;
 
-            string childTag = string.Empty;
-
             // Inline tag handling
-            MappingScope.ExtractTag(ref val, ref childTag);
+            Scope.ExtractTag(ref val, out var childTag);
 
             if (val.Length > 0)
             {
-                yield return scope.StandardMappingResolve(scope.Context, scope, key, val.ToString(), childTag);
+                yield return scope.StandardMappingResolve(scope.Context, scope, key, val.ToString(), childTag.ToString());
             }
             else
             {
                 // Look ahead for nested structures
                 if (scope.Context.Reader.Peek(out var lookahead))
                 {
-                    int nextIndent = MappingScope.CountIndent(lookahead);
+                    int nextIndent = Scope.CountIndent(lookahead);
                     ReadOnlySpan<char> nextTrim = lookahead.AsSpan(nextIndent);
 
                     if (nextIndent > scope.Indent)
                     {
                         if (!nextTrim.IsEmpty && nextTrim[0] == '-')
-                            yield return new(key, SequenceScope.Parse(scope.Context, scope.Indent + 2, childTag));
+                            yield return new(key, SequenceScope.Parse(scope.Context, scope.Indent + 2, childTag.ToString()));
                         else
-                            yield return new(key, MappingScope.Parse(scope.Context, scope.Indent + 2, childTag));
+                            yield return new(key, MappingScope.Parse(scope.Context, scope.Indent + 2, childTag.ToString()));
                         continue;
                     }
                     else if (!nextTrim.IsEmpty && nextTrim[0] == '-')
                     {
-                        yield return new(key, SequenceScope.Parse(scope.Context, scope.Indent, childTag));
+                        yield return new(key, SequenceScope.Parse(scope.Context, scope.Indent, childTag.ToString()));
                         continue;
                     }
                 }
 
                 // Default: empty scalar
-                yield return new(key, new ScalarScope(string.Empty, scope.Indent + 2, scope.Context, childTag));
+                yield return new(key, new ScalarScope(string.Empty, scope.Indent + 2, scope.Context, childTag.ToString()));
             }
         }
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
-
