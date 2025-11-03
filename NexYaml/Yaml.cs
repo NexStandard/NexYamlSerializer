@@ -45,8 +45,8 @@ public static class Yaml
     /// <returns>A string containing the YAML formatted representation of the value.</returns>
     public static string Write<T>(T value, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
     {
-        StringBuilder sb = new StringBuilder();
-        Yaml.Write(value, (ReadOnlySpan<char> text) => { sb.Append(text); }, style, options);
+        options ??= IYamlSerializerResolver.Default;
+        StringBuilder sb = new StringBuilder(256);
         return sb.ToString();
     }
 
