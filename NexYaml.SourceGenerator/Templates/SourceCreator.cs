@@ -105,7 +105,12 @@ internal static class SourceCreator
                     return res;
                 }
             """;
-        if(info.TypeKind == Microsoft.CodeAnalysis.TypeKind.Struct)
+
+        var isIdentifiable = info.AllInterfaces.Any((b) => {
+            return b.DisplayString.EndsWith("Stride.Core.IIdentifiable");
+        });
+
+        if (info.TypeKind == Microsoft.CodeAnalysis.TypeKind.Struct || !isIdentifiable)
         {
             s += $$"""
             public static async ValueTask<{{info.NameDefinition}}?> Read{{info.TypeParameterArguments}}(this Scope scope, {{info.NameDefinition}}? context = default)
