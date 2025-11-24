@@ -106,29 +106,6 @@ internal static class SourceCreator
                 }
             """;
 
-        var isIdentifiable = info.AllInterfaces.Any((b) => {
-            return b.DisplayString.EndsWith("Stride.Core.IIdentifiable");
-        });
-
-        if (info.TypeKind == Microsoft.CodeAnalysis.TypeKind.Struct || !isIdentifiable)
-        {
-            s += $$"""
-            public static async ValueTask<{{info.NameDefinition}}?> Read{{info.TypeParameterArguments}}(this Scope scope, {{info.NameDefinition}}? context = default)
-            {
-                if(scope is ScalarScope scalar && scalar.Value == YamlCodes.Null)
-                    return default;
-        {{charMembers}}
-        {{objTempVariables}}
-                var mapping = scope.As<MappingScope>();
-                foreach(var map in mapping)
-                {
-        {{ifStatementNew}}
-                }
-        {{awaitsNew}}
-                return res;
-            }
-        """;
-        }
         s += "}";
     ///
     string writeString = isEmpty ? $"       context.WriteEmptyMapping(\"!{tag}\");" :
