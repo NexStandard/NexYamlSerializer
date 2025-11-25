@@ -78,3 +78,19 @@ public class EnumAsStringSerializer<T> : IYamlSerializer<T>
     }
 }
 
+public class EnumSerializer<T>  : IYamlSerializer<T>
+    where T : struct, Enum
+{
+    public void Write<X>(WriteContext<X> context, T value, DataStyle style) where X : Node
+    {
+        context.WriteScalar(value.ToString());
+    }
+    public ValueTask<T> Read(Scope scope, T parseResult)
+    {
+        var scalarScope = scope.As<ScalarScope>();
+        // Should be taken care of in the caller's scope, which would be ScopeExtensions.Read
+        System.Diagnostics.Debug.Assert(scalarScope.Value != YamlCodes.Null);
+        Enum.TryParse<T>(scalarScope.Value, out var value);
+        return new(value);
+    }
+}

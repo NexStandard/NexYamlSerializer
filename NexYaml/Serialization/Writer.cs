@@ -42,6 +42,14 @@ public abstract class Writer(IYamlSerializerResolver resolver)
             context.WriteScalar(YamlCodes.Null);
             return;
         }
+        if (typeof(T).IsEnum)
+        {
+            var t = typeof(T);
+            var enumSerializerType = typeof(EnumSerializer<>).MakeGenericType(t);
+            var enumSerializer = (IYamlSerializer)Activator.CreateInstance(enumSerializerType)!;
+            enumSerializer.Write(context, value, style);
+            return;
+        }
         if (value is Array)
         {
             var t = typeof(T).GetElementType()!;

@@ -13,7 +13,13 @@ namespace NexYaml.Parser
             {
                 return new ValueTask<T?>(default(T));
             }
-
+            if(typeof(T).IsEnum)
+            {
+                var t = typeof(T);
+                var enumSerializerType = typeof(EnumSerializer<>).MakeGenericType(t);
+                var enumSerializer = (IYamlSerializer)Activator.CreateInstance(enumSerializerType)!;
+                return Convert<T>(enumSerializer.ReadUnknown(scope, context));
+            }
             if (typeof(T).IsArray)
             {
                 var t = typeof(T).GetElementType()!;
