@@ -5,7 +5,7 @@ namespace NexYaml.Serialization;
 /// <summary>
 /// The current context for writing YAML content. This record encapsulates the current state during YAML serialization,
 /// </summary>
-public readonly struct WriteContext<T>(int indent, bool isRedirected, DataStyle styleScope, T node, Writer writer) where T : Node
+public readonly struct WriteContext<T>(int indent, bool isRedirected, DataStyle styleScope, T node, YamlWriter writer) where T : Node
 {
     /// <summary>
     /// The current indentation level for formatting the YAML output.
@@ -26,5 +26,5 @@ public readonly struct WriteContext<T>(int indent, bool isRedirected, DataStyle 
     /// <summary>
     /// The <see cref="Writer"/> instance that handles the output of the YAML content.
     /// </summary>
-    public Writer Writer { get; init; } = writer;
+    public YamlWriter Writer { get; init; } = writer;
 }

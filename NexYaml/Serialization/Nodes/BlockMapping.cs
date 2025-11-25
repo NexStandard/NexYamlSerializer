@@ -30,12 +30,14 @@ class BlockMapping : Mapping
     {
         // "{KEY}: {OPTIONAL TAG}" OR "- {OPTIONAL TAG}"
         // "{NEWLINE}{INDENT}{KEY}: {OUTPUT FROM WriteType}"
-        context.WriteScalar("\n");
-        context.WriteScalar(new string(' ', context.Indent));
+        Span<char> indentedNewLine = stackalloc char[context.Indent + 1];
+        indentedNewLine.Fill(' ');
+        indentedNewLine[0] = '\n';
+        context.WriteScalar(indentedNewLine);
 
         // The key may contain YAML tokens, so it must be validated according to the ScalarStyle rules.
         context.WriteString(key);
-        context.WriteScalar(": ");
+        context.WriteScalar([ ':',' ' ]);
         context.WriteType(value, style);
         return context;
     }
@@ -44,11 +46,14 @@ class BlockMapping : Mapping
     {
         // "{KEY}: {OPTIONAL TAG}" OR "- {OPTIONAL TAG}"
         // "{NEWLINE}{INDENT}{KEY}: {OUTPUT FROM WriteType}"
-        context.WriteScalar("\n" + new string(' ', context.Indent));
+        Span<char> indentedNewLine = stackalloc char[context.Indent+1];
+        indentedNewLine.Fill(' ');
+        indentedNewLine[0] = '\n';
+        context.WriteScalar(indentedNewLine);
 
         // The key may contain YAML tokens, so it must be validated according to the ScalarStyle rules.
         context.WriteString(key);
-        context.WriteScalar(": ");
+        context.WriteScalar([':', ' ']);
         context.WriteScalar(value);
         return context;
     }

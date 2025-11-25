@@ -1,4 +1,5 @@
-﻿using NexYaml.Core;
+﻿using System.Text;
+using NexYaml.Core;
 using NexYaml.Serializers;
 using Stride.Core;
 
@@ -8,7 +9,7 @@ namespace NexYaml.Serialization;
 /// This class uses a serializer <see cref="IYamlSerializerResolver"/> and a collection of resolve <see cref="IResolvePlugin"/>
 /// to handle the redirection of registered types into YAML.
 /// </summary>
-public abstract class Writer(IYamlSerializerResolver resolver)
+public class YamlWriter(TextWriter writer, IYamlSerializerResolver resolver)
 {
     /// <summary>
     /// Gets the <see cref="IYamlSerializerResolver"/> used to resolve serializers for the registered types.
@@ -24,7 +25,10 @@ public abstract class Writer(IYamlSerializerResolver resolver)
     /// Writes the provided formatted and escaped text to the underlying output.
     /// </summary>
     /// <param name="text">A <see cref="ReadOnlySpan{T}"/> of characters representing the formatted text to write.</param>
-    public abstract void Write(ReadOnlySpan<char> text);
+    public void Write(ReadOnlySpan<char> text)
+    {
+        writer.Write(text);
+    }
 
     /// <summary>
     /// Redirects a value to the next <see cref="IYamlSerializer{T}"/> using the provided <see cref="WriteContext{T}"/> and <see cref="DataStyle"/>.
