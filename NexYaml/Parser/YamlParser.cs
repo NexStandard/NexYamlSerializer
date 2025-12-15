@@ -7,7 +7,6 @@ namespace NexYaml
 {
     public sealed class YamlParser
     {
-        private readonly ValueScopeFactory ValueScope = new ValueScopeFactory();
         private readonly IYamlSerializerResolver _resolver;
         private IdentifiableResolver IdentifiableResolver { get; } = new();
         private YamlReader _reader;
@@ -57,7 +56,7 @@ namespace NexYaml
 
                     if (inline.Length > 0)
                     {
-                        yield return ValueScope.Parse(context, inline, indent, tag);
+                        yield return ScalarScope.Parse(context, inline, indent, tag);
                         continue;
                     }
 
@@ -79,7 +78,7 @@ namespace NexYaml
                     }
                     else
                     {
-                        yield return ValueScope.Parse(context, indent, tag);
+                        yield return ScalarScope.Parse(context, indent, tag);
                     }
 
                     continue;
@@ -98,7 +97,7 @@ namespace NexYaml
                 // Scalar root
                 else
                 {
-                    yield return ValueScope.Parse(context, indent, string.Empty);
+                    yield return ScalarScope.Parse(context, indent, string.Empty);
                 }
             }
         }
