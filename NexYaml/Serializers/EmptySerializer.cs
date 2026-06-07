@@ -11,7 +11,7 @@ public class EmptySerializer<T> : IYamlSerializer<T>
         return new EmptySerializer<T>();
     }
 
-    public void Write<X>(WriteContext<X> context, T value, DataStyle style) where X : Node
+    public void Write(Node context, T value, DataStyle style)
     {
         context.WriteScalar(YamlCodes.Null);
     }

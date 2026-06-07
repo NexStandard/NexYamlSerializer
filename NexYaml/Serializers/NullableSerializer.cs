@@ -7,7 +7,7 @@ namespace NexYaml.Serializers;
 internal class NullableSerializer<T> : IYamlSerializer<T?>
     where T : struct
 {
-    public void Write<X>(WriteContext<X> context, T? value, DataStyle style) where X : Node
+    public void Write(Node ontext, T? value, DataStyle style)
     {
         // do nothing?
     }

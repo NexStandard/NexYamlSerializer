@@ -7,7 +7,7 @@ namespace NexYaml.Serializers;
 
 public class DecimalSerializer : IYamlSerializer<decimal>
 {
-    public void Write<X>(WriteContext<X> context, decimal value, DataStyle style) where X : Node
+    public void Write(Node context, decimal value, DataStyle style)
     {
         Span<char> span = stackalloc char[64];
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);

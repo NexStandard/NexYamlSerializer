@@ -20,7 +20,7 @@ public interface IYamlSerializer
     /// <param name="context">The <see cref="WriteContext{T}"/>.</param>
     /// <param name="value">The object to serialize.</param>
     /// <param name="style">The <see cref="DataStyle"/>.</param>
-    void Write<X>(WriteContext<X> context, object value, DataStyle style) where X : Node;
+    void Write(Node context, object value, DataStyle style);
     ValueTask<object?> ReadUnknown(Scope scope, object? context);
     ValueTask<object?> ReadUnknown(Scope scope);
 }
@@ -32,7 +32,7 @@ public interface IYamlSerializer<T> : IYamlSerializer
 {
     DataStyle IYamlSerializer.Style => DataStyle.Any;
 
-    void IYamlSerializer.Write<X>(WriteContext<X> context, object value, DataStyle style)
+    void IYamlSerializer.Write(Node context, object value, DataStyle style)
     {
         Write(context, (T)value, style);
     }
@@ -52,7 +52,7 @@ public interface IYamlSerializer<T> : IYamlSerializer
     /// <param name="context">The <see cref="WriteContext{T}"/>.</param>
     /// <param name="value">The value to serialize.</param>
     /// <param name="style">The <see cref="DataStyle"/>.</param>
-    public void Write<X>(WriteContext<X> context, T value, DataStyle style) where X : Node;
+    public void Write(Node context, T value, DataStyle style);
 
     public ValueTask<T> Read(Scope scope, T? parseResult = default);
 }

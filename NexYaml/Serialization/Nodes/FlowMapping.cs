@@ -4,46 +4,47 @@ namespace NexYaml.Serialization.Nodes;
 
 class FlowMapping : Mapping
 {
-    public override WriteContext<Mapping> BeginMapping<T>(WriteContext<T> context, string tag, DataStyle style)
+    public FlowMapping(int indent, bool isRedirected, DataStyle styleScope, Writer writer)
+        : base(indent, isRedirected, styleScope, writer)
     {
-        if (context.IsRedirected)
+    }
+    public override Mapping BeginMapping(string tag, DataStyle style)
+    {
+        if (IsRedirected)
         {
-            context.WriteScalar(tag);
-            context.WriteScalar(" { ");
+            this.WriteScalar(tag);
+            this.WriteScalar(" { ");
         }
         else
         {
-            context.WriteScalar("{ ");
+            this.WriteScalar("{ ");
         }
         // inside a flow, only new flows can be created, no block is allowed
-        return new WriteContext<Mapping>(context.Indent, false, DataStyle.Compact, this, context.Writer);
+        return new FlowMapping(Indent, false, DataStyle.Compact, Writer);
     }
 
-    public override WriteContext<Sequence> BeginSequence<T>(WriteContext<T> context, string tag, DataStyle style)
+    public override Sequence BeginSequence(string tag, DataStyle style)
     {
         // inside a flow, only new flows can be created, no block is allowed
-        return new WriteContext<Sequence>(context.Indent, false, DataStyle.Compact, CommonNodes.FlowSequence, context.Writer)
+        return new FlowSequence(Indent, IsRedirected, StyleScope, Writer)
             .BeginSequence(tag, DataStyle.Compact);
     }
-    public override void End<T>(WriteContext<T> context)
+    public override void End()
     {
-        context.WriteScalar(" }");
+        this.WriteScalar(" }");
     }
 
-    public override WriteContext<Mapping> Begin(WriteContext<Mapping> context, string key, DataStyle style)
+    public override Mapping Begin(Mapping context, string key, DataStyle style)
     {
         // First Node is {KEY: VALUE}
-        context.WriteScalar(key);
-        context.WriteScalar(": ");
+        this.WriteScalar(key);
+        this.WriteScalar(": ");
         return context;
     }
-    public override WriteContext<Mapping> End(WriteContext<Mapping> context, DataStyle style)
+    public override Mapping End(Mapping context, DataStyle style)
     {
         // all following Nodes need a prefix
-        return context with
-        {
-            Node = CommonNodes.FlowMappingSecondary
-        };
+        return new FlowMappingSecondary(Indent, IsRedirected, style, Writer);
     }
 
 

@@ -7,7 +7,7 @@ namespace NexYaml.Serializers;
 
 public class UInt64Serializer : IYamlSerializer<ulong>
 {
-    public void Write<X>(WriteContext<X> context, ulong value, DataStyle style) where X : Node
+    public void Write(Node context, ulong value, DataStyle style)
     {
         Span<char> span = stackalloc char[20];
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);

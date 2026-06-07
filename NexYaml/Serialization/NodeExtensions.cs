@@ -1,13 +1,14 @@
 ﻿using System.Globalization;
 using NexYaml.Core;
 using Stride.Core;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace NexYaml.Serialization;
 
 /// <summary>
 /// Contains extension methods that enhance the functionality of <see cref="WriteContext{T}"/> for YAML serialization operations.
 /// </summary>
-public static class WriteContextExtensions
+public static class NodeExtensions
 {
     /// <summary>
     /// Writes the provided formatted and escaped text to the underlying output.
@@ -15,38 +16,11 @@ public static class WriteContextExtensions
     /// <typeparam name="T">Type of the current <see cref="Node"/></typeparam>
     /// <param name="context">The current <see cref="WriteContext{T}"/>.</param>
     /// <param name="text">A <see cref="ReadOnlySpan{T}"/> of characters representing the formatted text to write.</param>
-    public static void WriteScalar<T>(this WriteContext<T> context, ReadOnlySpan<char> text) where T : Node
+    public static void WriteScalar(this Node context, ReadOnlySpan<char> text)
     {
         context.Writer.Write(text);
     }
 
-    /// <summary>
-    /// Begins a new YAML <see cref="Mapping"/> on the current <see cref="Node"/> context using the specified tag and style.
-    /// </summary>
-    /// <typeparam name="T">The type of the current YAML <see cref="Node"/>.</typeparam>
-    /// <param name="context">The current <see cref="WriteContext{T}"/>.</param>
-    /// <param name="tag">The tag to associate with the new <see cref="Mapping"/>.</param>
-    /// <param name="style">The <see cref="DataStyle"/> to use for the new <see cref="Mapping"/>.</param>
-    /// <returns><see cref="WriteContext{Mapping}"/> as the started <see cref="Mapping"/>.</returns>
-    public static WriteContext<Mapping> BeginMapping<T>(this WriteContext<T> context, string tag, DataStyle style)
-        where T : Node
-    {
-        return context.Node.BeginMapping(context, tag, style);
-    }
-
-    /// <summary>
-    /// Begins a new YAML <see cref="Sequence"/> on the current <see cref="Node"/> context using the specified tag and style.
-    /// </summary>
-    /// <typeparam name="T">The type of the current YAML <see cref="Node"/>.</typeparam>
-    /// <param name="node">The current <see cref="WriteContext{T}"/>.</param>
-    /// <param name="tag">The tag to associate with the new <see cref="Sequence"/>.</param>
-    /// <param name="style">The <see cref="DataStyle"/> to use for the new <see cref="Sequence"/>.</param>
-    /// <returns><see cref="WriteContext{Mapping}"/> as the started <see cref="Sequence"/>.</returns>
-    public static WriteContext<Sequence> BeginSequence<T>(this WriteContext<T> node, string tag, DataStyle style)
-        where T : Node
-    {
-        return node.Node.BeginSequence(node, tag, style);
-    }
 
     /// <summary>
     /// Writes a value using the specified <see cref="DataStyle"/> into the current YAML <see cref="Node"/>.
@@ -56,8 +30,7 @@ public static class WriteContextExtensions
     /// <param name="context">The current <see cref="WriteContext{T}"/>.</param>
     /// <param name="value">The value to write to YAML. May be <c>null</c>.</param>
     /// <param name="style">The <see cref="DataStyle"/>.</param>
-    public static void WriteType<T, X>(this WriteContext<T> context, X? value, DataStyle style)
-        where T : Node
+    public static void WriteType<T>(this Node context, T? value, DataStyle style)
     {
         context.Writer.WriteType(context, value, style);
     }
@@ -69,11 +42,9 @@ public static class WriteContextExtensions
     /// <typeparam name="X">The type of the current YAML <see cref="Node"/> that is ending.</typeparam>
     /// <param name="context">The parent <see cref="WriteContext{T}"/>.</param>
     /// <param name="current">The <see cref="WriteContext{T}"/> of the <see cref="Node"/> that is ending.</param>
-    public static void End<T, X>(this WriteContext<T> context, in WriteContext<X> current)
-        where T : Node
-        where X : Node
+    public static void End(this Node context, in Node current)
     {
-        context.Node.End(current);
+        context.End();
     }
 
     /// <summary>
@@ -82,11 +53,10 @@ public static class WriteContextExtensions
     /// <typeparam name="T">The type of the current YAML <see cref="Node"/>.</typeparam>
     /// <param name="context">The current <see cref="WriteContext{T}"/>.</param>
     /// <param name="tag">The tag to prefix the empty <see cref="Sequence"/>.</param>
-    public static void WriteEmptyMapping<T>(this WriteContext<T> context, string tag)
-        where T : Node
+    public static void WriteEmptyMapping(this Node context, string tag)
     {
         context.WriteScalar(tag);
-        context.WriteScalar(" { }");
+        context.WriteScalar(" { }".AsSpan());
     }
 
     /// <summary>
@@ -95,11 +65,10 @@ public static class WriteContextExtensions
     /// <typeparam name="T">The type of the current YAML <see cref="Node"/>.</typeparam>
     /// <param name="context">The current <see cref="WriteContext{T}"/>.</param>
     /// <param name="tag">The tag to prefix the empty sequence.</param>
-    public static void WriteEmptySequence<T>(this WriteContext<T> context, string tag)
-        where T : Node
+    public static void WriteEmptySequence(this Node context, string tag)
     {
         context.WriteScalar(tag);
-        context.WriteScalar(" [ ]");
+        context.WriteScalar(" [ ]".AsSpan());
     }
 
     /// <summary>
@@ -111,12 +80,11 @@ public static class WriteContextExtensions
     /// <param name="value">The value associated with the key.</param>
     /// <param name="style">The <see cref="DataStyle"/>.</param>
     /// <returns>The  <see cref="WriteContext{T}"/> based on the written key/value pair.</returns>
-    public static WriteContext<Mapping> Write<T>(this WriteContext<Mapping> mapping, string key, T value, DataStyle style = DataStyle.Any)
+    public static Mapping Write<T>(this Mapping mapping, string key, T value, DataStyle style = DataStyle.Any)
     {
-
-        var x = mapping.Node.Begin(mapping, key, style);
-        var y = x.Node.Write(x, key, value, style);
-        return x.Node.End(x,style);
+        var x = mapping.Begin(mapping, key, style);
+        x = x.Writes(key, value, style);
+        return x.End(x,style);
     }
 
     /// <summary>
@@ -127,9 +95,9 @@ public static class WriteContextExtensions
     /// <param name="value">The value to write as a <see cref="Sequence"/> item.</param>
     /// <param name="style">The <see cref="DataStyle"/>.</param>
     /// <returns>The next <see cref="WriteContext{Sequence}"/> based on the written value.</returns>
-    public static WriteContext<Sequence> Write<T>(this WriteContext<Sequence> sequence, T value, DataStyle style = DataStyle.Any)
+    public static Sequence Write<T>(this Sequence sequence, T value, DataStyle style = DataStyle.Any)
     {
-        return sequence.Node.Write(sequence, value, style);
+        return sequence.Write(sequence, value, style);
     }
 
     /// <summary>
@@ -138,9 +106,29 @@ public static class WriteContextExtensions
     /// <typeparam name="X">Type of the current <see cref="Node"/></typeparam>
     /// <param name="value">A <see cref="ReadOnlySpan{T}"/> of characters representing the formatted text to write.</param>
     /// <param name="style">The <see cref="DataStyle"/>.</param>
-    public static void WriteString<X>(this WriteContext<X> context, string value, DataStyle style = DataStyle.Compact)
-        where X : Node
+    public static void WriteString(this Node context, string value, DataStyle style = DataStyle.Compact)
     {
         context.WriteScalar(context.Writer.FormatString(context, value, style));
+    }
+    public static Mapping Write(this Mapping context, string key, string value, DataStyle style = DataStyle.Any)
+    {
+        var Style = style is DataStyle.Any or DataStyle.Normal ? DataStyle.Any : style;
+
+        var x = context.Begin(context,key, style);
+        if (value is null)
+        {
+            x.WriteScalar(YamlCodes.Null.AsSpan());
+            return x.End(x, style);
+        }
+        x.WriteScalar(context.Writer.FormatString(context, value, style));
+        return x.End(x, style);
+    }
+    public static Mapping Write(this Mapping context, string key, Guid value, DataStyle style = DataStyle.Any)
+    {
+        var Style = style is DataStyle.Any or DataStyle.Normal ? DataStyle.Any : style;
+
+        var x = context.Begin(context, key, style);
+        context.WriteString(value.ToString());
+        return x.End(x, style);
     }
 }

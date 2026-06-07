@@ -7,7 +7,7 @@ namespace NexYaml.Serializers;
 
 public class NullableStringSerializer : IYamlSerializer<string?>
 {
-    public void Write<X>(WriteContext<X> context, string? value, DataStyle style) where X : Node
+    public void Write(Node context, string? value, DataStyle style)
     {
         // Should be taken care of in the caller's scope, which would be Writer.WriteType
         System.Diagnostics.Debug.Assert(value is not null);

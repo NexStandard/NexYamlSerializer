@@ -8,9 +8,9 @@ public class ListSerializer<T> : IYamlSerializer<List<T?>>
 {
     public string? CustomTag { get; init; }
 
-    public void Write<X>(WriteContext<X> context, List<T?> value, DataStyle style) where X : Node
+    public void Write(Node context, List<T?> value, DataStyle style)
     {
-        CollectionSerialization.WriteCollection<X, T, List<T?>>(context, value, style, "!List");
+        CollectionSerialization.WriteCollection<T, List<T?>>(context, value, style, "!List");
     }
 
     public async ValueTask<List<T?>> Read(Scope scope, List<T?>? parseResult)

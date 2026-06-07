@@ -4,27 +4,14 @@ using Stride.Core;
 
 namespace NexYaml.Core;
 
-internal readonly struct EmitStringInfo(int lines, bool needsQuotes)
-{
-    public int Lines { get; } = lines;
-    public bool NeedsQuotes { get; } = needsQuotes;
-
-    public ScalarStyle SuggestScalarStyle()
-    {
-        if (Lines <= 1)
-            return NeedsQuotes ? ScalarStyle.DoubleQuoted : ScalarStyle.Plain;
-        return ScalarStyle.Literal;
-    }
-}
-
 internal static class EmitStringAnalyzer
 {
     private static readonly SearchValues<char> searchValues = SearchValues.Create(":{[],#`\" '");
 
-    public static EmitStringInfo Analyze(string value)
+    public static ScalarStyle Analyze(string value)
     {
         if (value.Length <= 0)
-            return new EmitStringInfo(0, true);
+            return ScalarStyle.Plain;
 
         var first = value[0];
         var last = value[^1];
@@ -35,11 +22,12 @@ internal static class EmitStringAnalyzer
                           first is '&' or '*' or '?' or '|' or '-' or '<' or '>' or '=' or '!' or '%' or '@' or '.' ||
                           span.ContainsAny(searchValues);
 
-        var lines = span.Count('\n');
+        var lines = span.ContainsAny('\n','\n');
 
 
-
-        return new EmitStringInfo(lines, needsQuotes);
+        if (!lines)
+            return needsQuotes ? ScalarStyle.DoubleQuoted : ScalarStyle.Plain;
+        return ScalarStyle.Literal;
     }
 
     /// <summary>

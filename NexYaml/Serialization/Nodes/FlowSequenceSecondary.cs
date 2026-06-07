@@ -1,26 +1,31 @@
-﻿using Stride.Core;
+﻿using Silk.NET.OpenXR;
+using Stride.Core;
 
 namespace NexYaml.Serialization.Nodes;
 
 class FlowSequenceSecondary : FlowSequence
 {
-    public override WriteContext<Sequence> BeginSequence<T>(WriteContext<T> context, string tag, DataStyle style)
+    public FlowSequenceSecondary(int indent, bool isRedirected, DataStyle styleScope, Writer writer)
+    : base(indent, isRedirected, styleScope, writer)
     {
-        if (context.IsRedirected)
+    }
+    public override Sequence BeginSequence(string tag, DataStyle style)
+    {
+        if (IsRedirected)
         {
-            context.WriteScalar(tag);
-            context.WriteScalar(" [ ");
+            this.WriteScalar(tag);
+            this.WriteScalar(" [ ");
         }
         else
         {
-            context.WriteScalar("[ ");
+            this.WriteScalar("[ ");
         }
-        return new WriteContext<Sequence>(context.Indent, false, DataStyle.Compact, CommonNodes.FlowSequence, context.Writer);
+        return new FlowSequence(Indent, false, DataStyle.Compact, Writer);
     }
-    public override WriteContext<Sequence> Write<T>(WriteContext<Sequence> context, T value, DataStyle style)
+    public override Sequence Write<T>(Sequence context, T value, DataStyle style)
     {
         // Node following a FlowMapping is prefixed with comma ", {VALUE}"
-        context.WriteScalar(", ");
+        this.WriteScalar(", ");
         return base.Write(context, value, style);
     }
 }

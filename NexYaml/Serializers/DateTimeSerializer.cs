@@ -6,9 +6,9 @@ namespace NexYaml.Serializers;
 
 public class DateTimeSerializer : IYamlSerializer<DateTime>
 {
-    public void Write<X>(WriteContext<X> context, DateTime value, DataStyle style) where X : Node
+    public void Write(Node context, DateTime value, DataStyle style)
     {
-        context.WriteType(value.ToString(), style);
+        context.WriteString(value.ToString());
     }
 
     public ValueTask<DateTime> Read(Scope scope, DateTime parseResult)

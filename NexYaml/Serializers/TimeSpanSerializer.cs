@@ -6,7 +6,7 @@ namespace NexYaml.Serializers;
 
 public class TimeSpanSerializer : IYamlSerializer<TimeSpan>
 {
-    public void Write<X>(WriteContext<X> context, TimeSpan value, DataStyle style) where X : Node
+    public void Write(Node context, TimeSpan value, DataStyle style)
     {
         context.WriteString(value.ToString());
     }

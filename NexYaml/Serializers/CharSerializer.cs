@@ -6,7 +6,7 @@ namespace NexYaml.Serializers;
 
 public class CharSerializer : IYamlSerializer<char>
 {
-    public void Write<X>(WriteContext<X> context, char value, DataStyle style) where X : Node
+    public void Write(Node context, char value, DataStyle style)
     {
         context.WriteScalar(['\'', value, '\'']);
     }

@@ -8,6 +8,10 @@ namespace NexYaml.Serialization;
 /// </summary>
 public abstract class Sequence : Node
 {
+    public Sequence(int indent, bool isRedirected, DataStyle styleScope, Writer writer)
+        : base(indent, isRedirected, styleScope, writer)
+    {
+    }
     /// <summary>
     /// Writes an element into the <see cref="Sequence"/> node.
     /// </summary>
@@ -16,5 +20,5 @@ public abstract class Sequence : Node
     /// <param name="value">The value to add to the sequence.</param>
     /// <param name="style">The <see cref="DataStyle"/>.</param>
     /// <returns>The next <see cref="WriteContext{Sequence}"/> for the <see cref="Sequence"/>.</returns>
-    public abstract WriteContext<Sequence> Write<T>(WriteContext<Sequence> context, T value, DataStyle style);
+    public abstract Sequence Write<T>(Sequence context, T value, DataStyle style);
 }

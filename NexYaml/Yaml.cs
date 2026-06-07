@@ -23,8 +23,7 @@ public static class Yaml
     public static void Write<T>(T value, WriteDelegate writing, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
     {
         options ??= IYamlSerializerResolver.Default;
-
-        WriteContext<Node> node = new WriteContext<Node>(-2, true, style, new BlockMapping(), new DelegateWriter(options, writing));
+        var node = new BlockMapping(-2, true, style, new DelegateWriter(options, writing));
 
         node.WriteType(value, style);
     }

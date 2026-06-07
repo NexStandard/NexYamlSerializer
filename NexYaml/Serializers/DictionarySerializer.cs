@@ -8,7 +8,7 @@ namespace NexYaml.Serializers;
 public class DictionarySerializer<TKey, TValue> : IYamlSerializer<Dictionary<TKey, TValue?>>
     where TKey : notnull
 {
-    public void Write<X>(WriteContext<X> context, Dictionary<TKey, TValue?> value, DataStyle style) where X : Node
+    public void Write(Node context, Dictionary<TKey, TValue?> value, DataStyle style)
     {
         if (value.Count == 0)
         {
@@ -23,11 +23,11 @@ public class DictionarySerializer<TKey, TValue> : IYamlSerializer<Dictionary<TKe
             {
                 resultContext = resultContext.Write(x.Key.ToString() ?? "", x.Value, style);
             }
-            resultContext.End(context);
+            context.End();
         }
         else
         {
-            CollectionSerialization.WriteCollection<X, KeyValuePair<TKey, TValue?>, Dictionary<TKey, TValue?>>(context, value, style, "!Dictionary");
+            CollectionSerialization.WriteCollection<KeyValuePair<TKey, TValue?>, Dictionary<TKey, TValue?>>(context, value, style, "!Dictionary");
         }
     }
 

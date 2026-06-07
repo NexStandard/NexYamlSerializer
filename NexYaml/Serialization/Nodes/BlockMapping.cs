@@ -5,43 +5,48 @@ namespace NexYaml.Serialization.Nodes;
 
 class BlockMapping : Mapping
 {
-
-    public override WriteContext<Mapping> BeginMapping<T>(WriteContext<T> context, string tag, DataStyle style)
+    public BlockMapping(int indent, bool isRedirected, DataStyle styleScope, Writer writer)
+    : base(indent, isRedirected, styleScope, writer)
     {
-        if (context.StyleScope is DataStyle.Compact || style is DataStyle.Compact)
+    }
+    public override Mapping BeginMapping(string tag, DataStyle style)
+    {
+        if (StyleScope is DataStyle.Compact || style is DataStyle.Compact)
         {
-            return CommonNodes.FlowMapping.BeginMapping(context, tag, DataStyle.Compact);
+            return new FlowMapping(Indent, IsRedirected, StyleScope, Writer).BeginMapping(tag,DataStyle.Compact);
         }
-        if (context.IsRedirected)
+        if (IsRedirected)
         {
-            context.WriteScalar(tag);
+            this.WriteScalar(tag);
         }
-        return new WriteContext<Mapping>(context.Indent + 2, false, DataStyle.Normal, this, context.Writer);
+        return new BlockMapping(Indent + 2, false, DataStyle.Normal, Writer);
     }
 
-    public override WriteContext<Sequence> BeginSequence<T>(WriteContext<T> context, string tag, DataStyle style)
+    public override Sequence BeginSequence(string tag, DataStyle style)
     {
-        if (context.StyleScope is DataStyle.Compact || style is DataStyle.Compact)
+        if (StyleScope is DataStyle.Compact || style is DataStyle.Compact)
         {
-            return CommonNodes.FlowSequence.BeginSequence(context, tag, DataStyle.Compact);
+            return new FlowSequence(Indent, IsRedirected, StyleScope, Writer).BeginSequence(tag, DataStyle.Compact);
         }
-        return CommonNodes.BlockSequence.BeginSequence(context, tag, DataStyle.Normal);
+        return new BlockSequence(Indent, IsRedirected, StyleScope, Writer).BeginSequence(tag, DataStyle.Normal);
     }
-    public override WriteContext<Mapping> Begin(WriteContext<Mapping> context, string key, DataStyle style)
+    public override Mapping Begin(Mapping context, string key, DataStyle style)
     {
         // "{KEY}: {OPTIONAL TAG}" OR "- {OPTIONAL TAG}"
         // "{NEWLINE}{INDENT}{KEY}: {OUTPUT FROM WriteType}"
-        context.WriteScalar("\n");
-        context.WriteScalar(new string(' ', context.Indent));
+        Span<char> x = stackalloc char[Indent + 1 + key.Length+2];
 
-        // The key may contain YAML tokens, so it must be validated according to the ScalarStyle rules.
-        context.WriteString(key);
-        context.WriteScalar(": ");
-        return context;
+        x[0] = '\n';
+        x.Slice(1, Indent).Fill(' ');
+        key.AsSpan().CopyTo(x.Slice(1 + Indent,key.Length));
+        x[^1] = ' ';
+        x[^2] = ':';
+        this.WriteScalar(x);
+        return this;
     }
 
 
-    public override WriteContext<Mapping> End(WriteContext<Mapping> context, DataStyle style)
+    public override Mapping End(Mapping context, DataStyle style)
     {
         return context;
     }

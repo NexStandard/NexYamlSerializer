@@ -34,8 +34,7 @@ public abstract class Writer(IYamlSerializerResolver resolver)
     /// <param name="context">The <see cref="WriteContext{T}"/> providing the current state.</param>
     /// <param name="value">The value to write. May be <c>null</c>, in which case a <see cref="YamlCodes.Null0"/> is emitted.</param>
     /// <param name="style">The <see cref="DataStyle"/> to use for the output</param>
-    public virtual void WriteType<X, T>(WriteContext<X> context, T? value, DataStyle style)
-        where X : Node
+    public virtual void WriteType<T>(Node context, T? value, DataStyle style)
     {
         if (value is null)
         {
@@ -56,7 +55,7 @@ public abstract class Writer(IYamlSerializerResolver resolver)
             if (context.Writer.References.Contains(id.Id))
             {
                 context.WriteScalar("!!ref ");
-                context.WriteScalar(id.Id.ToString());
+                context.WriteScalar(context.Writer.FormatString(context, id.Id.ToString(), style));
                 return;
             }
             else
@@ -77,10 +76,7 @@ public abstract class Writer(IYamlSerializerResolver resolver)
             var formatt = Resolver.GetSerializer(value!.GetType(), typeof(T));
             if (valueType != type)
             {
-                context = context with
-                {
-                    IsRedirected = true
-                };
+                context.IsRedirected = true;
             }
 
             // C# forgets the cast of T when invoking to an object,
@@ -108,16 +104,15 @@ public abstract class Writer(IYamlSerializerResolver resolver)
     /// <param name="context">The context providing state such as current indentation and style.</param>
     /// <param name="value">The string value to write.</param>
     /// <param name="style">The data style that influences formatting (for example, compact or normal).</param>
-    public virtual ReadOnlySpan<char> FormatString<X>(WriteContext<X> context, string value, DataStyle style)
-        where X : Node
+    public virtual ReadOnlySpan<char> FormatString(Node context, string value, DataStyle style)
     {
         var result = EmitStringAnalyzer.Analyze(value);
-        var scalarStyle = result.SuggestScalarStyle();
-        if (scalarStyle is ScalarStyle.Literal && style is DataStyle.Compact)
+        if (result is ScalarStyle.Literal && style is DataStyle.Compact)
         {
-            scalarStyle = ScalarStyle.DoubleQuoted;
+            result = ScalarStyle.DoubleQuoted;
         }
-        switch (scalarStyle)
+        
+        switch (result)
         {
             case ScalarStyle.Plain or ScalarStyle.Any:
                 return value;
@@ -136,4 +131,5 @@ public abstract class Writer(IYamlSerializerResolver resolver)
         }
         throw new ArgumentOutOfRangeException();
     }
+
 }

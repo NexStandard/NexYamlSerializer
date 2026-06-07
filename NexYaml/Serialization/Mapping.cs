@@ -8,6 +8,10 @@ namespace NexYaml.Serialization;
 /// </summary>
 public abstract class Mapping : Node
 {
+    public Mapping(int indent, bool isRedirected, DataStyle styleScope, Writer writer)
+    : base(indent, isRedirected, styleScope, writer)
+    {
+    }
     /// <summary>
     /// Writes a key-value pair into the <see cref="Mapping"/> node.
     /// </summary>
@@ -17,16 +21,16 @@ public abstract class Mapping : Node
     /// <param name="value">The value associated with the <paramref name="key"/>.</param>
     /// <param name="style">The <see cref="DataStyle"/>.</param>
     /// <returns>The next <see cref="WriteContext{Mapping}"/> for the <see cref="Mapping"/>.</returns>
-    public virtual WriteContext<Mapping> Write<T>(WriteContext<Mapping> context, string key, T value, DataStyle style)
+    public virtual Mapping Writes<T>(string key, T value, DataStyle style)
     {
         if (value is null)
         {
-            context.WriteScalar(YamlCodes.Null.AsSpan());
-            return context;
+            this.WriteScalar(YamlCodes.Null.AsSpan());
+            return this;
         }
-        context.WriteType(value, style);
-        return context;
+        this.WriteType(value, style);
+        return this;
     }
-    public abstract WriteContext<Mapping> Begin(WriteContext<Mapping> context, string key, DataStyle style);
-    public abstract WriteContext<Mapping> End(WriteContext<Mapping> context, DataStyle style);
+    public abstract Mapping Begin(Mapping context, string key, DataStyle style);
+    public abstract Mapping End(Mapping context, DataStyle style);
 }

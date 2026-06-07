@@ -7,7 +7,7 @@ namespace NexYaml.Serializers;
 
 public class ByteSerializer : IYamlSerializer<byte>
 {
-    public void Write<X>(WriteContext<X> context, byte value, DataStyle style) where X : Node
+    public void Write(Node context, byte value, DataStyle style)
     {
         Span<char> span = stackalloc char[3];
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);

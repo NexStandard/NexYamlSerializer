@@ -4,20 +4,32 @@ namespace NexYaml.Serialization.Nodes;
 
 class BlockSequenceMapping : BlockMapping
 {
-    public override WriteContext<Mapping> Begin(WriteContext<Mapping> context, string key, DataStyle style)
+    public BlockSequenceMapping(int indent, bool isRedirected, DataStyle styleScope, Writer writer)
+        : base(indent, isRedirected, styleScope, writer)
+    {
+    }
+    public override Mapping BeginMapping(string tag, DataStyle style)
+    {
+        if (StyleScope is DataStyle.Compact || style is DataStyle.Compact)
+        {
+            return new FlowMapping(Indent, IsRedirected, StyleScope, Writer).BeginMapping(tag, DataStyle.Compact);
+        }
+        if (IsRedirected)
+        {
+            this.WriteScalar(tag);
+        }
+        return new BlockSequenceMapping(Indent + 2, false, DataStyle.Normal, Writer);
+    }
+    public override Mapping Begin(Mapping context, string key, DataStyle style)
     {
         // If the tag is not present on Sequence element:
         //    {INDENT}- {KEY}: {VALUE}
         context.WriteString(key);
         context.WriteScalar(": ");
 
-        return context with
-        {
-            Node = new BlockMapping(),
-            Indent = context.Indent - 2,
-        };
+        return new BlockMapping(context.Indent - 2, IsRedirected, StyleScope, Writer);
     }
-    public override WriteContext<Mapping> End(WriteContext<Mapping> context, DataStyle style)
+    public override Mapping End(Mapping context, DataStyle style)
     {
         return context;
     }

@@ -4,40 +4,41 @@ namespace NexYaml.Serialization.Nodes;
 
 class FlowSequence : Sequence
 {
-    public override WriteContext<Mapping> BeginMapping<T>(WriteContext<T> context, string tag, DataStyle style)
+    public FlowSequence(int indent, bool isRedirected, DataStyle styleScope, Writer writer)
+    : base(indent, isRedirected, styleScope, writer)
+    {
+    }
+    public override Mapping BeginMapping(string tag, DataStyle style)
     {
         // inside a flow, only new flows can be created, no block is allowed
-        return CommonNodes.FlowMapping.BeginMapping(context, tag, DataStyle.Compact);
+        return new FlowMapping(Indent, IsRedirected, StyleScope, Writer).BeginMapping(tag,style);
     }
 
-    public override WriteContext<Sequence> BeginSequence<T>(WriteContext<T> context, string tag, DataStyle style)
+    public override Sequence BeginSequence(string tag, DataStyle style)
     {
-        if (context.IsRedirected)
+        if (IsRedirected)
         {
-            context.WriteScalar(tag);
-            context.WriteScalar(" [ ");
+            this.WriteScalar(tag);
+            this.WriteScalar(" [ ");
         }
         else
         {
-            context.WriteScalar("[ ");
+            this.WriteScalar("[ ");
         }
         // inside a flow, only new flows can be created, no block is allowed
-        return new WriteContext<Sequence>(context.Indent, false, DataStyle.Compact, this, context.Writer);
+        return new FlowSequenceSecondary(Indent, IsRedirected, DataStyle.Compact, Writer);
     }
 
-    public override WriteContext<Sequence> Write<T>(WriteContext<Sequence> context, T value, DataStyle style)
+    public override Sequence Write<T>(Sequence context, T value, DataStyle style)
     {
         // First Node is {VALUE}
-        context.WriteType(value, style);
+        this.WriteType(value, style);
 
         // all following Nodes need a prefix
-        return context with
-        {
-            Node = CommonNodes.FlowSequenceSecondary
-        };
+        return new FlowSequenceSecondary(Indent, IsRedirected, StyleScope, Writer);
     }
-    public override void End<T>(WriteContext<T> context)
+    public override void End()
     {
-        context.WriteScalar(" ]");
+        this.WriteScalar(" ]");
     }
 }

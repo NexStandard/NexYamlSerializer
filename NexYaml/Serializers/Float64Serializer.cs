@@ -7,7 +7,7 @@ namespace NexYaml.Serializers;
 
 public class Float64Serializer : IYamlSerializer<double>
 {
-    public void Write<X>(WriteContext<X> context, double value, DataStyle style) where X : Node
+    public void Write(Node context, double value, DataStyle style)
     {
         Span<char> span = stackalloc char[32];
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);

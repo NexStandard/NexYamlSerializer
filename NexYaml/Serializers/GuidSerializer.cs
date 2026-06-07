@@ -6,9 +6,9 @@ namespace NexYaml.Serializers;
 
 public class GuidSerializer : IYamlSerializer<Guid>
 {
-    public void Write<X>(WriteContext<X> context, Guid value, DataStyle style) where X : Node
+    public void Write(Node context, Guid value, DataStyle style)
     {
-        context.WriteString(value.ToString());
+        context.WriteScalar(value.ToString());
     }
 
     public ValueTask<Guid> Read(Scope scope, Guid parseResult)

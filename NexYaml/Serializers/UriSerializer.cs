@@ -6,7 +6,7 @@ namespace NexYaml.Serializers;
 
 public class UriSerializer : IYamlSerializer<Uri>
 {
-    public void Write<X>(WriteContext<X> context, Uri value, DataStyle style) where X : Node
+    public void Write(Node context, Uri value, DataStyle style)
     {
         context.WriteScalar(value.ToString());
     }

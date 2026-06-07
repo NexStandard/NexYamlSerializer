@@ -6,7 +6,7 @@ namespace NexYaml.Serializers;
 
 public static class CollectionSerialization
 {
-    public static void WriteCollection<X, T, TCol>(WriteContext<X> context, TCol value, DataStyle style, string tag) where X : Node where TCol : ICollection<T?>
+    public static void WriteCollection<T, TCol>(Node context, TCol value, DataStyle style, string tag)  where TCol : ICollection<T?>
     {
         if (value.Count == 0)
         {

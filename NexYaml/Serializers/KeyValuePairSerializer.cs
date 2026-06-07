@@ -6,7 +6,7 @@ namespace NexYaml.Serializers;
 
 public class KeyValuePairSerializer<TKey, TValue> : IYamlSerializer<KeyValuePair<TKey?, TValue?>>
 {
-    public void Write<X>(WriteContext<X> context, KeyValuePair<TKey?, TValue?> value, DataStyle style) where X : Node
+    public void Write(Node context, KeyValuePair<TKey?, TValue?> value, DataStyle style)
     {
         context.BeginSequence("!KeyValue", style)
             .Write(value.Key, style)
