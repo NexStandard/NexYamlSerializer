@@ -113,7 +113,10 @@ public static class WriteContextExtensions
     /// <returns>The  <see cref="WriteContext{T}"/> based on the written key/value pair.</returns>
     public static WriteContext<Mapping> Write<T>(this WriteContext<Mapping> mapping, string key, T value, DataStyle style = DataStyle.Any)
     {
-        return mapping.Node.Write(mapping, key, value, style);
+
+        var x = mapping.Node.Begin(mapping, key, style);
+        var y = x.Node.Write(x, key, value, style);
+        return x.Node.End(x,style);
     }
 
     /// <summary>
@@ -139,23 +142,5 @@ public static class WriteContextExtensions
         where X : Node
     {
         context.WriteScalar(context.Writer.FormatString(context, value, style));
-    }
-}
-public static class ScalarExtensions
-{
-    public static WriteContext<Mapping> Write(this WriteContext<Mapping> mapping, string key, int value, DataStyle style = DataStyle.Any)
-    {
-        Span<char> span = stackalloc char[11];
-        value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
-        return mapping.Node.Write(mapping, key, span[..written], style);
-    }
-
-    public static WriteContext<Mapping> Write(this WriteContext<Mapping> mapping, string key, string? value, DataStyle style = DataStyle.Any)
-    {
-        if (value is null)
-        {
-            return mapping.Node.Write(mapping, key, YamlCodes.Null.AsSpan(), style);
-        }
-        return mapping.Node.Write(mapping, key, mapping.Writer.FormatString(mapping, value, style), style);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Stride.Core;
+﻿using NexYaml.Core;
+using Stride.Core;
 
 namespace NexYaml.Serialization;
 /// <summary>
@@ -16,6 +17,16 @@ public abstract class Mapping : Node
     /// <param name="value">The value associated with the <paramref name="key"/>.</param>
     /// <param name="style">The <see cref="DataStyle"/>.</param>
     /// <returns>The next <see cref="WriteContext{Mapping}"/> for the <see cref="Mapping"/>.</returns>
-    public abstract WriteContext<Mapping> Write<T>(WriteContext<Mapping> context, string key, T value, DataStyle style);
-    public abstract WriteContext<Mapping> Write(WriteContext<Mapping> context, string key, ReadOnlySpan<char> value, DataStyle style);
+    public virtual WriteContext<Mapping> Write<T>(WriteContext<Mapping> context, string key, T value, DataStyle style)
+    {
+        if (value is null)
+        {
+            context.WriteScalar(YamlCodes.Null.AsSpan());
+            return context;
+        }
+        context.WriteType(value, style);
+        return context;
+    }
+    public abstract WriteContext<Mapping> Begin(WriteContext<Mapping> context, string key, DataStyle style);
+    public abstract WriteContext<Mapping> End(WriteContext<Mapping> context, DataStyle style);
 }

@@ -1,9 +1,11 @@
 ﻿using Stride.Core;
+using Stride.Input;
 
 namespace NexYaml.Serialization.Nodes;
 
 class BlockMapping : Mapping
 {
+
     public override WriteContext<Mapping> BeginMapping<T>(WriteContext<T> context, string tag, DataStyle style)
     {
         if (context.StyleScope is DataStyle.Compact || style is DataStyle.Compact)
@@ -25,8 +27,7 @@ class BlockMapping : Mapping
         }
         return CommonNodes.BlockSequence.BeginSequence(context, tag, DataStyle.Normal);
     }
-
-    public override WriteContext<Mapping> Write<T>(WriteContext<Mapping> context, string key, T value, DataStyle style)
+    public override WriteContext<Mapping> Begin(WriteContext<Mapping> context, string key, DataStyle style)
     {
         // "{KEY}: {OPTIONAL TAG}" OR "- {OPTIONAL TAG}"
         // "{NEWLINE}{INDENT}{KEY}: {OUTPUT FROM WriteType}"
@@ -36,20 +37,12 @@ class BlockMapping : Mapping
         // The key may contain YAML tokens, so it must be validated according to the ScalarStyle rules.
         context.WriteString(key);
         context.WriteScalar(": ");
-        context.WriteType(value, style);
         return context;
     }
 
-    public override WriteContext<Mapping> Write(WriteContext<Mapping> context, string key, ReadOnlySpan<char> value, DataStyle style)
-    {
-        // "{KEY}: {OPTIONAL TAG}" OR "- {OPTIONAL TAG}"
-        // "{NEWLINE}{INDENT}{KEY}: {OUTPUT FROM WriteType}"
-        context.WriteScalar("\n" + new string(' ', context.Indent));
 
-        // The key may contain YAML tokens, so it must be validated according to the ScalarStyle rules.
-        context.WriteString(key);
-        context.WriteScalar(": ");
-        context.WriteScalar(value);
+    public override WriteContext<Mapping> End(WriteContext<Mapping> context, DataStyle style)
+    {
         return context;
     }
 }

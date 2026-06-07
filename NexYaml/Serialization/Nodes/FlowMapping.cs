@@ -25,34 +25,26 @@ class FlowMapping : Mapping
         return new WriteContext<Sequence>(context.Indent, false, DataStyle.Compact, CommonNodes.FlowSequence, context.Writer)
             .BeginSequence(tag, DataStyle.Compact);
     }
-
-    public override WriteContext<Mapping> Write<T>(WriteContext<Mapping> context, string key, T value, DataStyle style)
-    {
-        // First Node is {KEY: VALUE}
-        context.WriteScalar(key);
-        context.WriteScalar(": ");
-        context.WriteType(value, style);
-
-        // all following Nodes need a prefix
-        return context with
-        {
-            Node = CommonNodes.FlowMappingSecondary
-        };
-    }
-    public override WriteContext<Mapping> Write(WriteContext<Mapping> context, string key, ReadOnlySpan<char> value, DataStyle style)
-    {
-        // First Node is {KEY: VALUE}
-        context.WriteScalar(key + ": ");
-        context.WriteScalar(value);
-
-        // all following Nodes need a prefix
-        return context with
-        {
-            Node = CommonNodes.FlowMappingSecondary
-        };
-    }
     public override void End<T>(WriteContext<T> context)
     {
         context.WriteScalar(" }");
     }
+
+    public override WriteContext<Mapping> Begin(WriteContext<Mapping> context, string key, DataStyle style)
+    {
+        // First Node is {KEY: VALUE}
+        context.WriteScalar(key);
+        context.WriteScalar(": ");
+        return context;
+    }
+    public override WriteContext<Mapping> End(WriteContext<Mapping> context, DataStyle style)
+    {
+        // all following Nodes need a prefix
+        return context with
+        {
+            Node = CommonNodes.FlowMappingSecondary
+        };
+    }
+
+
 }
