@@ -11,7 +11,7 @@ public class ValueTupleSerializer<T1, T2> : IYamlSerializer<ValueTuple<T1?, T2?>
         context.BeginSequence("!ValueTuple2", DataStyle.Compact)
             .Write(value.Item1, DataStyle.Compact)
             .Write(value.Item2, DataStyle.Compact)
-            .End(context);
+            .End();
     }
 
     public async ValueTask<(T1?, T2?)> Read(Scope scope, (T1?, T2?) parseResult)
@@ -56,7 +56,7 @@ public class ValueTupleSerializer<T1, T2, T3> : IYamlSerializer<ValueTuple<T1?, 
             .Write(value.Item1, DataStyle.Compact)
             .Write(value.Item2, DataStyle.Compact)
             .Write(value.Item3, DataStyle.Compact)
-            .End(context);
+            .End();
     }
 
     public async ValueTask<(T1?, T2?, T3?)> Read(Scope scope, (T1?, T2?, T3?) parseResult)
@@ -105,7 +105,7 @@ public class ValueTupleSerializer<T1, T2, T3, T4> : IYamlSerializer<ValueTuple<T
             .Write(value.Item2, DataStyle.Compact)
             .Write(value.Item3, DataStyle.Compact)
             .Write(value.Item4, DataStyle.Compact)
-            .End(context);
+            .End();
     }
 
     public async ValueTask<(T1?, T2?, T3?, T4?)> Read(Scope scope, (T1?, T2?, T3?, T4?) parseResult)
@@ -158,7 +158,7 @@ public class ValueTupleSerializer<T1, T2, T3, T4, T5> : IYamlSerializer<ValueTup
             .Write(value.Item3, DataStyle.Compact)
             .Write(value.Item4, DataStyle.Compact)
             .Write(value.Item5, DataStyle.Compact)
-            .End(context);
+            .End();
     }
 
     public async ValueTask<(T1?, T2?, T3?, T4?, T5?)> Read(Scope scope, (T1?, T2?, T3?, T4?, T5?) parseResult)
@@ -216,7 +216,7 @@ public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6> : IYamlSerializer<Valu
             .Write(value.Item4, DataStyle.Compact)
             .Write(value.Item5, DataStyle.Compact)
             .Write(value.Item6, DataStyle.Compact)
-            .End(context);
+            .End();
     }
 
     public async ValueTask<(T1?, T2?, T3?, T4?, T5?, T6?)> Read(Scope scope, (T1?, T2?, T3?, T4?, T5?, T6?) parseResult)
@@ -277,7 +277,7 @@ public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6, T7> : IYamlSerializer<
             .Write(value.Item5, DataStyle.Compact)
             .Write(value.Item6, DataStyle.Compact)
             .Write(value.Item7, DataStyle.Compact)
-            .End(context);
+            .End();
     }
 
     public async ValueTask<(T1?, T2?, T3?, T4?, T5?, T6?, T7?)> Read(Scope scope, (T1?, T2?, T3?, T4?, T5?, T6?, T7?) parseResult)

@@ -49,7 +49,7 @@ public static class CollectionSerialization
                 }
                 resultContext = resultContext.Write(element, DataStyle.Any);
             }
-            resultContext.End(context);
+            resultContext.End();
             return;
         }
 
@@ -58,7 +58,7 @@ public static class CollectionSerialization
         {
             result = result.Write(x, DataStyle.Any);
         }
-        result.End(context);
+        result.End();
     }
 
     /// <summary>

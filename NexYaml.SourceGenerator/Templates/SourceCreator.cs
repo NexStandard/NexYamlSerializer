@@ -93,7 +93,7 @@ internal static class SourceCreator
         var preferedStyle = style is DataStyle.Any or DataStyle.Normal ? Style : style;
         context.BeginMapping("!{tag}",preferedStyle)
         {package.CreateNewSerializationEmit()}
-                .End(context);
+                .End();
         """;
         string nullcheck = $$"""
             if (value is null)

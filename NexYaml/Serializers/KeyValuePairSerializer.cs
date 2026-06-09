@@ -11,7 +11,7 @@ public class KeyValuePairSerializer<TKey, TValue> : IYamlSerializer<KeyValuePair
         context.BeginSequence("!KeyValue", style)
             .Write(value.Key, style)
             .Write(value.Value, style)
-            .End(context);
+            .End();
     }
 
     public async ValueTask<KeyValuePair<TKey?, TValue?>> Read(Scope scope, KeyValuePair<TKey?, TValue?> parseResult)

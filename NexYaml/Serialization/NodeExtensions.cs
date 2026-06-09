@@ -36,18 +36,6 @@ public static class NodeExtensions
     }
 
     /// <summary>
-    /// Ends the current YAML <see cref="WriteContext{T}"/>, closing the <see cref="Node"/> that was previously started.
-    /// </summary>
-    /// <typeparam name="T">The type of the parent YAML <see cref="Node"/>.</typeparam>
-    /// <typeparam name="X">The type of the current YAML <see cref="Node"/> that is ending.</typeparam>
-    /// <param name="context">The parent <see cref="WriteContext{T}"/>.</param>
-    /// <param name="current">The <see cref="WriteContext{T}"/> of the <see cref="Node"/> that is ending.</param>
-    public static void End(this Node context, in Node current)
-    {
-        context.End();
-    }
-
-    /// <summary>
     /// Writes an empty <see cref="Mapping"/> with the given tag.
     /// </summary>
     /// <typeparam name="T">The type of the current YAML <see cref="Node"/>.</typeparam>
