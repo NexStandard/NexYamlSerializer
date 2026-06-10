@@ -30,7 +30,7 @@ class BlockMapping : Mapping
         }
         return new BlockSequence(Indent, IsRedirected, StyleScope, Writer).BeginSequence(tag, DataStyle.Normal);
     }
-    public override Mapping Begin(Mapping context, string key, DataStyle style)
+    public override Mapping WriteKey(Mapping context, string key, DataStyle style)
     {
         // "{KEY}: {OPTIONAL TAG}" OR "- {OPTIONAL TAG}"
         // "{NEWLINE}{INDENT}{KEY}: {OUTPUT FROM WriteType}"
@@ -43,11 +43,5 @@ class BlockMapping : Mapping
         x[^2] = ':';
         WriteScalar(x);
         return this;
-    }
-
-
-    public override Mapping End(Mapping context, DataStyle style)
-    {
-        return context;
     }
 }

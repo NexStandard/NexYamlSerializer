@@ -34,9 +34,14 @@ public static class NodeExtensions
     /// <returns>The  <see cref="WriteContext{T}"/> based on the written key/value pair.</returns>
     public static Mapping Write<T>(this Mapping mapping, string key, T value, DataStyle style = DataStyle.Any)
     {
-        var x = mapping.Begin(mapping, key, style);
-        x = x.Writes(key, value, style);
-        return x.End(x,style);
+        var x = mapping.WriteKey(mapping, key, style);
+        if (value is null)
+        {
+            x.WriteScalar(YamlCodes.Null.AsSpan());
+            return x;
+        }
+        x.WriteType(value, style);
+        return x;
     }
 
     /// <summary>
@@ -56,21 +61,21 @@ public static class NodeExtensions
     {
         var Style = style is DataStyle.Any or DataStyle.Normal ? DataStyle.Any : style;
 
-        var x = context.Begin(context,key, style);
+        var x = context.WriteKey(context,key, style);
         if (value is null)
         {
             x.WriteScalar(YamlCodes.Null.AsSpan());
-            return x.End(x, style);
+            return x;
         }
         x.WriteScalar(context.Writer.FormatString(context, value, style));
-        return x.End(x, style);
+        return x;
     }
     public static Mapping Write(this Mapping context, string key, Guid value, DataStyle style = DataStyle.Any)
     {
         var Style = style is DataStyle.Any or DataStyle.Normal ? DataStyle.Any : style;
 
-        var x = context.Begin(context, key, style);
+        var x = context.WriteKey(context, key, style);
         context.WriteString(value.ToString());
-        return x.End(x, style);
+        return x;
     }
 }

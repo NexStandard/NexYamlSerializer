@@ -8,11 +8,11 @@ class FlowMappingSecondary : FlowMapping
         : base(indent, isRedirected, styleScope, writer)
     {
     }
-    public override Mapping Begin(Mapping context, string key, DataStyle style)
+    public override Mapping WriteKey(Mapping context, string key, DataStyle style)
     {
         // Node following a FlowMapping is prefixed with comma ", {KEY: VALUE}"
         WriteScalar(", ");
-        base.Begin(this,key, style);
+        base.WriteKey(this,key, style);
         return this;
     }
 

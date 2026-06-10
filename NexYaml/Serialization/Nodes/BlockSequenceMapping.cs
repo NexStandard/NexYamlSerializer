@@ -20,7 +20,7 @@ class BlockSequenceMapping : BlockMapping
         }
         return new BlockSequenceMapping(Indent + 2, false, DataStyle.Normal, Writer);
     }
-    public override Mapping Begin(Mapping context, string key, DataStyle style)
+    public override Mapping WriteKey(Mapping context, string key, DataStyle style)
     {
         // If the tag is not present on Sequence element:
         //    {INDENT}- {KEY}: {VALUE}
@@ -28,9 +28,5 @@ class BlockSequenceMapping : BlockMapping
         context.WriteScalar(": ");
 
         return new BlockMapping(context.Indent - 2, IsRedirected, StyleScope, Writer);
-    }
-    public override Mapping End(Mapping context, DataStyle style)
-    {
-        return context;
     }
 }

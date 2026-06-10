@@ -98,7 +98,7 @@ internal static class SourceCreator
         string nullcheck = $$"""
             if (value is null)
                 {
-                    var x3 = context.Begin(context, key, style);
+                    var x3 = context.WriteKey(context, key, style);
                     context.WriteScalar(YamlCodes.Null);
                     return x3.End(x3,style);
                 }
@@ -108,11 +108,11 @@ internal static class SourceCreator
                     {{(info.TypeKind != Microsoft.CodeAnalysis.TypeKind.Struct ? nullcheck : "" )}}
                     if (value.Id != default && context.Writer.References.Contains(value.Id))
                     {
-                        var x2 = context.Begin(context, key, style);
+                        var x2 = context.WriteKey(context, key, style);
                         x2.WriteScalar("!!ref ");
                         x2.WriteScalar(value.Id.ToString());
                         
-                        return x2.End(x2,style);
+                        return x2;
                     }
                     else
                     {
@@ -142,9 +142,9 @@ internal static class SourceCreator
                 var Style = style is DataStyle.Any or DataStyle.Normal ? {{info.DataStyle}} : style;
                 {{(info.IsIIdentifiable ? iidentifiable : "")}}
                 
-                context = context.Begin(context, key, style);
+                context = context.WriteKey(context, key, style);
                 {{writeString}}
-                return context.End(context,style);
+                return context;
             }
             """;
 

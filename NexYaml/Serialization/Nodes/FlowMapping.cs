@@ -34,18 +34,11 @@ class FlowMapping : Mapping
         WriteScalar(" }");
     }
 
-    public override Mapping Begin(Mapping context, string key, DataStyle style)
+    public override Mapping WriteKey(Mapping context, string key, DataStyle style)
     {
         // First Node is {KEY: VALUE}
         WriteScalar(key);
         WriteScalar(": ");
-        return context;
+        return new FlowMappingSecondary(Indent,false,StyleScope,Writer);
     }
-    public override Mapping End(Mapping context, DataStyle style)
-    {
-        // all following Nodes need a prefix
-        return new FlowMappingSecondary(Indent, IsRedirected, style, Writer);
-    }
-
-
 }
