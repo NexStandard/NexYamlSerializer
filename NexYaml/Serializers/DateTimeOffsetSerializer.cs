@@ -8,7 +8,10 @@ public class DateTimeOffsetSerializer : IYamlSerializer<DateTimeOffset>
 {
     public void Write(Node context, DateTimeOffset value, DataStyle style)
     {
-        context.WriteString(value.ToString());
+        Span<char> buf = stackalloc char[33];
+        value.TryFormat(buf, out int written, "O");
+
+        context.WriteScalar(buf[..written]);
     }
 
     public ValueTask<DateTimeOffset> Read(Scope scope, DateTimeOffset parseResult)

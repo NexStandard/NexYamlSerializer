@@ -22,7 +22,7 @@ internal static class EmitStringAnalyzer
                           first is '&' or '*' or '?' or '|' or '-' or '<' or '>' or '=' or '!' or '%' or '@' or '.' ||
                           span.ContainsAny(searchValues);
 
-        var lines = span.ContainsAny('\n','\n');
+        var lines = span.Contains('\n');
 
 
         if (!lines)

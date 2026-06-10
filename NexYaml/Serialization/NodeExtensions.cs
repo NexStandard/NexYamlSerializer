@@ -75,7 +75,14 @@ public static class NodeExtensions
         var Style = style is DataStyle.Any or DataStyle.Normal ? DataStyle.Any : style;
 
         var x = context.WriteKey(context, key, style);
-        context.WriteString(value.ToString());
+        Span<char> buffer = stackalloc char[36]; // or 32 if you want "N" format
+
+        if (value.TryFormat(buffer, out int written, "D"))
+        {
+            context.WriteScalar(buffer);
+        }
+
+        
         return x;
     }
 }

@@ -8,7 +8,12 @@ public class GuidSerializer : IYamlSerializer<Guid>
 {
     public void Write(Node context, Guid value, DataStyle style)
     {
-        context.WriteScalar(value.ToString());
+        Span<char> buffer = stackalloc char[36]; // or 32 if you want "N" format
+
+        if (value.TryFormat(buffer, out int written, "D"))
+        {
+            context.WriteScalar(buffer);
+        }
     }
 
     public ValueTask<Guid> Read(Scope scope, Guid parseResult)

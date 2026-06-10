@@ -3,7 +3,7 @@ using Stride.Input;
 
 namespace NexYaml.Serialization.Nodes;
 
-class BlockMapping : Mapping
+public class BlockMapping : Mapping
 {
     public BlockMapping(int indent, bool isRedirected, DataStyle styleScope, Writer writer)
     : base(indent, isRedirected, styleScope, writer)
