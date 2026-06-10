@@ -52,16 +52,6 @@ public static class NodeExtensions
         return sequence.Write(sequence, value, style);
     }
 
-    /// <summary>
-    /// Writes the provided text to the underlying output with formatting.
-    /// </summary>
-    /// <typeparam name="X">Type of the current <see cref="Node"/></typeparam>
-    /// <param name="value">A <see cref="ReadOnlySpan{T}"/> of characters representing the formatted text to write.</param>
-    /// <param name="style">The <see cref="DataStyle"/>.</param>
-    public static void WriteString(this Node context, string value, DataStyle style = DataStyle.Compact)
-    {
-        context.WriteScalar(context.Writer.FormatString(context, value, style));
-    }
     public static Mapping Write(this Mapping context, string key, string value, DataStyle style = DataStyle.Any)
     {
         var Style = style is DataStyle.Any or DataStyle.Normal ? DataStyle.Any : style;

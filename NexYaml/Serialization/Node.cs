@@ -51,8 +51,6 @@ public abstract class Node(int indent, bool isRedirected, DataStyle styleScope, 
     /// This effectively causes the context to bubble up to the active parent <see cref="Node"/>.
     /// While this process can occur implicitly, some <see cref="Node"/> types may require an explicit ending.
     /// </summary>
-    /// <typeparam name="T">The node type.</typeparam>
-    /// <param name="context">The <see cref="WriteContext{T}"/> to be finalized.</param>
     public virtual void End()
     {
         // standard do nothing
@@ -78,5 +76,12 @@ public abstract class Node(int indent, bool isRedirected, DataStyle styleScope, 
     {
         WriteScalar(tag);
         WriteScalar(" [ ]".AsSpan());
+    }
+    /// <summary>
+    /// Writes the provided text to the underlying output with formatting.
+    /// </summary>
+    public void WriteString(string value, DataStyle style = DataStyle.Compact)
+    {
+        WriteScalar(Writer.FormatString(this, value, style));
     }
 }
