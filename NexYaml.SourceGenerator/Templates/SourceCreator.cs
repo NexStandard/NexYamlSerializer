@@ -90,7 +90,7 @@ internal static class SourceCreator
         ///
         string writeString = isEmpty ? $"       context.WriteEmptyMapping(\"!{tag}\");" :
             $"""
-        var preferedStyle = style is DataStyle.Any or DataStyle.Normal ? Style : style;
+        var preferedStyle = style is DataStyle.Any or DataStyle.Normal ? {info.DataStyle} : style;
         context.BeginMapping("!{tag}",preferedStyle)
         {package.CreateNewSerializationEmit()}
                 .End();
@@ -99,13 +99,13 @@ internal static class SourceCreator
             if (value is null)
                 {
                     var x3 = context.WriteKey(context, key, style);
-                    context.WriteScalar(YamlCodes.Null);
-                    return x3.End(x3,style);
+                    x3.WriteScalar(YamlCodes.Null);
+                    return x3;
                 }
             """;
 
         string iidentifiable = $$"""
-                    {{(info.TypeKind != Microsoft.CodeAnalysis.TypeKind.Struct ? nullcheck : "" )}}
+                    
                     if (value.Id != default && context.Writer.References.Contains(value.Id))
                     {
                         var x2 = context.WriteKey(context, key, style);
@@ -139,7 +139,7 @@ internal static class SourceCreator
                 }
             public static Mapping Write{{info.TypeParameterArguments}}(this Mapping context, string key, {{info.NameDefinition}} value, DataStyle style = DataStyle.Any){{info.TypeParameterRestrictions}}
             {
-                var Style = style is DataStyle.Any or DataStyle.Normal ? {{info.DataStyle}} : style;
+                {{(info.TypeKind != Microsoft.CodeAnalysis.TypeKind.Struct ? nullcheck : "")}}
                 {{(info.IsIIdentifiable ? iidentifiable : "")}}
                 
                 context = context.WriteKey(context, key, style);
