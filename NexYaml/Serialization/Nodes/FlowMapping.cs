@@ -12,12 +12,12 @@ class FlowMapping : Mapping
     {
         if (IsRedirected)
         {
-            this.WriteScalar(tag);
-            this.WriteScalar(" { ");
+            WriteScalar(tag);
+            WriteScalar(" { ");
         }
         else
         {
-            this.WriteScalar("{ ");
+            WriteScalar("{ ");
         }
         // inside a flow, only new flows can be created, no block is allowed
         return new FlowMapping(Indent, false, DataStyle.Compact, Writer);
@@ -31,14 +31,14 @@ class FlowMapping : Mapping
     }
     public override void End()
     {
-        this.WriteScalar(" }");
+        WriteScalar(" }");
     }
 
     public override Mapping Begin(Mapping context, string key, DataStyle style)
     {
         // First Node is {KEY: VALUE}
-        this.WriteScalar(key);
-        this.WriteScalar(": ");
+        WriteScalar(key);
+        WriteScalar(": ");
         return context;
     }
     public override Mapping End(Mapping context, DataStyle style)

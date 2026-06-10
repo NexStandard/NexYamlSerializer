@@ -16,7 +16,7 @@ class BlockSequenceMapping : BlockMapping
         }
         if (IsRedirected)
         {
-            this.WriteScalar(tag);
+            WriteScalar(tag);
         }
         return new BlockSequenceMapping(Indent + 2, false, DataStyle.Normal, Writer);
     }

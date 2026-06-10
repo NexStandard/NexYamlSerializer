@@ -17,7 +17,7 @@ class BlockMapping : Mapping
         }
         if (IsRedirected)
         {
-            this.WriteScalar(tag);
+            WriteScalar(tag);
         }
         return new BlockMapping(Indent + 2, false, DataStyle.Normal, Writer);
     }
@@ -41,7 +41,7 @@ class BlockMapping : Mapping
         key.AsSpan().CopyTo(x.Slice(1 + Indent,key.Length));
         x[^1] = ' ';
         x[^2] = ':';
-        this.WriteScalar(x);
+        WriteScalar(x);
         return this;
     }
 

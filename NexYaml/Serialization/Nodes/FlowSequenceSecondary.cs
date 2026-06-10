@@ -13,19 +13,19 @@ class FlowSequenceSecondary : FlowSequence
     {
         if (IsRedirected)
         {
-            this.WriteScalar(tag);
-            this.WriteScalar(" [ ");
+            WriteScalar(tag);
+            WriteScalar(" [ ");
         }
         else
         {
-            this.WriteScalar("[ ");
+            WriteScalar("[ ");
         }
         return new FlowSequence(Indent, false, DataStyle.Compact, Writer);
     }
     public override Sequence Write<T>(Sequence context, T value, DataStyle style)
     {
         // Node following a FlowMapping is prefixed with comma ", {VALUE}"
-        this.WriteScalar(", ");
+        WriteScalar(", ");
         return base.Write(context, value, style);
     }
 }

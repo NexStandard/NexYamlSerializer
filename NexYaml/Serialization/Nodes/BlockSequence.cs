@@ -37,7 +37,7 @@ class BlockSequence : Sequence
         }
         if (IsRedirected)
         {
-            this.WriteScalar(tag);
+            WriteScalar(tag);
         }
         return new BlockSequence(Math.Max(0, Indent) + 2, false, DataStyle.Normal, Writer);
     }
@@ -50,9 +50,9 @@ class BlockSequence : Sequence
         // - The sequence identifier ("- ") does NOT use increased indentation.
         // - The indent can NOT be below 0
         // - Only the subsequent nodes follow deeper indentation levels.
-        this.WriteScalar("\n");
-        this.WriteScalar(new string(' ', Math.Max(Indent - 2, 0)));
-        this.WriteScalar("- ");
+        WriteScalar("\n");
+        WriteScalar(new string(' ', Math.Max(Indent - 2, 0)));
+        WriteScalar("- ");
         context.WriteType(value, style);
         return context;
     }

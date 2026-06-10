@@ -25,7 +25,7 @@ public abstract class Mapping : Node
     {
         if (value is null)
         {
-            this.WriteScalar(YamlCodes.Null.AsSpan());
+            WriteScalar(YamlCodes.Null.AsSpan());
             return this;
         }
         this.WriteType(value, style);

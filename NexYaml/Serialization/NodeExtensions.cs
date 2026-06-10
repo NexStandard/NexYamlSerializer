@@ -11,18 +11,6 @@ namespace NexYaml.Serialization;
 public static class NodeExtensions
 {
     /// <summary>
-    /// Writes the provided formatted and escaped text to the underlying output.
-    /// </summary>
-    /// <typeparam name="T">Type of the current <see cref="Node"/></typeparam>
-    /// <param name="context">The current <see cref="WriteContext{T}"/>.</param>
-    /// <param name="text">A <see cref="ReadOnlySpan{T}"/> of characters representing the formatted text to write.</param>
-    public static void WriteScalar(this Node context, ReadOnlySpan<char> text)
-    {
-        context.Writer.Write(text);
-    }
-
-
-    /// <summary>
     /// Writes a value using the specified <see cref="DataStyle"/> into the current YAML <see cref="Node"/>.
     /// </summary>
     /// <typeparam name="T">The type of the current YAML <see cref="Node"/>.</typeparam>

@@ -57,4 +57,8 @@ public abstract class Node(int indent, bool isRedirected, DataStyle styleScope, 
     {
         // standard do nothing
     }
+    public void WriteScalar(ReadOnlySpan<char> text)
+    {
+        Writer.Write(text);
+    }
 }

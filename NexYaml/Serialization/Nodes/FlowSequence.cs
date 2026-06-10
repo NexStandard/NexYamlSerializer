@@ -18,12 +18,12 @@ class FlowSequence : Sequence
     {
         if (IsRedirected)
         {
-            this.WriteScalar(tag);
-            this.WriteScalar(" [ ");
+            WriteScalar(tag);
+            WriteScalar(" [ ");
         }
         else
         {
-            this.WriteScalar("[ ");
+            WriteScalar("[ ");
         }
         // inside a flow, only new flows can be created, no block is allowed
         return new FlowSequenceSecondary(Indent, IsRedirected, DataStyle.Compact, Writer);
@@ -39,6 +39,6 @@ class FlowSequence : Sequence
     }
     public override void End()
     {
-        this.WriteScalar(" ]");
+        WriteScalar(" ]");
     }
 }
