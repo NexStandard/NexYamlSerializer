@@ -24,30 +24,6 @@ public static class NodeExtensions
     }
 
     /// <summary>
-    /// Writes an empty <see cref="Mapping"/> with the given tag.
-    /// </summary>
-    /// <typeparam name="T">The type of the current YAML <see cref="Node"/>.</typeparam>
-    /// <param name="context">The current <see cref="WriteContext{T}"/>.</param>
-    /// <param name="tag">The tag to prefix the empty <see cref="Sequence"/>.</param>
-    public static void WriteEmptyMapping(this Node context, string tag)
-    {
-        context.WriteScalar(tag);
-        context.WriteScalar(" { }".AsSpan());
-    }
-
-    /// <summary>
-    /// Writes an empty <see cref="Sequence"/> with the given tag.
-    /// </summary>
-    /// <typeparam name="T">The type of the current YAML <see cref="Node"/>.</typeparam>
-    /// <param name="context">The current <see cref="WriteContext{T}"/>.</param>
-    /// <param name="tag">The tag to prefix the empty sequence.</param>
-    public static void WriteEmptySequence(this Node context, string tag)
-    {
-        context.WriteScalar(tag);
-        context.WriteScalar(" [ ]".AsSpan());
-    }
-
-    /// <summary>
     /// Writes a {KEY} : {VALUE} pair into the current YAML <see cref="Mapping"/> <see cref="WriteContext{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of the value to write.</typeparam>

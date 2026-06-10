@@ -61,4 +61,22 @@ public abstract class Node(int indent, bool isRedirected, DataStyle styleScope, 
     {
         Writer.Write(text);
     }
+
+    /// <summary>
+    /// Writes an empty <see cref="Mapping"/> with the given tag.
+    /// </summary>
+    public void WriteEmptyMapping(string tag)
+    {
+        WriteScalar(tag);
+        WriteScalar(" { }".AsSpan());
+    }
+
+    /// <summary>
+    /// Writes an empty <see cref="Sequence"/> with the given tag.
+    /// </summary>
+    public void WriteEmptySequence(string tag)
+    {
+        WriteScalar(tag);
+        WriteScalar(" [ ]".AsSpan());
+    }
 }
