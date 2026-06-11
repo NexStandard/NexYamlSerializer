@@ -14,27 +14,4 @@ class Program
     {
         BenchmarkRunner.Run<Benchmarker>();
     }
-}
-public record Person(int Id, string Name, bool Female);
-
-public class PersonSerializer : IYamlSerializer<Person>
-{
-
-    public void Write<X>(NexYaml.Serialization.WriteContext<X> context, Person value, DataStyle style) where X : NexYaml.Serialization.Node
-    {
-        throw new NotImplementedException();
     }
-    public ValueTask<Person> Read(Scope scope, Person? parseResult)
-    {
-        var mapping = scope.As<SequenceScope>();
-        int id = default;
-        string? name = default;
-        bool female = default;
-        foreach (var kvp in mapping)
-        {
-
-        }
-
-        return new(new Person(id, name, female));
-    }
-}
