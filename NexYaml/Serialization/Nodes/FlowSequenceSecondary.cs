@@ -20,7 +20,7 @@ class FlowSequenceSecondary : FlowSequence
         {
             WriteScalar("[ ");
         }
-        return new FlowSequence(Indent, false, DataStyle.Compact, Writer);
+        return new FlowSequenceSecondary(Indent, false, DataStyle.Compact, Writer);
     }
     public override Sequence Write<T>(Sequence context, T value, DataStyle style)
     {
