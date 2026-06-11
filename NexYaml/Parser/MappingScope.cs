@@ -42,28 +42,14 @@ public sealed class MappingScope : Scope, IEnumerable<KeyValuePair<string, Scope
     {
         return new MappingScope(value, indent, context, tag);
     }
-    public static KeyValuePair<string, Scope> StandardMappingResolve(ScopeContext context, MappingScope map, string key, string val, string childTag)
-    {
-        if (TryGetQuotedText(val, out var valUnquoted))
-            return new(key, new ScalarScope(valUnquoted.ToString(), map.Indent + 2, context, childTag));
-        else if (val.StartsWith('|'))
-            return new(key, new ScalarScope(ParseLiteralScalar(map.Context, map.Indent + 1, val[1]), map.Indent + 2, context, childTag));
-        else if (val.StartsWith('{') && val.EndsWith('}'))
-            return new(key, MappingScope.ParseFlow(context, val, map.Indent + 2, childTag));
-        else if (val.StartsWith('[') && val.EndsWith(']'))
-            return new(key, SequenceScope.ParseFlow(context, val, map.Indent + 2, childTag));
-        else
-            return new(key, new ScalarScope(val, map.Indent + 2, context, childTag));
-    }
-
     public static KeyValuePair<string, Scope> StandardMappingResolve(MappingScope map, string key, string val, string childTag)
     {
         if (TryGetQuotedText(val, out var valUnquoted))
             return new(key, new ScalarScope(valUnquoted.ToString(), map.Indent + 2, map.Context, childTag));
         else if (val.StartsWith('|'))
-            return new(key, new ScalarScope(ParseLiteralScalar(map.Context, map.Indent + 2, val[1]), map.Indent + 2, map.Context, childTag));
+            return new(key, new ScalarScope(ParseLiteralScalar(map.Context, map.Indent + 1, val[1]), map.Indent + 2, map.Context, childTag));
         else if (val.StartsWith('{') && val.EndsWith('}'))
-            return new(key, ParseFlow(map.Context, val, map.Indent + 2, childTag));
+            return new(key, MappingScope.ParseFlow(map.Context, val, map.Indent + 2, childTag));
         else if (val.StartsWith('[') && val.EndsWith(']'))
             return new(key, SequenceScope.ParseFlow(map.Context, val, map.Indent + 2, childTag));
         else
@@ -158,7 +144,7 @@ public struct BlockFlowParse(MappingScope scope, string value) : IEnumerable<Key
                 val = segs.Length > 1 ? segs[1].Trim() : string.Empty;
             }
 
-            yield return MappingScope.StandardMappingResolve(scope.Context, scope, key, val, childTag);
+            yield return MappingScope.StandardMappingResolve(scope, key, val, childTag);
 
         }
     }
@@ -212,7 +198,7 @@ public struct BlockMappingParse(MappingScope scope) : IEnumerable<KeyValuePair<s
 
             if (val.Length > 0)
             {
-                yield return MappingScope.StandardMappingResolve(scope.Context, scope, key, val.ToString(), childTag.ToString());
+                yield return MappingScope.StandardMappingResolve(scope, key, val.ToString(), childTag.ToString());
             }
             else
             {
