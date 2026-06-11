@@ -9,12 +9,12 @@ public sealed class MappingScope : Scope, IEnumerable<KeyValuePair<string, Scope
 {
     IEnumerator<KeyValuePair<string, Scope>> enumerator;
 
-    internal MappingScope(int indent, ScopeContext context, string tag = "")
+    private MappingScope(int indent, ScopeContext context, string tag = "")
 : base(tag, indent, context)
     {
         enumerator = new BlockMappingParse(this).GetEnumerator();
     }
-    internal MappingScope(string value, int indent, ScopeContext context, string tag = "")
+    private MappingScope(string value, int indent, ScopeContext context, string tag = "")
 : base(tag, indent, context)
     {
         enumerator = new BlockFlowParse(this, value).GetEnumerator();

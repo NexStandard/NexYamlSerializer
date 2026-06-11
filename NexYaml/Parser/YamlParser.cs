@@ -63,7 +63,7 @@ namespace NexYaml
                         if (inline.StartsWith('[') && inline.EndsWith(']'))
                             yield return SequenceScope.ParseFlow(context, inline, indent, tag);
 
-                        yield return ScalarScope.Parse(context, inline, indent, tag);
+                        yield return new ScalarScope(inline, indent, context, tag);
                         continue;
                     }
 
@@ -85,7 +85,11 @@ namespace NexYaml
                     }
                     else
                     {
-                        yield return ScalarScope.Parse(context, indent, tag);
+                        if (context.Reader.Move(out var val))
+                        {
+                            yield return new ScalarScope( val.Trim(), indent, context, tag);
+                        }
+                        throw new EndOfStreamException();
                     }
 
                     continue;
@@ -104,7 +108,11 @@ namespace NexYaml
                 // Scalar root
                 else
                 {
-                    yield return ScalarScope.Parse(context, indent, string.Empty);
+                    if (context.Reader.Move(out var val))
+                    {
+                        yield return new ScalarScope(val.Trim(), indent, context, string.Empty);
+                    }
+                    throw new EndOfStreamException();
                 }
             }
         }

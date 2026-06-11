@@ -24,10 +24,6 @@ namespace NexYaml.Parser
                 return input;
             return input.Replace("\\n", "\n").Replace("\r\n", "\n");
         }
-        public static Scope Parse(ScopeContext context, string val, int indent, string tag)
-        {
-            return new ScalarScope(val, indent, context, tag);
-        }
 
         private static ReadOnlySpan<char> TryGetQuotedText(ReadOnlySpan<char> s)
         {
@@ -38,15 +34,6 @@ namespace NexYaml.Parser
                 return s.Slice(1, s.Length - 2);
             }
             return s;
-        }
-
-        public static Scope Parse(ScopeContext context, int indent, string tag)
-        {
-            if (context.Reader.Move(out var val))
-            {
-                return Parse(context, val.Trim(), indent, tag);
-            }
-            throw new EndOfStreamException();
         }
     }
 }
