@@ -13,7 +13,7 @@ namespace NexYaml.Parser
             string tag
         ) : base(tag, indent, context)
         {
-            Value = DecodeEscapes(value);
+            Value = DecodeEscapes(TryGetQuotedText(value).ToString());
         }
 
         public override ScopeKind Kind => ScopeKind.Scalar;
@@ -28,10 +28,9 @@ namespace NexYaml.Parser
         {
             var valSpan = val.AsSpan();
 
-            if (TryGetQuotedText(valSpan, out var unquotedSpan))
-                return new ScalarScope(unquotedSpan.ToString(), indent, context, tag);
+            var text = TryGetQuotedText(valSpan);
 
-            return new ScalarScope(val, indent, context, tag);
+            return new ScalarScope(text.ToString(), indent, context, tag);
         }
 
         public static Scope Parse(ScopeContext context, int indent, string tag)

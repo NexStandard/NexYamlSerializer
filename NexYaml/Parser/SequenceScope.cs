@@ -72,10 +72,6 @@ namespace NexYaml.Parser
                 {
                     switch (itemSpan[0])
                     {
-                        // quoted scalar
-                        case '\"' when TryGetQuotedText(itemSpan, out var unquotedItemSpan):
-                            yield return new ScalarScope(unquotedItemSpan.ToString(), indent + 2, context, childTag.ToString());
-                            continue;
                         // literal block scalar
                         case '|':
                             yield return new ScalarScope(ParseLiteralScalar(Context, indent + 1, itemSpan[1]), indent + 2, context, childTag.ToString());
@@ -164,9 +160,7 @@ namespace NexYaml.Parser
                     bufferedTag = string.Empty;
                 }
 
-                if (TryGetQuotedText(item, out var unquotedItem))
-                    yield return new ScalarScope(unquotedItem.ToString(), indent + 2, context, childTag);
-                else if (item.StartsWith('|'))
+                if (item.StartsWith('|'))
                     yield return new ScalarScope(ParseLiteralScalar(context, indent + 2, item[1]), indent + 2, context, childTag);
                 else if (item.StartsWith('{') && item.EndsWith('}'))
                     yield return MappingScope.ParseFlow(context, item, indent + 2, childTag);

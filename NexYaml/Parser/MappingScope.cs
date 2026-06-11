@@ -44,9 +44,7 @@ public sealed class MappingScope : Scope, IEnumerable<KeyValuePair<string, Scope
     }
     public static KeyValuePair<string, Scope> StandardMappingResolve(MappingScope map, string key, string val, string childTag)
     {
-        if (TryGetQuotedText(val, out var valUnquoted))
-            return new(key, new ScalarScope(valUnquoted.ToString(), map.Indent + 2, map.Context, childTag));
-        else if (val.StartsWith('|'))
+        if (val.StartsWith('|'))
             return new(key, new ScalarScope(ParseLiteralScalar(map.Context, map.Indent + 1, val[1]), map.Indent + 2, map.Context, childTag));
         else if (val.StartsWith('{') && val.EndsWith('}'))
             return new(key, MappingScope.ParseFlow(map.Context, val, map.Indent + 2, childTag));

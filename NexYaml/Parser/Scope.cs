@@ -124,18 +124,15 @@ namespace NexYaml.Parser
             }
         }
 
-        public static bool TryGetQuotedText(ReadOnlySpan<char> s, out ReadOnlySpan<char> unquoted)
+        public static ReadOnlySpan<char> TryGetQuotedText(ReadOnlySpan<char> s)
         {
             if (s.Length >= 2 &&
                 ((s[0] == '\"' && s[^1] == '\"') ||
                  (s[0] == '\'' && s[^1] == '\'')))
             {
-                unquoted = s.Slice(1, s.Length - 2);
-                return true;
+                return s.Slice(1, s.Length - 2);
             }
-
-            unquoted = default;
-            return false;
+            return s;
         }
 
         public static int CountIndent(string line)
