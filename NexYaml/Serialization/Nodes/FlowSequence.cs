@@ -26,7 +26,7 @@ class FlowSequence : Sequence
             WriteScalar("[ ");
         }
         // inside a flow, only new flows can be created, no block is allowed
-        return new FlowSequenceSecondary(Indent, IsRedirected, DataStyle.Compact, Writer);
+        return new FlowSequence(Indent, false, DataStyle.Compact, Writer);
     }
 
     public override Sequence Write<T>(Sequence context, T value, DataStyle style)
