@@ -26,11 +26,18 @@ namespace NexYaml.Parser
         }
         public static Scope Parse(ScopeContext context, string val, int indent, string tag)
         {
-            var valSpan = val.AsSpan();
+            return new ScalarScope(val, indent, context, tag);
+        }
 
-            var text = TryGetQuotedText(valSpan);
-
-            return new ScalarScope(text.ToString(), indent, context, tag);
+        private static ReadOnlySpan<char> TryGetQuotedText(ReadOnlySpan<char> s)
+        {
+            if (s.Length >= 2 &&
+                ((s[0] == '\"' && s[^1] == '\"') ||
+                 (s[0] == '\'' && s[^1] == '\'')))
+            {
+                return s.Slice(1, s.Length - 2);
+            }
+            return s;
         }
 
         public static Scope Parse(ScopeContext context, int indent, string tag)
