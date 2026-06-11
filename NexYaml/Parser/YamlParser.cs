@@ -56,6 +56,13 @@ namespace NexYaml
 
                     if (inline.Length > 0)
                     {
+                        if (inline.StartsWith('|'))
+                            yield return new ScalarScope(Scope.ParseLiteralScalar(context, indent, inline[1]), indent, context, tag);
+                        if (inline.StartsWith('{') && inline.EndsWith('}'))
+                            yield return MappingScope.ParseFlow(context, inline, indent, tag);
+                        if (inline.StartsWith('[') && inline.EndsWith(']'))
+                            yield return SequenceScope.ParseFlow(context, inline, indent, tag);
+
                         yield return ScalarScope.Parse(context, inline, indent, tag);
                         continue;
                     }

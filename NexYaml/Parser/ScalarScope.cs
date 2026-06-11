@@ -46,12 +46,6 @@ namespace NexYaml.Parser
 
             if (TryGetQuotedText(valSpan, out var unquotedSpan))
                 return new ScalarScope(unquotedSpan.ToString(), indent, context, tag);
-            if (valSpan.StartsWith('|'))
-                return new ScalarScope(Scope.ParseLiteralScalar(context, indent, valSpan[1]), indent, context, tag);
-            if (valSpan.StartsWith('{') && valSpan.EndsWith('}'))
-                return MappingScope.ParseFlow(context, val, indent, tag);
-            if (valSpan.StartsWith('[') && valSpan.EndsWith(']'))
-                return SequenceScope.ParseFlow(context, val, indent, tag);
 
             return new ScalarScope(val, indent, context, tag);
         }
