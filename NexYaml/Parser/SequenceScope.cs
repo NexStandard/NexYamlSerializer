@@ -134,40 +134,32 @@ namespace NexYaml.Parser
             string bufferedTag = string.Empty;
             foreach (var raw in SplitFlowItems(inner))
             {
-                string childTag = string.Empty;
                 string item = raw;
-                if (bufferedTag == string.Empty)
-                {
-                    if (item.StartsWith('!') && item != YamlCodes.Null)
-                    {
-                        var segs = item.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
-                        if (segs.Length == 1)
-                        {
-                            bufferedTag = segs[0];
-                            continue;
-                        }
-                        else
-                        {
-                            childTag = segs[0];
-                            item = segs.Length > 1 ? segs[1].Trim() : string.Empty;
 
-                        }
-                    }
-                }
-                else
+                if (item.StartsWith('!') && item != YamlCodes.Null)
                 {
-                    childTag = bufferedTag;
-                    bufferedTag = string.Empty;
+                    var segs = item.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+                    if (segs.Length == 1)
+                    {
+                        bufferedTag = segs[0];
+                        continue;
+                    }
+                    else
+                    {
+                        bufferedTag = segs[0];
+                        item = segs.Length > 1 ? segs[1].Trim() : string.Empty;
+
+                    }
                 }
 
                 if (item.StartsWith('|'))
-                    yield return new ScalarScope(ParseLiteralScalar(context, indent + 2, item[1]), indent + 2, context, childTag);
+                    yield return new ScalarScope(ParseLiteralScalar(context, indent + 2, item[1]), indent + 2, context, bufferedTag);
                 else if (item.StartsWith('{') && item.EndsWith('}'))
-                    yield return MappingScope.ParseFlow(context, item, indent + 2, childTag);
+                    yield return MappingScope.ParseFlow(context, item, indent + 2, bufferedTag);
                 else if (item.StartsWith('[') && item.EndsWith(']'))
-                    yield return ParseFlow(context, item, indent + 2, childTag);
+                    yield return ParseFlow(context, item, indent + 2, bufferedTag);
                 else
-                    yield return new ScalarScope(item, indent + 2, context, childTag);
+                    yield return new ScalarScope(item, indent + 2, context, bufferedTag);
             }
         }
 
