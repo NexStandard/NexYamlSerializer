@@ -1,4 +1,5 @@
 using NexYaml.Parser;
+using NexYaml.Parser.Scopes;
 using NexYaml.Serialization;
 using Stride.Core;
 namespace NexYaml.Serializers;
@@ -12,7 +13,6 @@ public class BooleanSerializer : IYamlSerializer<bool>
 
     public ValueTask<bool> Read(Scope scope, bool parseResult)
     {
-        var s = scope.As<ScalarScope>();
-        return new(bool.Parse(s.Value));
+        return new(bool.Parse(scope.AsScalar()));
     }
 }

@@ -1,0 +1,169 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using static Stride.Graphics.Buffer;
+
+namespace NexYaml.Parser.Scopes;
+public struct Scope
+{
+    public ScopeKind Kind;
+    public int Indent;
+    public string Tag;
+    public ScopeContext Context;
+    private string ScalarValue;
+    public string prefix;
+    public ReadOnlySpan<char> AsScalar()
+    {
+        if (Kind is ScopeKind.Scalar)
+            return DecodeEscapes(TryGetQuotedText(ConvertStringToSpanUsingUnsafe(ScalarValue)));
+        throw new InvalidCastException();
+    }
+    public unsafe Span<char> ConvertStringToSpanUsingUnsafe(string value)
+    {
+        unsafe
+        {
+            fixed (char* ptr = value)
+            {
+                return new Span<char>(ptr, value.Length);
+            }
+        }
+    }
+    public SequenceEnumerator AsSequence()
+    {
+        if(Kind == ScopeKind.FlowSequence)
+        {
+            return new SequenceEnumerator(this, ScalarValue);
+        }
+        if(Kind == ScopeKind.BlockSequence)
+        {
+            return new SequenceEnumerator(this);
+        }
+        throw new InvalidCastException();
+    }
+    public MappingEnumerator AsMapping()
+    {
+        if (Kind == ScopeKind.BlockMapping)
+        {
+            return new MappingEnumerator(this);
+        }
+        else if (Kind == ScopeKind.FlowMapping)
+        {
+            return new MappingEnumerator(this, ScalarValue);
+        }
+        else if(Kind == ScopeKind.PrefixedBlockMapping)
+        {
+            return new MappingEnumerator(this, ScalarValue, prefix);
+        }
+        else
+        {
+            throw new InvalidCastException();
+        }
+    }
+    public static Scope NewScalar(ReadOnlySpan<char> value, int indent, ScopeContext context, ReadOnlySpan<char> tag)
+    {
+        return new Scope()
+        {
+            Context = context,
+            Indent = indent,
+            Kind = ScopeKind.Scalar,
+            Tag = tag.ToString(),
+            ScalarValue = value.ToString()
+        };
+    }
+
+    public static Scope NewFlowSequence(ReadOnlySpan<char> value, int indent, ScopeContext context, ReadOnlySpan<char> tag)
+    {
+        return new Scope()
+        {
+            Context = context,
+            Indent = indent,
+            Kind = ScopeKind.FlowSequence,
+            Tag = tag.ToString(),
+            ScalarValue = value.ToString()
+        };
+    }
+    public static Scope NewBlockSequence(int indent, ScopeContext context, ReadOnlySpan<char> tag)
+    {
+        return new Scope()
+        {
+            Context = context,
+            Indent = indent,
+            Kind = ScopeKind.BlockSequence,
+            Tag = tag.ToString()
+        };
+    }
+    public static Scope NewFlowMapping(ReadOnlySpan<char> value, int indent, ScopeContext context, ReadOnlySpan<char> tag)
+    {
+        return new Scope()
+        {
+            Context = context,
+            Indent = indent,
+            Kind = ScopeKind.FlowMapping,
+            Tag = tag.ToString(),
+            ScalarValue = value.ToString()
+        };
+    }
+    public static Scope NewBlockMapping(int indent, ScopeContext context, ReadOnlySpan<char> tag)
+    {
+        return new Scope()
+        {
+            Context = context,
+            Indent = indent,
+            Kind = ScopeKind.BlockMapping,
+            Tag = tag.ToString()
+        };
+    }
+    public static Scope NewPrefixedBlockMapping(ReadOnlySpan<char> value, string prefix, int indent, ScopeContext context, ReadOnlySpan<char> tag)
+    {
+        return new Scope()
+        {
+            Context = context,
+            Indent = indent,
+            Kind = ScopeKind.PrefixedBlockMapping,
+            Tag = tag.ToString(),
+            ScalarValue = value.ToString(),
+            prefix = prefix
+        };
+    }
+    public static Span<char> DecodeEscapes(Span<char> buffer)
+    {
+        int write = 0;
+
+        for (int read = 0; read < buffer.Length; read++)
+        {
+            char c = buffer[read];
+
+            // \n
+            if (c == '\\' && read + 1 < buffer.Length && buffer[read + 1] == 'n')
+            {
+                buffer[write++] = '\n';
+                read++;
+                continue;
+            }
+
+            // \r\n
+            if (c == '\r' && read + 1 < buffer.Length && buffer[read + 1] == '\n')
+            {
+                buffer[write++] = '\n';
+                read++;
+                continue;
+            }
+
+            buffer[write++] = c;
+        }
+
+        return buffer[..write];
+    }
+
+
+    private static Span<char> TryGetQuotedText(Span<char> s)
+    {
+        if (s.Length >= 2 &&
+            ((s[0] == '\"' && s[^1] == '\"') ||
+             (s[0] == '\'' && s[^1] == '\'')))
+        {
+            return s.Slice(1, s.Length - 2);
+        }
+        return s;
+    }
+}

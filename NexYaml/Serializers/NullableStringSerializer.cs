@@ -1,5 +1,6 @@
 using NexYaml.Core;
 using NexYaml.Parser;
+using NexYaml.Parser.Scopes;
 using NexYaml.Serialization;
 using Stride.Core;
 
@@ -16,9 +17,6 @@ public class NullableStringSerializer : IYamlSerializer<string?>
 
     public ValueTask<string?> Read(Scope scope, string? parseResult)
     {
-        var scalarScope = scope.As<ScalarScope>();
-        // Should be taken care of in the caller's scope, which would be ScopeExtensions.Read
-        System.Diagnostics.Debug.Assert(scalarScope.Value != YamlCodes.Null);
-        return new(scalarScope.Value);
+        return new(scope.AsScalar().ToString());
     }
 }

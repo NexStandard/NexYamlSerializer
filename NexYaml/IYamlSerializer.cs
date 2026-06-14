@@ -1,4 +1,4 @@
-using NexYaml.Parser;
+using NexYaml.Parser.Scopes;
 using NexYaml.Serialization;
 using Stride.Core;
 
@@ -48,8 +48,6 @@ public interface IYamlSerializer<T> : IYamlSerializer
     /// <summary>
     /// Serializes the specified value of type <typeparamref name="T"/> into YAML.
     /// </summary>
-    /// <typeparam name="X">The <see cref="Node"/>.</typeparam>
-    /// <param name="context">The <see cref="WriteContext{T}"/>.</param>
     /// <param name="value">The value to serialize.</param>
     /// <param name="style">The <see cref="DataStyle"/>.</param>
     public void Write(Node context, T value, DataStyle style);

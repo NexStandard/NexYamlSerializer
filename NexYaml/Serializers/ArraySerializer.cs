@@ -1,4 +1,5 @@
 using NexYaml.Parser;
+using NexYaml.Parser.Scopes;
 using NexYaml.Serialization;
 using Stride.Core;
 
@@ -14,7 +15,7 @@ public class ArraySerializer<T> : IYamlSerializer<T?[]>
     public async ValueTask<T?[]> Read(Scope scope, T?[]? parseResult = null)
     {
         var tasks = new List<ValueTask<T?>>();
-        foreach (var element in scope.As<SequenceScope>())
+        foreach (var element in scope.AsSequence())
         {
             tasks.Add(element.Read<T>());
         }

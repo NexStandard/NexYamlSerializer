@@ -14,6 +14,7 @@
 		<PackageOutputPath>C:\local.nuget\</PackageOutputPath>
 		<IncludeReferencedProjects>true</IncludeReferencedProjects>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Stride.Engine" Version="4.2.0.2282" />

@@ -1,4 +1,5 @@
 using NexYaml.Parser;
+using NexYaml.Parser.Scopes;
 using NexYaml.Serialization;
 using Stride.Core;
 
@@ -13,7 +14,6 @@ public class TimeSpanSerializer : IYamlSerializer<TimeSpan>
 
     public ValueTask<TimeSpan> Read(Scope scope, TimeSpan parseResult)
     {
-        var scalarScope = scope.As<ScalarScope>();
-        return new(TimeSpan.Parse(scalarScope.Value));
+        return new(TimeSpan.Parse(scope.AsScalar()));
     }
 }

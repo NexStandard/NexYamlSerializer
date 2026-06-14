@@ -1,4 +1,5 @@
 using NexYaml.Parser;
+using NexYaml.Parser.Scopes;
 using NexYaml.Serialization;
 using Stride.Core;
 
@@ -20,7 +21,7 @@ public class KeyValuePairSerializer<TKey, TValue> : IYamlSerializer<KeyValuePair
         ValueTask<TValue?> vTask = default;
         int i = 0;
 
-        foreach (var subscope in scope.As<SequenceScope>())
+        foreach (var subscope in scope.AsSequence())
         {
             if (i == 0)
                 kTask = subscope.Read<TKey?>();

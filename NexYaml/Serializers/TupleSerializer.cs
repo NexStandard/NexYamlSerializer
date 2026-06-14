@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Runtime.CompilerServices;
 using NexYaml.Parser;
+using NexYaml.Parser.Scopes;
 using NexYaml.Serialization;
 using Stride.Core;
 
@@ -22,7 +23,7 @@ public class TupleSerializer<T1, T2> : IYamlSerializer<Tuple<T1?, T2?>>
         ValueTask<T2?> item2 = default;
         int i = 0;
 
-        foreach (var subscope in scope.As<SequenceScope>())
+        foreach (var subscope in scope.AsSequence())
         {
             if (i == 0)
                 item1 = subscope.Read<T1?>();
@@ -71,7 +72,7 @@ public class TupleSerializer<T1, T2, T3> : IYamlSerializer<Tuple<T1?, T2?, T3?>>
         ValueTask<T3?> item3 = default;
         int i = 0;
 
-        foreach (var subscope in scope.As<SequenceScope>())
+        foreach (var subscope in scope.AsSequence())
         {
             if (i == 0)
                 item1 = subscope.Read<T1?>();
@@ -124,7 +125,7 @@ public class TupleSerializer<T1, T2, T3, T4> : IYamlSerializer<Tuple<T1?, T2?, T
         ValueTask<T4?> item4 = default;
         int i = 0;
 
-        foreach (var subscope in scope.As<SequenceScope>())
+        foreach (var subscope in scope.AsSequence())
         {
             if (i == 0)
                 item1 = subscope.Read<T1?>();
@@ -182,7 +183,7 @@ public class TupleSerializer<T1, T2, T3, T4, T5> : IYamlSerializer<Tuple<T1?, T2
         ValueTask<T5?> item5 = default;
         int i = 0;
 
-        foreach (var subscope in scope.As<SequenceScope>())
+        foreach (var subscope in scope.AsSequence())
         {
             if (i == 0)
                 item1 = subscope.Read<T1?>();
@@ -245,7 +246,7 @@ public class TupleSerializer<T1, T2, T3, T4, T5, T6> : IYamlSerializer<Tuple<T1?
         ValueTask<T6?> item6 = default;
         int i = 0;
 
-        foreach (var subscope in scope.As<SequenceScope>())
+        foreach (var subscope in scope.AsSequence())
         {
             if (i == 0)
                 item1 = subscope.Read<T1?>();
@@ -311,7 +312,7 @@ public class TupleSerializer<T1, T2, T3, T4, T5, T6, T7> : IYamlSerializer<Tuple
         ValueTask<T7?> item7 = default;
         int i = 0;
 
-        foreach (var subscope in scope.As<SequenceScope>())
+        foreach (var subscope in scope.AsSequence())
         {
             if (i == 0)
                 item1 = subscope.Read<T1?>();

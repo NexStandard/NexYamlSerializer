@@ -1,5 +1,6 @@
 using System.Globalization;
 using NexYaml.Parser;
+using NexYaml.Parser.Scopes;
 using NexYaml.Serialization;
 using Stride.Core;
 
@@ -16,7 +17,6 @@ public class Float32Serializer : IYamlSerializer<float>
 
     public ValueTask<float> Read(Scope scope, float parseResult)
     {
-        var scalarScope = scope.As<ScalarScope>();
-        return new(float.Parse(scalarScope.Value, CultureInfo.InvariantCulture));
+        return new(float.Parse(scope.AsScalar(), CultureInfo.InvariantCulture));
     }
 }

@@ -1,4 +1,5 @@
 using NexYaml.Parser;
+using NexYaml.Parser.Scopes;
 using NexYaml.Serialization;
 using Stride.Core;
 
@@ -18,7 +19,6 @@ public class GuidSerializer : IYamlSerializer<Guid>
 
     public ValueTask<Guid> Read(Scope scope, Guid parseResult)
     {
-        var scalarScope = scope.As<ScalarScope>();
-        return new(Guid.Parse(scalarScope.Value));
+        return new(Guid.Parse(scope.AsScalar()));
     }
 }

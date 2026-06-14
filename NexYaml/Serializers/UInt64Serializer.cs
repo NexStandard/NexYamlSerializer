@@ -1,5 +1,6 @@
 using System.Globalization;
 using NexYaml.Parser;
+using NexYaml.Parser.Scopes;
 using NexYaml.Serialization;
 using Stride.Core;
 
@@ -16,7 +17,6 @@ public class UInt64Serializer : IYamlSerializer<ulong>
 
     public ValueTask<ulong> Read(Scope scope, ulong parseResult)
     {
-        var scalarScope = scope.As<ScalarScope>();
-        return new(ulong.Parse(scalarScope.Value, CultureInfo.InvariantCulture));
+        return new(ulong.Parse(scope.AsScalar(), CultureInfo.InvariantCulture));
     }
 }

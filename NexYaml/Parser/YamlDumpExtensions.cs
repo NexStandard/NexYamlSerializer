@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using NexYaml.Parser.Scopes;
 
 namespace NexYaml.Parser
 {
@@ -6,16 +7,16 @@ namespace NexYaml.Parser
     {
         public static void EmptyDump(this Scope scope)
         {
-            if (scope is MappingScope mappingScope)
+            if (scope.Kind is ScopeKind.BlockMapping or ScopeKind.FlowMapping or ScopeKind.PrefixedBlockMapping)
             {
-                foreach(var m in mappingScope)
+                foreach (var m in scope.AsMapping())
                 {
                     m.Value.EmptyDump();
                 }
             }
-            if(scope is SequenceScope sequenceScope)
+            if (scope.Kind is ScopeKind.BlockSequence or ScopeKind.FlowSequence)
             {
-                foreach (var m in sequenceScope)
+                foreach (var m in scope.AsSequence())
                 {
                     m.EmptyDump();
                 }
@@ -26,41 +27,41 @@ namespace NexYaml.Parser
             var pad = new string(' ', indent);
             string TagSuffix(string tag) => $"({tag})";
 
-            switch (scope)
+            switch (scope.Kind)
             {
-                case ScalarScope s:
-                    return $"{pad}SCALAR{TagSuffix(s.Tag)}({s.Value})";
+                case ScopeKind.Scalar:
+                    return $"{pad}SCALAR{TagSuffix(scope.Tag)}({scope.AsScalar()})";
 
-                case MappingScope m:
+                case ScopeKind.BlockMapping or ScopeKind.FlowMapping or ScopeKind.PrefixedBlockMapping:
                     {
                         var sb = new StringBuilder();
                         if (includeHeader)
-                            sb.AppendLine($"{pad}MAPPING{TagSuffix(m.Tag)}");
+                            sb.AppendLine($"{pad}MAPPING{TagSuffix(scope.Tag)}");
                         sb.AppendLine($"{pad}{{");
-                        foreach (var (key, val) in m)
+                        foreach (var s in scope.AsMapping())
                         {
-                            if (val is ScalarScope scalar)
+                            if (s.Value.Kind is ScopeKind.Scalar)
                             {
-                                sb.AppendLine($"{pad}  SCALAR({key}) = SCALAR{TagSuffix(scalar.Tag)}({scalar.Value})");
+                                sb.AppendLine($"{pad}  SCALAR({s.Key}) = SCALAR{TagSuffix(s.Value.Tag)}({s.Value.AsScalar()})");
                             }
                             else
                             {
-                                var header = val.Kind.ToString().ToUpper();
-                                sb.AppendLine($"{pad}  SCALAR({key}) = {header}{TagSuffix(val.Tag)}");
-                                sb.Append(val.Dump(indent + 2, includeHeader: false));
+                                var header = s.Value.Kind.ToString().ToUpper();
+                                sb.AppendLine($"{pad}  SCALAR({s.Key}) = {header}{TagSuffix(s.Value.Tag)}");
+                                sb.Append(s.Value.Dump(indent + 2, includeHeader: false));
                             }
                         }
                         sb.AppendLine($"{pad}}}");
                         return sb.ToString();
                     }
 
-                case SequenceScope seq:
+                case ScopeKind.FlowSequence or ScopeKind.BlockSequence:
                     {
                         var sb = new StringBuilder();
                         if (includeHeader)
-                            sb.AppendLine($"{pad}SEQUENCE{TagSuffix(seq.Tag)}");
+                            sb.AppendLine($"{pad}SEQUENCE{TagSuffix(scope.Tag)}");
                         sb.AppendLine($"{pad}[");
-                        foreach (var item in seq)
+                        foreach (var item in scope.AsSequence())
                         {
                             sb.AppendLine(item.Dump(indent + 2, includeHeader: true));
                         }

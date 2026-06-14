@@ -1,6 +1,9 @@
 ﻿using System.Globalization;
 using NexYaml.Core;
+using NexYaml.Parser.Scopes;
 using NexYaml.Serializers;
+using SharpFont.Cache;
+using Silk.NET.Maths;
 using Stride.Core.Extensions;
 
 namespace NexYaml.Parser
@@ -9,7 +12,7 @@ namespace NexYaml.Parser
     {
         public static ValueTask<T?> Read<T>(this Scope scope, T? context = default)
         {
-            if (scope is ScalarScope scalar && scalar.Value == YamlCodes.Null)
+            if (scope.Kind is ScopeKind.Scalar && MemoryExtensions.Equals( scope.AsScalar(),YamlCodes.Null.AsSpan(),StringComparison.OrdinalIgnoreCase))
             {
                 return new ValueTask<T?>(default(T));
             }
@@ -26,14 +29,13 @@ namespace NexYaml.Parser
 
             if (scope.Tag.SequenceEqual("!!ref"))
             {
-                var refScalar = scope.As<ScalarScope>();
-                if (Guid.TryParse(refScalar.Value, out var id))
+                if (Guid.TryParse(scope.AsScalar(), out var id))
                 {
                     return scope.Context.IdentifiableResolver.AsyncGetRef<T?>(id);
                 }
                 else
                 {
-                    throw new InvalidCastException($"couldnt cast ref {refScalar.Value}");
+                    throw new InvalidCastException($"couldnt parse ref {scope.AsScalar()}");
                 }
             }
 
@@ -68,75 +70,68 @@ namespace NexYaml.Parser
         // What are all of these for ? value is left unused ... -Eideren
         public static ValueTask<Guid> Read(this Scope scope, Guid value = default)
         {
-            var scalarScope = scope.As<ScalarScope>();
-            if (scalarScope.Value == YamlCodes.Null)
+            var scalar = scope.AsScalar();
+            if (scalar.SequenceEqual(YamlCodes.Null))
                 return default;
-            return new(Guid.Parse(scalarScope.Value));
+            return new(Guid.Parse(scalar));
         }
         public static ValueTask<Guid?> Read(this Scope scope, Guid? value = default)
         {
-            var scalarScope = scope.As<ScalarScope>();
-            if (scalarScope.Value == YamlCodes.Null)
+            var scalar = scope.AsScalar();
+            if (scalar.Equals(YamlCodes.Null.AsSpan(), StringComparison.OrdinalIgnoreCase))
                 return default;
-            return new(Guid.Parse(scalarScope.Value));
+            return new(Guid.Parse(scalar));
         }
         public static ValueTask<bool> Read(this Scope scope, bool value = default)
         {
-            var scalarScope = scope.As<ScalarScope>();
-            if (scalarScope.Value == YamlCodes.Null)
+            var scalar = scope.AsScalar();
+            if (scalar.SequenceEqual(YamlCodes.Null))
                 return default;
-            return new(bool.Parse(scalarScope.Value));
+            return new(bool.Parse(scalar));
         }
         public static ValueTask<bool?> Read(this Scope scope, bool? value = default)
         {
-            var scalarScope = scope.As<ScalarScope>();
-            if (scalarScope.Value == YamlCodes.Null)
+            var scalar = scope.AsScalar();
+            if (scalar.SequenceEqual(YamlCodes.Null))
                 return default;
-            return new(bool.Parse(scalarScope.Value));
+            return new(bool.Parse(scalar));
         }
         public static ValueTask<byte> Read(this Scope scope, byte value = default)
         {
-            var scalarScope = scope.As<ScalarScope>();
-            if (scalarScope.Value == YamlCodes.Null)
+            var scalar = scope.AsScalar();
+            if (scalar.SequenceEqual(YamlCodes.Null))
                 return default;
-            return new(byte.Parse(scalarScope.Value));
+            return new(byte.Parse(scalar));
         }
         public static ValueTask<byte?> Read(this Scope scope, byte? value = default)
         {
-            var scalarScope = scope.As<ScalarScope>();
-            if (scalarScope.Value == YamlCodes.Null)
+            var scalar = scope.AsScalar();
+            if (scalar.SequenceEqual(YamlCodes.Null))
                 return default;
-            return new(byte.Parse(scalarScope.Value));
+            return new(byte.Parse(scalar));
         }
         public static ValueTask<int> Read(this Scope scope, int value = default)
         {
-            var scalarScope = scope.As<ScalarScope>();
-            if (scalarScope.Value == YamlCodes.Null)
+            var scalar = scope.AsScalar();
+            if (scalar.SequenceEqual(YamlCodes.Null))
                 return default;
-            return new(int.Parse(scalarScope.Value, CultureInfo.InvariantCulture));
+            return new(int.Parse(scalar, CultureInfo.InvariantCulture));
         }
         public static ValueTask<int?> Read(this Scope scope, int? value = default)
         {
-            var scalarScope = scope.As<ScalarScope>();
-            if (scalarScope.Value == YamlCodes.Null)
+            var scalar = scope.AsScalar();
+            if (scalar.SequenceEqual(YamlCodes.Null))
                 return default;
-            return new(int.Parse(scalarScope.Value, CultureInfo.InvariantCulture));
+            return new(int.Parse(scalar, CultureInfo.InvariantCulture));
         }
 
         public static ValueTask<string?> Read(this Scope scope, string? value = default)
         {
-            var scalarScope = scope.As<ScalarScope>();
-            if (scalarScope.Value == YamlCodes.Null)
+            var scalar = scope.AsScalar();
+            if (MemoryExtensions.Equals(scalar,YamlCodes.Null.AsSpan(), StringComparison.OrdinalIgnoreCase))
                 return default;
-            return new(scalarScope.Value);
+            return new(scalar.ToString());
         }
 
-        public static ValueTask<T?[]?> Read<T>(this Scope scope, T?[]? value)
-        {
-            var scalarScope = scope.As<ScalarScope>();
-            if (scalarScope.Value == YamlCodes.Null)
-                return default;
-            return new ArraySerializer<T>().Read(scope)!;
-        }
     }
 }

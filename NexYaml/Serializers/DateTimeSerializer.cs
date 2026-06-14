@@ -1,4 +1,5 @@
 using NexYaml.Parser;
+using NexYaml.Parser.Scopes;
 using NexYaml.Serialization;
 using Stride.Core;
 
@@ -17,7 +18,6 @@ public class DateTimeSerializer : IYamlSerializer<DateTime>
 
     public ValueTask<DateTime> Read(Scope scope, DateTime parseResult)
     {
-        var scalarScope = scope.As<ScalarScope>();
-        return new(DateTime.Parse(scalarScope.Value));
+        return new(DateTime.Parse(scope.AsScalar()));
     }
 }

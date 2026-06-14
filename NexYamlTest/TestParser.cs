@@ -16,13 +16,20 @@ namespace NexYamlTest
         {
 
             using var reader = new StreamReader(ToStream(s));
-            var parser = new YamlParser(reader, IYamlSerializerResolver.Default);
-            var pars = parser.Parse();
-            var first = pars.First();
-            Console.WriteLine(first.Dump());
+            var parser = new NewYamlParser(reader, IYamlSerializerResolver.Default);
+            var pars = parser;
+            foreach(var first in parser)
+            {
+                Console.WriteLine(first.Dump());
+                break;
+            }
             reader.BaseStream.Position = 0;
-            var f = parser.Parse().First();
-            return await f.Read<T>(default(T?));
+            var parser2= new NewYamlParser(reader, IYamlSerializerResolver.Default);
+            foreach(var second in parser2)
+            {
+                return await second.Read<T>(default(T?));
+            }
+            throw new Exception();
         }
     }
 }

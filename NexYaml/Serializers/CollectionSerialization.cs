@@ -1,4 +1,5 @@
 using NexYaml.Parser;
+using NexYaml.Parser.Scopes;
 using NexYaml.Serialization;
 using Stride.Core;
 
@@ -67,7 +68,7 @@ public static class CollectionSerialization
     public static async ValueTask ReadCollection<T, TCol>(Scope scope, TCol collection) where TCol : ICollection<T?>
     {
         var tasks = new List<ValueTask<T?>>();
-        foreach (var element in scope.As<SequenceScope>())
+        foreach (var element in scope.AsSequence())
         {
             tasks.Add(element.Read<T>());
         }

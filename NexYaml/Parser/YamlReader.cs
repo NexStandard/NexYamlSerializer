@@ -18,7 +18,7 @@ namespace NexYaml.Parser
         /// <summary>
         /// Advances to the next line and returns it.
         /// </summary>
-        public bool Move([NotNullWhen(true)] out string? currentLine)
+        public bool Move([NotNullWhen(true)] out ReadOnlySpan<char> currentLine)
         {
             if (_peekBuffer != null)
             {
@@ -27,8 +27,16 @@ namespace NexYaml.Parser
                 return true;
             }
 
-            currentLine = Reader.ReadLine();
-            return currentLine != null;
+            var x = Reader.ReadLine();
+            currentLine = x;
+            if(x is null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         /// <summary>
@@ -49,7 +57,7 @@ namespace NexYaml.Parser
         /// <summary>
         /// Peeks at the next line without consuming it.
         /// </summary>
-        public bool Peek([NotNullWhen(true)] out string? nextLine)
+        public bool Peek([NotNullWhen(true)] out ReadOnlySpan<char> nextLine)
         {
             if (_peekBuffer != null)
             {
@@ -67,5 +75,6 @@ namespace NexYaml.Parser
             nextLine = _peekBuffer;
             return true;
         }
+
     }
 }

@@ -1,4 +1,5 @@
 using NexYaml.Parser;
+using NexYaml.Parser.Scopes;
 using NexYaml.Serialization;
 using Stride.Core;
 
@@ -13,7 +14,6 @@ public class CharSerializer : IYamlSerializer<char>
 
     public ValueTask<char> Read(Scope scope, char parseResult)
     {
-        var scalarScope = scope.As<ScalarScope>();
-        return new(char.Parse(scalarScope.Value));
+        return new(scope.AsScalar()[0]);
     }
 }

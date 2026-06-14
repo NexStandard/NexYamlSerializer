@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 using NexYaml.Core;
-using NexYaml.Parser;
+using NexYaml.Parser.Scopes;
 using NexYaml.Serialization;
 using Stride.Core;
 
