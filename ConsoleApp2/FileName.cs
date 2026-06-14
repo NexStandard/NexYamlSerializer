@@ -18,16 +18,20 @@ public class Benchmarker
     static Benchmarker()
     {
         s = JsonSerializer.Serialize(values, MyJsonContext.Default.Collections);
+        w = Yaml.Write(values, DataStyle.Normal, resolver);
 
     }
 
 
     [Benchmark]
-    public async Task YamlB()
+    public void YamlB()
     {
-        w = Yaml.Write(values, DataStyle.Normal, resolver);
-        var parser = new YamlParser(w, resolver).Parse();
-        parser.First().EmptyDump();
+        var parser = new NewYamlParser(w, resolver);
+        foreach(var x in parser)
+        {
+            x.EmptyDump();
+            break;
+        };
     }
     [Benchmark()]
     public void JsonB()

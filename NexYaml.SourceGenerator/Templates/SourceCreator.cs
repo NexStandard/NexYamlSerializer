@@ -63,11 +63,11 @@ internal static class SourceCreator
             objTempVariables.AppendLine($"\t\tvar var_{member.Name} = default(ValueTask<{(member.IsArray ? member.Type + "[]" : member.Type)}>);");
             if (member.Context.Mode == MemberApi.UniversalAnalyzers.MemberMode.Content)
             {
-                ifStatementNew.AppendLine($"\t\t\tif (map.Key == UTF8{member.Name}){{ var_{member.Name} = map.Value.Read(res.{member.Name}); continue; }}");
+                ifStatementNew.AppendLine($"\t\t\tif (map.Key.SequenceEqual(UTF8{member.Name})){{ var_{member.Name} = map.Value.Read(res.{member.Name}); continue; }}");
             }
             else
             {
-                ifStatementNew.AppendLine($"\t\t\tif (map.Key == UTF8{member.Name}){{ var_{member.Name} = map.Value.Read(default({(member.IsArray ? member.Type + "[]" : member.Type)})!); continue; }}");
+                ifStatementNew.AppendLine($"\t\t\tif (map.Key.SequenceEqual(UTF8{member.Name})){{ var_{member.Name} = map.Value.Read(default({(member.IsArray ? member.Type + "[]" : member.Type)})!); continue; }}");
             }
             if (member.Context.Mode is MemberApi.UniversalAnalyzers.MemberMode.Content)
             {
@@ -125,11 +125,11 @@ internal static class SourceCreator
             {
                 public static async ValueTask<{{info.NameDefinition}}> Read{{info.TypeParameterArguments}}(this Scope scope, {{info.NameDefinition}} context = default){{info.TypeParameterRestrictions}}
                 {
-                    if(scope is ScalarScope scalar && scalar.Value == "!!null")
+                    if(scope.Kind is ScopeKind.Scalar && scope.AsScalar() == "!!null")
                         return default;
             {{charMembers}}
             {{objTempVariables}}
-                    var mapping = scope.As<MappingScope>();
+                    var mapping = scope.AsMapping();
                     foreach(var map in mapping)
                     {
             {{ifStatementNew}}
@@ -162,6 +162,7 @@ using System.Collections.Generic;
 using NexYaml;
 using NexYaml.Serialization;
 using NexYaml.Parser;
+using NexYaml.Parser.Scopes;
 using NexYaml.Core;
 using Stride.Core;
 using System.Runtime.CompilerServices;
@@ -199,7 +200,7 @@ file sealed class {{info.GeneratorName + info.TypeParameterArguments}} : IYamlSe
     {
 
 {{objTempVariables}}
-        var mapping = scope.As<MappingScope>();
+        var mapping = scope.AsMapping();
         foreach(var map in mapping)
         {
 {{ifStatementNew}}
