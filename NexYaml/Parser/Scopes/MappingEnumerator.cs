@@ -79,7 +79,7 @@ namespace NexYaml.Parser.Scopes
                 {
                     Current = new Map()
                     {
-                        Value = Scope.NewFlowMapping(val.ToString(), data.Indent + 2, data.Context, childTag.ToString()),
+                        Value = Scope.NewFlowMapping(val, data.Indent + 2, data.Context, childTag.ToString()),
                         Key = key
                     };
                 }
@@ -87,7 +87,7 @@ namespace NexYaml.Parser.Scopes
                 {
                     Current = new Map()
                     {
-                        Value = Scope.NewFlowSequence(val.ToString(), data.Indent + 2, data.Context, childTag.ToString()),
+                        Value = Scope.NewFlowSequence(val, data.Indent + 2, data.Context, childTag.ToString()),
                         Key = key
                     };
                     
@@ -96,7 +96,7 @@ namespace NexYaml.Parser.Scopes
                 {
                     Current = new Map()
                     {
-                        Value = Scope.NewScalar(val.ToString(), data.Indent + 2, data.Context, childTag.ToString()),
+                        Value = Scope.NewScalar(val, data.Indent + 2, data.Context, childTag.ToString()),
                         Key = key
                     };
                 }
@@ -166,7 +166,7 @@ namespace NexYaml.Parser.Scopes
                     {
                         Current = new Map()
                         {
-                            Value = Scope.NewFlowMapping(val.ToString(), data.Indent + 2, data.Context, childTag),
+                            Value = Scope.NewFlowMapping(val, data.Indent + 2, data.Context, childTag),
                             Key = key
                         };
                     }
@@ -334,8 +334,7 @@ namespace NexYaml.Parser.Scopes
                     
                 }
             }
-            // TODO FOREACH LOOP Blockmapping
-            return false;
+            return ParseBlockMapping();
         }
     }
 }
