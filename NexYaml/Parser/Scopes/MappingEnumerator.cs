@@ -242,7 +242,7 @@ namespace NexYaml.Parser.Scopes
         {
             // If we were seeded with a key (from "- key:" or "- key: value")
 
-            if (!string.IsNullOrEmpty(prefix) && !processedPrefix)
+            if (!string.IsNullOrEmpty(value2) && !processedPrefix)
             {
                 processedPrefix = true;
                 string childTag = string.Empty;
@@ -275,7 +275,7 @@ namespace NexYaml.Parser.Scopes
                 {
                     Current = new Map()
                     {
-                        Value = Scope.NewFlowMapping(val.ToString(), data.Indent + 2, data.Context, childTag.ToString()),
+                        Value = Scope.NewFlowMapping(val, data.Indent + 2, data.Context, childTag.ToString()),
                         Key = prefix
                     };
                 }
@@ -283,7 +283,7 @@ namespace NexYaml.Parser.Scopes
                 {
                     Current = new Map()
                     {
-                        Value = Scope.NewFlowSequence(val.ToString(), data.Indent + 2, data.Context, childTag.ToString()),
+                        Value = Scope.NewFlowSequence(val, data.Indent + 2, data.Context, childTag.ToString()),
                         Key = prefix
                     };
                 }
@@ -291,7 +291,7 @@ namespace NexYaml.Parser.Scopes
                 {
                     Current = new Map()
                     {
-                        Value = Scope.NewScalar(val.ToString(), data.Indent + 2, data.Context, childTag.ToString()),
+                        Value = Scope.NewScalar(val, data.Indent + 2, data.Context, childTag.ToString()),
                         Key = prefix
                     };
                 }
@@ -300,6 +300,7 @@ namespace NexYaml.Parser.Scopes
             else if(!processedPrefix)
             {
                 // No inline value: "- key:" followed by nested mapping/sequence
+                processedPrefix = true;
                 if (data.Context.Reader.Peek(out var lookahead))
                 {
                     int nextIndent = ScopeUtils.CountIndent(lookahead);
@@ -334,7 +335,8 @@ namespace NexYaml.Parser.Scopes
                     
                 }
             }
-            return ParseBlockMapping();
+            var result = ParseBlockMapping();
+            return result;
         }
     }
 }
