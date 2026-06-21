@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using NexYaml;
+using Stride.Core;
 using Xunit;
 
 namespace NexYamlTest.References;
@@ -129,6 +130,47 @@ public class ReferenceTest
         var d = await TestParser.Read<ReferenceScriptList>(s);
         Assert.Equal(d.List[1], d.List[0].Reference.ReferenceScript);
     }
+
+    public async Task ResolveListReferences_DeepStructure_Compact()
+    {
+        NexYamlSerializerRegistry.Init();
+        var list = new ReferenceScriptList();
+        Guid guid = Guid.NewGuid();
+        Guid guid2 = Guid.NewGuid();
+        Guid guid3 = Guid.NewGuid();
+
+        var refScript2 = new ReferenceScript()
+        {
+            Id = guid2,
+            Reference = new ReferenceClass()
+            {
+            },
+        };
+
+        var refScript = new ReferenceScript()
+        {
+            Id = guid,
+            Reference = new ReferenceClass()
+            {
+                ReferenceScript = refScript2
+            },
+        };
+
+        var refScript3 = new ReferenceScript()
+        {
+            Id = guid3,
+            Reference = new ReferenceClass()
+            {
+                ReferenceScript = refScript
+            },
+        };
+        list.List.Add(refScript);
+        list.List.Add(refScript2);
+        list.List.Add(refScript3);
+        var s = Yaml.Write(list, Stride.Core.DataStyle.Compact);
+        var d = await TestParser.Read<ReferenceScriptList>(s);
+        Assert.Equal(d.List[1], d.List[0].Reference.ReferenceScript);
+    }
 #endif
     [Fact]
     public async Task StructsLinkedWithinReference()
@@ -138,6 +180,19 @@ public class ReferenceTest
         a.Id = Guid.NewGuid();
         a.MyStruct = new MyStruct() { MyRef = new ClassB() { Id = a.Id } };
         var s = Yaml.Write<ClassA>(a);
+        var d = await TestParser.Read<ClassA>(s);
+        Assert.NotNull(d);
+        Assert.Equal(a.Id, d.Id);
+        Assert.Equal(a.MyStruct.MyRef.Id, d.MyStruct.MyRef.Id);
+    }
+    [Fact]
+    public async Task StructsLinkedWithinReference_Compact()
+    {
+        NexYamlSerializerRegistry.Init();
+        var a = new ClassA();
+        a.Id = Guid.NewGuid();
+        a.MyStruct = new MyStruct() { MyRef = new ClassB() { Id = a.Id } };
+        var s = Yaml.Write<ClassA>(a, DataStyle.Compact);
         var d = await TestParser.Read<ClassA>(s);
         Assert.NotNull(d);
         Assert.Equal(a.Id, d.Id);
