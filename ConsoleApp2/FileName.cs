@@ -17,14 +17,13 @@ public class Benchmarker
     static string w;
     static Benchmarker()
     {
-        s = JsonSerializer.Serialize(values, MyJsonContext.Default.Collections);
-        w = Yaml.Write(values, DataStyle.Normal, resolver);
     }
 
 
     [Benchmark]
     public async ValueTask<Collections> YamlB()
     {
+        w = Yaml.Write(values, DataStyle.Normal, resolver);
         var parser = new NewYamlParser(w, resolver);
         foreach(var x in parser)
         {
@@ -37,6 +36,7 @@ public class Benchmarker
     public void JsonB()
     {
 
+        s = JsonSerializer.Serialize(values, MyJsonContext.Default.Collections);
         var d = JsonSerializer.Deserialize<Collections>(s);
     }
 
