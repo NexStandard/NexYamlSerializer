@@ -2,7 +2,7 @@
 
 namespace NexYamlTest.SimpleClasses;
 [DataContract]
-internal class Generics<T>
+internal record class Generics<T>
 {
     public T? Value { get; set; }
 }
@@ -13,7 +13,7 @@ internal class GenericWithRestriction<T>
     public T? Value { get; init; }
 }
 [DataContract]
-internal class GenericWithImplementation : Generics<int>
+internal record class GenericWithImplementation : Generics<int>
 {
 
 }

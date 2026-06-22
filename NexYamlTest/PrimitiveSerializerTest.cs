@@ -1,7 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using NexYaml;
+﻿using NexYaml;
+using NexYamlTest.Helper;
 using NexYamlTest.SimpleClasses;
+using System;
+using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace NexYamlTest;
@@ -407,6 +409,29 @@ public class PrimitiveSerializerTest
         Assert.Equal(x.GuidProperty, d.GuidProperty);
     }
     [Fact]
+    public async Task BaseGeneric_Bool()
+    {
+        await YamlHelper.Run(new Generics<bool>() {  Value = true });
+        await YamlHelper.Run(new Generics<byte>() { Value = 6 });
+        await YamlHelper.Run(new Generics<char>() { Value = 'c' });
+        await YamlHelper.Run(new Generics<DateTimeOffset>() { Value = new() });
+        await YamlHelper.Run(new Generics<DateTime>() { Value = new() });
+        await YamlHelper.Run(new Generics<decimal>() { Value = 134.123m });
+        await YamlHelper.Run(new Generics<float>() { Value = 12314.3f });
+        await YamlHelper.Run(new Generics<long>() { Value = 123124 });
+        await YamlHelper.Run(new Generics<double>() { Value = 124.124 });
+        await YamlHelper.Run(new Generics<short>() { Value = 123 });
+        await YamlHelper.Run(new Generics<int>() { Value = 12131 });
+        await YamlHelper.Run(new Generics<sbyte>() { Value = 11 });
+        await YamlHelper.Run(new Generics<ushort>() { Value = 111 });
+        await YamlHelper.Run(new Generics<uint>() { Value = 111 });
+        await YamlHelper.Run(new Generics<ulong>() { Value = 111 });
+        await YamlHelper.Run(new Generics<Guid>() { Value = Guid.NewGuid() });
+        await YamlHelper.Run(new Generics<TimeSpan>() { Value = new() });
+        await YamlHelper.Run(new Generics<Uri>() { Value = new Uri("https://asdsf") });
+        await YamlHelper.Run(new Generics<string>() { Value = "help" });
+    }
+    [Fact]
     public async Task Exception_On_Wrong_Primitive_Type()
     {
         NexYamlSerializerRegistry.Init();
@@ -433,6 +458,5 @@ public class PrimitiveSerializerTest
         await Assert.ThrowsAsync<InvalidCastException>(async () => await TestParser.Read<Guid>(s));
         await Assert.ThrowsAsync<InvalidCastException>(async () => await TestParser.Read<TimeSpan>(s));
         await Assert.ThrowsAsync<InvalidCastException>(async () => await TestParser.Read<Uri>(s));
-        await Assert.ThrowsAsync<InvalidCastException>(async () => await TestParser.Read<TimeSpan>(s));
     }
 }
