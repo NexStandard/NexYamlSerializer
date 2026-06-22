@@ -61,7 +61,7 @@ public class ReferenceTest
             Reference2 = refData
         };
         var s = Yaml.Write(refScript);
-        var d = await TestParser.Read<ReferenceScript>(s);
+        var d = await TestParser.Read<ReferenceRecordScript>(s);
         Assert.NotNull(d);
         Assert.Equal(d.Reference, d.Reference1);
         Assert.Equal(d.Reference, d.Reference2);

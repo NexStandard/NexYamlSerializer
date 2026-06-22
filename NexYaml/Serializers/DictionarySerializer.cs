@@ -58,7 +58,7 @@ public class DictionarySerializer<TKey, TValue> : IYamlSerializer<Dictionary<TKe
         }
         return map;
     }
-
+    // TODO: what if user defines more valid primitives, scalar serializers are valid?
     private static T ParsePrimitive<T>(string key)
     {
         var type = typeof(T);

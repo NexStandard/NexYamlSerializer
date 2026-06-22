@@ -44,6 +44,7 @@ namespace NexYaml.Parser
             }
 
             var type = typeof(T);
+            Type alias;
             if (type.IsInterface || type.IsAbstract || type.IsGenericType)
             {
                 if (scope.Tag.IsNullOrEmpty())
@@ -53,12 +54,19 @@ namespace NexYaml.Parser
                 }
                 else
                 {
-                    Type alias = scope.Context.Resolver.GetAliasType(scope.Tag);
+                    alias = scope.Context.Resolver.GetAliasType(scope.Tag);
                     var serializer = scope.Context.Resolver.GetSerializer(alias, type);
 
                     var res = serializer.ReadUnknown(scope, context);
                     return Convert<T>(res);
                 }
+            }
+            else if(!scope.Tag.IsNullOrEmpty() && ( (alias = scope.Context.Resolver.GetAliasType(scope.Tag)) != type || (alias.IsGenericType  && alias.GetGenericTypeDefinition() != type.GetGenericTypeDefinition())))
+            {
+                var serializer = scope.Context.Resolver.GetSerializer(alias, type);
+
+                var res = serializer.ReadUnknown(scope, context);
+                return Convert<T>(res);
             }
             else
             {

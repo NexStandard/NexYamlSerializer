@@ -70,7 +70,7 @@ public abstract class Writer(IYamlSerializerResolver resolver)
             Resolver.GetSerializer<T>().Write(context, value, style);
             return;
         }
-        else if (type.IsInterface || type.IsAbstract || type.IsGenericType || type.IsArray)
+        else if (type.IsInterface || type.IsAbstract || type.IsGenericType || type.IsArray || type != value.GetType())
         {
             var valueType = value!.GetType();
             var formatt = Resolver.GetSerializer(value!.GetType(), typeof(T));

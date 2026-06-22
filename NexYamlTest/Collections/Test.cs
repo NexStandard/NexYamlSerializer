@@ -100,13 +100,32 @@ public class CollectionTest
         Assert.IsType<GenericAbstractImplementation<int, int>>(d[1]);
     }
     [Fact]
+    public async Task BlockSequenceWithCompactMapping()
+    {
+        var list = new List<CompactParent>
+        {
+            new SimpleClasses.CompactClass(),
+            new SimpleClasses.CompactClass(),
+            new SimpleClasses.CompactClass()
+        };
+        NexYamlSerializerRegistry.Init();
+        var s = Yaml.Write(list, DataStyle.Any);
+        Console.WriteLine(s);
+        var d = await TestParser.Read<List<CompactParent>>(s);
+        Assert.NotNull(d);
+        Assert.Equal(list.Count, d.Count);
+        Assert.Equal(list[0], d[0]);
+        Assert.Equal(list[1], d[1]);
+        Assert.Equal(list[2], d[2]);
+    }
+    [Fact]
     public async Task EmitBlockSequenceWithCompactMapping()
     {
         var list = new List<CompactStruct>
-    {
-        new(),
-        new()
-    };
+        {
+            new(),
+            new()
+        };
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(list, DataStyle.Any);
         var d = await TestParser.Read<List<CompactStruct>>(s);
