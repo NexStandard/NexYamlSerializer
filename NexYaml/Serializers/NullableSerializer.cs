@@ -15,14 +15,7 @@ internal class NullableSerializer<T> : IYamlSerializer<T?>
 
     public async ValueTask<T?> Read(Scope scope, T? parseResult)
     {
-        if (parseResult.HasValue)
-        {
-            return await scope.Read(parseResult.Value);
-        }
-        else
-        {
-            return await scope.Read<T>();
-        }
+        return await scope.Read<T>();
     }
 }
 public struct NullableFactory : IYamlSerializerFactory
