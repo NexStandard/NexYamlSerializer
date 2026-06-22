@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using NexYaml.Core;
 using static Stride.Graphics.Buffer;
 
 namespace NexYaml.Parser.Scopes;
@@ -15,10 +16,46 @@ public struct Scope
     public ReadOnlySpan<char> AsScalar()
     {
         if (Kind is ScopeKind.Scalar)
+        {
             return DecodeEscapes(TryGetQuotedText(ConvertStringToSpanUsingUnsafe(ScalarValue)));
+        }
+        else if(Kind is ScopeKind.NullScalar)
+        {
+            return YamlCodes.Null.AsSpan();
+        }
+        else if(Kind is ScopeKind.LazyScalar)
+        {
+            Context.Reader.Move(out var currentLine);
+            int colonIdx = currentLine.IndexOf(':');
+            if (colonIdx < 0)
+                throw new InvalidOperationException($"Invalid mapping line: '{currentLine}'");
+
+            ReadOnlySpan<char> keySpan = currentLine.Slice(0, colonIdx).Trim();
+            ReadOnlySpan<char> valSpan = colonIdx + 1 < currentLine.Length
+                ? currentLine.Slice(colonIdx + 1).Trim()
+                : ReadOnlySpan<char>.Empty;
+            return DecodeEscapes(TryGetQuotedText(ConvertSpanToSpanUsingUnsafe(valSpan)));
+        }
         throw new InvalidCastException();
     }
+    public bool IsNull
+    {
+        get
+        {
+            return Kind is ScopeKind.NullScalar;
+        }
+    }
     public unsafe Span<char> ConvertStringToSpanUsingUnsafe(string value)
+    {
+        unsafe
+        {
+            fixed (char* ptr = value)
+            {
+                return new Span<char>(ptr, value.Length);
+            }
+        }
+    }
+    public unsafe Span<char> ConvertSpanToSpanUsingUnsafe(ReadOnlySpan<char> value)
     {
         unsafe
         {
@@ -70,7 +107,24 @@ public struct Scope
             ScalarValue = value.ToString()
         };
     }
-
+    public static Scope NewLazyScalar(int indent, ScopeContext context, ReadOnlySpan<char> tag)
+    {
+        return new Scope()
+        {
+            Context = context,
+            Indent = indent,
+            Kind = ScopeKind.LazyScalar,
+            Tag = tag.ToString(),
+        };
+    }
+    public static Scope NewNullScalar()
+    {
+        return new Scope()
+        {
+            Kind = ScopeKind.NullScalar,
+            Tag = string.Empty
+        };
+    }
     public static Scope NewFlowSequence(ReadOnlySpan<char> value, int indent, ScopeContext context, ReadOnlySpan<char> tag)
     {
         return new Scope()

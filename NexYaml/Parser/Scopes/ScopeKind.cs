@@ -18,5 +18,7 @@ public enum ScopeKind
     BlockSequence,
     FlowSequence,
     FlowMapping,
-    PrefixedBlockMapping
+    PrefixedBlockMapping,
+    LazyScalar,
+    NullScalar
 }

@@ -29,7 +29,7 @@ namespace NexYaml.Parser
 
             switch (scope.Kind)
             {
-                case ScopeKind.Scalar:
+                case ScopeKind.Scalar or ScopeKind.LazyScalar or ScopeKind.NullScalar:
                     return $"{pad}SCALAR{TagSuffix(scope.Tag)}({scope.AsScalar()})";
 
                 case ScopeKind.BlockMapping or ScopeKind.FlowMapping or ScopeKind.PrefixedBlockMapping:

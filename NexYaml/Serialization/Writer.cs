@@ -111,25 +111,15 @@ public abstract class Writer(IYamlSerializerResolver resolver)
         {
             result = ScalarStyle.DoubleQuoted;
         }
-        
-        switch (result)
+        return result switch
         {
-            case ScalarStyle.Plain or ScalarStyle.Any:
-                return value;
-            case ScalarStyle.Folded:
-                throw new NotSupportedException($"The {ScalarStyle.Folded} is not supported.");
-            case ScalarStyle.SingleQuoted:
-                throw new InvalidOperationException("Single Quote is reserved for char");
-            case ScalarStyle.DoubleQuoted:
-                return "\"" + value.Replace("\n", "\\n") + "\"";
-            case ScalarStyle.Literal:
-                {
-                    var indentCharCount = Math.Max(1, (context.Indent + 1) * context.Indent);
-                    var scalarStringBuilt = EmitStringAnalyzer.BuildLiteralScalar(value, indentCharCount).ToString();
-                    return scalarStringBuilt;
-                }
-        }
-        throw new ArgumentOutOfRangeException();
+             ScalarStyle.Plain or ScalarStyle.Any => value,
+             ScalarStyle.Folded => throw new NotSupportedException($"The {ScalarStyle.Folded} is not supported."),
+             ScalarStyle.SingleQuoted => throw new InvalidOperationException("Single Quote is reserved for char"),
+             ScalarStyle.DoubleQuoted => "\"" + value.Replace("\n", "\\n") + "\"",
+             ScalarStyle.Literal => EmitStringAnalyzer.BuildLiteralScalar(value, Math.Max(1, (context.Indent + 1) * context.Indent)),
+             _ => throw new ArgumentOutOfRangeException(nameof(value)),
+        };
     }
 
 }

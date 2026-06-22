@@ -68,7 +68,7 @@ public class EnumAsStringSerializer<T> : IYamlSerializer<T>
         }
         else
         {
-            throw new YamlException($"Cannot detect a value of enum: {typeof(T)}, {value}");
+            throw new Exception();
         }
     }
 

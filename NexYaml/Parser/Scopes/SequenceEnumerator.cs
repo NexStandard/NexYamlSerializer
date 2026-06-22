@@ -69,6 +69,10 @@ public ref struct SequenceEnumerator
             {
                 Current = Scope.NewFlowSequence(item, data.Indent, data.Context, bufferedTag);
             }
+            else if (item.SequenceEqual(YamlCodes.Null.AsSpan()))
+            {
+                Current = Scope.NewNullScalar();
+            }
             else
             {
                 Current = Scope.NewScalar(item, data.Indent + 2, data.Context, bufferedTag);
@@ -128,7 +132,14 @@ public ref struct SequenceEnumerator
                         }
                         else
                         {
-                            Current = Scope.NewScalar(itemSpan, data.Indent + 2, data.Context, childTag);
+                            if (itemSpan.SequenceEqual(YamlCodes.Null.AsSpan()))
+                            {
+                                Current = Scope.NewNullScalar();
+                            }
+                            else
+                            {
+                                Current = Scope.NewScalar(itemSpan, data.Indent + 2, data.Context, childTag);
+                            }
                         }
                         return true;
                 }
@@ -274,69 +285,6 @@ public static class ScopeUtils
         return list.ToArray();
     }
 
-    public static IEnumerable<string> SplitFlowItems(string input)
-    {
-        int depth = 0;
-        bool inQuotes = false;
-        bool inTag = false;
-        char quoteChar = '\0';
-
-        int tokenStart = 0;
-
-        for (int i = 0; i < input.Length; i++)
-        {
-            char c = input[i];
-
-            if (inQuotes)
-            {
-                if (c == quoteChar)
-                    inQuotes = false;
-                continue;
-            }
-
-            switch (c)
-            {
-                case '"' or '\'':
-                    inQuotes = true;
-                    quoteChar = c;
-                    break;
-                case '!':
-                    inTag = true;
-                    break;
-                case ' ' or '[' or '{':
-                    if (inTag)
-                    {
-                        inTag = false;
-                        var s = input.AsSpan().Slice(tokenStart, i - tokenStart).Trim();
-                        if (s.Length > 0)
-                            yield return s.ToString();
-                        tokenStart = i + 1;
-                    }
-                    if (c == '[' || c == '{')
-                        depth++;
-                    break;
-                case ']' or '}':
-                    depth--;
-                    break;
-                case ',':
-                    if (depth == 0 && !inTag)
-                    {
-                        var s = input.AsSpan().Slice(tokenStart, i - tokenStart).Trim();
-                        if (s.Length > 0)
-                            yield return s.ToString();
-                        tokenStart = i + 1;
-                    }
-                    break;
-            }
-        }
-
-        if (tokenStart < input.Length)
-        {
-            var s = input.AsSpan().Slice(tokenStart).Trim();
-            if (s.Length > 0)
-                yield return s.ToString();
-        }
-    }
     public static string ParseLiteralScalar(ScopeContext context, int indent, char chompHint)
     {
         var sb = new System.Text.StringBuilder();
