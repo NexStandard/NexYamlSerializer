@@ -32,7 +32,7 @@ public static class NodeExtensions
     /// <param name="value">The value associated with the key.</param>
     /// <param name="style">The <see cref="DataStyle"/>.</param>
     /// <returns>The  <see cref="WriteContext{T}"/> based on the written key/value pair.</returns>
-    public static Mapping Write<T>(this Mapping mapping, string key, T value, DataStyle style = DataStyle.Any)
+    public static Mapping Write<T>(this Mapping mapping, ReadOnlySpan<char> key, T value, DataStyle style = DataStyle.Any)
     {
         var x = mapping.WriteKey(mapping, key, style);
         if (value is null)
@@ -57,7 +57,7 @@ public static class NodeExtensions
         return sequence.Write(sequence, value, style);
     }
 
-    public static Mapping Write(this Mapping context, string key, string value, DataStyle style = DataStyle.Any)
+    public static Mapping Write(this Mapping context, ReadOnlySpan<char> key, string value, DataStyle style = DataStyle.Any)
     {
         var Style = style is DataStyle.Any or DataStyle.Normal ? DataStyle.Any : style;
 
@@ -70,7 +70,7 @@ public static class NodeExtensions
         x.WriteScalar(context.Writer.FormatString(context, value, style));
         return x;
     }
-    public static Mapping Write(this Mapping context, string key, Guid value, DataStyle style = DataStyle.Any)
+    public static Mapping Write(this Mapping context, ReadOnlySpan<char> key, Guid value, DataStyle style = DataStyle.Any)
     {
         var Style = style is DataStyle.Any or DataStyle.Normal ? DataStyle.Any : style;
 

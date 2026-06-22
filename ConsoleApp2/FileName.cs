@@ -19,19 +19,19 @@ public class Benchmarker
     {
         s = JsonSerializer.Serialize(values, MyJsonContext.Default.Collections);
         w = Yaml.Write(values, DataStyle.Normal, resolver);
-
     }
 
 
     [Benchmark]
-    public void YamlB()
+    public async ValueTask<Collections> YamlB()
     {
         var parser = new NewYamlParser(w, resolver);
         foreach(var x in parser)
         {
-            x.EmptyDump();
+            return await x.Read<Collections>();
             break;
         };
+        return default;
     }
     [Benchmark()]
     public void JsonB()
@@ -52,7 +52,7 @@ public struct Y
     public X x;
 }
 [DataContract]
-internal sealed class Collections
+public sealed class Collections
 {
 
     [JsonInclude]
@@ -105,7 +105,7 @@ internal partial class MyJsonContext : JsonSerializerContext
 }
 
 [DataContract]
-public struct TempData : IIdentifiable
+public struct TempData
 {
     [DataMember]
     public string Name { get; set; }

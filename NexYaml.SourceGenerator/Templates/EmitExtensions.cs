@@ -32,12 +32,6 @@ internal static class EmitExtensions
     {
         var charMembers = new StringBuilder();
 
-        foreach (var member in package.MemberSymbols)
-        {
-            charMembers
-                .AppendLine($"private readonly string UTF8{member.Name} = \"{member.Name}\";")
-                .Append("\t");
-        }
 
         return charMembers.ToString();
     }

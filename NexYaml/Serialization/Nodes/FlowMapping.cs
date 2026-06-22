@@ -34,7 +34,7 @@ class FlowMapping : Mapping
         WriteScalar(" }");
     }
 
-    public override Mapping WriteKey(Mapping context, string key, DataStyle style)
+    public override Mapping WriteKey(Mapping context, ReadOnlySpan<char> key, DataStyle style)
     {
         // First Node is {KEY: VALUE}
         int len = key.Length + 2; 

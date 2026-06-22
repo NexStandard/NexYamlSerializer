@@ -21,6 +21,10 @@ namespace NexYaml.Parser
                     m.EmptyDump();
                 }
             }
+            if (scope.Kind is ScopeKind.LazyScalar)
+            {
+                scope.AsScalar();
+            }
         }
         public static string Dump(this Scope scope, int indent = 0, bool includeHeader = true)
         {

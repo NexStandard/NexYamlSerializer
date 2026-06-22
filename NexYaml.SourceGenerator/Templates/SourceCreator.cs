@@ -30,14 +30,6 @@ internal static class SourceCreator
         var map = package.MemberSymbols;
         // needs ID at first place to avoid deadlock on awaits for reference resolving
 
-        var charMembers = new StringBuilder();
-
-        foreach (var member in package.MemberSymbols)
-        {
-            charMembers
-                .AppendLine($"var UTF8{member.Name} = \"{member.Name}\";");
-        }
-
         var orderedSymbols = package.MemberSymbols.OrderByDescending(s => s.Name == "Id").ToList();
         ///
         if (info.TypeKind is Microsoft.CodeAnalysis.TypeKind.Struct)
@@ -63,11 +55,11 @@ internal static class SourceCreator
             objTempVariables.AppendLine($"\t\tvar var_{member.Name} = default(ValueTask<{(member.IsArray ? member.Type + "[]" : member.Type)}>);");
             if (member.Context.Mode == MemberApi.UniversalAnalyzers.MemberMode.Content)
             {
-                ifStatementNew.AppendLine($"\t\t\tif (map.Key.SequenceEqual(UTF8{member.Name})){{ var_{member.Name} = map.Value.Read(res.{member.Name}); continue; }}");
+                ifStatementNew.AppendLine($"\t\t\tif (map.Key.SequenceEqual(\"{member.Name}\".AsSpan())){{ var_{member.Name} = map.Value.Read(res.{member.Name}); continue; }}");
             }
             else
             {
-                ifStatementNew.AppendLine($"\t\t\tif (map.Key.SequenceEqual(UTF8{member.Name})){{ var_{member.Name} = map.Value.Read(default({(member.IsArray ? member.Type + "[]" : member.Type)})!); continue; }}");
+                ifStatementNew.AppendLine($"\t\t\tif (map.Key.SequenceEqual(\"{member.Name}\".AsSpan())){{ var_{member.Name} = map.Value.Read(default({(member.IsArray ? member.Type + "[]" : member.Type)})!); continue; }}");
             }
             if (member.Context.Mode is MemberApi.UniversalAnalyzers.MemberMode.Content)
             {
@@ -126,7 +118,6 @@ internal static class SourceCreator
                 public static async ValueTask<{{info.NameDefinition}}> Read{{info.TypeParameterArguments}}(this Scope scope, {{info.NameDefinition}} context = default){{info.TypeParameterRestrictions}}
                 {
                     if(scope.IsNull) return default;
-            {{charMembers}}
             {{objTempVariables}}
                     var mapping = scope.AsMapping();
                     foreach(var map in mapping)
@@ -136,7 +127,7 @@ internal static class SourceCreator
             {{awaitsNew}}
                     return res;
                 }
-            public static Mapping Write{{info.TypeParameterArguments}}(this Mapping context, string key, {{info.NameDefinition}} value, DataStyle style = DataStyle.Any){{info.TypeParameterRestrictions}}
+            public static Mapping Write{{info.TypeParameterArguments}}(this Mapping context, ReadOnlySpan<char> key, {{info.NameDefinition}} value, DataStyle style = DataStyle.Any){{info.TypeParameterRestrictions}}
             {
                 {{(info.TypeKind != Microsoft.CodeAnalysis.TypeKind.Struct ? nullcheck : "")}}
                 {{(info.IsIIdentifiable ? iidentifiable : "")}}

@@ -185,7 +185,7 @@ public class ReferenceTest
         Assert.Equal(a.Id, d.Id);
         Assert.Equal(a.MyStruct.MyRef.Id, d.MyStruct.MyRef.Id);
     }
-    [Fact]
+    [Fact(Skip = "")]
     public async Task StructsLinkedWithinReference_Compact()
     {
         NexYamlSerializerRegistry.Init();

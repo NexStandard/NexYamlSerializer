@@ -8,7 +8,7 @@ class FlowMappingSecondary : FlowMapping
         : base(indent, isRedirected, styleScope, writer)
     {
     }
-    public override Mapping WriteKey(Mapping context, string key, DataStyle style)
+    public override Mapping WriteKey(Mapping context, ReadOnlySpan<char> key, DataStyle style)
     {
         // Node following a FlowMapping is prefixed with comma ", {KEY: VALUE}"
         WriteScalar(", ");

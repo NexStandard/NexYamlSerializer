@@ -12,6 +12,7 @@ class Program
     static Stream ToStream(string s) => new MemoryStream(Encoding.UTF8.GetBytes(s));
     public static async Task Main(string[] args)
     {
+
         BenchmarkRunner.Run<Benchmarker>();
     }
     }

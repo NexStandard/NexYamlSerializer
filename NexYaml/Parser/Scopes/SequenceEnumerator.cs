@@ -94,7 +94,7 @@ public ref struct SequenceEnumerator
                 return false;
 
             // consume this line
-            data.Context.Reader.Move();
+
 
             // skip the leading '-' and any following spaces
             var itemSpan = line[1..].Trim();
@@ -104,20 +104,22 @@ public ref struct SequenceEnumerator
 
             if (itemSpan.Length > 0)
             {
+                
                 switch (itemSpan[0])
                 {
                     // literal block scalar
                     case '|':
-                        
+                        data.Context.Reader.Move();
                         Current = Scope.NewScalar(ScopeUtils.ParseLiteralScalar(data.Context, data.Indent + 1, itemSpan[1]), data.Indent + 2, data.Context, childTag);
                         return true;
                     // flow mapping
                     case '{' when itemSpan[^1] == '}':
-                        
+                        data.Context.Reader.Move();
                         Current = Scope.NewFlowMapping(itemSpan, data.Indent + 2, data.Context, childTag);
                         return true;
                     // flow sequence
                     case '[' when itemSpan[^1] == ']':
+                        data.Context.Reader.Move();
                         Current = Scope.NewFlowSequence(itemSpan, data.Indent + 2, data.Context, childTag);
                         return true;
                     // inline mapping (key: value)
@@ -132,6 +134,7 @@ public ref struct SequenceEnumerator
                         }
                         else
                         {
+                            data.Context.Reader.Move();
                             if (itemSpan.SequenceEqual(YamlCodes.Null.AsSpan()))
                             {
                                 Current = Scope.NewNullScalar();
@@ -146,6 +149,7 @@ public ref struct SequenceEnumerator
             }
             else
             {
+                data.Context.Reader.Move();
                 // empty item, look ahead for nested structure
                 if (data.Context.Reader.Peek(out var la))
                 {

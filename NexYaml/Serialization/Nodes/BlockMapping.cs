@@ -30,7 +30,7 @@ public class BlockMapping : Mapping
         }
         return new BlockSequence(Indent, IsRedirected, StyleScope, Writer).BeginSequence(tag, DataStyle.Normal);
     }
-    public override Mapping WriteKey(Mapping context, string key, DataStyle style)
+    public override Mapping WriteKey(Mapping context, ReadOnlySpan<char> key, DataStyle style)
     {
         // "{KEY}: {OPTIONAL TAG}" OR "- {OPTIONAL TAG}"
         // "{NEWLINE}{INDENT}{KEY}: {OUTPUT FROM WriteType}"
@@ -38,7 +38,7 @@ public class BlockMapping : Mapping
 
         x[0] = '\n';
         x.Slice(1, Indent).Fill(' ');
-        key.AsSpan().CopyTo(x.Slice(1 + Indent,key.Length));
+        key.CopyTo(x.Slice(1 + Indent,key.Length));
         x[^1] = ' ';
         x[^2] = ':';
         WriteScalar(x);

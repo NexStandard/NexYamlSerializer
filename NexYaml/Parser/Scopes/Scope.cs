@@ -30,11 +30,18 @@ public struct Scope
             if (colonIdx < 0)
                 throw new InvalidOperationException($"Invalid mapping line: '{currentLine}'");
 
-            ReadOnlySpan<char> keySpan = currentLine.Slice(0, colonIdx).Trim();
             ReadOnlySpan<char> valSpan = colonIdx + 1 < currentLine.Length
                 ? currentLine.Slice(colonIdx + 1).Trim()
                 : ReadOnlySpan<char>.Empty;
-            return DecodeEscapes(TryGetQuotedText(ConvertSpanToSpanUsingUnsafe(valSpan)));
+            if (valSpan[0] == '!')
+            {
+                colonIdx = valSpan.IndexOf(' ');
+            }
+            else
+            {
+                colonIdx = 0;
+            }
+            return DecodeEscapes(TryGetQuotedText(ConvertSpanToSpanUsingUnsafe(valSpan.Slice(colonIdx))));
         }
         throw new InvalidCastException();
     }
@@ -107,7 +114,7 @@ public struct Scope
             ScalarValue = value.ToString()
         };
     }
-    public static Scope NewLazyScalar(int indent, ScopeContext context, ReadOnlySpan<char> tag)
+    public static Scope NewLazyScalar(int valueIndex, int indent, ScopeContext context, ReadOnlySpan<char> tag)
     {
         return new Scope()
         {
