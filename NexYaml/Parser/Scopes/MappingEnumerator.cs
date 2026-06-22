@@ -72,14 +72,14 @@ namespace NexYaml.Parser.Scopes
                     Current = new Map()
                     {
                         Key = key,
-                        Value = Scope.NewScalar(ScopeUtils.ParseLiteralScalar(data.Context, data.Indent + 1, val[1]), data.Indent + 2, data.Context, childTag.ToString())
+                        Value = Scope.NewScalar(ScopeUtils.ParseLiteralScalar(data.Context, data.Indent + 1, val[1]), data.Indent + 2, data.Context, childTag)
                     };
                 }
                 else if (val.StartsWith('{') && val.EndsWith('}'))
                 {
                     Current = new Map()
                     {
-                        Value = Scope.NewFlowMapping(val, data.Indent + 2, data.Context, childTag.ToString()),
+                        Value = Scope.NewFlowMapping(val, data.Indent + 2, data.Context, childTag),
                         Key = key
                     };
                 }
@@ -87,7 +87,7 @@ namespace NexYaml.Parser.Scopes
                 {
                     Current = new Map()
                     {
-                        Value = Scope.NewFlowSequence(val, data.Indent + 2, data.Context, childTag.ToString()),
+                        Value = Scope.NewFlowSequence(val, data.Indent + 2, data.Context, childTag),
                         Key = key
                     };
                     
@@ -96,7 +96,7 @@ namespace NexYaml.Parser.Scopes
                 {
                     Current = new Map()
                     {
-                        Value = Scope.NewScalar(val, data.Indent + 2, data.Context, childTag.ToString()),
+                        Value = Scope.NewScalar(val, data.Indent + 2, data.Context, childTag),
                         Key = key
                     };
                 }
@@ -202,7 +202,7 @@ namespace NexYaml.Parser.Scopes
                             {
                                 Current = new Map()
                                 {
-                                    Value = Scope.NewBlockSequence(data.Indent + 2, data.Context, childTag.ToString()),
+                                    Value = Scope.NewBlockSequence(data.Indent + 2, data.Context, childTag),
                                     Key = key
                                 };
                             }
@@ -210,7 +210,7 @@ namespace NexYaml.Parser.Scopes
                             {
                                 Current = new Map()
                                 {
-                                    Value = Scope.NewBlockMapping(data.Indent + 2, data.Context, childTag.ToString()),
+                                    Value = Scope.NewBlockMapping(data.Indent + 2, data.Context, childTag),
                                     Key = key
                                 };
                             }
@@ -220,7 +220,7 @@ namespace NexYaml.Parser.Scopes
                         {
                             Current = new Map()
                             {
-                                Value = Scope.NewBlockSequence(data.Indent, data.Context, childTag.ToString()),
+                                Value = Scope.NewBlockSequence(data.Indent, data.Context, childTag),
                                 Key = key
                             };
                             return true;
@@ -230,7 +230,7 @@ namespace NexYaml.Parser.Scopes
                     // Default: empty scalar
                     Current = new Map()
                     {
-                        Value = Scope.NewScalar(string.Empty, data.Indent + 2, data.Context, childTag.ToString()),
+                        Value = Scope.NewScalar(string.Empty, data.Indent + 2, data.Context, childTag),
                         Key = key
                     };
                     return true;
@@ -245,7 +245,7 @@ namespace NexYaml.Parser.Scopes
             if (!string.IsNullOrEmpty(value2) && !processedPrefix)
             {
                 processedPrefix = true;
-                string childTag = string.Empty;
+                ReadOnlySpan<char> childTag = [];
                 ReadOnlySpan<char> valSpan = value2.AsSpan();
 
                 if (valSpan.StartsWith('!') && !valSpan.SequenceEqual(YamlCodes.Null.AsSpan()))
@@ -253,21 +253,21 @@ namespace NexYaml.Parser.Scopes
                     int spaceIdx = valSpan.IndexOf(' ');
                     if (spaceIdx >= 0)
                     {
-                        childTag = valSpan.Slice(0, spaceIdx).ToString();
+                        childTag = valSpan.Slice(0, spaceIdx);
                         valSpan = valSpan.Slice(spaceIdx + 1).Trim();
                     }
                     else
                     {
-                        childTag = valSpan.ToString();
+                        childTag = valSpan;
                         valSpan = ReadOnlySpan<char>.Empty;
                     }
                 }
-                string val = valSpan.ToString();
+                ReadOnlySpan<char> val = valSpan;
                 if (val.StartsWith('|'))
                 {
                     Current = new Map()
                     {
-                        Value = Scope.NewScalar(ScopeUtils.ParseLiteralScalar(data.Context, data.Indent + 1, val[1]), data.Indent + 2, data.Context, childTag.ToString()),
+                        Value = Scope.NewScalar(ScopeUtils.ParseLiteralScalar(data.Context, data.Indent + 1, val[1]), data.Indent + 2, data.Context, childTag),
                         Key = prefix
                     };
                 }
@@ -275,7 +275,7 @@ namespace NexYaml.Parser.Scopes
                 {
                     Current = new Map()
                     {
-                        Value = Scope.NewFlowMapping(val, data.Indent + 2, data.Context, childTag.ToString()),
+                        Value = Scope.NewFlowMapping(val, data.Indent + 2, data.Context, childTag),
                         Key = prefix
                     };
                 }
@@ -283,7 +283,7 @@ namespace NexYaml.Parser.Scopes
                 {
                     Current = new Map()
                     {
-                        Value = Scope.NewFlowSequence(val, data.Indent + 2, data.Context, childTag.ToString()),
+                        Value = Scope.NewFlowSequence(val, data.Indent + 2, data.Context, childTag),
                         Key = prefix
                     };
                 }
@@ -291,7 +291,7 @@ namespace NexYaml.Parser.Scopes
                 {
                     Current = new Map()
                     {
-                        Value = Scope.NewScalar(val, data.Indent + 2, data.Context, childTag.ToString()),
+                        Value = Scope.NewScalar(val, data.Indent + 2, data.Context, childTag),
                         Key = prefix
                     };
                 }

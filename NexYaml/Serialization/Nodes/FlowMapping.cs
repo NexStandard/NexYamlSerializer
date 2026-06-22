@@ -37,8 +37,12 @@ class FlowMapping : Mapping
     public override Mapping WriteKey(Mapping context, string key, DataStyle style)
     {
         // First Node is {KEY: VALUE}
-        WriteScalar(key);
-        WriteScalar(": ");
+        int len = key.Length + 2; 
+        Span<char> buf = stackalloc char[len];
+        key.CopyTo(buf);
+        buf[key.Length] = ':';
+        buf[key.Length + 1] = ' ';
+        WriteScalar(buf);
         return new FlowMappingSecondary(Indent,false,StyleScope,Writer);
     }
 }

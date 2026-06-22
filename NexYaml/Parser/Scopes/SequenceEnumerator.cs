@@ -105,16 +105,16 @@ public ref struct SequenceEnumerator
                     // literal block scalar
                     case '|':
                         
-                        Current = Scope.NewScalar(ScopeUtils.ParseLiteralScalar(data.Context, data.Indent + 1, itemSpan[1]), data.Indent + 2, data.Context, childTag.ToString());
+                        Current = Scope.NewScalar(ScopeUtils.ParseLiteralScalar(data.Context, data.Indent + 1, itemSpan[1]), data.Indent + 2, data.Context, childTag);
                         return true;
                     // flow mapping
                     case '{' when itemSpan[^1] == '}':
                         
-                        Current = Scope.NewFlowMapping(itemSpan.ToString(), data.Indent + 2, data.Context, childTag.ToString());
+                        Current = Scope.NewFlowMapping(itemSpan, data.Indent + 2, data.Context, childTag);
                         return true;
                     // flow sequence
                     case '[' when itemSpan[^1] == ']':
-                        Current = Scope.NewFlowSequence(itemSpan.ToString(), data.Indent + 2, data.Context, childTag.ToString());
+                        Current = Scope.NewFlowSequence(itemSpan, data.Indent + 2, data.Context, childTag);
                         return true;
                     // inline mapping (key: value)
                     default:
@@ -124,11 +124,11 @@ public ref struct SequenceEnumerator
                             var keySpan = itemSpan[..colonIdx].Trim();
                             var valSpan = itemSpan[(colonIdx + 1)..].Trim();
                             
-                            Current = Scope.NewPrefixedBlockMapping(valSpan.ToString(), keySpan.ToString(), data.Indent + 2, data.Context, childTag.ToString());
+                            Current = Scope.NewPrefixedBlockMapping(valSpan, keySpan.ToString(), data.Indent + 2, data.Context, childTag);
                         }
                         else
                         {
-                            Current = Scope.NewScalar(itemSpan.ToString(), data.Indent + 2, data.Context, childTag.ToString());
+                            Current = Scope.NewScalar(itemSpan, data.Indent + 2, data.Context, childTag);
                         }
                         return true;
                 }
@@ -146,18 +146,18 @@ public ref struct SequenceEnumerator
                         if (nextTrim.Length > 0 && nextTrim[0] == '-')
                         {
                             
-                            Current = Scope.NewBlockSequence(data.Indent + 2, data.Context, childTag.ToString());
+                            Current = Scope.NewBlockSequence(data.Indent + 2, data.Context, childTag);
 
                         }
                         else
                         {
-                            Current = Scope.NewBlockMapping(data.Indent + 2, data.Context, childTag.ToString());
+                            Current = Scope.NewBlockMapping(data.Indent + 2, data.Context, childTag);
                         }
                         return true;
                     }
                 }
                 
-                Current = Scope.NewScalar(string.Empty, data.Indent + 2, data.Context, childTag.ToString());
+                Current = Scope.NewScalar(string.Empty, data.Indent + 2, data.Context, childTag);
                 return true;
             }
         }

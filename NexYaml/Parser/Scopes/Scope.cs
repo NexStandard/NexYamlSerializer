@@ -125,7 +125,7 @@ public struct Scope
             prefix = prefix
         };
     }
-    public static Span<char> DecodeEscapes(Span<char> buffer)
+    public static ReadOnlySpan<char> DecodeEscapes(Span<char> buffer)
     {
         int write = 0;
 

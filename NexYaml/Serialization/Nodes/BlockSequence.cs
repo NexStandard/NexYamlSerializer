@@ -50,9 +50,18 @@ class BlockSequence : Sequence
         // - The sequence identifier ("- ") does NOT use increased indentation.
         // - The indent can NOT be below 0
         // - Only the subsequent nodes follow deeper indentation levels.
-        WriteScalar("\n");
-        WriteScalar(new string(' ', Math.Max(Indent - 2, 0)));
-        WriteScalar("- ");
+        int spaceCount = Math.Max(Indent - 2, 0);
+
+        // total length: '\n' + spaces + "- "
+        int len = 1 + spaceCount + 2;
+
+        Span<char> buf = stackalloc char[len];
+        buf.Fill(' ');
+        int i = 0;
+        buf[0] = '\n';
+        buf[^2] = '-';
+
+        WriteScalar(buf);
         context.WriteType(value, style);
         return context;
     }
