@@ -10,6 +10,7 @@ class BlockSequenceMapping : BlockMapping
     }
     public override Mapping BeginMapping(string tag, DataStyle style)
     {
+        // TODO: how can this even happen, missing test for these ifs
         if (StyleScope is DataStyle.Compact || style is DataStyle.Compact)
         {
             return new FlowMapping(Indent, IsRedirected, StyleScope, Writer).BeginMapping(tag, DataStyle.Compact);
