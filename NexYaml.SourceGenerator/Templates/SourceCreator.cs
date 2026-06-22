@@ -125,8 +125,7 @@ internal static class SourceCreator
             {
                 public static async ValueTask<{{info.NameDefinition}}> Read{{info.TypeParameterArguments}}(this Scope scope, {{info.NameDefinition}} context = default){{info.TypeParameterRestrictions}}
                 {
-                    if(scope.Kind is ScopeKind.Scalar && scope.AsScalar() == "!!null")
-                        return default;
+                    if(scope.IsNull) return default;
             {{charMembers}}
             {{objTempVariables}}
                     var mapping = scope.AsMapping();
