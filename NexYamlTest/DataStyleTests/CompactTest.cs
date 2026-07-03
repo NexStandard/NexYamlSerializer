@@ -35,7 +35,7 @@ public class CompactTest
         var compact = new CompactRecordWithCompactMember();
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(compact);
-        Assert.Equal("!NexYamlTest.DataStyleTests.CompactRecordWithCompactMember,NexYamlTest { CompactMember: !NexYamlTest.DataStyleTests.CompactRecord,NexYamlTest { X: 0, Y: 0, W: !!null } }", s);
+        Assert.Equal("!NexYamlTest.DataStyleTests.CompactRecordWithCompactMember { CompactMember: !NexYamlTest.DataStyleTests.CompactRecord { X: 0, Y: 0, W: !!null } }", s);
     }
     public async Task Compact_List()
     {
@@ -53,7 +53,7 @@ public class CompactTest
         var compact = new CompactCompactRecord();
         NexYamlSerializerRegistry.Init();
         var s = Yaml.Write(compact);
-        Assert.Equal("!NexYamlTest.DataStyleTests.CompactCompactRecord,NexYamlTest\nCompactMember: !NexYamlTest.DataStyleTests.CompactRecordWithCompactMember,NexYamlTest { CompactMember: !NexYamlTest.DataStyleTests.CompactRecord,NexYamlTest { X: 0, Y: 0, W: !!null } }", s);
+        Assert.Equal("!NexYamlTest.DataStyleTests.CompactCompactRecord\nCompactMember: !NexYamlTest.DataStyleTests.CompactRecordWithCompactMember { CompactMember: !NexYamlTest.DataStyleTests.CompactRecord { X: 0, Y: 0, W: !!null } }", s);
     }
 
     [Fact]

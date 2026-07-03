@@ -219,7 +219,7 @@ public static class ScopeUtils
     }
     public static string[] NewSplitItems(string input)
     {
-        var list = new List<string>();
+        var items = new List<string>();
 
         int depth = 0;
         bool inQuotes = false;
@@ -250,17 +250,8 @@ public static class ScopeUtils
                     inTag = true;
                     break;
 
-                case ' ' or '[' or '{':
-                    if (inTag)
-                    {
-                        inTag = false;
-                        var s = input.AsSpan().Slice(tokenStart, i - tokenStart).Trim();
-                        if (s.Length > 0)
-                            list.Add(s.ToString());
-                        tokenStart = i + 1;
-                    }
-                    if (c == '[' || c == '{')
-                        depth++;
+                case '[' or '{':
+                    depth++;
                     break;
 
                 case ']' or '}':
@@ -268,11 +259,15 @@ public static class ScopeUtils
                     break;
 
                 case ',':
-                    if (depth == 0 && !inTag)
+                    // Tag endet hier
+                    if (inTag)
+                        inTag = false;
+
+                    if (depth == 0)
                     {
-                        var s = input.AsSpan().Slice(tokenStart, i - tokenStart).Trim();
+                        string s = input.Substring(tokenStart, i - tokenStart).Trim();
                         if (s.Length > 0)
-                            list.Add(s.ToString());
+                            items.Add(s);
                         tokenStart = i + 1;
                     }
                     break;
@@ -281,13 +276,14 @@ public static class ScopeUtils
 
         if (tokenStart < input.Length)
         {
-            var s = input.AsSpan().Slice(tokenStart).Trim();
+            string s = input.Substring(tokenStart).Trim();
             if (s.Length > 0)
-                list.Add(s.ToString());
+                items.Add(s);
         }
 
-        return list.ToArray();
+        return items.ToArray();
     }
+
 
     public static string ParseLiteralScalar(ScopeContext context, int indent, char chompHint)
     {

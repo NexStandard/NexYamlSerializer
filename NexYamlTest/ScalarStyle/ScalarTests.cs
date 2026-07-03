@@ -16,7 +16,7 @@ namespace NexYamlTest.ScalarStyle
                 Value = "ScalarStylePlainScalar",
             };
             var s = Yaml.Write(w);
-            Assert.Equal("!NexYamlTest.ScalarStyle.StringWrapper,NexYamlTest\nValue: ScalarStylePlainScalar", s);
+            Assert.Equal("!NexYamlTest.ScalarStyle.StringWrapper\nValue: ScalarStylePlainScalar", s);
 
         }
         [Fact]

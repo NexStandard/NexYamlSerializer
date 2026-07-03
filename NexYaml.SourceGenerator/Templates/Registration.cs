@@ -32,7 +32,7 @@ internal static class Registration
         }
         else
         {
-            sb.AppendLine($"{Constants.SerializerRegistry}.RegisterTag($\"!{package.ClassInfo.NameSpace}.{package.ClassInfo.TypeName},{package.ClassInfo.NameSpace.Split('.')[0]}\",typeof({package.ClassInfo.ShortDefinition}));");
+            sb.AppendLine($"{Constants.SerializerRegistry}.RegisterTag($\"!{package.ClassInfo.NameSpace}.{package.ClassInfo.TypeName}\",typeof({package.ClassInfo.ShortDefinition}));");
         }
         if (package.ClassInfo.IsGeneric)
         {

@@ -18,7 +18,7 @@ internal static class SourceCreator
             tempVariables.AppendLine($"var temp_{member.Name} = context.DataMemberMode == DataMemberMode.Content ? ({info.NameDefinition})context.Value : default({member.Type});");
         }
         var tag = package.ClassInfo.AliasTag?.Length == 0 ?
-            $"{info.NameSpace}.{info.TypeName},{info.NameSpace.Split('.')[0]}" :
+            $"{info.NameSpace}.{info.TypeName}" :
             $"{package.ClassInfo.AliasTag}";
         ///////
         ///
