@@ -113,7 +113,7 @@ namespace NexYaml.Parser.Scopes
             }
             return false;
         }
-        public bool ParseBlockMapping()
+        public unsafe bool ParseBlockMapping()
         {
             while (data.Context.Reader.Peek(out var next))
             {
@@ -162,51 +162,7 @@ namespace NexYaml.Parser.Scopes
 
                 if (val.Length > 0)
                 {
-                    if (val.StartsWith('|'))
-                    {
-                        data.Context.Reader.Move();
-                        Current = new Map()
-                        {
-                            Value = Scope.NewScalar(ScopeUtils.ParseLiteralScalar(data.Context, data.Indent + 1, val[1]), data.Indent + 2, data.Context, childTag),
-                            Key = key
-                        };
-                    }
-                    else if (val.StartsWith('{') && val.EndsWith('}'))
-                    {
-                        data.Context.Reader.Move();
-                        Current = new Map()
-                        {
-                            Value = Scope.NewFlowMapping(val, data.Indent + 2, data.Context, childTag),
-                            Key = key
-                        };
-                    }
-                    else if (val.StartsWith('[') && val.EndsWith(']'))
-                    {
-                        data.Context.Reader.Move();
-                        Current = new Map()
-                        {
-                            Value = Scope.NewFlowSequence(val, data.Indent + 2, data.Context, childTag),
-                            Key = key
-                        };
-                    }
-                    else if (val.SequenceEqual(YamlCodes.Null.AsSpan()))
-                    {
-
-                        data.Context.Reader.Move();
-                        Current = new Map()
-                        {
-                            Value = Scope.NewNullScalar(),
-                            Key = key
-                        };
-                    }
-                    else
-                    {
-                        Current = new Map()
-                        {
-                            Value = Scope.NewLazyScalar( 111,data.Indent + 2, data.Context, childTag),
-                            Key = key
-                        };
-                    }
+                    HandleMapping(val, key, ref childTag);
                     return true;
                 }
                 else
@@ -260,6 +216,56 @@ namespace NexYaml.Parser.Scopes
             }
             return false;
         }
+
+        private void HandleMapping(ReadOnlySpan<char> val, ReadOnlySpan<char> key, ref ReadOnlySpan<char> childTag)
+        {
+            if (val.StartsWith('|'))
+            {
+                data.Context.Reader.Move();
+                Current = new Map()
+                {
+                    Value = Scope.NewScalar(ScopeUtils.ParseLiteralScalar(data.Context, data.Indent + 1, val[1]), data.Indent + 2, data.Context, childTag),
+                    Key = key
+                };
+            }
+            else if (val.StartsWith('{') && val.EndsWith('}'))
+            {
+                data.Context.Reader.Move();
+                Current = new Map()
+                {
+                    Value = Scope.NewFlowMapping(val, data.Indent + 2, data.Context, childTag),
+                    Key = key
+                };
+            }
+            else if (val.StartsWith('[') && val.EndsWith(']'))
+            {
+                data.Context.Reader.Move();
+                Current = new Map()
+                {
+                    Value = Scope.NewFlowSequence(val, data.Indent + 2, data.Context, childTag),
+                    Key = key
+                };
+            }
+            else if (val.SequenceEqual(YamlCodes.Null.AsSpan()))
+            {
+
+                data.Context.Reader.Move();
+                Current = new Map()
+                {
+                    Value = Scope.NewNullScalar(),
+                    Key = key
+                };
+            }
+            else
+            {
+                Current = new Map()
+                {
+                    Value = Scope.NewLazyScalar(111, data.Indent + 2, data.Context, childTag),
+                    Key = key
+                };
+            }
+        }
+
         public bool ParsePrefixedMapping()
         {
             // If we were seeded with a key (from "- key:" or "- key: value")
@@ -286,50 +292,7 @@ namespace NexYaml.Parser.Scopes
                     }
                 }
                 ReadOnlySpan<char> val = valSpan;
-                if (val.StartsWith('|'))
-                {
-                    data.Context.Reader.Move();
-                    Current = new Map()
-                    {
-                        Value = Scope.NewScalar(ScopeUtils.ParseLiteralScalar(data.Context, data.Indent + 1, val[1]), data.Indent + 2, data.Context, childTag),
-                        Key = prefix
-                    };
-                }
-                else if (val.StartsWith('{') && val.EndsWith('}'))
-                {
-                    data.Context.Reader.Move();
-                    Current = new Map()
-                    {
-                        Value = Scope.NewFlowMapping(val, data.Indent + 2, data.Context, childTag),
-                        Key = prefix
-                    };
-                }
-                else if (val.StartsWith('[') && val.EndsWith(']'))
-                {
-                    data.Context.Reader.Move();
-                    Current = new Map()
-                    {
-                        Value = Scope.NewFlowSequence(val, data.Indent + 2, data.Context, childTag),
-                        Key = prefix
-                    };
-                }
-                else if (val.SequenceEqual(YamlCodes.Null.AsSpan()))
-                {
-                    data.Context.Reader.Move();
-                    Current = new Map()
-                    {
-                        Value = Scope.NewNullScalar(),
-                        Key = prefix
-                    };
-                }
-                else
-                {
-                    Current = new Map()
-                    {
-                        Value = Scope.NewLazyScalar(111, data.Indent + 2, data.Context, childTag),
-                        Key = prefix
-                    };
-                }
+                HandleMapping(val, prefix,ref childTag);
                 return true;
             }
             else if(!processedPrefix)
