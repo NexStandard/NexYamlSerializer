@@ -8,6 +8,7 @@ class FlowMapping : Mapping
         : base(indent, isRedirected, styleScope, writer)
     {
     }
+    private bool isFirst = true;
     public override Mapping BeginMapping(string tag, DataStyle style)
     {
         if (IsRedirected)
@@ -33,16 +34,23 @@ class FlowMapping : Mapping
     {
         WriteScalar(" }");
     }
-
     public override Mapping WriteKey(Mapping context, ReadOnlySpan<char> key, DataStyle style)
     {
+        if (isFirst)
+        {
+            isFirst = false;
+        }
+        else
+        {
+            WriteScalar(", ");
+        }
         // First Node is {KEY: VALUE}
-        int len = key.Length + 2; 
+        int len = key.Length + 2;
         Span<char> buf = stackalloc char[len];
         key.CopyTo(buf);
         buf[key.Length] = ':';
         buf[key.Length + 1] = ' ';
         WriteScalar(buf);
-        return new FlowMappingSecondary(Indent,false,StyleScope,Writer);
+        return this;
     }
 }
