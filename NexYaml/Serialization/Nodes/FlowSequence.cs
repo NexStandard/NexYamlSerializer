@@ -13,7 +13,7 @@ class FlowSequence : Sequence
         // inside a flow, only new flows can be created, no block is allowed
         return new FlowMapping(Indent, IsRedirected, StyleScope, Writer).BeginMapping(tag,style);
     }
-
+    private bool isFirst = true;
     public override Sequence BeginSequence(string tag, DataStyle style)
     {
         if (IsRedirected)
@@ -31,11 +31,19 @@ class FlowSequence : Sequence
 
     public override Sequence Write<T>(Sequence context, T value, DataStyle style)
     {
+        if (isFirst)
+        {
+            isFirst = false;
+        }
+        else
+        {
+            WriteScalar(", ");
+        }
         // First Node is {VALUE}
         this.WriteType(value, style);
 
         // all following Nodes need a prefix
-        return new FlowSequenceSecondary(Indent, IsRedirected, StyleScope, Writer);
+        return this;
     }
     public override void End()
     {
