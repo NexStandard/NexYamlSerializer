@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.8.34309.116
+# Visual Studio Version 18
+VisualStudioVersion = 18.7.12002.237 oobstable
 MinimumVisualStudioVersion = 16.0.0.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NexYamlTest", "NexYamlTest\NexYamlTest.csproj", "{1DCCD97B-943A-4299-8CD4-530FFFDD2886}"
 EndProject
@@ -9,6 +9,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NexYaml.SourceGenerator", "NexYaml.SourceGenerator\NexYaml.SourceGenerator.csproj", "{389D2965-9E23-4F60-B18D-858E4F36A2A6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp2", "ConsoleApp2\ConsoleApp2.csproj", "{885E3F56-5741-4D93-8810-3FF6D97C2291}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NexYaml.Core", "NexYaml.Core\NexYaml.Core.csproj", "{E71055A6-9056-4FD9-87AD-A166A28C0BD1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +34,10 @@ Global
 		{885E3F56-5741-4D93-8810-3FF6D97C2291}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{885E3F56-5741-4D93-8810-3FF6D97C2291}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{885E3F56-5741-4D93-8810-3FF6D97C2291}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E71055A6-9056-4FD9-87AD-A166A28C0BD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E71055A6-9056-4FD9-87AD-A166A28C0BD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E71055A6-9056-4FD9-87AD-A166A28C0BD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E71055A6-9056-4FD9-87AD-A166A28C0BD1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

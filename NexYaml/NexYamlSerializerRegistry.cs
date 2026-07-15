@@ -13,9 +13,9 @@ public class NexYamlSerializerRegistry : IYamlSerializerResolver
     internal SerializerRegistry SerializerRegistry { get; set; } = new();
     public static NexYamlSerializerRegistry Instance { get; } = new NexYamlSerializerRegistry();
 
-    public Type GetAliasType(string alias)
+    public Type GetAliasType(ReadOnlySpan<char> alias)
     {
-        return SerializerRegistry.TypeMap[alias];
+        return SerializerRegistry.TypeMap[alias.ToString()];
     }
 
     public IYamlSerializer<T> GetSerializer<T>()

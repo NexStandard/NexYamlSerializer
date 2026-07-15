@@ -7,21 +7,21 @@ namespace NexYaml.Parser
     {
         public static void EmptyDump(this Scope scope)
         {
-            if (scope.Kind is ScopeKind.BlockMapping or ScopeKind.FlowMapping or ScopeKind.PrefixedBlockMapping)
+            if (scope.IsMapping)
             {
                 foreach (var m in scope.AsMapping())
                 {
                     m.Value.EmptyDump();
                 }
             }
-            if (scope.Kind is ScopeKind.BlockSequence or ScopeKind.FlowSequence)
+            if (scope.IsSequence)
             {
                 foreach (var m in scope.AsSequence())
                 {
-                    m.EmptyDump();
+                    m.Data.EmptyDump();
                 }
             }
-            if (scope.Kind is ScopeKind.LazyScalar)
+            if (scope.IsScalar)
             {
                 scope.AsScalar();
             }
@@ -30,51 +30,48 @@ namespace NexYaml.Parser
         {
             var pad = new string(' ', indent);
             string TagSuffix(string tag) => $"({tag})";
-
-            switch (scope.Kind)
+            if (scope.IsScalar)
             {
-                case ScopeKind.Scalar or ScopeKind.LazyScalar or ScopeKind.NullScalar:
-                    return $"{pad}SCALAR{TagSuffix(scope.Tag)}({scope.AsScalar()})";
-
-                case ScopeKind.BlockMapping or ScopeKind.FlowMapping or ScopeKind.PrefixedBlockMapping:
+                return $"{pad}SCALAR(TODO)({scope.AsScalar()})";
+            }
+            else if(scope.IsMapping)
+            {
+                var sb = new StringBuilder();
+                if (includeHeader)
+                    sb.AppendLine($"{pad}MAPPING(TODO)");
+                sb.AppendLine($"{pad}{{");
+                foreach (var s in scope.AsMapping())
+                {
+                    if (s.Value.IsScalar)
                     {
-                        var sb = new StringBuilder();
-                        if (includeHeader)
-                            sb.AppendLine($"{pad}MAPPING{TagSuffix(scope.Tag)}");
-                        sb.AppendLine($"{pad}{{");
-                        foreach (var s in scope.AsMapping())
-                        {
-                            if (s.Value.Kind is ScopeKind.Scalar)
-                            {
-                                sb.AppendLine($"{pad}  SCALAR({s.Key}) = SCALAR{TagSuffix(s.Value.Tag)}({s.Value.AsScalar()})");
-                            }
-                            else
-                            {
-                                var header = s.Value.Kind.ToString().ToUpper();
-                                sb.AppendLine($"{pad}  SCALAR({s.Key}) = {header}{TagSuffix(s.Value.Tag)}");
-                                sb.Append(s.Value.Dump(indent + 2, includeHeader: false));
-                            }
-                        }
-                        sb.AppendLine($"{pad}}}");
-                        return sb.ToString();
+                        sb.AppendLine($"{pad}  SCALAR({s.Key}) = SCALAR({s.Value.AsScalar()})");
                     }
-
-                case ScopeKind.FlowSequence or ScopeKind.BlockSequence:
+                    else
                     {
-                        var sb = new StringBuilder();
-                        if (includeHeader)
-                            sb.AppendLine($"{pad}SEQUENCE{TagSuffix(scope.Tag)}");
-                        sb.AppendLine($"{pad}[");
-                        foreach (var item in scope.AsSequence())
-                        {
-                            sb.AppendLine(item.Dump(indent + 2, includeHeader: true));
-                        }
-                        sb.AppendLine($"{pad}]");
-                        return sb.ToString();
+                        var header = s.Value.GetType().Name.ToString().ToUpper();
+                        sb.AppendLine($"{pad}  SCALAR({s.Key}) = {header}");
+                        sb.Append(s.Value.Dump(indent + 2, includeHeader: false));
                     }
-
-                default:
-                    throw new InvalidOperationException();
+                }
+                sb.AppendLine($"{pad}}}");
+                return sb.ToString();
+            }
+            else if(scope.IsSequence)
+            {
+                var sb = new StringBuilder();
+                if (includeHeader)
+                    sb.AppendLine($"{pad}SEQUENCE");
+                sb.AppendLine($"{pad}[");
+                foreach (var item in scope.AsSequence())
+                {
+                    sb.AppendLine(item.Data.Dump(indent + 2, includeHeader: true));
+                }
+                sb.AppendLine($"{pad}]");
+                return sb.ToString();
+            }
+            else
+            {
+                throw new Exception("???");
             }
         }
     }

@@ -1,5 +1,6 @@
-﻿using NexYaml.Serialization;
-namespace NexYaml.Parser;
+﻿using NexYaml.Parser;
+using NexYaml.Serialization;
+namespace NexYaml.Core.Parser;
 /// <summary>
 /// Encapsulates the shared state required while parsing YAML scopes.
 /// </summary>

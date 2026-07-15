@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using NexYaml;
 using NexYamlTest.ComplexCases;
 using NexYamlTest.SimpleClasses;
@@ -40,6 +41,7 @@ public class ComplexTests
             Generic = 4
         };
         var s = Yaml.Write(genericInterface);
+        Console.WriteLine(s);
         var d = await TestParser.Read<IGenericInterface<int, int>>(s);
         Assert.NotNull(d);
         Assert.Equal(genericInterface.Generic, d.Generic);

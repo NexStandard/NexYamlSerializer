@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Runtime.CompilerServices;
+using NexYaml.Core.Serialization.Nodes;
 using NexYaml.Parser;
 using NexYaml.Parser.Scopes;
 using NexYaml.Serialization;

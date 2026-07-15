@@ -10,13 +10,17 @@ namespace NexYaml.Parser
 {
     public static class ScopeExtensions
     {
-        public static ValueTask<T?> Read<T>(this Scope scope, T? context = default)
+        public static ValueTask<T?> Read<T>(this Element element, T? context = default)
+        {
+            return element.Data.Read<T>(element.Tag, context);
+        }
+        public static ValueTask<T?> Read<T>(this Map map, T? context = default)
+        {
+            return map.Value.Read<T>(map.Tag, context);
+        }
+        public static ValueTask<T?> Read<T>(this Scope scope, ReadOnlySpan<char> tag, T? context = default)
         {
             if(scope.IsNull)
-            {
-                return new ValueTask<T?>(default(T));
-            }
-            if (scope.Kind is ScopeKind.Scalar && MemoryExtensions.Equals( scope.AsScalar(),YamlCodes.Null.AsSpan(),StringComparison.OrdinalIgnoreCase))
             {
                 return new ValueTask<T?>(default(T));
             }
@@ -30,12 +34,12 @@ namespace NexYaml.Parser
                 var value = Convert<T>(arraySerializer.ReadUnknown(scope, context));
                 return value;
             }
-
-            if (scope.Tag.SequenceEqual("!!ref"))
+            ReadOnlySpan<char> refs = ['!', '!', 'r', 'e', 'f'];
+            if (tag.SequenceEqual(refs))
             {
                 if (Guid.TryParse(scope.AsScalar(), out var id))
                 {
-                    return scope.Context.IdentifiableResolver.AsyncGetRef<T?>(id);
+                    return scope.IdentifiableResolver.AsyncGetRef<T?>(id);
                 }
                 else
                 {
@@ -47,30 +51,30 @@ namespace NexYaml.Parser
             Type alias;
             if (type.IsInterface || type.IsAbstract || type.IsGenericType)
             {
-                if (scope.Tag.IsNullOrEmpty())
+                if (tag.Length == 0)
                 {
-                    var serializerForT = scope.Context.Resolver.GetSerializer<T>();
+                    var serializerForT = scope.Resolver.GetSerializer<T>();
                     return serializerForT.Read(scope, context)!;
                 }
                 else
                 {
-                    alias = scope.Context.Resolver.GetAliasType(scope.Tag);
-                    var serializer = scope.Context.Resolver.GetSerializer(alias, type);
+                    alias = scope.Resolver.GetAliasType(tag);
+                    var serializer = scope.Resolver.GetSerializer(alias, type);
 
                     var res = serializer.ReadUnknown(scope, context);
                     return Convert<T>(res);
                 }
             }
-            else if(!scope.Tag.IsNullOrEmpty() && ( (alias = scope.Context.Resolver.GetAliasType(scope.Tag)) != type || (alias.IsGenericType  && alias.GetGenericTypeDefinition() != type.GetGenericTypeDefinition())))
+            else if(!(tag.Length == 0) && ( (alias = scope.Resolver.GetAliasType(tag)) != type || (alias.IsGenericType  && alias.GetGenericTypeDefinition() != type.GetGenericTypeDefinition())))
             {
-                var serializer = scope.Context.Resolver.GetSerializer(alias, type);
+                var serializer = scope.Resolver.GetSerializer(alias, type);
 
                 var res = serializer.ReadUnknown(scope, context);
                 return Convert<T>(res);
             }
             else
             {
-                return scope.Context.Resolver.GetSerializer<T?>().Read(scope, context);
+                return scope.Resolver.GetSerializer<T?>().Read(scope, context);
             }
         }
 

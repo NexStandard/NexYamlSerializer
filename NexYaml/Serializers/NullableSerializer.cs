@@ -1,4 +1,5 @@
-﻿using NexYaml.Parser;
+﻿using NexYaml.Core.Serialization.Nodes;
+using NexYaml.Parser;
 using NexYaml.Parser.Scopes;
 using NexYaml.Serialization;
 using Stride.Core;
@@ -15,7 +16,7 @@ internal class NullableSerializer<T> : IYamlSerializer<T?>
 
     public async ValueTask<T?> Read(Scope scope, T? parseResult)
     {
-        return await scope.Read<T>();
+        return await scope.Read<T>([]);
     }
 }
 public struct NullableFactory : IYamlSerializerFactory

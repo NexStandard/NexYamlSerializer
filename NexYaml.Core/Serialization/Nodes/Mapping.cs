@@ -1,7 +1,8 @@
 ﻿using NexYaml.Core;
+using NexYaml.Serialization;
 using Stride.Core;
 
-namespace NexYaml.Serialization;
+namespace NexYaml.Core.Serialization.Nodes;
 /// <summary>
 /// Represents a YAML <see cref="Mapping"/> node.
 /// Allows writing key-value pairs.

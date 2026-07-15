@@ -28,7 +28,7 @@ public interface IYamlSerializerResolver
     /// </summary>
     /// <param name="alias">The alias string.</param>
     /// <returns>The <see cref="Type"/> associated with the alias.</returns>
-    public Type GetAliasType(string alias);
+    public Type GetAliasType(ReadOnlySpan<char> alias);
 
     /// <summary>
     /// Registers a custom YAML serializer factory for a given target type and interface type.
@@ -67,10 +67,4 @@ public interface IYamlSerializerResolver
     /// <param name="target">The <see cref="Type"/> of the target object to serialize.</param>
     /// <param name="serializerType">The <see cref="Type"/> of the serializer to handle generic serialization.</param>
     public void RegisterGenericSerializer(Type target, Type serializerType);
-
-    /// <summary>
-    /// The default implementation of the <see cref="IYamlSerializerResolver"/> interface.
-    /// This is typically used when no custom resolver is needed, providing default behavior.
-    /// </summary>
-    public static IYamlSerializerResolver Default { get; set; } = NexYamlSerializerRegistry.Instance;
 }

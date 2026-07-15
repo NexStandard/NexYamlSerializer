@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Buffers;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace NexYaml.Parser
@@ -20,6 +21,9 @@ namespace NexYaml.Parser
         /// </summary>
         public bool Move([NotNullWhen(true)] out ReadOnlySpan<char> currentLine)
         {
+            ReadOnlySequenceSegment<char> t;
+            SequenceReader<char> se;
+            
             if (_peekBuffer != null)
             {
                 currentLine = _peekBuffer;

@@ -22,10 +22,11 @@ public static class Yaml
     /// </param>
     public static void Write<T>(T value, WriteDelegate writing, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
     {
-        options ??= IYamlSerializerResolver.Default;
-        var node = new BlockMapping(-2, true, style, new DelegateWriter(options, writing));
+        options ??= NexYamlSerializerRegistry.Instance;
+        var writer = new DelegateWriter(options, writing);
+        var node = new BlockMapping(-2, true, style, writer);
 
-        node.WriteType(value, style);
+        writer.WriteType(node, value, style);
     }
 
     /// <summary>
@@ -44,7 +45,7 @@ public static class Yaml
     /// <returns>A string containing the YAML formatted representation of the value.</returns>
     public static string Write<T>(T value, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
     {
-        options ??= IYamlSerializerResolver.Default;
+        options ??= NexYamlSerializerRegistry.Instance;
         StringBuilder sb = new StringBuilder(256);
         Write(value, (span) => { sb.Append(span); }, style, options);
         return sb.ToString();

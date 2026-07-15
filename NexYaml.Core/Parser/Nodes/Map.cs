@@ -4,6 +4,7 @@
     {
         public ReadOnlySpan<char> Key;
         public Scope Value;
+        public ReadOnlySpan<char> Tag;
     }
 }
 

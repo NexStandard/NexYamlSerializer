@@ -1,3 +1,4 @@
+using NexYaml.Core.Serialization.Nodes;
 using NexYaml.Parser;
 using NexYaml.Parser.Scopes;
 using NexYaml.Serialization;
@@ -9,7 +10,7 @@ public class KeyValuePairSerializer<TKey, TValue> : IYamlSerializer<KeyValuePair
 {
     public void Write(Node context, KeyValuePair<TKey?, TValue?> value, DataStyle style)
     {
-        context.BeginSequence("!KeyValue", style)
+        context.BeginSequence("!KeyValuePair", style)
             .Write(value.Key, style)
             .Write(value.Value, style)
             .End();

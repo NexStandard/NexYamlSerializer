@@ -1,7 +1,8 @@
-﻿using Stride.Core;
+﻿using NexYaml.Serialization;
+using Stride.Core;
 using static Stride.Graphics.Buffer;
 
-namespace NexYaml.Serialization;
+namespace NexYaml.Core.Serialization.Nodes;
 
 /// <summary>
 /// Base class for all YAML nodes.
@@ -26,24 +27,8 @@ public abstract class Node(int indent, bool isRedirected, DataStyle styleScope, 
     /// The <see cref="Writer"/> instance that handles the output of the YAML content.
     /// </summary>
     public Writer Writer { get; init; } = writer;
-    /// <summary>
-    /// Begins a new <see cref="Mapping"/> node.
-    /// </summary>
-    /// <typeparam name="T">The parent <see cref="Node"/> type.</typeparam>
-    /// <param name="context">The current serialization <see cref="WriteContext{T}"/>.</param>
-    /// <param name="tag">The YAML tag associated with this <see cref="Mapping"/>.</param>
-    /// <param name="style">The <see cref="DataStyle"/></param>
-    /// <returns>The next <see cref="WriteContext{Mapping}"/> for the upcomming <see cref="Mapping"/>.</returns>
     public abstract Mapping BeginMapping(string tag, DataStyle style);
 
-    /// <summary>
-    /// Begins a new <see cref="Sequence"/> node.
-    /// </summary>
-    /// <typeparam name="T">The parent <see cref="Node"/> type.</typeparam>
-    /// <param name="context">The current serialization <see cref="WriteContext{T}"/>.</param>
-    /// <param name="tag">The YAML tag associated with this <see cref="Sequence"/>.</param>
-    /// <param name="style">The <see cref="DataStyle"/></param>
-    /// <returns>The next <see cref="WriteContext{Sequence}"/> for the upcomming <see cref="Sequence"/>.</returns>
     public abstract Sequence BeginSequence(string tag, DataStyle style);
 
     /// <summary>

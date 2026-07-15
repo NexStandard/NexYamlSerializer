@@ -55,11 +55,11 @@ internal static class SourceCreator
             objTempVariables.AppendLine($"\t\tvar var_{member.Name} = default(ValueTask<{(member.IsArray ? member.Type + "[]" : member.Type)}>);");
             if (member.Context.Mode == MemberApi.UniversalAnalyzers.MemberMode.Content)
             {
-                ifStatementNew.AppendLine($"\t\t\tif (map.Key.SequenceEqual(\"{member.Name}\".AsSpan())){{ var_{member.Name} = map.Value.Read(res.{member.Name}); continue; }}");
+                ifStatementNew.AppendLine($"\t\t\tif (map.Key.SequenceEqual(\"{member.Name}\".AsSpan())){{ var_{member.Name} = map.Read(res.{member.Name}); continue; }}");
             }
             else
             {
-                ifStatementNew.AppendLine($"\t\t\tif (map.Key.SequenceEqual(\"{member.Name}\".AsSpan())){{ var_{member.Name} = map.Value.Read(default({(member.IsArray ? member.Type + "[]" : member.Type)})!); continue; }}");
+                ifStatementNew.AppendLine($"\t\t\tif (map.Key.SequenceEqual(\"{member.Name}\".AsSpan())){{ var_{member.Name} = map.Read(default({(member.IsArray ? member.Type + "[]" : member.Type)})!); continue; }}");
             }
             if (member.Context.Mode is MemberApi.UniversalAnalyzers.MemberMode.Content)
             {
@@ -75,7 +75,7 @@ internal static class SourceCreator
             }
             if (package.ClassInfo.IsIIdentifiable && member.Name == "Id")
             {
-                awaitsNew.AppendLine("\t\tscope.Context.IdentifiableResolver.RegisterIdentifiable(res.Id, res);");
+                awaitsNew.AppendLine("\t\tscope.IdentifiableResolver.RegisterIdentifiable(res.Id, res);");
             }
 
         }
@@ -115,7 +115,15 @@ internal static class SourceCreator
         var s = $$"""
             {{info.Accessibility.ToString().ToLower()}} static class {{info.GeneratorName}}_Extension
             {
-                public static async ValueTask<{{info.NameDefinition}}> Read{{info.TypeParameterArguments}}(this Scope scope, {{info.NameDefinition}} context = default){{info.TypeParameterRestrictions}}
+                public static ValueTask<{{info.NameDefinition}}> Read{{info.TypeParameterArguments}}(this Map scope, {{info.NameDefinition}} context = default){{info.TypeParameterRestrictions}}
+                {
+                    return scope.Value.Read(context);
+                }
+                public static ValueTask<{{info.NameDefinition}}> Read{{info.TypeParameterArguments}}(this Element scope, {{info.NameDefinition}} context = default){{info.TypeParameterRestrictions}}
+                {
+                    return scope.Data.Read(context);
+                }
+            public static async ValueTask<{{info.NameDefinition}}> Read{{info.TypeParameterArguments}}(this Scope scope, {{info.NameDefinition}} context = default){{info.TypeParameterRestrictions}}
                 {
                     if(scope.IsNull) return default;
             {{objTempVariables}}
@@ -127,15 +135,6 @@ internal static class SourceCreator
             {{awaitsNew}}
                     return res;
                 }
-            public static Mapping Write{{info.TypeParameterArguments}}(this Mapping context, ReadOnlySpan<char> key, {{info.NameDefinition}} value, DataStyle style = DataStyle.Any){{info.TypeParameterRestrictions}}
-            {
-                {{(info.TypeKind != Microsoft.CodeAnalysis.TypeKind.Struct ? nullcheck : "")}}
-                {{(info.IsIIdentifiable ? iidentifiable : "")}}
-                
-                context = context.WriteKey(context, key, style);
-                {{writeString}}
-                return context;
-            }
             """;
 
         s += "}";
@@ -154,6 +153,7 @@ using NexYaml.Serialization;
 using NexYaml.Parser;
 using NexYaml.Parser.Scopes;
 using NexYaml.Core;
+using NexYaml.Core.Serialization.Nodes;
 using Stride.Core;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;

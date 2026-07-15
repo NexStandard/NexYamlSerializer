@@ -3,7 +3,7 @@ using NexYaml.Core;
 using Stride.Core;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace NexYaml.Serialization;
+namespace NexYaml.Core.Serialization.Nodes;
 
 /// <summary>
 /// Contains extension methods that enhance the functionality of <see cref="WriteContext{T}"/> for YAML serialization operations.

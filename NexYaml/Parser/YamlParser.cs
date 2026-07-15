@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using NexYaml.Core;
+using NexYaml.Core.Parser;
 using NexYaml.Parser;
 using NexYaml.Parser.Scopes;
 using NexYaml.Serialization;
@@ -10,9 +11,9 @@ namespace NexYaml
     public ref struct NewYamlParser
     {
         private readonly IYamlSerializerResolver _resolver;
-        private IdentifiableResolver IdentifiableResolver { get; } = new();
+        private readonly IdentifiableResolver _identifiableResolver = new();
         private YamlReader _reader;
-        private ScopeContext context;
+        private ScopeContext _context;
         public NewYamlParser(string text, IYamlSerializerResolver resolver)
         {
             _resolver = resolver;
@@ -20,7 +21,7 @@ namespace NexYaml
             {
                 Reader = new StringReader(text),
             };
-            context = new ScopeContext(_reader, _resolver, IdentifiableResolver);
+            _context = new ScopeContext(_reader, _resolver, _identifiableResolver);
         }
         public NewYamlParser GetEnumerator() => this;
         public NewYamlParser(Stream stream, IYamlSerializerResolver resolver, Encoding? encoding = null)
@@ -31,7 +32,7 @@ namespace NexYaml
             {
                 Reader = reader
             };
-            context = new ScopeContext(_reader, _resolver, IdentifiableResolver);
+            _context = new ScopeContext(_reader, _resolver, _identifiableResolver);
         }
         public NewYamlParser(TextReader stream, IYamlSerializerResolver resolver)
         {
@@ -40,7 +41,7 @@ namespace NexYaml
             {
                 Reader = stream
             };
-            context = new ScopeContext(_reader, _resolver, IdentifiableResolver);
+            _context = new ScopeContext(_reader, _resolver, _identifiableResolver);
         }
         public bool MoveNext()
         {
@@ -63,23 +64,38 @@ namespace NexYaml
                     {
                         if (inline.StartsWith('|'))
                         {
-                            Current = Scope.NewScalar(ScopeUtils.ParseLiteralScalar(context, indent, inline[1]), indent, context, tag);
-
+                            Current = new Element()
+                            {
+                                Data = ParsingScope.NewScalar(ScopeUtils.ParseLiteralScalar(_context, indent, inline[1]), indent, _context, tag),
+                                Tag = tag
+                            };
                             return true;
                         }
                         if (inline.StartsWith('{') && inline.EndsWith('}'))
                         {
-                            Current = Scope.NewFlowMapping(inline, indent, context, tag);
+                            Current = new Element()
+                            {
+                                Data = ParsingScope.NewFlowMapping(inline, indent, _context, tag),
+                                Tag = tag
+                            };
                             return true;
                         }
                         if (inline.StartsWith('[') && inline.EndsWith(']'))
                         {
-                            Current = Scope.NewFlowSequence(inline, indent, context, tag);
+                            Current = new Element()
+                            {
+                                Data = ParsingScope.NewFlowSequence(inline, indent, _context, tag),
+                                Tag = tag
+                            };
                             return true;
                         }
                         else
                         {
-                            Current = Scope.NewScalar(inline, indent, context, tag);
+                            Current = new Element()
+                            {
+                                Data = ParsingScope.NewScalar(inline, indent, _context, tag),
+                                Tag = tag
+                            };
                             return true;
                         }
                     }
@@ -94,18 +110,30 @@ namespace NexYaml
 
                     if (nextLine.TrimStart().StartsWith('-'))
                     {
-                        Current = Scope.NewBlockSequence(indent, context, tag);
+                        Current = new Element()
+                        {
+                            Data = ParsingScope.NewBlockSequence(indent, _context, tag),
+                            Tag = tag
+                        };
                     }
                     else if (nextLine.Contains(':'))
                     {
-                        Current = Scope.NewBlockMapping(indent, context, tag);
+                        Current = new Element()
+                        {
+                            Data = ParsingScope.NewBlockMapping(indent, _context, tag),
+                            Tag = tag
+                        };
                         return true;
                     }
                     else
                     {
-                        if (context.Reader.Move(out var val))
+                        if (_context.Reader.Move(out var val))
                         {
-                            Current = Scope.NewScalar(val.Trim(), indent, context, tag);
+                            Current = new Element()
+                            {
+                                Data = ParsingScope.NewScalar(val.Trim(), indent, _context, tag),
+                                Tag = tag,
+                            };
                             return true;
                         }
                         throw new EndOfStreamException();
@@ -116,68 +144,52 @@ namespace NexYaml
                 // Sequence root
                 if (trimmed.StartsWith('-'))
                 {
-                    Current = Scope.NewBlockMapping(indent, context, string.Empty);
+                    Current = new Element()
+                    {
+                        Data = ParsingScope.NewBlockMapping(indent, _context, string.Empty),
+                        Tag = []
+                    };
                     return true;
                 }
                 // Mapping root
                 else if (trimmed.Contains(':'))
                 {
-                    Current = Scope.NewBlockMapping(indent, context, string.Empty);
+                    Current = new Element()
+                    {
+                        Data = ParsingScope.NewBlockMapping(indent, _context, string.Empty),
+                        Tag = []
+                    };
                     return true;
                 }
                 // Scalar root
                 else
                 {
-                    if (context.Reader.Move(out var val))
+                    if (_context.Reader.Move(out var val))
                     {
-                        Current = Scope.NewScalar(val.Trim(), indent, context, string.Empty);
-                        return true;
+                        if (val.SequenceEqual(YamlCodes.Null.AsSpan()))
+                        {
+                            Current = new Element()
+                            {
+                                Data = ParsingScope.NewNullScalar(),
+                                Tag = []
+                            };
+                            return true;
+                        }
+                        else
+                        {
+                            Current = new Element()
+                            {
+                                Data = ParsingScope.NewScalar(val.Trim(), indent, _context, string.Empty),
+                                Tag = []
+                            };
+                            return true;
+                        }
                     }
                     throw new EndOfStreamException();
                 }
             }
                 return false;
         }
-        public Scope Current { get; private set; }
-    }
-    public sealed class YamlParser
-    {
-        private readonly IYamlSerializerResolver _resolver;
-        private IdentifiableResolver IdentifiableResolver { get; } = new();
-        private YamlReader _reader;
-        public YamlParser(string text, IYamlSerializerResolver resolver)
-        {
-            _resolver = resolver;
-            _reader = new YamlReader()
-            {
-                Reader = new StringReader(text),
-            };
-        }
-
-        public YamlParser(Stream stream, IYamlSerializerResolver resolver, Encoding? encoding = null)
-        {
-            var reader = new StreamReader(stream, encoding ?? Encoding.UTF8, leaveOpen: true);
-            _resolver = resolver;
-            _reader = new YamlReader()
-            {
-                Reader = reader
-            };
-        }
-        public YamlParser(TextReader stream, IYamlSerializerResolver resolver)
-        {
-            _resolver = resolver;
-            _reader = new YamlReader()
-            {
-                Reader = stream
-            };
-        }
-
-        private static int CountIndent(ReadOnlySpan<char> line)
-        {
-            int i = 0;
-            while (i < line.Length && line[i] == ' ')
-                i++;
-            return i;
-        }
+        public Element Current { get; private set; }
     }
 }

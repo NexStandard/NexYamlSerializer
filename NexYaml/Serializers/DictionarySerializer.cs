@@ -1,3 +1,4 @@
+using NexYaml.Core.Serialization.Nodes;
 using NexYaml.Parser;
 using NexYaml.Parser.Scopes;
 using NexYaml.Serialization;
@@ -37,13 +38,13 @@ public class DictionarySerializer<TKey, TValue> : IYamlSerializer<Dictionary<TKe
         var map = parseResult ?? new();
         map.Clear();
 
-        if (scope.Kind is ScopeKind.BlockMapping or ScopeKind.FlowMapping or ScopeKind.PrefixedBlockMapping && IsPrimitive(typeof(TKey)))
+        if (scope.IsMapping && IsPrimitive(typeof(TKey)))
         {
             var tasks = new List<(TKey Key, ValueTask<TValue?> ValueTask)>();
             foreach (var kvp in scope.AsMapping())
             {
                 var key = ParsePrimitive<TKey>(kvp.Key.ToString());
-                var value = kvp.Value.Read<TValue>();
+                var value = kvp.Read<TValue>();
                 tasks.Add((key, value));
             }
 
