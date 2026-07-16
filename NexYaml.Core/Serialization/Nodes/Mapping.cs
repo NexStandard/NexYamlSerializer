@@ -14,5 +14,5 @@ public abstract class Mapping : Node
     {
     }
 
-    public abstract Mapping WriteKey(Mapping context, ReadOnlySpan<char> key, DataStyle style);
+    public abstract void WriteMap(Mapping context, ReadOnlySpan<char> key, DataStyle style);
 }

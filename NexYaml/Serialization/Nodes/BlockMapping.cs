@@ -31,13 +31,13 @@ public class BlockMapping : Mapping
                 WriteScalar("{ ");
             }
             // inside a flow, only new flows can be created, no block is allowed
-            return new BlockMapping(Indent, false, DataStyle.Compact, Writer);
+            return new BlockMapping(Indent, false, DataStyle.Compact, Writer, skipFirst);
         }
         if (IsRedirected)
         {
             WriteScalar(tag);
         }
-        return new BlockMapping(Indent + 2, false, DataStyle.Normal, Writer);
+        return new BlockMapping(Indent + 2, false, DataStyle.Normal, Writer, skipFirst);
     }
 
     public override Sequence BeginSequence(string tag, DataStyle style)
@@ -48,7 +48,7 @@ public class BlockMapping : Mapping
         }
         return new BlockSequence(Indent, IsRedirected, StyleScope, Writer).BeginSequence(tag, DataStyle.Normal);
     }
-    public override Mapping WriteKey(Mapping context, ReadOnlySpan<char> key, DataStyle style)
+    public override void WriteMap(Mapping context, ReadOnlySpan<char> key, DataStyle style)
     {
         if(StyleScope is DataStyle.Compact)
         {
@@ -67,22 +67,20 @@ public class BlockMapping : Mapping
             buf[key.Length] = ':';
             buf[key.Length + 1] = ' ';
             WriteScalar(buf);
-            return this;
         }
         else
         {
-            if (skipFirst)
+            if (this.skipFirst)
             {
                 // "{KEY}: {OPTIONAL TAG}" OR "- {OPTIONAL TAG}"
                 // "{NEWLINE}{INDENT}{KEY}: {OUTPUT FROM WriteType}"
                 Span<char> x = stackalloc char[key.Length + 2];
 
-                key.CopyTo(x.Slice(1 + Indent, key.Length));
+                key.CopyTo(x.Slice(0, key.Length));
                 x[^1] = ' ';
                 x[^2] = ':';
                 WriteScalar(x);
-                skipFirst = false;
-                return this;
+                this.skipFirst = false;
             }
             else
             {
@@ -96,7 +94,6 @@ public class BlockMapping : Mapping
                 x[^1] = ' ';
                 x[^2] = ':';
                 WriteScalar(x);
-                return this;
             }
         }
 

@@ -34,14 +34,14 @@ public static class NodeExtensions
     /// <returns>The  <see cref="WriteContext{T}"/> based on the written key/value pair.</returns>
     public static Mapping Write<T>(this Mapping mapping, ReadOnlySpan<char> key, T value, DataStyle style = DataStyle.Any)
     {
-        var x = mapping.WriteKey(mapping, key, style);
+        mapping.WriteMap(mapping, key, style);
         if (value is null)
         {
-            x.WriteScalar(YamlCodes.Null.AsSpan());
-            return x;
+            mapping.WriteScalar(YamlCodes.Null.AsSpan());
+            return mapping;
         }
-        x.WriteType(value, style);
-        return x;
+        mapping.WriteType(value, style);
+        return mapping;
     }
 
     /// <summary>
@@ -54,35 +54,36 @@ public static class NodeExtensions
     /// <returns>The next <see cref="WriteContext{Sequence}"/> based on the written value.</returns>
     public static Sequence Write<T>(this Sequence sequence, T value, DataStyle style = DataStyle.Any)
     {
-        return sequence.Write(sequence, value, style);
+        sequence.WriteElement(sequence, value, style);
+        return sequence;
     }
 
-    public static Mapping Write(this Mapping context, ReadOnlySpan<char> key, string value, DataStyle style = DataStyle.Any)
+    public static Mapping Write(this Mapping mapping, ReadOnlySpan<char> key, string value, DataStyle style = DataStyle.Any)
     {
         var Style = style is DataStyle.Any or DataStyle.Normal ? DataStyle.Any : style;
 
-        var x = context.WriteKey(context,key, style);
+        mapping.WriteMap(mapping,key, style);
         if (value is null)
         {
-            x.WriteScalar(YamlCodes.Null.AsSpan());
-            return x;
+            mapping.WriteScalar(YamlCodes.Null.AsSpan());
+            return mapping;
         }
-        x.WriteScalar(context.Writer.FormatString(context, value, style));
-        return x;
+        mapping.WriteScalar(mapping.Writer.FormatString(mapping, value, style));
+        return mapping;
     }
-    public static Mapping Write(this Mapping context, ReadOnlySpan<char> key, Guid value, DataStyle style = DataStyle.Any)
+    public static Mapping Write(this Mapping mapping, ReadOnlySpan<char> key, Guid value, DataStyle style = DataStyle.Any)
     {
         var Style = style is DataStyle.Any or DataStyle.Normal ? DataStyle.Any : style;
 
-        var x = context.WriteKey(context, key, style);
+        mapping.WriteMap(mapping, key, style);
         Span<char> buffer = stackalloc char[36]; // or 32 if you want "N" format
 
         if (value.TryFormat(buffer, out int written, "D"))
         {
-            context.WriteScalar(buffer);
+            mapping.WriteScalar(buffer);
         }
 
         
-        return x;
+        return mapping;
     }
 }

@@ -55,7 +55,7 @@ class BlockSequence : Sequence
         }
     }
 
-    public override Sequence Write<T>(Sequence context, T value, DataStyle style)
+    public override void WriteElement<T>(Sequence context, T value, DataStyle style)
     {
         if(StyleScope is DataStyle.Compact)
         {
@@ -69,9 +69,6 @@ class BlockSequence : Sequence
             }
             // First Node is {VALUE}
             this.WriteType(value, style);
-
-            // all following Nodes need a prefix
-            return this;
         }
         else
         {
@@ -94,7 +91,6 @@ class BlockSequence : Sequence
 
             WriteScalar(buf);
             context.WriteType(value, style);
-            return context;
         }
     }
     public override void End()

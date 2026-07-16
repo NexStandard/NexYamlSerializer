@@ -20,6 +20,5 @@ public abstract class Sequence : Node
     /// <param name="context">The current <see cref="Sequence"/> <see cref="WriteContext{T}"/>.</param>
     /// <param name="value">The value to add to the sequence.</param>
     /// <param name="style">The <see cref="DataStyle"/>.</param>
-    /// <returns>The next <see cref="WriteContext{Sequence}"/> for the <see cref="Sequence"/>.</returns>
-    public abstract Sequence Write<T>(Sequence context, T value, DataStyle style);
+    public abstract void WriteElement<T>(Sequence context, T value, DataStyle style);
 }
