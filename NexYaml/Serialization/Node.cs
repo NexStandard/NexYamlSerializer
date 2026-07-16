@@ -1,13 +1,12 @@
-﻿using NexYaml.Core.Serialization.Nodes;
-using Stride.Core;
+﻿using Stride.Core;
 using Stride.Graphics;
 using Stride.Input;
 
-namespace NexYaml.Serialization.Nodes;
+namespace NexYaml.Serialization;
 
-public class BlockMapping : Mapping, Sequence
+public struct Node
 {
-    public BlockMapping(int indent, bool isRedirected, DataStyle styleScope, Writer writer, NodeKind kind, bool skipFirstLineBreak= false)
+    public Node(int indent, bool isRedirected, DataStyle styleScope, Writer writer, NodeKind kind, bool skipFirstLineBreak= false)
     {
         // edge case for Blockmapping on a BlockSequence if there is no tag
         if(!isRedirected && skipFirstLineBreak)
@@ -30,7 +29,7 @@ public class BlockMapping : Mapping, Sequence
     public DataStyle StyleScope { get; init; }
     public Writer Writer { get; init; }
 
-    public Mapping BeginMapping(string tag, DataStyle style)
+    public Node BeginMapping(string tag, DataStyle style)
     {
         if(Kind is NodeKind.Mapping)
         {
@@ -47,46 +46,46 @@ public class BlockMapping : Mapping, Sequence
                     WriteScalar("{ ");
                 }
                 // inside a flow, only new flows can be created, no block is allowed
-                return new BlockMapping(Indent, false, DataStyle.Compact, Writer, NodeKind.Mapping, skipFirst);
+                return new Node(Indent, false, DataStyle.Compact, Writer, NodeKind.Mapping, skipFirst);
             }
             if (IsRedirected)
             {
                 WriteScalar(tag);
             }
-            return new BlockMapping(Indent + 2, false, DataStyle.Normal, Writer, NodeKind.Mapping, skipFirst);
+            return new Node(Indent + 2, false, DataStyle.Normal, Writer, NodeKind.Mapping, skipFirst);
         }
         else if(Kind is NodeKind.Sequence)
         {
             if (StyleScope is DataStyle.Compact || style is DataStyle.Compact)
             {
-                return new BlockMapping(Indent, IsRedirected, DataStyle.Compact, Writer, NodeKind.Mapping).BeginMapping(tag, DataStyle.Compact);
+                return new Node(Indent, IsRedirected, DataStyle.Compact, Writer, NodeKind.Mapping).BeginMapping(tag, DataStyle.Compact);
             }
             //  When no tag is provided, BlockMapping would introduce an extra faulty newline.
             if (IsRedirected)
             {
                 // - {TAG}\n
                 //   {KEY} : {VALUE}
-                return new BlockMapping(Indent, IsRedirected, DataStyle.Compact, Writer, NodeKind.Mapping).BeginMapping(tag, DataStyle.Normal);
+                return new Node(Indent, IsRedirected, DataStyle.Compact, Writer, NodeKind.Mapping).BeginMapping(tag, DataStyle.Normal);
             }
             else
             {
                 // - {KEY} : {VALUE}
-                return new BlockMapping(Indent - 2, false, DataStyle.Normal, Writer, NodeKind.Mapping, true).BeginMapping(tag, DataStyle.Normal);
+                return new Node(Indent - 2, false, DataStyle.Normal, Writer, NodeKind.Mapping, true).BeginMapping(tag, DataStyle.Normal);
             }
         }
         throw new InvalidDataException();
     }
 
-    public Sequence BeginSequence(string tag, DataStyle style)
+    public Node BeginSequence(string tag, DataStyle style)
     {
         if(Kind is NodeKind.Mapping)
         {
 
             if (StyleScope is DataStyle.Compact || style is DataStyle.Compact)
             {
-                return new BlockMapping(Indent, IsRedirected, StyleScope, Writer,NodeKind.Sequence).BeginSequence(tag, DataStyle.Compact);
+                return new Node(Indent, IsRedirected, StyleScope, Writer,NodeKind.Sequence).BeginSequence(tag, DataStyle.Compact);
             }
-            return new BlockMapping(Indent, IsRedirected, StyleScope, Writer, NodeKind.Sequence).BeginSequence(tag, DataStyle.Normal);
+            return new Node(Indent, IsRedirected, StyleScope, Writer, NodeKind.Sequence).BeginSequence(tag, DataStyle.Normal);
         }
         else if (Kind is NodeKind.Sequence)
         {
@@ -101,7 +100,7 @@ public class BlockMapping : Mapping, Sequence
                 {
                     WriteScalar("[ ");
                 }
-                return new BlockMapping(Indent, false, DataStyle.Compact, Writer, NodeKind.Sequence);
+                return new Node(Indent, false, DataStyle.Compact, Writer, NodeKind.Sequence);
             }
             else
             {
@@ -109,12 +108,12 @@ public class BlockMapping : Mapping, Sequence
                 {
                     WriteScalar(tag);
                 }
-                return new BlockMapping(Math.Max(0, Indent) + 2, false, DataStyle.Normal, Writer, NodeKind.Sequence);
+                return new Node(Math.Max(0, Indent) + 2, false, DataStyle.Normal, Writer, NodeKind.Sequence);
             }
         }
         throw new InvalidDataException();
     }
-    public void WriteMap(Mapping context, ReadOnlySpan<char> key, DataStyle style)
+    public void WriteMap(Node context, ReadOnlySpan<char> key, DataStyle style)
     {
         if(StyleScope is DataStyle.Compact)
         {
@@ -138,8 +137,7 @@ public class BlockMapping : Mapping, Sequence
         {
             if (skipFirst)
             {
-                // "{KEY}: {OPTIONAL TAG}" OR "- {OPTIONAL TAG}"
-                // "{NEWLINE}{INDENT}{KEY}: {OUTPUT FROM WriteType}"
+                // "- {OUTPUT FROM WRITETYPE}"
                 Span<char> x = stackalloc char[key.Length + 2];
 
                 key.CopyTo(x.Slice(0, key.Length));
@@ -164,7 +162,7 @@ public class BlockMapping : Mapping, Sequence
         }
 
     }
-    public void WriteElement<T>(Sequence context, T value, DataStyle style)
+    public void WriteElement<T>(Node context, T value, DataStyle style)
     {
         if (StyleScope is DataStyle.Compact)
         {
@@ -217,7 +215,10 @@ public class BlockMapping : Mapping, Sequence
     {
         Writer.Write(text);
     }
-
+    public void WriteScalar(ref ReadOnlySpan<char> text)
+    {
+        Writer.Write(text);
+    }
     /// <summary>
     /// Writes an empty <see cref="Mapping"/> with the given tag.
     /// </summary>

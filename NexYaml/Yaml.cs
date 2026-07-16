@@ -1,6 +1,4 @@
-﻿using System.Text;
-using NexYaml.Serialization;
-using NexYaml.Serialization.Nodes;
+﻿using NexYaml.Serialization;
 using Stride.Core;
 
 namespace NexYaml;
@@ -9,26 +7,6 @@ namespace NexYaml;
 /// </summary>
 public static class Yaml
 {
-    /// <summary>
-    /// Serializes the specified value as YAML and writes the output to the provided <see cref="WriteDelegate"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the value to be serialized.</typeparam>
-    /// <param name="value">The value to serialize as YAML.</param>
-    /// <param name="writing">A delegate to handle the output of the serialized YAML text.</param>
-    /// <param name="style">The <see cref="DataStyle"/> determining the formatting of the YAML output. The default is <see cref="DataStyle.Any"/>.</param>
-    /// <param name="options">
-    /// The options used by the YAML serializer resolver to control serialization features.
-    /// If not specified, the default resolver <see cref="IYamlSerializerResolver.Default"/> will be used.
-    /// </param>
-    public static void Write<T>(T value, WriteDelegate writing, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
-    {
-        options ??= NexYamlSerializerRegistry.Instance;
-        var writer = new DelegateWriter(options, writing);
-        var node = new BlockMapping(-2, true, style, writer,NodeKind.Mapping);
-
-        writer.WriteType(node, value, style);
-    }
-
     /// <summary>
     /// Serializes the specified value to a YAML formatted string.
     /// </summary>
@@ -43,13 +21,16 @@ public static class Yaml
     /// may be obsoleted/renamed at some point
     /// </remarks>
     /// <returns>A string containing the YAML formatted representation of the value.</returns>
-    public static string Write<T>(T value, DataStyle style = DataStyle.Any, IYamlSerializerResolver? options = null)
+    public static string Write<T>(T value, Writer writer, DataStyle style = DataStyle.Any)
     {
-        options ??= NexYamlSerializerRegistry.Instance;
-        StringBuilder sb = new StringBuilder(256);
-        Write(value, (span) => { sb.Append(span); }, style, options);
-        return sb.ToString();
+        var node = new Node(-2, true, style, writer, NodeKind.Mapping);
+        writer.WriteType(node, value, style);
+        return "";
     }
-
+    public static string Write<T>(T value, DataStyle style = DataStyle.Any)
+    {
+        var writer = new Writer(NexYamlSerializerRegistry.Instance);
+        return Write<T>(value, writer, style);
+    }
 
 }

@@ -9,4 +9,8 @@
 	<ItemGroup>
 		<PackageReference Include="Stride.Engine" Version="4.2.0.2282" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Parser\Nodes\" />
+	  <Folder Include="Serialization\" />
+	</ItemGroup>
 </Project>

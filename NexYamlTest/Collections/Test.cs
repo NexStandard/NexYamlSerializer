@@ -159,7 +159,7 @@ public class CollectionTest
         data.Dictionary.Add(new TempData(), new TempData());
         data.Dictionary.Add(new TempData() { Id = 2, Name = "2" }, new TempData());
 
-        var s = Yaml.Write(data);
+        var s = Yaml.Write(data, new NexYaml.Serialization.Writer(NexYamlSerializerRegistry.Instance));
         var d = await TestParser.Read<ComplexDictionary>(s);
         Assert.NotNull(d);
         Assert.NotNull(d.Dictionary[new TempData()]);
@@ -173,7 +173,7 @@ public class CollectionTest
             Foo = [1, 2, 3]
         };
         NexYamlSerializerRegistry.Init();
-        var s = Yaml.Write(c);
+        var s = Yaml.Write(c, new NexYaml.Serialization.Writer(NexYamlSerializerRegistry.Instance));
         throw new System.Exception(s);
     }
     [Fact]
@@ -203,7 +203,7 @@ public class CollectionTest
         };
 
         NexYamlSerializerRegistry.Init();
-        var s = Yaml.Write(data1);
+        var s = Yaml.Write(data1, new NexYaml.Serialization.Writer(NexYamlSerializerRegistry.Instance));
         var d = await TestParser.Read<CollectionInterfaces>(s);
         Assert.NotNull(d);
         Assert.Equal(data1.Collection.Count, d.Collection.Count);
@@ -223,7 +223,7 @@ public class CollectionTest
         };
 
         NexYamlSerializerRegistry.Init();
-        var s = Yaml.Write(data1);
+        var s = Yaml.Write(data1, new NexYaml.Serialization.Writer(NexYamlSerializerRegistry.Instance));
         var d = await TestParser.Read<Generics<Dictionary<int, string>>>(s);
         Assert.NotNull(d);
         Assert.NotNull(d.Value);

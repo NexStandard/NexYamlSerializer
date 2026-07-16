@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NexYaml.Serialization.Nodes;
+namespace NexYaml.Serialization;
 
 public enum NodeKind
 {

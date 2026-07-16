@@ -1,6 +1,7 @@
 ﻿using NexYaml.Core;
-using NexYaml.Core.Serialization.Nodes;
+using NexYaml.Serializers;
 using Stride.Core;
+using System.Text;
 
 namespace NexYaml.Serialization;
 /// <summary>
@@ -8,7 +9,7 @@ namespace NexYaml.Serialization;
 /// This class uses a serializer <see cref="IYamlSerializerResolver"/> and a collection of resolve <see cref="IResolvePlugin"/>
 /// to handle the redirection of registered types into YAML.
 /// </summary>
-public abstract class Writer(IYamlSerializerResolver resolver)
+public class Writer(IYamlSerializerResolver resolver)
 {
     /// <summary>
     /// Gets the <see cref="IYamlSerializerResolver"/> used to resolve serializers for the registered types.
@@ -20,11 +21,15 @@ public abstract class Writer(IYamlSerializerResolver resolver)
     /// </summary>
     public HashSet<Guid> References { get; } = [];
 
+    // public StringBuilder sb = new();
     /// <summary>
     /// Writes the provided formatted and escaped text to the underlying output.
     /// </summary>
     /// <param name="text">A <see cref="ReadOnlySpan{T}"/> of characters representing the formatted text to write.</param>
-    public abstract void Write(ReadOnlySpan<char> text);
+    public void Write(ReadOnlySpan<char> text)
+    {
+       // sb.Append(text);
+    }
 
     /// <summary>
     /// Redirects a value to the next <see cref="IYamlSerializer{T}"/> using the provided <see cref="WriteContext{T}"/> and <see cref="DataStyle"/>.
@@ -34,8 +39,61 @@ public abstract class Writer(IYamlSerializerResolver resolver)
     /// <param name="context">The <see cref="WriteContext{T}"/> providing the current state.</param>
     /// <param name="value">The value to write. May be <c>null</c>, in which case a <see cref="YamlCodes.Null0"/> is emitted.</param>
     /// <param name="style">The <see cref="DataStyle"/> to use for the output</param>
-    public abstract void WriteType<T>(Node context, T? value, DataStyle style);
+    public void WriteType<T>(Node context, T? value, DataStyle style)
+    {
+        if (value is null)
+        {
+            context.WriteScalar(YamlCodes.Null);
+            return;
+        }
+        if (value is Array)
+        {
+            var t = typeof(T).GetElementType()!;
+            var arraySerializerType = typeof(ArraySerializer<>).MakeGenericType(t);
+            var arraySerializer = (IYamlSerializer)Activator.CreateInstance(arraySerializerType)!;
 
+            arraySerializer.Write(context, value, style);
+            return;
+        }
+        if (value is IIdentifiable id)
+        {
+            if (context.Writer.References.Contains(id.Id))
+            {
+                context.WriteScalar("!!ref ");
+                context.WriteScalar(context.Writer.FormatString(context, id.Id.ToString(), style));
+                return;
+            }
+            else
+            {
+                context.Writer.References.Add(id.Id);
+            }
+        }
+        var type = typeof(T);
+
+        if ((type.IsValueType || type.IsSealed) && !type.IsGenericType)
+        {
+            Resolver.GetSerializer<T>().Write(context, value, style);
+            return;
+        }
+        else if (type.IsInterface || type.IsAbstract || type.IsGenericType || type.IsArray || type != value.GetType())
+        {
+            var valueType = value!.GetType();
+            var formatt = Resolver.GetSerializer(value!.GetType(), typeof(T));
+            if (valueType != type)
+            {
+                context.IsRedirected = true;
+            }
+
+            // C# forgets the cast of T when invoking to an object,
+            // this way we can call the write method with the "real type"
+            // that is in the object
+            formatt.Write(context, value, style);
+        }
+        else
+        {
+            Resolver.GetSerializer<T>().Write(context, value, style);
+        }
+    }
     /// <summary>
     /// Writes a string value to the YAML output, formatting it according to the appropriate scalar style.
     /// <list type="bullet">

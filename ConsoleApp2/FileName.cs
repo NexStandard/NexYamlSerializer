@@ -1,43 +1,40 @@
-﻿using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using BenchmarkDotNet.Attributes;
+﻿using BenchmarkDotNet.Attributes;
+using Microsoft.Extensions.Options;
 using NexYaml;
 using NexYaml.Parser;
 using NexYaml.Serialization;
 using Stride.Core;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 namespace Test;
 [MemoryDiagnoser()]
 public class Benchmarker
 {
     static Collections values = new Collections();
 
-    static IYamlSerializerResolver? resolver = NexYamlSerializerRegistry.Create(typeof(Collections).Assembly);
+    static IYamlSerializerResolver? resolver = NexYamlSerializerRegistry.Instance;
+    static Writer writer;
     static string s;
     static string w;
     static Benchmarker()
     {
+        NexYamlSerializerRegistry.Init();
+        writer = new Writer(resolver);
     }
 
 
     [Benchmark]
-    public async ValueTask<Collections> YamlB()
+    public void YamlB()
     {
-        w = Yaml.Write(values, DataStyle.Normal, resolver);
-        var parser = new NewYamlParser(w, resolver);
-        foreach(var x in parser)
-        {
-            return await x.Read<Collections>();
-            break;
-        };
-        return default;
+
+        w = Yaml.Write(values, writer, DataStyle.Normal);
     }
     [Benchmark()]
     public void JsonB()
     {
 
         s = JsonSerializer.Serialize(values, MyJsonContext.Default.Collections);
-        var d = JsonSerializer.Deserialize<Collections>(s);
     }
 
 }

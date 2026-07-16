@@ -3,7 +3,7 @@ using NexYaml.Core;
 using Stride.Core;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace NexYaml.Core.Serialization.Nodes;
+namespace NexYaml.Serialization;
 
 /// <summary>
 /// Contains extension methods that enhance the functionality of <see cref="WriteContext{T}"/> for YAML serialization operations.
@@ -32,7 +32,7 @@ public static class NodeExtensions
     /// <param name="value">The value associated with the key.</param>
     /// <param name="style">The <see cref="DataStyle"/>.</param>
     /// <returns>The  <see cref="WriteContext{T}"/> based on the written key/value pair.</returns>
-    public static Mapping Write<T>(this Mapping mapping, ReadOnlySpan<char> key, T value, DataStyle style = DataStyle.Any)
+    public static Node Write<T>(this Node mapping, ReadOnlySpan<char> key, T value, DataStyle style = DataStyle.Any)
     {
         mapping.WriteMap(mapping, key, style);
         if (value is null)
@@ -52,13 +52,13 @@ public static class NodeExtensions
     /// <param name="value">The value to write as a <see cref="Sequence"/> item.</param>
     /// <param name="style">The <see cref="DataStyle"/>.</param>
     /// <returns>The next <see cref="WriteContext{Sequence}"/> based on the written value.</returns>
-    public static Sequence Write<T>(this Sequence sequence, T value, DataStyle style = DataStyle.Any)
+    public static Node Write<T>(this Node sequence, T value, DataStyle style = DataStyle.Any)
     {
         sequence.WriteElement(sequence, value, style);
         return sequence;
     }
 
-    public static Mapping Write(this Mapping mapping, ReadOnlySpan<char> key, string value, DataStyle style = DataStyle.Any)
+    public static Node Write(this Node mapping, ReadOnlySpan<char> key, string value, DataStyle style = DataStyle.Any)
     {
         var Style = style is DataStyle.Any or DataStyle.Normal ? DataStyle.Any : style;
 
@@ -71,7 +71,7 @@ public static class NodeExtensions
         mapping.WriteScalar(mapping.Writer.FormatString(mapping, value, style));
         return mapping;
     }
-    public static Mapping Write(this Mapping mapping, ReadOnlySpan<char> key, Guid value, DataStyle style = DataStyle.Any)
+    public static Node Write(this Node mapping, ReadOnlySpan<char> key, Guid value, DataStyle style = DataStyle.Any)
     {
         var Style = style is DataStyle.Any or DataStyle.Normal ? DataStyle.Any : style;
 
@@ -82,8 +82,6 @@ public static class NodeExtensions
         {
             mapping.WriteScalar(buffer);
         }
-
-        
         return mapping;
     }
 }
