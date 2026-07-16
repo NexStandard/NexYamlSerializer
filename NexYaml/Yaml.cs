@@ -24,7 +24,7 @@ public static class Yaml
     {
         options ??= NexYamlSerializerRegistry.Instance;
         var writer = new DelegateWriter(options, writing);
-        var node = new BlockMapping(-2, true, style, writer);
+        var node = new BlockMapping(-2, true, style, writer,NodeKind.Mapping);
 
         writer.WriteType(node, value, style);
     }

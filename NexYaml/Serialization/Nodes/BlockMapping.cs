@@ -1,54 +1,120 @@
 ﻿using NexYaml.Core.Serialization.Nodes;
 using Stride.Core;
+using Stride.Graphics;
 using Stride.Input;
 
 namespace NexYaml.Serialization.Nodes;
 
-public class BlockMapping : Mapping
+public class BlockMapping : Mapping, Sequence
 {
-    public BlockMapping(int indent, bool isRedirected, DataStyle styleScope, Writer writer, bool skipFirstLineBreak= false)
-    : base(indent, isRedirected, styleScope, writer)
+    public BlockMapping(int indent, bool isRedirected, DataStyle styleScope, Writer writer, NodeKind kind, bool skipFirstLineBreak= false)
     {
         // edge case for Blockmapping on a BlockSequence if there is no tag
         if(!isRedirected && skipFirstLineBreak)
         {
-            this.skipFirst = true;
+            this.isFirst = false;
         }
+        Kind = kind;
+        this.indent = indent;
+        IsRedirected = isRedirected;
+        StyleScope = styleScope;
+        Writer = writer;
     }
+    NodeKind Kind;
     private bool skipFirst = false;
     private bool isFirst = true;
-    public override Mapping BeginMapping(string tag, DataStyle style)
+    private int indent;
+    public int Indent => indent;
+
+    public bool IsRedirected { get; set; }
+    public DataStyle StyleScope { get; init; }
+    public Writer Writer { get; init; }
+
+    public Mapping BeginMapping(string tag, DataStyle style)
     {
-        if (StyleScope is DataStyle.Compact || style is DataStyle.Compact)
+        if(Kind is NodeKind.Mapping)
         {
+
+            if (StyleScope is DataStyle.Compact || style is DataStyle.Compact)
+            {
+                if (IsRedirected)
+                {
+                    WriteScalar(tag);
+                    WriteScalar(" { ");
+                }
+                else
+                {
+                    WriteScalar("{ ");
+                }
+                // inside a flow, only new flows can be created, no block is allowed
+                return new BlockMapping(Indent, false, DataStyle.Compact, Writer, NodeKind.Mapping, skipFirst);
+            }
             if (IsRedirected)
             {
                 WriteScalar(tag);
-                WriteScalar(" { ");
+            }
+            return new BlockMapping(Indent + 2, false, DataStyle.Normal, Writer, NodeKind.Mapping, skipFirst);
+        }
+        else if(Kind is NodeKind.Sequence)
+        {
+            if (StyleScope is DataStyle.Compact || style is DataStyle.Compact)
+            {
+                return new BlockMapping(Indent, IsRedirected, DataStyle.Compact, Writer, NodeKind.Mapping).BeginMapping(tag, DataStyle.Compact);
+            }
+            //  When no tag is provided, BlockMapping would introduce an extra faulty newline.
+            if (IsRedirected)
+            {
+                // - {TAG}\n
+                //   {KEY} : {VALUE}
+                return new BlockMapping(Indent, IsRedirected, DataStyle.Compact, Writer, NodeKind.Mapping).BeginMapping(tag, DataStyle.Normal);
             }
             else
             {
-                WriteScalar("{ ");
+                // - {KEY} : {VALUE}
+                return new BlockMapping(Indent - 2, false, DataStyle.Normal, Writer, NodeKind.Mapping, true).BeginMapping(tag, DataStyle.Normal);
             }
-            // inside a flow, only new flows can be created, no block is allowed
-            return new BlockMapping(Indent, false, DataStyle.Compact, Writer, skipFirst);
         }
-        if (IsRedirected)
-        {
-            WriteScalar(tag);
-        }
-        return new BlockMapping(Indent + 2, false, DataStyle.Normal, Writer, skipFirst);
+        throw new InvalidDataException();
     }
 
-    public override Sequence BeginSequence(string tag, DataStyle style)
+    public Sequence BeginSequence(string tag, DataStyle style)
     {
-        if (StyleScope is DataStyle.Compact || style is DataStyle.Compact)
+        if(Kind is NodeKind.Mapping)
         {
-            return new BlockSequence(Indent, IsRedirected, StyleScope, Writer).BeginSequence(tag, DataStyle.Compact);
+
+            if (StyleScope is DataStyle.Compact || style is DataStyle.Compact)
+            {
+                return new BlockMapping(Indent, IsRedirected, StyleScope, Writer,NodeKind.Sequence).BeginSequence(tag, DataStyle.Compact);
+            }
+            return new BlockMapping(Indent, IsRedirected, StyleScope, Writer, NodeKind.Sequence).BeginSequence(tag, DataStyle.Normal);
         }
-        return new BlockSequence(Indent, IsRedirected, StyleScope, Writer).BeginSequence(tag, DataStyle.Normal);
+        else if (Kind is NodeKind.Sequence)
+        {
+            if (StyleScope is DataStyle.Compact || style is DataStyle.Compact)
+            {
+                if (IsRedirected)
+                {
+                    WriteScalar(tag);
+                    WriteScalar(" [ ");
+                }
+                else
+                {
+                    WriteScalar("[ ");
+                }
+                return new BlockMapping(Indent, false, DataStyle.Compact, Writer, NodeKind.Sequence);
+            }
+            else
+            {
+                if (IsRedirected)
+                {
+                    WriteScalar(tag);
+                }
+                return new BlockMapping(Math.Max(0, Indent) + 2, false, DataStyle.Normal, Writer, NodeKind.Sequence);
+            }
+        }
+        throw new InvalidDataException();
     }
-    public override void WriteMap(Mapping context, ReadOnlySpan<char> key, DataStyle style)
+    public void WriteMap(Mapping context, ReadOnlySpan<char> key, DataStyle style)
     {
         if(StyleScope is DataStyle.Compact)
         {
@@ -70,7 +136,7 @@ public class BlockMapping : Mapping
         }
         else
         {
-            if (this.skipFirst)
+            if (skipFirst)
             {
                 // "{KEY}: {OPTIONAL TAG}" OR "- {OPTIONAL TAG}"
                 // "{NEWLINE}{INDENT}{KEY}: {OUTPUT FROM WriteType}"
@@ -80,7 +146,7 @@ public class BlockMapping : Mapping
                 x[^1] = ' ';
                 x[^2] = ':';
                 WriteScalar(x);
-                this.skipFirst = false;
+                skipFirst = false;
             }
             else
             {
@@ -98,11 +164,82 @@ public class BlockMapping : Mapping
         }
 
     }
-    public override void End()
+    public void WriteElement<T>(Sequence context, T value, DataStyle style)
     {
-        if(StyleScope is DataStyle.Compact)
+        if (StyleScope is DataStyle.Compact)
+        {
+            if (isFirst)
+            {
+                isFirst = false;
+            }
+            else
+            {
+                WriteScalar(", ");
+            }
+            // First Node is {VALUE}
+            this.WriteType(value, style);
+        }
+        else
+        {
+            // "{KEY}: {OPTIONAL TAG}" OR "- {OPTIONAL TAG}"
+            // "{NEWLINE}{INDENT}- {OUTPUT FROM WriteType}"
+            // Special rule:
+            // - The sequence identifier ("- ") does NOT use increased indentation.
+            // - The indent can NOT be below 0
+            // - Only the subsequent nodes follow deeper indentation levels.
+            int spaceCount = Math.Max(Indent - 2, 0);
+
+            // total length: '\n' + spaces + "- "
+            int len = 1 + spaceCount + 2;
+
+            Span<char> buf = stackalloc char[len];
+            buf.Fill(' ');
+            int i = 0;
+            buf[0] = '\n';
+            buf[^2] = '-';
+
+            WriteScalar(buf);
+            context.WriteType(value, style);
+        }
+    }
+    public void End()
+    {
+        if(Kind is NodeKind.Mapping && this.StyleScope is DataStyle.Compact)
         {
             WriteScalar(" }");
         }
+        else if (Kind is NodeKind.Sequence && StyleScope is DataStyle.Compact)
+        {
+            WriteScalar(" ]");
+        }
+    }
+    public void WriteScalar(ReadOnlySpan<char> text)
+    {
+        Writer.Write(text);
+    }
+
+    /// <summary>
+    /// Writes an empty <see cref="Mapping"/> with the given tag.
+    /// </summary>
+    public void WriteEmptyMapping(string tag)
+    {
+        WriteScalar(tag);
+        WriteScalar(" { }".AsSpan());
+    }
+
+    /// <summary>
+    /// Writes an empty <see cref="Sequence"/> with the given tag.
+    /// </summary>
+    public void WriteEmptySequence(string tag)
+    {
+        WriteScalar(tag);
+        WriteScalar(" [ ]".AsSpan());
+    }
+    /// <summary>
+    /// Writes the provided text to the underlying output with formatting.
+    /// </summary>
+    public void WriteString(string value, DataStyle style = DataStyle.Compact)
+    {
+        WriteScalar(Writer.FormatString(this, value, style));
     }
 }

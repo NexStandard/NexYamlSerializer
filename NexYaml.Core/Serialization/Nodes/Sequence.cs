@@ -7,12 +7,8 @@ namespace NexYaml.Core.Serialization.Nodes;
 /// Represents a YAML <see cref="Sequence"/> node.
 /// Allows writing ordered elements.
 /// </summary>
-public abstract class Sequence : Node
+public interface Sequence : Node
 {
-    public Sequence(int indent, bool isRedirected, DataStyle styleScope, Writer writer)
-        : base(indent, isRedirected, styleScope, writer)
-    {
-    }
     /// <summary>
     /// Writes an element into the <see cref="Sequence"/> node.
     /// </summary>
@@ -20,5 +16,5 @@ public abstract class Sequence : Node
     /// <param name="context">The current <see cref="Sequence"/> <see cref="WriteContext{T}"/>.</param>
     /// <param name="value">The value to add to the sequence.</param>
     /// <param name="style">The <see cref="DataStyle"/>.</param>
-    public abstract void WriteElement<T>(Sequence context, T value, DataStyle style);
+    public void WriteElement<T>(Sequence context, T value, DataStyle style);
 }
