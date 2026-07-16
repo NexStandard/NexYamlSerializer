@@ -11,7 +11,7 @@ namespace NexYaml.Parser.Scopes;
 public class ParsingScope
 {
 
-    public static Scope NewScalar(ReadOnlySpan<char> value, int indent, ScopeContext context, ReadOnlySpan<char> tag)
+    public static Scope NewScalar(ReadOnlySpan<char> value, int indent, ScopeContext context)
     {
         return new Scope()
         {
@@ -21,7 +21,7 @@ public class ParsingScope
             ScalarValue = value.ToString()
         };
     }
-    public static Scope NewLazyScalar(int valueIndex, int indent, ScopeContext context, ReadOnlySpan<char> tag)
+    public static Scope NewLazyScalar(int valueIndex, int indent, ScopeContext context)
     {
         return new Scope()
         {
@@ -37,7 +37,7 @@ public class ParsingScope
             Kind = ScopeKind.NullScalar,
         };
     }
-    public static Scope NewFlowSequence(ReadOnlySpan<char> value, int indent, ScopeContext context, ReadOnlySpan<char> tag)
+    public static Scope NewFlowSequence(ReadOnlySpan<char> value, int indent, ScopeContext context)
     {
         return new Scope()
         {
@@ -47,7 +47,7 @@ public class ParsingScope
             sequenceStrategy = new FlowSequenceStrategy(ScopeUtils.NewSplitItems(value.ToString().Substring(1, value.Length - 2).Trim()))
         };
     }
-    public static Scope NewBlockSequence(int indent, ScopeContext context, ReadOnlySpan<char> tag)
+    public static Scope NewBlockSequence(int indent, ScopeContext context)
     {
         return new Scope()
         {
@@ -57,7 +57,7 @@ public class ParsingScope
             sequenceStrategy = new BlockSequenceStrategy()
         };
     }
-    public static Scope NewFlowMapping(ReadOnlySpan<char> value, int indent, ScopeContext context, ReadOnlySpan<char> tag)
+    public static Scope NewFlowMapping(ReadOnlySpan<char> value, int indent, ScopeContext context)
     {
         return new Scope()
         {
@@ -68,7 +68,7 @@ public class ParsingScope
             mapStrategy = new FlowMapStrategy(ScopeUtils.NewSplitItems(value.ToString().Substring(1, value.Length - 2).Trim()))
         };
     }
-    public static Scope NewBlockMapping(int indent, ScopeContext context, ReadOnlySpan<char> tag)
+    public static Scope NewBlockMapping(int indent, ScopeContext context)
     {
         return new Scope()
         {
@@ -78,7 +78,7 @@ public class ParsingScope
             mapStrategy = new BlockMapStrategy()
         };
     }
-    public static Scope NewPrefixedBlockMapping(ReadOnlySpan<char> value, string prefix, int indent, ScopeContext context, ReadOnlySpan<char> tag)
+    public static Scope NewPrefixedBlockMapping(ReadOnlySpan<char> value, string prefix, int indent, ScopeContext context)
     {
         return new Scope()
         {

@@ -66,7 +66,7 @@ namespace NexYaml
                         {
                             Current = new Element()
                             {
-                                Data = ParsingScope.NewScalar(ScopeUtils.ParseLiteralScalar(_context, indent, inline[1]), indent, _context, tag),
+                                Data = ParsingScope.NewScalar(ScopeUtils.ParseLiteralScalar(_context, indent, inline[1]), indent, _context),
                                 Tag = tag
                             };
                             return true;
@@ -75,7 +75,7 @@ namespace NexYaml
                         {
                             Current = new Element()
                             {
-                                Data = ParsingScope.NewFlowMapping(inline, indent, _context, tag),
+                                Data = ParsingScope.NewFlowMapping(inline, indent, _context),
                                 Tag = tag
                             };
                             return true;
@@ -84,7 +84,7 @@ namespace NexYaml
                         {
                             Current = new Element()
                             {
-                                Data = ParsingScope.NewFlowSequence(inline, indent, _context, tag),
+                                Data = ParsingScope.NewFlowSequence(inline, indent, _context),
                                 Tag = tag
                             };
                             return true;
@@ -93,7 +93,7 @@ namespace NexYaml
                         {
                             Current = new Element()
                             {
-                                Data = ParsingScope.NewScalar(inline, indent, _context, tag),
+                                Data = ParsingScope.NewScalar(inline, indent, _context),
                                 Tag = tag
                             };
                             return true;
@@ -112,7 +112,7 @@ namespace NexYaml
                     {
                         Current = new Element()
                         {
-                            Data = ParsingScope.NewBlockSequence(indent, _context, tag),
+                            Data = ParsingScope.NewBlockSequence(indent, _context),
                             Tag = tag
                         };
                     }
@@ -120,7 +120,7 @@ namespace NexYaml
                     {
                         Current = new Element()
                         {
-                            Data = ParsingScope.NewBlockMapping(indent, _context, tag),
+                            Data = ParsingScope.NewBlockMapping(indent, _context),
                             Tag = tag
                         };
                         return true;
@@ -131,7 +131,7 @@ namespace NexYaml
                         {
                             Current = new Element()
                             {
-                                Data = ParsingScope.NewScalar(val.Trim(), indent, _context, tag),
+                                Data = ParsingScope.NewScalar(val.Trim(), indent, _context),
                                 Tag = tag,
                             };
                             return true;
@@ -146,7 +146,7 @@ namespace NexYaml
                 {
                     Current = new Element()
                     {
-                        Data = ParsingScope.NewBlockMapping(indent, _context, string.Empty),
+                        Data = ParsingScope.NewBlockMapping(indent, _context),
                         Tag = []
                     };
                     return true;
@@ -156,7 +156,7 @@ namespace NexYaml
                 {
                     Current = new Element()
                     {
-                        Data = ParsingScope.NewBlockMapping(indent, _context, string.Empty),
+                        Data = ParsingScope.NewBlockMapping(indent, _context),
                         Tag = []
                     };
                     return true;
@@ -179,7 +179,7 @@ namespace NexYaml
                         {
                             Current = new Element()
                             {
-                                Data = ParsingScope.NewScalar(val.Trim(), indent, _context, string.Empty),
+                                Data = ParsingScope.NewScalar(val.Trim(), indent, _context),
                                 Tag = []
                             };
                             return true;

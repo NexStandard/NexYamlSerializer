@@ -35,7 +35,7 @@ public class FlowMapStrategy(string[] value) : MapStrategy
                 map = new Map()
                 {
                     Key = key,
-                    Value = ParsingScope.NewScalar(ScopeUtils.ParseLiteralScalar(data.Context, data.Indent + 1, val[1]), data.Indent + 2, data.Context, childTag),
+                    Value = ParsingScope.NewScalar(ScopeUtils.ParseLiteralScalar(data.Context, data.Indent + 1, val[1]), data.Indent + 2, data.Context),
                     Tag = childTag
                 };
             }
@@ -43,7 +43,7 @@ public class FlowMapStrategy(string[] value) : MapStrategy
             {
                 map = new Map()
                 {
-                    Value = ParsingScope.NewFlowMapping(val, data.Indent + 2, data.Context, childTag),
+                    Value = ParsingScope.NewFlowMapping(val, data.Indent + 2, data.Context),
                     Key = key,
                     Tag = childTag
                 };
@@ -52,7 +52,7 @@ public class FlowMapStrategy(string[] value) : MapStrategy
             {
                 map = new Map()
                 {
-                    Value = ParsingScope.NewFlowSequence(val, data.Indent + 2, data.Context, childTag),
+                    Value = ParsingScope.NewFlowSequence(val, data.Indent + 2, data.Context),
                     Key = key,
                     Tag = childTag
                 };
@@ -70,7 +70,7 @@ public class FlowMapStrategy(string[] value) : MapStrategy
             {
                 map = new Map()
                 {
-                    Value = ParsingScope.NewScalar(val, data.Indent + 2, data.Context, childTag),
+                    Value = ParsingScope.NewScalar(val, data.Indent + 2, data.Context),
                     Key = key,
                     Tag = childTag
                 };
@@ -132,7 +132,7 @@ public class PrefixedBlockMapStrategy(string value2, string prefix) : MapStrateg
                     {
                         map = new Map()
                         {
-                            Value = ParsingScope.NewBlockSequence(data.Indent + 2, data.Context, string.Empty),
+                            Value = ParsingScope.NewBlockSequence(data.Indent + 2, data.Context),
                             Key = prefix,
                             Tag = []
                         };
@@ -141,7 +141,7 @@ public class PrefixedBlockMapStrategy(string value2, string prefix) : MapStrateg
                     {
                         map = new Map()
                         {
-                            Value = ParsingScope.NewBlockMapping(data.Indent + 2, data.Context, string.Empty),
+                            Value = ParsingScope.NewBlockMapping(data.Indent + 2, data.Context),
                             Key = prefix,
                             Tag = []
                         };
@@ -150,7 +150,7 @@ public class PrefixedBlockMapStrategy(string value2, string prefix) : MapStrateg
                 }
                 map = new Map()
                 {
-                    Value = ParsingScope.NewScalar(string.Empty, data.Indent + 2, data.Context, string.Empty),
+                    Value = ParsingScope.NewScalar(string.Empty, data.Indent + 2, data.Context),
                     Key = prefix,
                     Tag = []
                 };
@@ -246,7 +246,7 @@ public class PrefixedBlockMapStrategy(string value2, string prefix) : MapStrateg
                         {
                             map = new Map()
                             {
-                                Value = ParsingScope.NewBlockSequence(data.Indent + 2, data.Context, childTag),
+                                Value = ParsingScope.NewBlockSequence(data.Indent + 2, data.Context),
                                 Key = key,
                                 Tag = childTag
                             };
@@ -255,7 +255,7 @@ public class PrefixedBlockMapStrategy(string value2, string prefix) : MapStrateg
                         {
                             map = new Map()
                             {
-                                Value = ParsingScope.NewBlockMapping(data.Indent + 2, data.Context, childTag),
+                                Value = ParsingScope.NewBlockMapping(data.Indent + 2, data.Context),
                                 Key = key,
                                 Tag = childTag
                             };
@@ -266,7 +266,7 @@ public class PrefixedBlockMapStrategy(string value2, string prefix) : MapStrateg
                     {
                         map = new Map()
                         {
-                            Value = ParsingScope.NewBlockSequence(data.Indent, data.Context, childTag),
+                            Value = ParsingScope.NewBlockSequence(data.Indent, data.Context),
                             Key = key,
                             Tag = childTag
                         };
@@ -277,7 +277,7 @@ public class PrefixedBlockMapStrategy(string value2, string prefix) : MapStrateg
                 // Default: empty scalar
                 map = new Map()
                 {
-                    Value = ParsingScope.NewScalar(string.Empty, data.Indent + 2, data.Context, childTag),
+                    Value = ParsingScope.NewScalar(string.Empty, data.Indent + 2, data.Context),
                     Key = key,
                     Tag = childTag
                 };
@@ -380,7 +380,7 @@ public class BlockMapStrategy : MapStrategy
                         {
                             map = new Map()
                             {
-                                Value = ParsingScope.NewBlockSequence(data.Indent + 2, data.Context, childTag),
+                                Value = ParsingScope.NewBlockSequence(data.Indent + 2, data.Context),
                                 Key = key,
                                 Tag = childTag
                             };
@@ -389,7 +389,7 @@ public class BlockMapStrategy : MapStrategy
                         {
                             map = new Map()
                             {
-                                Value = ParsingScope.NewBlockMapping(data.Indent + 2, data.Context, childTag),
+                                Value = ParsingScope.NewBlockMapping(data.Indent + 2, data.Context),
                                 Key = key,
                                 Tag = childTag
                             };
@@ -400,7 +400,7 @@ public class BlockMapStrategy : MapStrategy
                     {
                         map = new Map()
                         {
-                            Value = ParsingScope.NewBlockSequence(data.Indent, data.Context, childTag),
+                            Value = ParsingScope.NewBlockSequence(data.Indent, data.Context),
                             Key = key,
                             Tag = childTag
                         };
@@ -411,7 +411,7 @@ public class BlockMapStrategy : MapStrategy
                 // Default: empty scalar
                 map = new Map()
                 {
-                    Value = ParsingScope.NewScalar(string.Empty, data.Indent + 2, data.Context, childTag),
+                    Value = ParsingScope.NewScalar(string.Empty, data.Indent + 2, data.Context),
                     Key = key,
                     Tag = childTag
                 };
@@ -432,7 +432,7 @@ internal static class ScopeStrategyExtensions
             data.Reader.Move();
             map = new Map()
             {
-                Value = ParsingScope.NewScalar(ScopeUtils.ParseLiteralScalar(data, Indent + 1, val[1]), Indent + 2, data, childTag),
+                Value = ParsingScope.NewScalar(ScopeUtils.ParseLiteralScalar(data, Indent + 1, val[1]), Indent + 2, data),
                 Key = key,
                 Tag = childTag
             };
@@ -442,7 +442,7 @@ internal static class ScopeStrategyExtensions
             data.Reader.Move();
             map = new Map()
             {
-                Value = ParsingScope.NewFlowMapping(val, Indent + 2, data, childTag),
+                Value = ParsingScope.NewFlowMapping(val, Indent + 2, data),
                 Key = key,
                 Tag = childTag
             };
@@ -452,7 +452,7 @@ internal static class ScopeStrategyExtensions
             data.Reader.Move();
             map = new Map()
             {
-                Value = ParsingScope.NewFlowSequence(val, Indent + 2, data, childTag),
+                Value = ParsingScope.NewFlowSequence(val, Indent + 2, data),
                 Key = key,
                 Tag = childTag
             };
@@ -471,7 +471,7 @@ internal static class ScopeStrategyExtensions
         {
             map = new Map()
             {
-                Value = ParsingScope.NewLazyScalar(111, Indent + 2, data, childTag),
+                Value = ParsingScope.NewLazyScalar(111, Indent + 2, data),
                 Key = key,
                 Tag = childTag
             };

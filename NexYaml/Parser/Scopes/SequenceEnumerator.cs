@@ -66,7 +66,7 @@ public class BlockSequenceStrategy() : SequenceStrategy
                         data.Context.Reader.Move();
                         scope = new Element()
                         {
-                            Data = ParsingScope.NewScalar(ScopeUtils.ParseLiteralScalar(data.Context, data.Indent + 1, itemSpan[1]), data.Indent + 2, data.Context, childTag),
+                            Data = ParsingScope.NewScalar(ScopeUtils.ParseLiteralScalar(data.Context, data.Indent + 1, itemSpan[1]), data.Indent + 2, data.Context),
                             Tag = childTag
                         };
                         return true;
@@ -75,7 +75,7 @@ public class BlockSequenceStrategy() : SequenceStrategy
                         data.Context.Reader.Move();
                         scope = new Element()
                         {
-                            Data = ParsingScope.NewFlowMapping(itemSpan, data.Indent + 2, data.Context, childTag),
+                            Data = ParsingScope.NewFlowMapping(itemSpan, data.Indent + 2, data.Context),
                             Tag = childTag
                         };
                         return true;
@@ -84,7 +84,7 @@ public class BlockSequenceStrategy() : SequenceStrategy
                         data.Context.Reader.Move();
                         scope = new Element()
                         {
-                            Data = ParsingScope.NewFlowSequence(itemSpan, data.Indent + 2, data.Context, childTag),
+                            Data = ParsingScope.NewFlowSequence(itemSpan, data.Indent + 2, data.Context),
                             Tag = childTag
                         };
                         return true;
@@ -97,7 +97,7 @@ public class BlockSequenceStrategy() : SequenceStrategy
                             var valSpan = itemSpan[(colonIdx + 1)..].Trim();
                             scope = new Element()
                             {
-                                Data = ParsingScope.NewPrefixedBlockMapping(valSpan, keySpan.ToString(), data.Indent + 2, data.Context, childTag),
+                                Data = ParsingScope.NewPrefixedBlockMapping(valSpan, keySpan.ToString(), data.Indent + 2, data.Context),
                                 Tag = childTag
                             };
                         }
@@ -115,7 +115,7 @@ public class BlockSequenceStrategy() : SequenceStrategy
                             {
                                 scope = new Element()
                                 {
-                                    Data = ParsingScope.NewScalar(itemSpan, data.Indent + 2, data.Context, childTag),
+                                    Data = ParsingScope.NewScalar(itemSpan, data.Indent + 2, data.Context),
                                     Tag = childTag
                                 };
                             }
@@ -138,7 +138,7 @@ public class BlockSequenceStrategy() : SequenceStrategy
                         {
                             scope = new Element()
                             {
-                                Data = ParsingScope.NewBlockSequence(data.Indent + 2, data.Context, childTag),
+                                Data = ParsingScope.NewBlockSequence(data.Indent + 2, data.Context),
                                 Tag = childTag
                             };
 
@@ -147,7 +147,7 @@ public class BlockSequenceStrategy() : SequenceStrategy
                         {
                             scope = new Element()
                             {
-                                Data = ParsingScope.NewBlockMapping(data.Indent + 2, data.Context, childTag),
+                                Data = ParsingScope.NewBlockMapping(data.Indent + 2, data.Context),
                                 Tag = childTag
                             };
                         }
@@ -156,7 +156,7 @@ public class BlockSequenceStrategy() : SequenceStrategy
                 }
                 scope = new Element()
                 {
-                    Data = ParsingScope.NewScalar(string.Empty, data.Indent + 2, data.Context, childTag),
+                    Data = ParsingScope.NewScalar(string.Empty, data.Indent + 2, data.Context),
                     Tag = childTag
                 };
                 return true;
@@ -198,7 +198,7 @@ public class FlowSequenceStrategy(string[] value) : SequenceStrategy
             {
                 scope = new Element()
                 {
-                    Data = ParsingScope.NewScalar(ScopeUtils.ParseLiteralScalar(data.Context, data.Indent + 2, item[1]), data.Indent + 2, data.Context, bufferedTag),
+                    Data = ParsingScope.NewScalar(ScopeUtils.ParseLiteralScalar(data.Context, data.Indent + 2, item[1]), data.Indent + 2, data.Context),
                     Tag = bufferedTag
                 };
             }
@@ -206,7 +206,7 @@ public class FlowSequenceStrategy(string[] value) : SequenceStrategy
             {
                 scope = new Element()
                 {
-                    Data = ParsingScope.NewFlowMapping(item, data.Indent + 2, data.Context, bufferedTag),
+                    Data = ParsingScope.NewFlowMapping(item, data.Indent + 2, data.Context),
                     Tag = bufferedTag
                 };
             }
@@ -214,7 +214,7 @@ public class FlowSequenceStrategy(string[] value) : SequenceStrategy
             {
                 scope = new Element()
                 {
-                    Data = ParsingScope.NewFlowSequence(item, data.Indent, data.Context, bufferedTag),
+                    Data = ParsingScope.NewFlowSequence(item, data.Indent, data.Context),
                     Tag = bufferedTag
                 };
             }
@@ -230,7 +230,7 @@ public class FlowSequenceStrategy(string[] value) : SequenceStrategy
             {
                 scope = new Element()
                 {
-                    Data = ParsingScope.NewScalar(item, data.Indent + 2, data.Context, bufferedTag),
+                    Data = ParsingScope.NewScalar(item, data.Indent + 2, data.Context),
                     Tag = bufferedTag
                 };
             }
