@@ -12,7 +12,7 @@ public class BlockMapping : Mapping
         // edge case for Blockmapping on a BlockSequence if there is no tag
         if(!isRedirected && skipFirstLineBreak)
         {
-            this.skipFirst = false;
+            this.skipFirst = true;
         }
     }
     private bool skipFirst = false;
