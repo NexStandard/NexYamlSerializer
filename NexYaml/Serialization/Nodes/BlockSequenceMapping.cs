@@ -14,7 +14,7 @@ class BlockSequenceMapping : BlockMapping
         // TODO: how can this even happen, missing test for these ifs
         if (StyleScope is DataStyle.Compact || style is DataStyle.Compact)
         {
-            return new FlowMapping(Indent, IsRedirected, StyleScope, Writer).BeginMapping(tag, DataStyle.Compact);
+            return new BlockMapping(Indent, IsRedirected, StyleScope, Writer).BeginMapping(tag, DataStyle.Compact);
         }
         if (IsRedirected)
         {
