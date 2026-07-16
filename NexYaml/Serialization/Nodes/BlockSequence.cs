@@ -9,13 +9,13 @@ class BlockSequence : Sequence
         : base(indent, isRedirected, styleScope, writer)
     {
     }
+    private bool isFirst = true;
     public override Mapping BeginMapping(string tag, DataStyle style)
     {
         if (StyleScope is DataStyle.Compact || style is DataStyle.Compact)
         {
-            return new FlowMapping(Indent, IsRedirected, DataStyle.Compact, Writer).BeginMapping(tag, DataStyle.Compact);
+            return new BlockMapping(Indent, IsRedirected, DataStyle.Compact, Writer).BeginMapping(tag, DataStyle.Compact);
         }
-
         //  When no tag is provided, BlockMapping would introduce an extra faulty newline.
         if (IsRedirected)
         {
@@ -34,36 +34,74 @@ class BlockSequence : Sequence
     {
         if (StyleScope is DataStyle.Compact || style is DataStyle.Compact)
         {
-            return new FlowSequence(Indent, IsRedirected, DataStyle.Compact, Writer).BeginSequence(tag, DataStyle.Compact);
+            if (IsRedirected)
+            {
+                WriteScalar(tag);
+                WriteScalar(" [ ");
+            }
+            else
+            {
+                WriteScalar("[ ");
+            }
+            return new BlockSequence(Indent, false, DataStyle.Compact, Writer);
         }
-        if (IsRedirected)
+        else
         {
-            WriteScalar(tag);
+            if (IsRedirected)
+            {
+                WriteScalar(tag);
+            }
+            return new BlockSequence(Math.Max(0, Indent) + 2, false, DataStyle.Normal, Writer);
         }
-        return new BlockSequence(Math.Max(0, Indent) + 2, false, DataStyle.Normal, Writer);
     }
 
     public override Sequence Write<T>(Sequence context, T value, DataStyle style)
     {
-        // "{KEY}: {OPTIONAL TAG}" OR "- {OPTIONAL TAG}"
-        // "{NEWLINE}{INDENT}- {OUTPUT FROM WriteType}"
-        // Special rule:
-        // - The sequence identifier ("- ") does NOT use increased indentation.
-        // - The indent can NOT be below 0
-        // - Only the subsequent nodes follow deeper indentation levels.
-        int spaceCount = Math.Max(Indent - 2, 0);
+        if(StyleScope is DataStyle.Compact)
+        {
+            if (isFirst)
+            {
+                isFirst = false;
+            }
+            else
+            {
+                WriteScalar(", ");
+            }
+            // First Node is {VALUE}
+            this.WriteType(value, style);
 
-        // total length: '\n' + spaces + "- "
-        int len = 1 + spaceCount + 2;
+            // all following Nodes need a prefix
+            return this;
+        }
+        else
+        {
+            // "{KEY}: {OPTIONAL TAG}" OR "- {OPTIONAL TAG}"
+            // "{NEWLINE}{INDENT}- {OUTPUT FROM WriteType}"
+            // Special rule:
+            // - The sequence identifier ("- ") does NOT use increased indentation.
+            // - The indent can NOT be below 0
+            // - Only the subsequent nodes follow deeper indentation levels.
+            int spaceCount = Math.Max(Indent - 2, 0);
 
-        Span<char> buf = stackalloc char[len];
-        buf.Fill(' ');
-        int i = 0;
-        buf[0] = '\n';
-        buf[^2] = '-';
+            // total length: '\n' + spaces + "- "
+            int len = 1 + spaceCount + 2;
 
-        WriteScalar(buf);
-        context.WriteType(value, style);
-        return context;
+            Span<char> buf = stackalloc char[len];
+            buf.Fill(' ');
+            int i = 0;
+            buf[0] = '\n';
+            buf[^2] = '-';
+
+            WriteScalar(buf);
+            context.WriteType(value, style);
+            return context;
+        }
+    }
+    public override void End()
+    {
+        if(StyleScope is DataStyle.Compact)
+        {
+            WriteScalar(" ]");
+        }
     }
 }
