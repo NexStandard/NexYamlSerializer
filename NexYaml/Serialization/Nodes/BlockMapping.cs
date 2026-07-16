@@ -6,11 +6,16 @@ namespace NexYaml.Serialization.Nodes;
 
 public class BlockMapping : Mapping
 {
-    public BlockMapping(int indent, bool isRedirected, DataStyle styleScope, Writer writer)
+    public BlockMapping(int indent, bool isRedirected, DataStyle styleScope, Writer writer, bool skipFirstLineBreak= false)
     : base(indent, isRedirected, styleScope, writer)
     {
+        // edge case for Blockmapping on a BlockSequence if there is no tag
+        if(!isRedirected && skipFirstLineBreak)
+        {
+            this.skipFirst = false;
+        }
     }
-
+    private bool skipFirst = false;
     private bool isFirst = true;
     public override Mapping BeginMapping(string tag, DataStyle style)
     {
@@ -66,17 +71,33 @@ public class BlockMapping : Mapping
         }
         else
         {
-            // "{KEY}: {OPTIONAL TAG}" OR "- {OPTIONAL TAG}"
-            // "{NEWLINE}{INDENT}{KEY}: {OUTPUT FROM WriteType}"
-            Span<char> x = stackalloc char[Indent + 1 + key.Length + 2];
+            if (skipFirst)
+            {
+                // "{KEY}: {OPTIONAL TAG}" OR "- {OPTIONAL TAG}"
+                // "{NEWLINE}{INDENT}{KEY}: {OUTPUT FROM WriteType}"
+                Span<char> x = stackalloc char[key.Length + 2];
 
-            x[0] = '\n';
-            x.Slice(1, Indent).Fill(' ');
-            key.CopyTo(x.Slice(1 + Indent, key.Length));
-            x[^1] = ' ';
-            x[^2] = ':';
-            WriteScalar(x);
-            return this;
+                key.CopyTo(x.Slice(1 + Indent, key.Length));
+                x[^1] = ' ';
+                x[^2] = ':';
+                WriteScalar(x);
+                skipFirst = false;
+                return this;
+            }
+            else
+            {
+                // "{KEY}: {OPTIONAL TAG}" OR "- {OPTIONAL TAG}"
+                // "{NEWLINE}{INDENT}{KEY}: {OUTPUT FROM WriteType}"
+                Span<char> x = stackalloc char[Indent + 1 + key.Length + 2];
+
+                x[0] = '\n';
+                x.Slice(1, Indent).Fill(' ');
+                key.CopyTo(x.Slice(1 + Indent, key.Length));
+                x[^1] = ' ';
+                x[^2] = ':';
+                WriteScalar(x);
+                return this;
+            }
         }
 
     }

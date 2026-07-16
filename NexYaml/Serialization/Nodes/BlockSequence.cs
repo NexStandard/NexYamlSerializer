@@ -26,7 +26,7 @@ class BlockSequence : Sequence
         else
         {
             // - {KEY} : {VALUE}
-            return new BlockSequenceMapping(Indent, IsRedirected, DataStyle.Normal,Writer).BeginMapping(tag, DataStyle.Normal);
+            return new BlockMapping(Indent-2, false, DataStyle.Normal,Writer, true).BeginMapping(tag, DataStyle.Normal);
         }
     }
 
