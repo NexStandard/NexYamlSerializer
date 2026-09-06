@@ -17,7 +17,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Stride.Engine" Version="4.2.0.2282" />
+		<PackageReference Include="Stride.Engine" Version="*"/>
+    
 	</ItemGroup>
 
 	<ItemGroup>
