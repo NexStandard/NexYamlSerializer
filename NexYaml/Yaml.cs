@@ -25,7 +25,7 @@ public static class Yaml
     {
         var node = new Node(-2, true, style, writer, NodeKind.Mapping);
         writer.WriteType(node, value, style);
-        return "";
+        return writer.sb.ToString();
     }
     public static string Write<T>(T value, DataStyle style = DataStyle.Any)
     {

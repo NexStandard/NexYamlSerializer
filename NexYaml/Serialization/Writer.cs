@@ -21,14 +21,14 @@ public class Writer(IYamlSerializerResolver resolver)
     /// </summary>
     public HashSet<Guid> References { get; } = [];
 
-    // public StringBuilder sb = new();
+    public StringBuilder sb = new(256);
     /// <summary>
     /// Writes the provided formatted and escaped text to the underlying output.
     /// </summary>
     /// <param name="text">A <see cref="ReadOnlySpan{T}"/> of characters representing the formatted text to write.</param>
     public void Write(ReadOnlySpan<char> text)
     {
-       // sb.Append(text);
+       sb.Append(text);
     }
 
     /// <summary>
