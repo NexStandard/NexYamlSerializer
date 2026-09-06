@@ -80,7 +80,7 @@ internal static class SourceCreator
 
         }
         ///
-        string writeString = isEmpty ? $"       context.WriteEmptyMapping(\"!{tag}\");" :
+        string writeString = isEmpty ? $"       node.WriteEmptyMapping(\"!{tag}\");" :
             $"""
         var preferedStyle = style is DataStyle.Any or DataStyle.Normal ? {info.DataStyle} : style;
         node.BeginMapping("!{tag}",preferedStyle)
@@ -90,7 +90,7 @@ internal static class SourceCreator
         string nullcheck = $$"""
             if (value is null)
                 {
-                    var x3 = context.WriteKey(context, key, style);
+                    var x3 = node.WriteKey(context, key, style);
                     x3.WriteScalar(YamlCodes.Null);
                     return x3;
                 }
