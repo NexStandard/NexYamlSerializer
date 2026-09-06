@@ -152,6 +152,7 @@ coverage*.info
 *.coveragexml
 
 # NCrunch
+*ncrunch*
 _NCrunch_*
 .*crunch*.local.xml
 nCrunchTemp_*
