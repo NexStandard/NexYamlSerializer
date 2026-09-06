@@ -215,10 +215,7 @@ public struct Node
     {
         Writer.Write(text);
     }
-    public void WriteScalar(ref ReadOnlySpan<char> text)
-    {
-        Writer.Write(text);
-    }
+
     /// <summary>
     /// Writes an empty <see cref="Mapping"/> with the given tag.
     /// </summary>
