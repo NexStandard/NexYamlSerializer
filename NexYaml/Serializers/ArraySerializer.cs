@@ -7,9 +7,9 @@ namespace NexYaml.Serializers;
 
 public class ArraySerializer<T> : IYamlSerializer<T?[]>
 {
-    public void Write(Node context, T?[] value, DataStyle style)
+    public void Write(Node node, T?[] value, DataStyle style)
     {
-        CollectionSerialization.WriteCollection<T, T?[]>(context, value, style, "!Array");
+        CollectionSerialization.WriteCollection<T, T?[]>(node, value, style, "!Array");
     }
 
     public async ValueTask<T?[]> Read(Scope scope, T?[]? parseResult = null)

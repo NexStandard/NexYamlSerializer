@@ -36,14 +36,14 @@ public class Writer(IYamlSerializerResolver resolver)
     /// </summary>
     /// <typeparam name="X">The type of the current YAML <see cref="Node"/>.</typeparam>
     /// <typeparam name="T">The type of the value to write.</typeparam>
-    /// <param name="context">The <see cref="WriteContext{T}"/> providing the current state.</param>
+    /// <param name="node">The <see cref="WriteContext{T}"/> providing the current state.</param>
     /// <param name="value">The value to write. May be <c>null</c>, in which case a <see cref="YamlCodes.Null0"/> is emitted.</param>
     /// <param name="style">The <see cref="DataStyle"/> to use for the output</param>
-    public void WriteType<T>(Node context, T? value, DataStyle style)
+    public void WriteType<T>(Node node, T? value, DataStyle style)
     {
         if (value is null)
         {
-            context.WriteScalar(YamlCodes.Null);
+            node.WriteScalar(YamlCodes.Null);
             return;
         }
         if (value is Array)
@@ -52,27 +52,27 @@ public class Writer(IYamlSerializerResolver resolver)
             var arraySerializerType = typeof(ArraySerializer<>).MakeGenericType(t);
             var arraySerializer = (IYamlSerializer)Activator.CreateInstance(arraySerializerType)!;
 
-            arraySerializer.Write(context, value, style);
+            arraySerializer.Write(node, value, style);
             return;
         }
         if (value is IIdentifiable id)
         {
-            if (context.Writer.References.Contains(id.Id))
+            if (node.Writer.References.Contains(id.Id))
             {
-                context.WriteScalar("!!ref ");
-                context.WriteScalar(context.Writer.FormatString(context, id.Id.ToString(), style));
+                node.WriteScalar("!!ref ");
+                node.WriteScalar(node.Writer.FormatString(node, id.Id.ToString(), style));
                 return;
             }
             else
             {
-                context.Writer.References.Add(id.Id);
+                node.Writer.References.Add(id.Id);
             }
         }
         var type = typeof(T);
 
         if ((type.IsValueType || type.IsSealed) && !type.IsGenericType)
         {
-            Resolver.GetSerializer<T>().Write(context, value, style);
+            Resolver.GetSerializer<T>().Write(node, value, style);
             return;
         }
         else if (type.IsInterface || type.IsAbstract || type.IsGenericType || type.IsArray || type != value.GetType())
@@ -81,17 +81,17 @@ public class Writer(IYamlSerializerResolver resolver)
             var formatt = Resolver.GetSerializer(value!.GetType(), typeof(T));
             if (valueType != type)
             {
-                context.IsRedirected = true;
+                node.IsRedirected = true;
             }
 
             // C# forgets the cast of T when invoking to an object,
             // this way we can call the write method with the "real type"
             // that is in the object
-            formatt.Write(context, value, style);
+            formatt.Write(node, value, style);
         }
         else
         {
-            Resolver.GetSerializer<T>().Write(context, value, style);
+            Resolver.GetSerializer<T>().Write(node, value, style);
         }
     }
     /// <summary>
@@ -105,10 +105,10 @@ public class Writer(IYamlSerializerResolver resolver)
     /// </list>
     /// </summary>
     /// <typeparam name="X">The type of the current <see cref="Node"/>.</typeparam>
-    /// <param name="context">The context providing state such as current indentation and style.</param>
+    /// <param name="node">The context providing state such as current indentation and style.</param>
     /// <param name="value">The string value to write.</param>
     /// <param name="style">The data style that influences formatting (for example, compact or normal).</param>
-    public virtual ReadOnlySpan<char> FormatString(Node context, string value, DataStyle style)
+    public virtual ReadOnlySpan<char> FormatString(Node node, string value, DataStyle style)
     {
         var result = EmitStringAnalyzer.Analyze(value);
         if (result is ScalarStyle.Literal && style is DataStyle.Compact)
@@ -121,7 +121,7 @@ public class Writer(IYamlSerializerResolver resolver)
              ScalarStyle.Folded => throw new NotSupportedException($"The {ScalarStyle.Folded} is not supported."),
              ScalarStyle.SingleQuoted => throw new InvalidOperationException("Single Quote is reserved for char"),
              ScalarStyle.DoubleQuoted => "\"" + value.Replace("\n", "\\n") + "\"",
-             ScalarStyle.Literal => EmitStringAnalyzer.BuildLiteralScalar(value, Math.Max(1, (context.Indent + 1) * context.Indent)),
+             ScalarStyle.Literal => EmitStringAnalyzer.BuildLiteralScalar(value, Math.Max(1, (node.Indent + 1) * node.Indent)),
              _ => throw new ArgumentOutOfRangeException(nameof(value)),
         };
     }

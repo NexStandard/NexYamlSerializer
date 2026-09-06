@@ -7,9 +7,9 @@ namespace NexYaml.Serializers;
 
 public class ValueTupleSerializer<T1, T2> : IYamlSerializer<ValueTuple<T1?, T2?>>
 {
-    public void Write(Node context, ValueTuple<T1?, T2?> value, DataStyle style) 
+    public void Write(Node node, ValueTuple<T1?, T2?> value, DataStyle style) 
     {
-        context.BeginSequence("!ValueTuple2", DataStyle.Compact)
+        node.BeginSequence("!ValueTuple2", DataStyle.Compact)
             .Write(value.Item1, DataStyle.Compact)
             .Write(value.Item2, DataStyle.Compact)
             .End();
@@ -51,9 +51,9 @@ public struct ValueTuple2Factory : IYamlSerializerFactory
 }
 public class ValueTupleSerializer<T1, T2, T3> : IYamlSerializer<ValueTuple<T1?, T2?, T3?>>
 {
-    public void Write(Node context, ValueTuple<T1?, T2?, T3?> value, DataStyle style)
+    public void Write(Node node, ValueTuple<T1?, T2?, T3?> value, DataStyle style)
     {
-        context.BeginSequence("!ValueTuple3", DataStyle.Compact)
+        node.BeginSequence("!ValueTuple3", DataStyle.Compact)
             .Write(value.Item1, DataStyle.Compact)
             .Write(value.Item2, DataStyle.Compact)
             .Write(value.Item3, DataStyle.Compact)
@@ -99,9 +99,9 @@ public struct ValueTuple3Factory : IYamlSerializerFactory
 }
 public class ValueTupleSerializer<T1, T2, T3, T4> : IYamlSerializer<ValueTuple<T1?, T2?, T3?, T4?>>
 {
-    public void Write(Node context, ValueTuple<T1?, T2?, T3?, T4?> value, DataStyle style)
+    public void Write(Node node, ValueTuple<T1?, T2?, T3?, T4?> value, DataStyle style)
     {
-        context.BeginSequence("!ValueTuple4", DataStyle.Compact)
+        node.BeginSequence("!ValueTuple4", DataStyle.Compact)
             .Write(value.Item1, DataStyle.Compact)
             .Write(value.Item2, DataStyle.Compact)
             .Write(value.Item3, DataStyle.Compact)
@@ -151,9 +151,9 @@ public struct ValueTuple4Factory : IYamlSerializerFactory
 }
 public class ValueTupleSerializer<T1, T2, T3, T4, T5> : IYamlSerializer<ValueTuple<T1?, T2?, T3?, T4?, T5?>>
 {
-    public void Write(Node context, ValueTuple<T1?, T2?, T3?, T4?, T5?> value, DataStyle style)
+    public void Write(Node node, ValueTuple<T1?, T2?, T3?, T4?, T5?> value, DataStyle style)
     {
-        context.BeginSequence("!ValueTuple5", DataStyle.Compact)
+        node.BeginSequence("!ValueTuple5", DataStyle.Compact)
             .Write(value.Item1, DataStyle.Compact)
             .Write(value.Item2, DataStyle.Compact)
             .Write(value.Item3, DataStyle.Compact)
@@ -208,9 +208,9 @@ public struct ValueTuple5Factory : IYamlSerializerFactory
 public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6> : IYamlSerializer<ValueTuple<T1?, T2?, T3?, T4?, T5?, T6?>>
 {
 
-    public void Write(Node context, ValueTuple<T1?, T2?, T3?, T4?, T5?, T6?> value, DataStyle style)
+    public void Write(Node node, ValueTuple<T1?, T2?, T3?, T4?, T5?, T6?> value, DataStyle style)
     {
-        context.BeginSequence("!ValueTuple6", DataStyle.Compact)
+        node.BeginSequence("!ValueTuple6", DataStyle.Compact)
             .Write(value.Item1, DataStyle.Compact)
             .Write(value.Item2, DataStyle.Compact)
             .Write(value.Item3, DataStyle.Compact)
@@ -268,9 +268,9 @@ public struct ValueTuple6Factory : IYamlSerializerFactory
 }
 public class ValueTupleSerializer<T1, T2, T3, T4, T5, T6, T7> : IYamlSerializer<ValueTuple<T1?, T2?, T3?, T4?, T5?, T6?, T7?>>
 {
-    public void Write(Node context, ValueTuple<T1?, T2?, T3?, T4?, T5?, T6?, T7?> value, DataStyle style)
+    public void Write(Node node, ValueTuple<T1?, T2?, T3?, T4?, T5?, T6?, T7?> value, DataStyle style)
     {
-        context.BeginSequence("!ValueTuple7", DataStyle.Compact)
+        node.BeginSequence("!ValueTuple7", DataStyle.Compact)
             .Write(value.Item1, DataStyle.Compact)
             .Write(value.Item2, DataStyle.Compact)
             .Write(value.Item3, DataStyle.Compact)

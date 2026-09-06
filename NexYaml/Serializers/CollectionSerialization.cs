@@ -7,11 +7,11 @@ namespace NexYaml.Serializers;
 
 public static class CollectionSerialization
 {
-    public static void WriteCollection<T, TCol>(Node context, TCol value, DataStyle style, string tag)  where TCol : ICollection<T?>
+    public static void WriteCollection<T, TCol>(Node node, TCol value, DataStyle style, string tag)  where TCol : ICollection<T?>
     {
         if (value.Count == 0)
         {
-            context.WriteEmptySequence(tag);
+            node.WriteEmptySequence(tag);
             return;
         }
 
@@ -31,21 +31,21 @@ public static class CollectionSerialization
             foreach (var element in value)
             {
                 if (element is IIdentifiable identifiable
-                    && context.Writer.References.Add(identifiable.Id))
+                    && node.Writer.References.Add(identifiable.Id))
                 {
                     reservedIds.Add(identifiable);
                 }
             }
 
             var removedIds = new HashSet<IIdentifiable>();
-            var resultContext = context.BeginSequence(tag, style);
+            var resultContext = node.BeginSequence(tag, style);
             foreach (var element in value)
             {
                 if (element is IIdentifiable identifiable
                     && reservedIds.Contains(identifiable) &&
                     !removedIds.Contains(identifiable))
                 {
-                    context.Writer.References.Remove(identifiable.Id);
+                    node.Writer.References.Remove(identifiable.Id);
                     removedIds.Add(identifiable);
                 }
                 resultContext = resultContext.Write(element, DataStyle.Any);
@@ -54,7 +54,7 @@ public static class CollectionSerialization
             return;
         }
 
-        var result = context.BeginSequence(tag, style);
+        var result = node.BeginSequence(tag, style);
         foreach (var x in value)
         {
             result = result.Write(x, DataStyle.Any);

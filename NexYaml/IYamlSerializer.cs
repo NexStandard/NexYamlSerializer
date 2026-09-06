@@ -18,10 +18,10 @@ public interface IYamlSerializer
     /// Serializes the specified object into YAML.
     /// </summary>
     /// <typeparam name="X">The <see cref="Node"/> type.</typeparam>
-    /// <param name="context">The <see cref="WriteContext{T}"/>.</param>
+    /// <param name="node">The <see cref="WriteContext{T}"/>.</param>
     /// <param name="value">The object to serialize.</param>
     /// <param name="style">The <see cref="DataStyle"/>.</param>
-    void Write(Node context, object value, DataStyle style);
+    void Write(Node node, object value, DataStyle style);
     ValueTask<object?> ReadUnknown(Scope scope, object? context);
     ValueTask<object?> ReadUnknown(Scope scope);
 }
@@ -33,9 +33,9 @@ public interface IYamlSerializer<T> : IYamlSerializer
 {
     DataStyle IYamlSerializer.Style => DataStyle.Any;
 
-    void IYamlSerializer.Write(Node context, object value, DataStyle style)
+    void IYamlSerializer.Write(Node node, object value, DataStyle style)
     {
-        Write(context, (T)value, style);
+        Write(node, (T)value, style);
     }
     async ValueTask<object?> IYamlSerializer.ReadUnknown(Scope scope, object? parseResult)
     {
@@ -51,7 +51,7 @@ public interface IYamlSerializer<T> : IYamlSerializer
     /// </summary>
     /// <param name="value">The value to serialize.</param>
     /// <param name="style">The <see cref="DataStyle"/>.</param>
-    public void Write(Node context, T value, DataStyle style);
+    public void Write(Node node, T value, DataStyle style);
 
     public ValueTask<T> Read(Scope scope, T? parseResult = default);
 }

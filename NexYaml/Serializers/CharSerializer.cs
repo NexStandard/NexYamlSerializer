@@ -7,9 +7,9 @@ namespace NexYaml.Serializers;
 
 public class CharSerializer : IYamlSerializer<char>
 {
-    public void Write(Node context, char value, DataStyle style)
+    public void Write(Node node, char value, DataStyle style)
     {
-        context.WriteScalar(['\'', value, '\'']);
+        node.WriteScalar(['\'', value, '\'']);
     }
 
     public ValueTask<char> Read(Scope scope, char parseResult)

@@ -7,12 +7,12 @@ namespace NexYaml.Serializers;
 
 public class DateTimeOffsetSerializer : IYamlSerializer<DateTimeOffset>
 {
-    public void Write(Node context, DateTimeOffset value, DataStyle style)
+    public void Write(Node node, DateTimeOffset value, DataStyle style)
     {
         Span<char> buf = stackalloc char[33];
         value.TryFormat(buf, out int written, "O");
 
-        context.WriteScalar(buf[..written]);
+        node.WriteScalar(buf[..written]);
     }
 
     public ValueTask<DateTimeOffset> Read(Scope scope, DateTimeOffset parseResult)

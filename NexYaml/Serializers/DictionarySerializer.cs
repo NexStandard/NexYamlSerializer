@@ -10,26 +10,26 @@ namespace NexYaml.Serializers;
 public class DictionarySerializer<TKey, TValue> : IYamlSerializer<Dictionary<TKey, TValue?>>
     where TKey : notnull
 {
-    public void Write(Node context, Dictionary<TKey, TValue?> value, DataStyle style)
+    public void Write(Node node, Dictionary<TKey, TValue?> value, DataStyle style)
     {
         if (value.Count == 0)
         {
-            context.WriteEmptySequence("!Dictionary");
+            node.WriteEmptySequence("!Dictionary");
             return;
         }
 
         if (IsPrimitive(typeof(TKey)))
         {
-            var resultContext = context.BeginMapping("!Dictionary", style);
+            var resultContext = node.BeginMapping("!Dictionary", style);
             foreach (var x in value)
             {
                 resultContext = resultContext.Write(x.Key.ToString() ?? "", x.Value, style);
             }
-            context.End();
+            node.End();
         }
         else
         {
-            CollectionSerialization.WriteCollection<KeyValuePair<TKey, TValue?>, Dictionary<TKey, TValue?>>(context, value, style, "!Dictionary");
+            CollectionSerialization.WriteCollection<KeyValuePair<TKey, TValue?>, Dictionary<TKey, TValue?>>(node, value, style, "!Dictionary");
         }
     }
 

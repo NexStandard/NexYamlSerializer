@@ -11,9 +11,9 @@ public class EmptySerializer<T> : IYamlSerializer<T>
         return new EmptySerializer<T>();
     }
 
-    public void Write(Node context, T value, DataStyle style)
+    public void Write(Node node, T value, DataStyle style)
     {
-        context.WriteScalar(YamlCodes.Null);
+        node.WriteScalar(YamlCodes.Null);
     }
 
     public ValueTask<T> Read(Scope scope, T? parseResult)

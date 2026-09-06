@@ -7,9 +7,9 @@ namespace NexYaml.Serializers;
 
 public class UriSerializer : IYamlSerializer<Uri>
 {
-    public void Write(Node context, Uri value, DataStyle style)
+    public void Write(Node node, Uri value, DataStyle style)
     {
-        context.WriteScalar(value.ToString());
+        node.WriteScalar(value.ToString());
     }
 
     public ValueTask<Uri> Read(Scope scope, Uri? parseResult)

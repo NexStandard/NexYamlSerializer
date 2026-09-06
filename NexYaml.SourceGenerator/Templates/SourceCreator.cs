@@ -83,7 +83,7 @@ internal static class SourceCreator
         string writeString = isEmpty ? $"       context.WriteEmptyMapping(\"!{tag}\");" :
             $"""
         var preferedStyle = style is DataStyle.Any or DataStyle.Normal ? {info.DataStyle} : style;
-        context.BeginMapping("!{tag}",preferedStyle)
+        node.BeginMapping("!{tag}",preferedStyle)
         {package.CreateNewSerializationEmit()}
                 .End();
         """;
@@ -179,7 +179,7 @@ file sealed class {{info.GeneratorName + info.TypeParameterArguments}} : IYamlSe
     {{(info.DataStyle != "DataStyle.Any" ? $"private DataStyle Style =>{info.DataStyle};" : "private DataStyle Style => DataStyle.Any;")}}
     {{package.CreateUTF8Members()}}
 
-    public void Write(Node context, {{info.NameDefinition}} value, DataStyle style)
+    public void Write(Node node, {{info.NameDefinition}} value, DataStyle style)
     {
         {{writeString}}
     }

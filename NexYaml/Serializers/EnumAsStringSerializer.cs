@@ -59,11 +59,11 @@ public class EnumAsStringSerializer<T> : IYamlSerializer<T>
         return buf.ToString();
     }
 
-    public void Write(Node context, T value, DataStyle style)
+    public void Write(Node node, T value, DataStyle style)
     {
         if (ValueNameMapping.TryGetValue(value, out var name))
         {
-            context.WriteScalar(name);
+            node.WriteScalar(name);
         }
         else
         {

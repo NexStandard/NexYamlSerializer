@@ -7,11 +7,11 @@ namespace NexYaml.Serializers;
 
 public class UInt32Serializer : IYamlSerializer<uint>
 {
-    public void Write(Node context, uint value, DataStyle style)
+    public void Write(Node node, uint value, DataStyle style)
     {
         Span<char> span = stackalloc char[10];
         value.TryFormat(span, out var written, default, CultureInfo.InvariantCulture);
-        context.WriteScalar(span[..written]);
+        node.WriteScalar(span[..written]);
     }
 
     public ValueTask<uint> Read(Scope scope, uint parseResult)
