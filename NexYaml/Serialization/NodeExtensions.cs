@@ -34,7 +34,7 @@ public static class NodeExtensions
     /// <returns>The  <see cref="WriteContext{T}"/> based on the written key/value pair.</returns>
     public static Node Write<T>(this Node mapping, ReadOnlySpan<char> key, T value, DataStyle style = DataStyle.Any)
     {
-        mapping.WriteMap(mapping, key, style);
+        mapping.WriteMap(key, style);
         if (value is null)
         {
             mapping.WriteScalar(YamlCodes.Null.AsSpan());
@@ -54,7 +54,7 @@ public static class NodeExtensions
     /// <returns>The next <see cref="WriteContext{Sequence}"/> based on the written value.</returns>
     public static Node Write<T>(this Node sequence, T value, DataStyle style = DataStyle.Any)
     {
-        sequence.WriteElement(sequence, value, style);
+        sequence.WriteElement(value, style);
         return sequence;
     }
 
@@ -62,7 +62,7 @@ public static class NodeExtensions
     {
         var Style = style is DataStyle.Any or DataStyle.Normal ? DataStyle.Any : style;
 
-        mapping.WriteMap(mapping,key, style);
+        mapping.WriteMap(key, style);
         if (value is null)
         {
             mapping.WriteScalar(YamlCodes.Null.AsSpan());
@@ -75,7 +75,7 @@ public static class NodeExtensions
     {
         var Style = style is DataStyle.Any or DataStyle.Normal ? DataStyle.Any : style;
 
-        mapping.WriteMap(mapping, key, style);
+        mapping.WriteMap(key, style);
         Span<char> buffer = stackalloc char[36]; // or 32 if you want "N" format
 
         if (value.TryFormat(buffer, out int written, "D"))

@@ -113,56 +113,67 @@ public struct Node
         }
         throw new InvalidDataException();
     }
-    public void WriteMap(Node context, ReadOnlySpan<char> key, DataStyle style)
+    public void WriteMap(ReadOnlySpan<char> key, DataStyle style)
     {
         if(StyleScope is DataStyle.Compact)
         {
-            if (isFirst)
-            {
-                isFirst = false;
-            }
-            else
-            {
-                WriteScalar(", ");
-            }
-            // First Node is {KEY: VALUE}
-            int len = key.Length + 2;
-            Span<char> buf = stackalloc char[len];
-            key.CopyTo(buf);
-            buf[key.Length] = ':';
-            buf[key.Length + 1] = ' ';
-            WriteScalar(buf);
+            WriteCompactMap(key);
         }
         else
         {
-            if (skipFirst)
-            {
-                // "- {OUTPUT FROM WRITETYPE}"
-                Span<char> x = stackalloc char[key.Length + 2];
-
-                key.CopyTo(x.Slice(0, key.Length));
-                x[^1] = ' ';
-                x[^2] = ':';
-                WriteScalar(x);
-                skipFirst = false;
-            }
-            else
-            {
-                // "{KEY}: {OPTIONAL TAG}" OR "- {OPTIONAL TAG}"
-                // "{NEWLINE}{INDENT}{KEY}: {OUTPUT FROM WriteType}"
-                Span<char> x = stackalloc char[Indent + 1 + key.Length + 2];
-
-                x[0] = '\n';
-                x.Slice(1, Indent).Fill(' ');
-                key.CopyTo(x.Slice(1 + Indent, key.Length));
-                x[^1] = ' ';
-                x[^2] = ':';
-                WriteScalar(x);
-            }
+            WriteBlockMap(key);
         }
 
     }
-    public void WriteElement<T>(Node context, T value, DataStyle style)
+
+    private void WriteBlockMap(ReadOnlySpan<char> key)
+    {
+        if (skipFirst)
+        {
+            // "- {OUTPUT FROM WRITETYPE}"
+            Span<char> x = stackalloc char[key.Length + 2];
+
+            key.CopyTo(x.Slice(0, key.Length));
+            x[^1] = ' ';
+            x[^2] = ':';
+            WriteScalar(x);
+            skipFirst = false;
+        }
+        else
+        {
+            // "{KEY}: {OPTIONAL TAG}" OR "- {OPTIONAL TAG}"
+            // "{NEWLINE}{INDENT}{KEY}: {OUTPUT FROM WriteType}"
+            Span<char> x = stackalloc char[Indent + 1 + key.Length + 2];
+
+            x[0] = '\n';
+            x.Slice(1, Indent).Fill(' ');
+            key.CopyTo(x.Slice(1 + Indent, key.Length));
+            x[^1] = ' ';
+            x[^2] = ':';
+            WriteScalar(x);
+        }
+    }
+
+    private void WriteCompactMap(ReadOnlySpan<char> key)
+    {
+        if (isFirst)
+        {
+            isFirst = false;
+        }
+        else
+        {
+            WriteScalar(", ");
+        }
+        // First Node is {KEY: VALUE}
+        int len = key.Length + 2;
+        Span<char> buf = stackalloc char[len];
+        key.CopyTo(buf);
+        buf[key.Length] = ':';
+        buf[key.Length + 1] = ' ';
+        WriteScalar(buf);
+    }
+
+    public void WriteElement<T>(T value, DataStyle style)
     {
         if (StyleScope is DataStyle.Compact)
         {
@@ -197,7 +208,7 @@ public struct Node
             buf[^2] = '-';
 
             WriteScalar(buf);
-            context.WriteType(value, style);
+            this.WriteType(value, style);
         }
     }
     public void End()
